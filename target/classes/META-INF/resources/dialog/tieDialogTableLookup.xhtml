@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+xmlns:ui="http://java.sun.com/jsf/facelets" 
+xmlns:f="http://java.sun.com/jsf/core" 
+xmlns:h="http://java.sun.com/jsf/html" 
+xmlns:p="http://primefaces.org/ui">
+
+
+
+<h:head>
+<title>#{tieDialogLookupBean.attrs.dialogTitle}</title>
+<f:facet name="first">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+</f:facet>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</h:head>
+
+<h:outputStylesheet name="tiefaces/lookup.css" />
+<h:body>
+ <h:form id="tiedialogform">
+	<p:messages id="tiedialogmessages" globalOnly="true" showDetail="true" autoUpdate="true" severity="info,warn,error,fatal" closable="true" />
+	             
+	<p:dataTable
+		 paginatorTemplate= "#{tieDialogLookupBean.attrs.paginatorTemplate}" 
+         paginator="#{tieDialogLookupBean.attrs.paginator}" rows="#{tieDialogLookupBean.attrs.rows}" 
+         paginatorPosition="#{tieDialogLookupBean.attrs.paginatorPosition}"
+		 paginatorAlwaysVisible = "#{tieDialogLookupBean.attrs.paginatorAlwaysVisible}"
+		 style="#{tieDialogLookupBean.attrs.style}"
+			styleClass="#{tieDialogLookupBean.attrs.styleClass}"
+			tableStyle="#{tieDialogLookupBean.attrs.tableStyle}" id="tieLookupTable"
+			value="#{tieDialogLookupBean.attrs.lookupBean.results}" var="result"
+			emptyMessage="#{tieDialogLookupBean.attrs.emptyMessage}"
+			filteredValue="#{tieDialogLookupBean.attrs.lookupBean.results}">
+			
+			
+			<p:columns value="#{tieDialogLookupBean.attrs.lookupBean.columns}" var="column"
+				columnIndexVar="colIndex" sortBy="#{result[column.property]}"
+				filterBy="#{result[column.property]}" headerText="#{column.header}"
+				filterStyle="text-align:center" style="#{column.style}">
+				<f:facet name="filter">
+					<p:inputText
+						value="#{tieDialogLookupBean.attrs.lookupBean.searchItem[column.property]}"
+						styleClass="formFieldInputColumnWidth" />
+				</f:facet>
+				<h:outputText style="padding: 2px;"
+					value="#{result[column.property]}" />
+			</p:columns>
+
+			<p:column filterBy="#{result.class}"
+				style="#{tieDialogLookupBean.attrs.searchButtonColumnStyle}">
+				<f:facet name="filter">
+					<p:commandButton id="searchBtn" icon="#{tieDialogLookupBean.attrs.searchButtonIcon}"
+						value="#{tieDialogLookupBean.attrs.searchButtonText}"
+						style="#{tieDialogLookupBean.attrs.searchButtonStyle}"
+						actionListener="#{tieDialogLookupBean.attrs.lookupBean.doSearch}"
+						oncomplete="tieRefreshTblAfter();"
+						 update="@none">
+					</p:commandButton>
+	<p:remoteCommand name="tieRefreshTblAfter"  
+				actionListener="#{tieDialogLookupBean.attrs.lookupBean.refresh}" update="tieLookupTable" />
+					
+				</f:facet>
+				
+			    <p:commandButton icon="#{tieDialogLookupBean.attrs.selectButtonIcon}" 
+			    value="#{tieDialogLookupBean.attrs.selectButtonText}"
+			    style="#{tieDialogLookupBean.attrs.selectButtonStyle}" 
+			    actionListener="#{tieDialogLookupBean.selectResultFromDialog(result)}"
+			    />
+				
+			</p:column>
+		</p:dataTable>
+			
+		</h:form>
+    </h:body>    
+
+
+</html>

@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<!-- INTERFACE -->
+<cc:interface>
+	<cc:attribute name="lookupBean" required="true"
+		type="com.tiefaces.components.common.lookup.TieTableLookupBean" />
+	<cc:attribute name="paginatorTemplate" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="paginator" required="false" default="false"
+		type="java.lang.Boolean" />
+	<cc:attribute name="paginatorPosition" required="false" default="bottom"
+		type="java.lang.String" />
+	<cc:attribute name="paginatorAlwaysVisible" required="false" default="false"
+		type="java.lang.Boolean" />
+	<cc:attribute name="rows" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="style" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="styleClass" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="tableStyle" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="rendered" required="false" default="true"
+		type="java.lang.Boolean" />
+	<cc:attribute name="searchButtonIcon" required="false"
+		default="ui-icon-search" type="java.lang.String" />
+	<cc:attribute name="searchButtonText" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="searchButtonStyle" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="searchButtonColumnStyle" required="false"
+		default="" type="java.lang.String" />
+	<cc:attribute name="showSelectButton" required="false"
+		default="false" type="java.lang.Boolean" />
+	<cc:attribute name="selectButtonIcon" required="false"
+		default="ui-icon-circle-check" type="java.lang.String" />
+	<cc:attribute name="selectButtonText" required="false" default=""
+		type="java.lang.String" />
+	<cc:attribute name="selectButtonButtonStyle" required="false" default=""
+		type="java.lang.String" />
+		
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+	<h:outputStylesheet name="tiefaces/lookup.css" />
+	<div id="#{cc.clientId}">
+
+    
+    
+    
+		<p:dataTable 
+		 paginatorTemplate= "#{cc.attrs.paginatorTemplate}" 
+         paginator="#{cc.attrs.paginator}" rows="#{cc.attrs.rows}" 
+         paginatorPosition="#{cc.attrs.paginatorPosition}"
+		 paginatorAlwaysVisible = "#{cc.attrs.paginatorAlwaysVisible}"
+		 style="#{cc.attrs.style}"
+			styleClass="#{cc.attrs.styleClass}"
+			tableStyle="#{cc.attrs.tableStyle}" id="tieLookupTable"
+			value="#{cc.attrs.lookupBean.results}" var="result"
+			emptyMessage="#{cc.attrs.emptyMessage}"
+			filteredValue="#{cc.attrs.lookupBean.results}">
+			
+			<cc:insertFacet name="{Exporters}"/>
+			
+			<p:columns value="#{cc.attrs.lookupBean.columns}" var="column"
+				columnIndexVar="colIndex" sortBy="#{result[column.property]}"
+				filterBy="#{result[column.property]}" headerText="#{column.header}"
+				filterStyle="text-align:center" style="#{column.style}">
+				<f:facet name="filter">
+					<p:inputText
+						value="#{cc.attrs.lookupBean.searchItem[column.property]}"
+						styleClass="formFieldInputColumnWidth" />
+				</f:facet>
+				<h:outputText style="padding: 2px;"
+					value="#{result[column.property]}" />
+			</p:columns>
+
+			<p:column filterBy="#{result.class}"
+				style="#{cc.attrs.searchButtonColumnStyle}">
+				<f:facet name="filter">
+					<p:commandButton id="searchBtn" icon="#{cc.attrs.searchButtonIcon}"
+						value="#{cc.attrs.searchButtonText}"
+						style="#{cc.attrs.searchButtonStyle}"
+						oncomplete="tieRefreshTblAfter();"
+						actionListener="#{cc.attrs.lookupBean.doSearch}" update="tieLookupTable">
+					</p:commandButton>
+	<p:remoteCommand name="tieRefreshTblAfter"  
+				actionListener="#{cc.attrs.lookupBean.refresh}" update="tieLookupTable" />
+					
+				</f:facet>
+				
+			    <p:commandButton icon="#{cc.attrs.selectButtonIcon}" 
+			    value="#{cc.attrs.selectButtonText}"
+			    style="#{cc.attrs.selectButtonStyle}" 
+			    actionListener="#{cc.attrs.lookupBean.selectSearchResult(result)}"
+			    rendered="#{cc.attrs.showSelectButton}" />
+				
+			</p:column>
+		</p:dataTable>
+	</div>
+</cc:implementation>
+</html>

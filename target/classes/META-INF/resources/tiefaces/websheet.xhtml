@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<!-- INTERFACE -->
+<cc:interface componentType="tieWebSheetComponent">
+
+	<cc:attribute name="webSheetBean" required="true"
+		type="com.tiefaces.components.websheet.TieWebSheetBean" />
+	<cc:attribute name="rendered" required="false" default="true"
+		type="java.lang.Boolean" />
+	<cc:attribute name="readonly" required="false" default="false"
+		type="java.lang.Boolean" />
+	<cc:attribute name="showLineNumber" required="false" default="true"
+		type="java.lang.Boolean" />
+	<cc:attribute name="paginator" required="false"
+		default="#{cc.attrs.webSheetBean.multiplePage}"
+		type="java.lang.Boolean" />
+	<cc:attribute name="paginatorTemplate" required="false"
+		default="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		type="java.lang.String" />
+	<cc:attribute name="paginatorPosition" required="false"
+		default="bottom" type="java.lang.String" />
+	<cc:attribute name="paginatorAlwaysVisible" required="false"
+		default="false" type="java.lang.Boolean" />
+	<cc:attribute name="maxRowsPerPage" required="false"
+		default="#{cc.attrs.webSheetBean.maxRowsPerPage}"
+		type="java.lang.String" />
+	<cc:attribute name="rowsPerPageTemplate" required="false"
+		default="#{cc.attrs.webSheetBean.maxRowsPerPage} #{cc.attrs.webSheetBean.maxRowsPerPage * 2}"
+		type="java.lang.String" />
+	<cc:attribute name="tableWidthStyle" required="false"
+		default="#{cc.attrs.webSheetBean.tableWidthStyle}"
+		type="java.lang.String" />
+	<cc:attribute name="emptyMessage" required="false"
+		default=""
+		type="java.lang.String" />
+
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+	<h:outputStylesheet name="tiefaces/websheet.css" />
+	<div id="#{cc.clientId}">
+<p:outputPanel id="websheet">
+		<div id="websheettabview">
+			<p:tabView id = "websheettab" scrollable="true" style="height: 35px;"
+				binding="#{cc.attrs.webSheetBean.webFormTabView}" 
+				rendered="#{cc.attrs.rendered}">
+				<p:ajax event="tabChange" 
+					listener="#{cc.attrs.webSheetBean.onTabChange}" update="@parent" />
+				<c:forEach items="#{cc.attrs.webSheetBean.tabs}" var="tab"
+					varStatus="status">
+					<p:tab title="#{tab.title}" rendered="#{cc.attrs.rendered}" />
+				</c:forEach>
+			</p:tabView>
+		</div>
+
+		<div id="websheet">
+			<p:dataTable id="websheettable" var="dataRow"
+				rendered="#{cc.attrs.rendered}"
+				value="#{cc.attrs.webSheetBean.bodyRows}"
+				paginator="#{cc.attrs.paginator}"
+				paginatorPosition="#{cc.attrs.paginatorPosition}"
+				rows="#{cc.attrs.maxRowsPerPage}"
+				paginatorAlwaysVisible="cc.attrs.paginatorAlwaysVisible"
+				paginatorTemplate="#{cc.attrs.paginatorTemplate}"
+				rowsPerPageTemplate="#{cc.attrs.rowsPerPageTemplate}"
+				emptyMessage="#{cc.attrs.emptyMessage}" 
+				rowIndexVar="rowindex" widgetVar="webSheetTable"
+				tableStyle="table-layout: fixed; width:#{cc.attrs.tableWidthStyle} ">
+
+
+				<p:columnGroup type="header">
+					<c:forEach items="#{cc.attrs.webSheetBean.headerRows}"
+						var="headerrow" varStatus="loopheaderrow">
+						<p:row>
+							<p:column width="18" rendered="#{cc.attrs.showLineNumber}" />
+							<c:forEach items="#{headerrow}" var="headerrowcolumn"
+								varStatus="loopheaderrowcolumn">
+								<p:column rowspan="#{headerrowcolumn.rowspan}"
+									colspan="#{headerrowcolumn.colspan}"
+									style="#{headerrowcolumn.columnStyle}">
+									<f:facet name="header">
+										<h:outputText value="#{headerrowcolumn.cellValue}"
+											style="#{headerrowcolumn.style}"
+											styleClass="inputColumnWidth" />
+									</f:facet>
+								</p:column>
+								<p:column width="16" rendered="#{webFormBean.bodyAllowAddRows}" />
+							</c:forEach>
+						</p:row>
+					</c:forEach>
+				</p:columnGroup>
+
+				<p:column width="18" style="text-align: center;"
+					rendered="#{cc.attrs.showLineNumber and dataRow.rendered}">
+					<h:outputText value="#{dataRow.rowIndex + 1}" />
+				</p:column>
+
+				<c:forEach items="#{cc.attrs.webSheetBean.columns}" var="column"
+					varStatus="loop">
+					<p:column
+						rendered="#{not empty dataRow.cells[loop.index] and dataRow.rendered }"
+						rowspan="#{dataRow.cells[loop.index].rowspan}"
+						colspan="#{dataRow.cells[loop.index].colspan}"
+						style="#{dataRow.cells[loop.index].columnStyle}">
+						<h:outputText id="cocalc#{loop.index}"
+							rendered="#{empty dataRow.cells[loop.index].inputType}"
+							style="#{dataRow.cells[loop.index].style}"
+							styleClass="inputColumnWidth"
+							value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex).concat(':format')]}"
+							/>
+							
+						<p:inputText id="column#{loop.index}"
+							value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
+							style="#{dataRow.cells[loop.index].validStyle}"
+							styleClass="inputColumnWidth" readonly="#{cc.attrs.readonly}"
+							autocomplete="off"
+							rendered="#{(!empty dataRow.cells[loop.index].inputType) and ( dataRow.cells[loop.index].inputType != 'textarea' ) }"
+							onkeypress="if (event.keyCode == 13) { onchange(); return false; }">
+
+							<p:ajax event="change" process="@this"
+								listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
+							 <f:attribute name="data-row" value="#{dataRow.rowIndex}" />
+							 <f:attribute name="data-column" value="#{dataRow.cells[loop.index].columnIndex}" />
+
+						</p:inputText>
+						<p:inputTextarea id="coarea#{loop.index}" rows="3"
+							value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
+							style="#{dataRow.cells[loop.index].style}"
+							styleClass="inputTextarea inputColumnWidth"
+							readonly="#{cc.attrs.readonly}" autocomplete="off"
+							rendered="#{dataRow.cells[loop.index].inputType == 'textarea'}">
+
+							<p:ajax event="change" process="@this"
+								listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
+						</p:inputTextarea>
+						<h:outputText id="msgcolumn#{loop.index}" style="color:red"
+							styleClass="inputColumnWidth"
+							rendered="#{(dataRow.cells[loop.index].invalid)}"
+							value="#{dataRow.cells[loop.index].errormsg}" />
+						<p:graphicImage id="pictures#{loop.index}"
+							style="#{dataRow.cells[loop.index].pictureStyle}"
+							value="#{tieWebSheetPicturesService.picture}"
+							rendered="#{(dataRow.cells[loop.index].containPic)}">
+							<f:param name="pictureViewId"
+								value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex).concat(':picture')]}" />
+						</p:graphicImage>
+					</p:column>
+				</c:forEach>
+				<p:column width="16" style="text-align: center;"
+					rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows}">
+					<h:panelGroup
+						rendered="#{dataRow.rendered and dataRow.repeatZone }">
+						<p:commandButton
+							actionListener="#{cc.attrs.webSheetBean.addRepeatRow(dataRow.rowIndex)}"
+							update="@form" title="Add Row" alt="Add Row" icon="ui-icon-plus"
+							styleClass="icon_button" />
+						<p:commandButton
+							actionListener="#{cc.attrs.webSheetBean.deleteRepeatRow(dataRow.rowIndex)}"
+							update="@form" title="Delete Row" alt="Delete Row"
+							icon="ui-icon-minus" styleClass="icon_button">
+							<p:confirm header="Confirmation" message="Are you sure?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</h:panelGroup>
+				</p:column>
+			</p:dataTable>
+
+			<p:blockUI block="#{cc.clientId}:websheet" widgetVar="tiefaces_websheet_bui" trigger="#{cc.clientId}:websheettab #{cc.clientId}:websheettable">
+				<p:graphicImage name="tiefaces/img/ajaxloadingbar.gif"/>
+		    </p:blockUI>
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+		</div>
+
+</p:outputPanel>
+
+	</div>
+</cc:implementation>
+</html>
