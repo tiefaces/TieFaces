@@ -231,10 +231,10 @@ public class TieWebSheetLoader implements Serializable {
 			fis.close();
 			// remove configuration sheet
 			if (parent.getWb().getSheet(
-					TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_SHEET) != null)
+					parent.getConfigurationTab()) != null)
 				parent.getWb().removeSheetAt(
 						parent.getWb().getSheetIndex(
-								TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_SHEET));
+								parent.getConfigurationTab()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			debug("Web Form loadWorkbook Error Exception = "

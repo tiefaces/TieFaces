@@ -78,6 +78,7 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 	private String clientId = null;
 	private String webFormClientId = null;
 	private String excelType = null;
+	private String configurationTab = TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_SHEET;
 
 	private boolean debug = true;
 
@@ -241,6 +242,7 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		this.picturesMap = picturesMap;
 	}
 
+	
 	// public void initWorkBook() {
 	// if (this.getWb() == null) {
 	//
@@ -251,6 +253,14 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 	// }
 	// }
 	// }
+
+	public String getConfigurationTab() {
+		return configurationTab;
+	}
+
+	public void setConfigurationTab(String configurationTab) {
+		this.configurationTab = configurationTab;
+	}
 
 	public int loadWebSheet(InputStream inputStream) {
 		return  webSheetLoader.loadWorkbook(inputStream);
@@ -272,15 +282,11 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		return exportFile;
 	}
 
-	public void doExportPrime() {
+	public void doExport() {
 		try {
 
 			webSheetLoader.loadAllFields();
-			String fileName = FacesUtility
-					.evaluateExpression(
-							"#{submissionEdit.submission.submissionTypeCd}_#{submissionEdit.submissionRes.submission.organizationCode}_#{submissionEdit.submission.reportingPeriod}_#{submissionEdit.reportingYearCode}",
-							String.class)
-					+ ".xls";
+			String fileName = "WebSheetTemplate"+"."+this.getExcelType();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			wb.write(out);
 			InputStream stream = new BufferedInputStream(

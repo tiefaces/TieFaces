@@ -14,7 +14,7 @@
 		type="com.tiefaces.components.websheet.TieWebSheetBean" />
 	<cc:attribute name="rendered" required="false" default="true"
 		type="java.lang.Boolean" />
-	<cc:attribute name="readonly" required="false" default="false"
+	<cc:attribute name="readOnly" required="false" default="false"
 		type="java.lang.Boolean" />
 	<cc:attribute name="showLineNumber" required="false" default="true"
 		type="java.lang.Boolean" />
@@ -111,7 +111,7 @@
 						colspan="#{dataRow.cells[loop.index].colspan}"
 						style="#{dataRow.cells[loop.index].columnStyle}">
 						<h:outputText id="cocalc#{loop.index}"
-							rendered="#{empty dataRow.cells[loop.index].inputType}"
+							rendered="#{empty dataRow.cells[loop.index].inputType or cc.attrs.readOnly}"
 							style="#{dataRow.cells[loop.index].style}"
 							styleClass="inputColumnWidth"
 							value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex).concat(':format')]}"
@@ -120,9 +120,9 @@
 						<p:inputText id="column#{loop.index}"
 							value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 							style="#{dataRow.cells[loop.index].validStyle}"
-							styleClass="inputColumnWidth" readonly="#{cc.attrs.readonly}"
+							styleClass="inputColumnWidth"
 							autocomplete="off"
-							rendered="#{(!empty dataRow.cells[loop.index].inputType) and ( dataRow.cells[loop.index].inputType != 'textarea' ) }"
+							rendered="#{(!cc.attrs.readOnly) and (!empty dataRow.cells[loop.index].inputType) and ( dataRow.cells[loop.index].inputType != 'textarea' ) }"
 							onkeypress="if (event.keyCode == 13) { onchange(); return false; }">
 
 							<p:ajax event="change" process="@this"
@@ -135,8 +135,8 @@
 							value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 							style="#{dataRow.cells[loop.index].style}"
 							styleClass="inputTextarea inputColumnWidth"
-							readonly="#{cc.attrs.readonly}" autocomplete="off"
-							rendered="#{dataRow.cells[loop.index].inputType == 'textarea'}">
+							autocomplete="off"
+							rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].inputType == 'textarea'}">
 
 							<p:ajax event="change" process="@this"
 								listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />

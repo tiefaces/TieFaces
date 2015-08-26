@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import com.tiefaces.common.FacesUtility;
+import com.tiefaces.common.TIEConstants;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.CellRange;
 import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
@@ -94,8 +95,8 @@ public class TieWebSheetConfigurationHandler {
 	public Map<String, SheetConfiguration> buildConfiguration() {
 
 		Map<String, SheetConfiguration> sheetConfigMap = new LinkedHashMap<String, SheetConfiguration>();
-		Sheet sheet1 = parent.getWb().getSheet(
-				TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_SHEET);
+System.out.println("parent configuration tab = "+parent.getConfigurationTab());		
+		Sheet sheet1 = parent.getWb().getSheet(parent.getConfigurationTab());
 
 		if (sheet1 == null) // no configuration tab
 			return buildConfigurationWithoutTab(sheetConfigMap);
@@ -278,7 +279,10 @@ public class TieWebSheetConfigurationHandler {
 			int lastRow = sheet.getLastRowNum();
 			int firstRow = 0;
 			int rightCol = 0;
+			int maxRow = 0;
 			for (Row row : sheet) {
+				if (row.getRowNum() > TIEConstants.TIE_WEB_SHEET_MAX_ROWS) break;
+				maxRow = row.getRowNum();
 				int firstCellNum = row.getFirstCellNum();
 				if ( firstCellNum >=0 && firstCellNum < leftCol ) {
 					leftCol = firstCellNum;
@@ -288,6 +292,8 @@ public class TieWebSheetConfigurationHandler {
 					if (verifiedcol > rightCol)	rightCol = verifiedcol;
 				}	
 			}
+			if (maxRow < lastRow) lastRow = maxRow;
+			debug("tabName = "+tabName+" maxRow = "+maxRow);
 
 			// header range row set to 0 while column set to first column to max
 			// column (FF) e.g. $A$0 : $FF$0

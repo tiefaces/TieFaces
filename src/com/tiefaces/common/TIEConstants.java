@@ -24,5 +24,7 @@ public final class TIEConstants {
 	
 	public static final String TIE_DIALOG_ATTRS  ="tieDialogLookupComponentAttrs";
 	
+	public static final int TIE_WEB_SHEET_MAX_ROWS = 99999;
+	
 
 }
