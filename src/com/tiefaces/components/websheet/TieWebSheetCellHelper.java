@@ -261,12 +261,15 @@ public class TieWebSheetCellHelper {
 			// Set the cell data value
 			switch (oldCell.getCellType()) {
 			case Cell.CELL_TYPE_BLANK:
+				if(newCellStyle.getLocked()) 
 				newCell.setCellValue(oldCell.getStringCellValue());
 				break;
 			case Cell.CELL_TYPE_BOOLEAN:
+				if(newCellStyle.getLocked()) 
 				newCell.setCellValue(oldCell.getBooleanCellValue());
 				break;
 			case Cell.CELL_TYPE_ERROR:
+				if(newCellStyle.getLocked()) 
 				newCell.setCellErrorValue(oldCell.getErrorCellValue());
 				break;
 			case Cell.CELL_TYPE_FORMULA:
@@ -279,9 +282,11 @@ public class TieWebSheetCellHelper {
 
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
+				if(newCellStyle.getLocked()) 
 				newCell.setCellValue(oldCell.getNumericCellValue());
 				break;
 			case Cell.CELL_TYPE_STRING:
+				if(newCellStyle.getLocked()) 
 				newCell.setCellValue(oldCell.getRichStringCellValue());
 				break;
 			}
@@ -792,10 +797,11 @@ public class TieWebSheetCellHelper {
 		return style;
 	}
 	
-	
-	public int calcTotalWidth(Sheet sheet1, int firstCol, int lastCol) {
+	//additionalWidth is to calculate extra width outside spreadsheet for layout purpose
+	//e.g. lineNumberColumnWidth and addRowColumnWidth
+	public int calcTotalWidth(Sheet sheet1, int firstCol, int lastCol, int additionalWidth) {
 
-		int totalWidth = 0;
+		int totalWidth = additionalWidth;
 		for (int i = firstCol; i <= lastCol; i++) {
 
 			totalWidth += sheet1.getColumnWidth(i);

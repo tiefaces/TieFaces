@@ -136,6 +136,44 @@ public class TieWebSheetView  {
 	public void setTableWidthStyle(String tableWidthStyle) {
 		this.tableWidthStyle = tableWidthStyle;
 	}
+	// width use pixel 24 = 24px;
+	private int lineNumberColumnWidth = 24;
+	private int addRowColumnWidth = 36;
+	
+	private String lineNumberColumnWidthStyle="";
+	private String addRowColumnWidthStyle="";
+
+	public int getLineNumberColumnWidth() {
+		return lineNumberColumnWidth;
+	}
+
+	public void setLineNumberColumnWidth(int lineNumberColumnWidth) {
+		this.lineNumberColumnWidth = lineNumberColumnWidth;
+	}
+
+	public int getAddRowColumnWidth() {
+		return addRowColumnWidth;
+	}
+
+	public void setAddRowColumnWidth(int addRowColumnWidth) {
+		this.addRowColumnWidth = addRowColumnWidth;
+	}
+
+	public String getLineNumberColumnWidthStyle() {
+		return lineNumberColumnWidthStyle;
+	}
+
+	public void setLineNumberColumnWidthStyle(String lineNumberCoumnWidthStyle) {
+		this.lineNumberColumnWidthStyle = lineNumberCoumnWidthStyle;
+	}
+
+	public String getAddRowColumnWidthStyle() {
+		return addRowColumnWidthStyle;
+	}
+
+	public void setAddRowColumnWidthStyle(String addRowColumnWidthStyle) {
+		this.addRowColumnWidthStyle = addRowColumnWidthStyle;
+	}
 
 	private boolean bodyAllowAddRows;
 
@@ -147,6 +185,16 @@ public class TieWebSheetView  {
 		this.bodyAllowAddRows = bodyAllowAddRows;
 	}  
 
+	private boolean showLineNumber=false;
 
+	public boolean isShowLineNumber() {
+		return showLineNumber;
+	}
+
+	public void setShowLineNumber(boolean showLineNumber) {
+		this.showLineNumber = showLineNumber;
+	}
+	
+	
 	
 }

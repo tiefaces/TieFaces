@@ -32,7 +32,8 @@ public class HeaderCell {
 	private String colspan; // cell column span attribute
 	private String cellValue; // header text label
 	private String style; // cell web css style attriubte    
-	private String columnStyle; // cell web css style attriubte    
+	private String columnStyle; // cell web css style attriubte
+	private boolean rendered = true;;
 	
 	/**
 	 * Constructor.
@@ -41,13 +42,14 @@ public class HeaderCell {
 	 * @param style cell web css style attriubte
 	 * @param headertext header text label
 	 */
-	public HeaderCell(String rowspan, String colspan, String style, String columnStyle, String cellValue) {
+	public HeaderCell(String rowspan, String colspan, String style, String columnStyle, String cellValue, boolean rendered) {
 		super();
 		this.rowspan = rowspan;
 		this.colspan = colspan;
 		this.style = style;
 		this.columnStyle = columnStyle;
 		this.cellValue = cellValue;
+		this.rendered = rendered;
 		debug("header cell construction: rowspan = "+rowspan+" colspan="+colspan+" style="+style+" columnStyle="+columnStyle+" cellValue="+cellValue);
 	}
 	public String getRowspan() {
@@ -80,6 +82,13 @@ public class HeaderCell {
 	}
 	public void setStyle(String style) {
 		this.style = style;
+	}
+	
+	public boolean isRendered() {
+		return rendered;
+	}
+	public void setRendered(boolean rendered) {
+		this.rendered = rendered;
 	}
 	/**
 	 * Obtain a human readable representation.

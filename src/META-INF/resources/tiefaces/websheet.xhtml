@@ -16,7 +16,8 @@
 		type="java.lang.Boolean" />
 	<cc:attribute name="readOnly" required="false" default="false"
 		type="java.lang.Boolean" />
-	<cc:attribute name="showLineNumber" required="false" default="true"
+	<cc:attribute name="showLineNumber" required="false" 
+		default="#{cc.attrs.webSheetBean.showLineNumber}"
 		type="java.lang.Boolean" />
 	<cc:attribute name="paginator" required="false"
 		default="#{cc.attrs.webSheetBean.multiplePage}"
@@ -40,7 +41,9 @@
 	<cc:attribute name="emptyMessage" required="false"
 		default=""
 		type="java.lang.String" />
-
+	<cc:attribute name="deleteRowConfirmMessage" required="false"
+		default="Are you sure you want to delete this row?"
+		type="java.lang.String" />
 </cc:interface>
 
 <!-- IMPLEMENTATION -->
@@ -80,7 +83,7 @@
 					<c:forEach items="#{cc.attrs.webSheetBean.headerRows}"
 						var="headerrow" varStatus="loopheaderrow">
 						<p:row>
-							<p:column width="18" rendered="#{cc.attrs.showLineNumber}" />
+							<p:column style="#{cc.attrs.webSheetBean.lineNumberColumnWidthStyle}" rendered="#{cc.attrs.showLineNumber}" />
 							<c:forEach items="#{headerrow}" var="headerrowcolumn"
 								varStatus="loopheaderrowcolumn">
 								<p:column rowspan="#{headerrowcolumn.rowspan}"
@@ -89,16 +92,17 @@
 									<f:facet name="header">
 										<h:outputText value="#{headerrowcolumn.cellValue}"
 											style="#{headerrowcolumn.style}"
-											styleClass="inputColumnWidth" />
+											styleClass="inputColumnWidth"
+											rendered="#{headerrowcolumn.rendered}" />
 									</f:facet>
 								</p:column>
-								<p:column width="16" rendered="#{webFormBean.bodyAllowAddRows}" />
 							</c:forEach>
+							<p:column style="#{cc.attrs.webSheetBean.addRowColumnWidthStyle}" rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows}" />
 						</p:row>
 					</c:forEach>
 				</p:columnGroup>
 
-				<p:column width="18" style="text-align: center;"
+				<p:column style="text-align: center;#{cc.attrs.webSheetBean.lineNumberColumnWidthStyle}"
 					rendered="#{cc.attrs.showLineNumber and dataRow.rendered}">
 					<h:outputText value="#{dataRow.rowIndex + 1}" />
 				</p:column>
@@ -154,10 +158,10 @@
 						</p:graphicImage>
 					</p:column>
 				</c:forEach>
-				<p:column width="16" style="text-align: center;"
+				<p:column style="text-align: center;#{cc.attrs.webSheetBean.addRowColumnWidthStyle}" 
 					rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows}">
 					<h:panelGroup
-						rendered="#{dataRow.rendered and dataRow.repeatZone }">
+						rendered="#{dataRow.rendered and dataRow.repeatZone}">
 						<p:commandButton
 							actionListener="#{cc.attrs.webSheetBean.addRepeatRow(dataRow.rowIndex)}"
 							update="@form" title="Add Row" alt="Add Row" icon="ui-icon-plus"
@@ -166,7 +170,7 @@
 							actionListener="#{cc.attrs.webSheetBean.deleteRepeatRow(dataRow.rowIndex)}"
 							update="@form" title="Delete Row" alt="Delete Row"
 							icon="ui-icon-minus" styleClass="icon_button">
-							<p:confirm header="Confirmation" message="Are you sure?"
+							<p:confirm header="Confirmation" message="#{cc.attrs.deleteRowConfirmMessage}"
 								icon="ui-icon-alert" />
 						</p:commandButton>
 					</h:panelGroup>
@@ -176,7 +180,7 @@
 			<p:blockUI block="#{cc.clientId}:websheet" widgetVar="tiefaces_websheet_bui" trigger="#{cc.clientId}:websheettab #{cc.clientId}:websheettable">
 				<p:graphicImage name="tiefaces/img/ajaxloadingbar.gif"/>
 		    </p:blockUI>
-			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
 				<p:commandButton value="Yes" type="button"
 					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
 				<p:commandButton value="No" type="button"

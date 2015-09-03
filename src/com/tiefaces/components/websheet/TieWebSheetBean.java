@@ -242,18 +242,6 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		this.picturesMap = picturesMap;
 	}
 
-	
-	// public void initWorkBook() {
-	// if (this.getWb() == null) {
-	//
-	// int return_flag = webSheetLoader.loadWorkbook();
-	// if (return_flag <= 0) {
-	// debug(" loadworkbook failed, return = " + return_flag);
-	// return;
-	// }
-	// }
-	// }
-
 	public String getConfigurationTab() {
 		return configurationTab;
 	}
@@ -301,33 +289,6 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		return;
 	}
 
-	// commented below is another way to do export excel file
-	// public void doExport() throws IOException {
-	//
-	// loadAllFields();
-	// String filename =
-	// WebFormHelper.evaluateExpression("#{submissionEdit.submission.submissionTypeCd}_#{submissionEdit.submissionRes.submission.organizationCode}_#{submissionEdit.submission.reportingPeriod}_#{submissionEdit.reportingYearCode}",
-	// String.class)+".xls";
-	//
-	// FacesContext facesContext = FacesContext.getCurrentInstance();
-	// ExternalContext externalContext = facesContext.getExternalContext();
-	// externalContext.setResponseContentType("application/vnd.ms-excel");
-	// externalContext.setResponseHeader("Content-Disposition",
-	// "attachment; filename=\""+filename+"\"");
-	// wb.write(externalContext.getResponseOutputStream());
-	// facesContext.responseComplete();
-	// log.info("Web Form Exported file finished filename = "+filename);
-	// }
-
-//	private int findTabIndexWithName(String tabname) {
-//
-//		for (int i = 0; i < tabs.size(); i++) {
-//			if (tabs.get(i).getTitle().equalsIgnoreCase(tabname))
-//				return i;
-//		}
-//		return -1;
-//
-//	}
 
 	private boolean preValidation(boolean passEmptyCheck) {
 
@@ -545,6 +506,13 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 	public void onCellEdit(CellEditEvent event) {
 
 		System.out.println(" into celledit event row =" + event.getRowIndex());
+	}
+	
+	public void addRepeatRow(int rowIndex) {
+		this.webSheetLoader.addRepeatRow(rowIndex);
+	}
+	public void deleteRepeatRow(int rowIndex) {
+		this.webSheetLoader.deleteRepeatRow(rowIndex);
 	}
 
 }

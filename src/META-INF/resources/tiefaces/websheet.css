@@ -26,6 +26,17 @@
     border-radius: 0 !important;
 }
 
+#websheet .singleLine {
+       text-wrap:none !important;
+       white-space:nowrap !important;
+       overflow:hidden !important;
+       text-overflow:ellipsis !important;
+   }
+   
+#websheet .ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td, .ui-datatable tfoot th  {
+    padding: 0 !important;
+}   
+   
 #websheet .icon_button {
 	width: 1.2em !important;
 }

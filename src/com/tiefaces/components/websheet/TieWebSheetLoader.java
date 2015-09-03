@@ -79,7 +79,7 @@ public class TieWebSheetLoader implements Serializable {
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
 
 		int totalWidth = parent.getCellHelper().calcTotalWidth(sheet1, left,
-				right);
+				right, TieWebSheetUtility.pixel2WidthUnits(parent.getLineNumberColumnWidth() + parent.getAddRowColumnWidth()));
 		debug("totalwidth = " + totalWidth);
 		String formWidthStyle = sheetConfig.getFormWidth();
 		if ((formWidthStyle == null) || (formWidthStyle.isEmpty()))		
@@ -87,16 +87,25 @@ public class TieWebSheetLoader implements Serializable {
 				.widthUnits2Pixel(totalWidth) + "px;");
 		else
 			parent.setTableWidthStyle("100%;");
-			
-		debug("change to pixel = " + parent.getTableWidthStyle());
+		
+		parent.setLineNumberColumnWidthStyle(getWidthStyle(TieWebSheetUtility.pixel2WidthUnits(parent.getLineNumberColumnWidth()), totalWidth));
+		parent.setAddRowColumnWidthStyle(getWidthStyle(TieWebSheetUtility.pixel2WidthUnits(parent.getAddRowColumnWidth()), totalWidth));
+
+		debug("tableWidthStyle = " + parent.getTableWidthStyle()+" lineNumberColumnWidthStyle= "+parent.getLineNumberColumnWidthStyle()+" addRowColumnWidthStyle= "+parent.getAddRowColumnWidthStyle());
+		
 		parent.setHeaderRows(new ArrayList<List<HeaderCell>>());
 
 		if (top < 0) {
 			// this is blank configuration. set column letter as header
 			parent.getHeaderRows().add(
 					loadHeaderRowWithoutConfigurationTab(sheet1, left, right,
-							totalWidth));
+							totalWidth,true));
+			// set showlinenumber to true as default
+			parent.setShowLineNumber(true);
 		} else {
+			parent.getHeaderRows().add(
+					loadHeaderRowWithoutConfigurationTab(sheet1, left, right,
+							totalWidth,false));
 			for (int i = top; i <= bottom; i++) {
 				parent.getHeaderRows().add(
 						loadHeaderRowWithConfigurationTab(sheetConfig, sheet1, sheetName, i, top, left,
@@ -104,12 +113,16 @@ public class TieWebSheetLoader implements Serializable {
 								skippedRegionCells));
 				
 			}
+			// set showlinenumber to false as default
+			parent.setShowLineNumber(false);
+			
 		}
+		
 	}
 	
 	
 	private List<HeaderCell> loadHeaderRowWithoutConfigurationTab(Sheet sheet1,
-			int firstCol, int lastCol, double totalWidth) {
+			int firstCol, int lastCol, double totalWidth, boolean rendered) {
 		
 		List<HeaderCell> headercells = new ArrayList<HeaderCell>();
 		for (int i = firstCol; i <= lastCol; i++) {
@@ -117,7 +130,7 @@ public class TieWebSheetLoader implements Serializable {
 			String style = getHeaderColumnStyle(parent.getWb(), null,
 					sheet1.getColumnWidth(i), totalWidth, 12); 	
 			headercells.add(new HeaderCell("1", "1",style,style,
-					TieWebSheetUtility.GetExcelColumnName(i)));
+					TieWebSheetUtility.GetExcelColumnName(i), rendered));
 			}
 		}
 		return headercells;
@@ -132,9 +145,13 @@ public class TieWebSheetLoader implements Serializable {
 			columnstyle += parent.getCellHelper().getCellStyle(wb, cell, "")
 					+ parent.getCellHelper().getCellFontStyle(wb, cell,"", rowHeight); // +
 		// "background-image: none ;color: #000000;";
-		double percentage = FacesUtility.round(100 * colWidth / totalWidth, 2);
-		columnstyle = columnstyle + " width : " + percentage + "%;";
+		columnstyle = columnstyle + getWidthStyle(colWidth, totalWidth);
 		return columnstyle;
+	}
+	
+	private String getWidthStyle(double colWidth, double totalWidth) {
+		double percentage = FacesUtility.round(100 * colWidth / totalWidth, 2);
+		return "width:" + percentage + "%;";
 	}
 	
 	private List<HeaderCell> loadHeaderRowWithConfigurationTab(SheetConfiguration sheetConfig, Sheet sheet1, String sheetName,
@@ -163,7 +180,7 @@ public class TieWebSheetLoader implements Serializable {
 						fcell.setColumnIndex(cindex);
 						
 						headercells.add(new HeaderCell(fcell.getRowspan()+"", fcell.getColspan()+"",fcell.getStyle(),fcell.getColumnStyle(),
-								parent.getCellHelper().getCellValueWithFormat(cell)));						
+								parent.getCellHelper().getCellValueWithFormat(cell),true));						
 					}
 				}	
 					
@@ -181,12 +198,11 @@ public class TieWebSheetLoader implements Serializable {
 			colWidth = parent.getCellHelper()
 				.calcTotalWidth(sheet1,
 						caddress.getFirstColumn(),
-						caddress.getLastColumn());
+						caddress.getLastColumn(),0);
 		else
 			colWidth = sheet1.getColumnWidth(cindex);
 		
-		double percentage = FacesUtility.round(100 * colWidth / totalWidth, 2);
-		return " width : " + percentage + "%;";
+		return  getWidthStyle(colWidth, totalWidth);
 		
 	}
 
