@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 
 
 public class SQLRunner {
-	    private boolean       debug              = true;
+	    private boolean       debug              = false;
 	    private boolean       autocommit         = false;
 	    private Connection    connection         = null;
 	    Pattern               whiteSpacePattern  = Pattern.compile("^\\s*$",                  Pattern.CASE_INSENSITIVE);
@@ -176,6 +176,7 @@ public class SQLRunner {
 	        	if (!autocommit) getConnection().rollback();
 	            if (getSqlExceptionThrown())
 	            {
+	            	System.out.println("Exception throwed: "+results);
 	                throw new Exception("SQLReader exceptions");
 	            }
 	        }
@@ -651,7 +652,7 @@ public class SQLRunner {
 	    {
 	        if (debug)
 	        {
-	            System.out.println("SRISQL: " + msg);
+	            System.out.println("SQLRunner: " + msg);
 	        }
 	    }
 

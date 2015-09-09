@@ -213,7 +213,7 @@ System.out.println("parent configuration tab = "+parent.getConfigurationTab());
 
 					if (version < 1) // version 0
 					{
-						sheetConfig.setFormWidth("100%;");
+						//sheetConfig.setFormWidth("100%;");
 					} else {
 						sheetConfig.setFormWidth(rowCell(row,schemaMap.get(TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_WIDTH)));
 						tempStr = rowCell(row,schemaMap.get(TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE)).trim();

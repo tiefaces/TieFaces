@@ -86,7 +86,7 @@ public class TieWebSheetLoader implements Serializable {
 			parent.setTableWidthStyle(TieWebSheetUtility
 				.widthUnits2Pixel(totalWidth) + "px;");
 		else
-			parent.setTableWidthStyle("100%;");
+			parent.setTableWidthStyle(formWidthStyle);
 		
 		parent.setLineNumberColumnWidthStyle(getWidthStyle(TieWebSheetUtility.pixel2WidthUnits(parent.getLineNumberColumnWidth()), totalWidth));
 		parent.setAddRowColumnWidthStyle(getWidthStyle(TieWebSheetUtility.pixel2WidthUnits(parent.getAddRowColumnWidth()), totalWidth));
