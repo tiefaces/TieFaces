@@ -114,6 +114,7 @@
 						rowspan="#{dataRow.cells[loop.index].rowspan}"
 						colspan="#{dataRow.cells[loop.index].colspan}"
 						style="#{dataRow.cells[loop.index].columnStyle}">
+						<h:panelGroup id="group#{loop.index}">
 						<h:outputText id="cocalc#{loop.index}"
 							rendered="#{empty dataRow.cells[loop.index].inputType or cc.attrs.readOnly}"
 							style="#{dataRow.cells[loop.index].style}"
@@ -147,7 +148,7 @@
 						</p:inputTextarea>
 						<h:outputText id="msgcolumn#{loop.index}" style="color:red"
 							styleClass="inputColumnWidth"
-							rendered="#{(dataRow.cells[loop.index].invalid)}"
+							rendered="#{dataRow.cells[loop.index].invalid}"
 							value="#{dataRow.cells[loop.index].errormsg}" />
 						<p:graphicImage id="pictures#{loop.index}"
 							style="#{dataRow.cells[loop.index].pictureStyle}"
@@ -156,6 +157,7 @@
 							<f:param name="pictureViewId"
 								value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex).concat(':picture')]}" />
 						</p:graphicImage>
+						</h:panelGroup>
 					</p:column>
 				</c:forEach>
 				<p:column style="text-align: center;#{cc.attrs.webSheetBean.addRowColumnWidthStyle}" 

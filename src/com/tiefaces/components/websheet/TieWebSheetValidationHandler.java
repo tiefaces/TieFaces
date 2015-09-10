@@ -34,7 +34,7 @@ public class TieWebSheetValidationHandler {
 	
 	private TieWebSheetBean parent = null;
 	
-	private static boolean debug=false;
+	private static boolean debug=true;
     private static void debug(String msg)
     {
         if (debug)
@@ -73,13 +73,14 @@ public class TieWebSheetValidationHandler {
 	}		
 
 	
-private void refreshAfterStatusChanged(boolean oldStatus, boolean newStatus, int irow, int icol, FacesCell cell) {
+private void refreshAfterStatusChanged(boolean oldStatus, boolean newStatus, int irow, int topRow, int icol, int leftCol, FacesCell cell) {
 	
 	if (!newStatus) cell.setErrormsg("");
 	cell.setInvalid(newStatus);
 	if (oldStatus != newStatus) {
-		RequestContext.getCurrentInstance().update(parent.getWebFormClientId()+":"+irow+":column"+icol);
-		RequestContext.getCurrentInstance().update(parent.getWebFormClientId()+":"+irow+":msgcolumn"+icol);
+		RequestContext.getCurrentInstance().update(parent.getWebFormClientId()+":"+(irow - topRow)+":group"+ (icol - leftCol));
+		//RequestContext.getCurrentInstance().update(parent.getWebFormClientId()+":"+(irow - topRow)+":column"+ (icol - leftCol));
+		//RequestContext.getCurrentInstance().update(parent.getWebFormClientId()+":"+(irow - topRow)+":msgcolumn"+ (icol - leftCol));
 	}
 	
 }
@@ -87,8 +88,12 @@ public void validateWithRowColInCurrentPage( int row, int col,
 		String value,
 		boolean useExistingValue, boolean passEmptyCheck) throws ValidatorException {
 		
+	debug("validationwithrowcolincurrentpage row = "+row+" col = "+col+" value = "+value);
 	
-    FacesCell cell = parent.getCellHelper().getFacesCellFromBodyRow(row - parent.getCurrentTopRow(), col - parent.getCurrentLeftColumn(), parent.getBodyRows());
+	int topRow =  parent.getCurrentTopRow();
+	int leftCol = parent.getCurrentLeftColumn(); 
+
+	FacesCell cell = parent.getCellHelper().getFacesCellFromBodyRow(row - topRow, col - leftCol, parent.getBodyRows());
     if (cell == null) return;
 
     Cell poiCell = parent.getCellHelper().getPoiCellWithRowColFromCurrentPage(row, col);
@@ -98,14 +103,16 @@ public void validateWithRowColInCurrentPage( int row, int col,
 	}
 
 	if (value==null) value = "";
-	else value = value.trim();  
+	else value = value.trim();
+	
+
 	if (passEmptyCheck&&value.isEmpty()) {
-			refreshAfterStatusChanged(oldStatus,false, row, col, cell); 				
+			refreshAfterStatusChanged(oldStatus,false, row, topRow, col, leftCol, cell); 				
 			return;
 	}
 	
 	SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(parent.getCurrentTabName());
-	List<CellFormAttributes> cellAttributes = parent.getCellHelper().findCellAttributes(sheetConfig, poiCell, row, sheetConfig.getBodyCellRange().getTopRow() );
+	List<CellFormAttributes> cellAttributes = parent.getCellHelper().findCellAttributes(sheetConfig, poiCell, row, topRow );
 	if (cellAttributes != null) {
 	    Sheet sheet1 = parent.getWb().getSheet(sheetConfig.getSheetName());
 		for( CellFormAttributes attr: cellAttributes) {
@@ -114,7 +121,7 @@ public void validateWithRowColInCurrentPage( int row, int col,
 				String errmsg = attr.getMessage();
 				if (errmsg== null) errmsg = "Invalid input";
 				cell.setErrormsg(errmsg);
-				refreshAfterStatusChanged(false,true, row, col, cell); 				
+				refreshAfterStatusChanged(false,true, row, topRow, col, leftCol, cell); 				
 		        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Valication", errmsg);
 		        debug("Web Form ValidationHandler validate failed = "+errmsg+"; row ="+row+" col= "+ col);
 		        throw new ValidatorException(msg);
@@ -122,7 +129,7 @@ public void validateWithRowColInCurrentPage( int row, int col,
 			
 		} 
 	}
-	refreshAfterStatusChanged(oldStatus,false, row, col, cell);
+	refreshAfterStatusChanged(oldStatus,false, row, topRow, col, leftCol, cell);
  
 }	
 	

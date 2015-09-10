@@ -477,7 +477,7 @@ public class TieWebSheetCellHelper {
 			int initRows = sheetConfig.getBodyInitialRows();
 			if (initRows < 1)
 				initRows = 1;
-			if ((row >= 0) && (row < (initRows)))
+			if ((row >= bodyTopRow) && (row < (bodyTopRow + initRows)))
 				repeatZone = true;
 			return findCellAttributesWithOffset(sheetConfig, cell, initRows,
 					bodyTopRow, repeatZone);
