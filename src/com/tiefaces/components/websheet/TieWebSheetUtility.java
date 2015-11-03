@@ -1,3 +1,8 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
+
 package com.tiefaces.components.websheet;
 
 import org.apache.poi.ss.usermodel.Cell;
