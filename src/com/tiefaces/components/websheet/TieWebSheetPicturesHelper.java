@@ -59,10 +59,17 @@ public class TieWebSheetPicturesHelper {
 	}
 
 	private Map<String, Picture> getPictruesMap(Workbook wb) {
-		if (wb instanceof HSSFWorkbook) {
-			return getHSSFPictruesMap((HSSFWorkbook) wb);
-		} else if (wb instanceof XSSFWorkbook) {
-			return getXSSFPictruesMap((XSSFWorkbook) wb);
+		try {
+			if (wb instanceof HSSFWorkbook) {
+				return getHSSFPictruesMap((HSSFWorkbook) wb);
+			} else if (wb instanceof XSSFWorkbook) {
+				return getXSSFPictruesMap((XSSFWorkbook) wb);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			debug("Web Form getPictruesMap Error Exception = "
+					+ e.getLocalizedMessage());			
+			return null;
 		}
 		return null;
 	}
