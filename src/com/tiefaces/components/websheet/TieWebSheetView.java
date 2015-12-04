@@ -10,10 +10,7 @@ import java.util.List;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.TabView;
 
-
-public class TieWebSheetView  {
-	
-	
+public class TieWebSheetView {
 
 	public TieWebSheetView() {
 		super();
@@ -21,7 +18,7 @@ public class TieWebSheetView  {
 	}
 
 	protected List<tabModel> tabs;
-	
+
 	public List<tabModel> getTabs() {
 		return tabs;
 	}
@@ -29,9 +26,10 @@ public class TieWebSheetView  {
 	public void setTabs(List<tabModel> tabs) {
 		this.tabs = tabs;
 	}
-    static public class tabModel implements Serializable {
-   	 
-        /**
+
+	static public class tabModel implements Serializable {
+
+		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
@@ -40,36 +38,35 @@ public class TieWebSheetView  {
 		 */
 		private String id;
 		private String title;
-        private String type;
- 
-        public tabModel(String id, String title, String type) {
-            this.id = id;
-            if (this.id!=null) this.id = this.id.replaceAll(" ","_");
-        	this.title = title;
-            this.type = type;
-        }
- 
-        
-        public String getId() {
-			return id;
+		private String type;
+
+		public tabModel(String id, String title, String type) {
+			this.id = id;
+			if (this.id != null)
+				this.id = this.id.replaceAll(" ", "_");
+			this.title = title;
+			this.type = type;
 		}
 
+		public String getId() {
+			return id;
+		}
 
 		public void setId(String id) {
 			this.id = id;
 		}
 
-
 		public String getTitle() {
-            return title;
-        }
- 
-        public String getType() {
-            return type;
-        }
-    }	
-	
-    protected TabView webFormTabView=null;   
+			return title;
+		}
+
+		public String getType() {
+			return type;
+		}
+	}
+
+	protected TabView webFormTabView = null;
+
 	public TabView getWebFormTabView() {
 		return webFormTabView;
 	}
@@ -79,37 +76,38 @@ public class TieWebSheetView  {
 	}
 
 	protected String tabType;
+
 	public String getTabType() {
-		
-    	int  sheetId = webFormTabView.getActiveIndex();
-    	if ((sheetId >= 0)&&(tabs!=null))
-    	{	
-    		if (sheetId >= tabs.size()) sheetId = 0;
-    		tabType = tabs.get(sheetId).type.toLowerCase();
-    	}	
-    	else
-    		tabType = "none";
+
+		int sheetId = webFormTabView.getActiveIndex();
+		if ((sheetId >= 0) && (tabs != null)) {
+			if (sheetId >= tabs.size())
+				sheetId = 0;
+			tabType = tabs.get(sheetId).type.toLowerCase();
+		} else
+			tabType = "none";
 		return tabType;
 	}
-		
+
 	protected String tabStyle;
+
 	public String getTabStyle() {
 
 		tabStyle = "height: 530px;";
-    	int  sheetId = webFormTabView.getActiveIndex();
-    	if (sheetId >= 0)
-    	{	
-    		if (sheetId < tabs.size()) tabStyle = "height: 30px;";
-    		//if (tabs.get(sheetId).type.equalsIgnoreCase("form")) tabStyle = "height: 30px;";
-    	}
-    	
+		int sheetId = webFormTabView.getActiveIndex();
+		if (sheetId >= 0) {
+			if (sheetId < tabs.size())
+				tabStyle = "height: 30px;";
+			// if (tabs.get(sheetId).type.equalsIgnoreCase("form")) tabStyle =
+			// "height: 30px;";
+		}
+
 		return tabStyle;
 	}
 
 	public void setTabType(String tabType) {
 		this.tabType = tabType;
 	}
-	
 
 	private Integer maxRowsPerPage = 80;
 
@@ -121,7 +119,8 @@ public class TieWebSheetView  {
 		this.maxRowsPerPage = maxRowsPerPage;
 	}
 
-	private String tableWidthStyle="100%;";
+	private String tableWidthStyle = "100%;";
+
 	public String getTableWidthStyle() {
 		return tableWidthStyle;
 	}
@@ -129,12 +128,13 @@ public class TieWebSheetView  {
 	public void setTableWidthStyle(String tableWidthStyle) {
 		this.tableWidthStyle = tableWidthStyle;
 	}
+
 	// width use pixel 24 = 24px;
 	private int lineNumberColumnWidth = 24;
 	private int addRowColumnWidth = 36;
-	
-	private String lineNumberColumnWidthStyle="";
-	private String addRowColumnWidthStyle="";
+
+	private String lineNumberColumnWidthStyle = "";
+	private String addRowColumnWidthStyle = "";
 
 	public int getLineNumberColumnWidth() {
 		return lineNumberColumnWidth;
@@ -148,8 +148,8 @@ public class TieWebSheetView  {
 		return addRowColumnWidth;
 	}
 
-	public void setAddRowColumnWidth(int addRowColumnWidth) {
-		this.addRowColumnWidth = addRowColumnWidth;
+	public void setAddRowColumnWidth(int addWidth) {
+		this.addRowColumnWidth = addWidth;
 	}
 
 	public String getLineNumberColumnWidthStyle() {
@@ -164,8 +164,8 @@ public class TieWebSheetView  {
 		return addRowColumnWidthStyle;
 	}
 
-	public void setAddRowColumnWidthStyle(String addRowColumnWidthStyle) {
-		this.addRowColumnWidthStyle = addRowColumnWidthStyle;
+	public void setAddRowColumnWidthStyle(String addWidthStyle) {
+		this.addRowColumnWidthStyle = addWidthStyle;
 	}
 
 	private boolean bodyAllowAddRows;
@@ -176,9 +176,9 @@ public class TieWebSheetView  {
 
 	public void setBodyAllowAddRows(boolean bodyAllowAddRows) {
 		this.bodyAllowAddRows = bodyAllowAddRows;
-	}  
+	}
 
-	private boolean showLineNumber=false;
+	private boolean showLineNumber = false;
 
 	public boolean isShowLineNumber() {
 		return showLineNumber;
@@ -187,7 +187,5 @@ public class TieWebSheetView  {
 	public void setShowLineNumber(boolean showLineNumber) {
 		this.showLineNumber = showLineNumber;
 	}
-	
-	
-	
+
 }

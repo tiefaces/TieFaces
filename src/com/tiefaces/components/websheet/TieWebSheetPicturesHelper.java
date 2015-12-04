@@ -68,7 +68,7 @@ public class TieWebSheetPicturesHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 			debug("Web Form getPictruesMap Error Exception = "
-					+ e.getLocalizedMessage());			
+					+ e.getLocalizedMessage());
 			return null;
 		}
 		return null;
@@ -92,7 +92,7 @@ public class TieWebSheetPicturesHelper {
 						HSSFPictureData picData = pic.getPictureData();
 						String picIndex = wb.getSheetName(i) + "$"
 								+ String.valueOf(anchor.getCol1()) + "$"
-								+ String.valueOf(anchor.getRow1()) ;
+								+ String.valueOf(anchor.getRow1());
 						picMap.put(picIndex, pic);
 					}
 				}
@@ -122,7 +122,7 @@ public class TieWebSheetPicturesHelper {
 							CTMarker ctMarker = anchor.getFrom();
 							String picIndex = wb.getSheetName(i) + "$"
 									+ ctMarker.getCol() + "$"
-									+ ctMarker.getRow() ;
+									+ ctMarker.getRow();
 							picMap.put(picIndex, pic);
 						}
 					}

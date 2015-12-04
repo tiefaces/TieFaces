@@ -18,5 +18,4 @@
 			<to-view-id>/dialog/tieDialogTableLookup.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
 </faces-config>

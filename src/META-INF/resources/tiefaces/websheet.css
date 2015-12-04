@@ -26,6 +26,14 @@
     border-radius: 0 !important;
 }
 
+#websheet .inputLabel {
+	display: block;
+	box-shadow: 0 2px 2px #8f8f8f inset !important;
+	border: 1px solid #7096ab !important;
+	
+}
+
+
 #websheet .singleLine {
        text-wrap:none !important;
        white-space:nowrap !important;

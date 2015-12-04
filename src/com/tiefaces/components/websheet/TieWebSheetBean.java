@@ -244,7 +244,7 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 	}
 
 	public int loadWebSheet(InputStream inputStream) {
-		return  webSheetLoader.loadWorkbook(inputStream);
+		return webSheetLoader.loadWorkbook(inputStream);
 	}
 
 	public void onTabChange(TabChangeEvent event) {
@@ -267,7 +267,7 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		try {
 
 			webSheetLoader.loadAllFields();
-			String fileName = "WebSheetTemplate"+"."+this.getExcelType();
+			String fileName = "WebSheetTemplate" + "." + this.getExcelType();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			wb.write(out);
 			InputStream stream = new BufferedInputStream(
@@ -282,17 +282,17 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		return;
 	}
 
-
 	private boolean preValidation(boolean passEmptyCheck) {
 
 		String tabName = validationHandler
 				.findFirstInvalidSheet(passEmptyCheck);
 		if (tabName != null) {
-//			if (!currentTabName.equalsIgnoreCase(tabName)) {
-//				int tabIndex = findTabIndexWithName(tabName);
-//				webFormTabView.setActiveIndex(tabIndex);
-//				// RequestContext.getCurrentInstance().update("frmSubmissionWebform:tabview");
-//			}
+			// if (!currentTabName.equalsIgnoreCase(tabName)) {
+			// int tabIndex = findTabIndexWithName(tabName);
+			// webFormTabView.setActiveIndex(tabIndex);
+			// //
+			// RequestContext.getCurrentInstance().update("frmSubmissionWebform:tabview");
+			// }
 			webSheetLoader.loadWorkSheet(tabName);
 			// RequestContext.getCurrentInstance().update(WebFormHelper.getWebFormClientId());
 			return false;
@@ -418,11 +418,6 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		String tblName = getWebFormClientId();
 		UIComponent target = event.getComponent();
 
-		int rowIndex = (Integer) target.getAttributes().get("data-row");
-		int colIndex = (Integer) target.getAttributes().get("data-column");
-		debug("valueChangeEvent rowindex = " + rowIndex + " colindex = "
-				+ colIndex);
-
 		boolean pass = validationHandler.validateCell(target);
 		if (pass) {
 			// to improve performance, re-validate current row only
@@ -446,7 +441,8 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 							Cell poiCell = this.getCellHelper()
 									.getPoiCellWithRowColFromCurrentPage(
 											i + top, index + left);
-							if ((poiCell != null)&&(poiCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
+							if ((poiCell != null)
+									&& (poiCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
 								debug("refresh obj name =" + tblName + ":" + i
 										+ ":cocalc" + index + " formula = "
 										+ poiCell.getCellFormula());
@@ -496,16 +492,14 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		return;
 	}
 
-	public void onCellEdit(CellEditEvent event) {
 
-		System.out.println(" into celledit event row =" + event.getRowIndex());
-	}
-	
 	public void addRepeatRow(int rowIndex) {
 		this.webSheetLoader.addRepeatRow(rowIndex);
 	}
+
 	public void deleteRepeatRow(int rowIndex) {
 		this.webSheetLoader.deleteRepeatRow(rowIndex);
 	}
+	
 
 }

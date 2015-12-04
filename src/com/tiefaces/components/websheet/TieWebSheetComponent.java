@@ -3,7 +3,6 @@
  * Licensed under MIT
  */
 
-
 package com.tiefaces.components.websheet;
 
 import java.io.IOException;
@@ -38,17 +37,18 @@ public class TieWebSheetComponent extends UINamingContainer {
 	public void encodeBegin(FacesContext context) throws IOException {
 		webSheetBean = (TieWebSheetBean) this.getAttributes().get(
 				TieWebSheetConstants.TIE_WEBSHEET_ATTRS_WEBSHEETBEAN);
-		if ((webSheetBean != null) && (webSheetBean.getWebFormClientId() == null))
-		{	
+		if ((webSheetBean != null)
+				&& (webSheetBean.getWebFormClientId() == null)) {
 			webSheetBean.setClientId(this.getClientId());
 			webSheetBean.setWebFormClientId(this.getClientId() + ":"
 					+ TieWebSheetConstants.TIE_WEBSHEET_COMPONENT_ID);
-			
-			String maxrows = (String) this.getAttributes().get("maxRowsPerPage");
-			if ((maxrows != null)&&(!maxrows.isEmpty()))
-			webSheetBean.setMaxRowsPerPage(Integer.valueOf(maxrows));
-			debug("websheetbean max rows = "+webSheetBean.getMaxRowsPerPage());
-			debug("webclientid = "+webSheetBean.getWebFormClientId());
+
+			String maxrows = (String) this.getAttributes()
+					.get("maxRowsPerPage");
+			if ((maxrows != null) && (!maxrows.isEmpty()))
+				webSheetBean.setMaxRowsPerPage(Integer.valueOf(maxrows));
+			debug("websheetbean max rows = " + webSheetBean.getMaxRowsPerPage());
+			debug("webclientid = " + webSheetBean.getWebFormClientId());
 		}
 		super.encodeBegin(context);
 	}
