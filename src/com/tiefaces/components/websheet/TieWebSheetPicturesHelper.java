@@ -6,6 +6,7 @@
 package com.tiefaces.components.websheet;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import org.primefaces.model.DefaultStreamedContent;
 
+import com.tiefaces.components.websheet.dataobjects.AnchorSize;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
+import com.tiefaces.components.websheet.dataobjects.ParsedCell;
 
 public class TieWebSheetPicturesHelper {
 
@@ -90,9 +93,9 @@ public class TieWebSheetPicturesHelper {
 						// int pictureIndex = pic.getPictureIndex() - 1;
 						// HSSFPictureData picData = pictures.get(pictureIndex);
 						HSSFPictureData picData = pic.getPictureData();
-						String picIndex = wb.getSheetName(i) + "$"
-								+ String.valueOf(anchor.getCol1()) + "$"
-								+ String.valueOf(anchor.getRow1());
+						String picIndex = TieWebSheetUtility
+								.getFullCellRefName(sheet.getSheetName(),
+										anchor.getCol1(), anchor.getRow1());
 						picMap.put(picIndex, pic);
 					}
 				}
@@ -117,13 +120,21 @@ public class TieWebSheetPicturesHelper {
 						XSSFDrawing drawing = (XSSFDrawing) dr;
 						List<XSSFShape> shapes = drawing.getShapes();
 						for (XSSFShape shape : shapes) {
-							XSSFPicture pic = (XSSFPicture) shape;
-							XSSFClientAnchor anchor = pic.getPreferredSize();
-							CTMarker ctMarker = anchor.getFrom();
-							String picIndex = wb.getSheetName(i) + "$"
-									+ ctMarker.getCol() + "$"
-									+ ctMarker.getRow();
-							picMap.put(picIndex, pic);
+							System.out
+									.println(" *********************************** shape = "
+											+ shape);
+							if (shape instanceof XSSFPicture) {
+								XSSFPicture pic = (XSSFPicture) shape;
+								XSSFClientAnchor anchor = pic
+										.getPreferredSize();
+								CTMarker ctMarker = anchor.getFrom();
+								String picIndex = TieWebSheetUtility
+										.getFullCellRefName(
+												sheet.getSheetName(),
+												ctMarker.getCol(),
+												ctMarker.getRow());
+								picMap.put(picIndex, pic);
+							}
 						}
 					}
 				}
@@ -135,17 +146,38 @@ public class TieWebSheetPicturesHelper {
 		}
 	}
 
-	public void setupFacesCellPictures(Sheet sheet1, FacesCell fcell,
-			String pictureId) {
+	public void setupFacesCellPictureCharts(Sheet sheet1, FacesCell fcell,
+			String fId) {
 		if (parent.getPicturesMap() != null) {
-			Picture pic = (Picture) parent.getPicturesMap().get(pictureId);
-			if (pic != null) {
-
-				debug(" pic dimension = " + pic.getImageDimension()
-						+ " perfersize = " + pic.getPreferredSize());
-				fcell.setContainPic(true);
-				fcell.setPictureId(pictureId);
-				fcell.setPictureStyle(generatePictureStyle(sheet1, pic));
+			try {
+				Picture pic = (Picture) parent.getPicturesMap().get(fId);
+				if (pic != null) {
+					debug(" pic dimension = " + pic.getImageDimension()
+							+ " perfersize = " + pic.getPreferredSize());
+					fcell.setContainPic(true);
+					fcell.setPictureId(fId);
+					fcell.setPictureStyle(generatePictureStyle(sheet1, pic));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		if (parent.getChartsMap() != null) {
+			try {
+				String chartId = parent.getChartPositionMap().get(fId);
+				if (chartId != null) {
+					BufferedImage img = (BufferedImage) parent.getChartsMap()
+							.get(chartId);
+					if (img != null) {
+						debug(" pic dimension width = " + img.getWidth()
+								+ " height = " + img.getHeight());
+						fcell.setContainChart(true);
+						fcell.setChartId(chartId);
+						fcell.setChartStyle(generateChartStyle(sheet1, chartId));
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		}
 	}
@@ -153,6 +185,30 @@ public class TieWebSheetPicturesHelper {
 	private String generatePictureStyle(Sheet sheet1, Picture pic) {
 
 		ClientAnchor anchor = pic.getPreferredSize();
+		AnchorSize anchorSize = getAnchorSize(sheet1, anchor);
+		String style = "PADDING-LEFT:" + anchorSize.getLeft()
+				+ "px;PADDING-TOP:" + anchorSize.getTop() + "px;width:"
+				+ anchorSize.getWidth() + "px; height:"
+				+ anchorSize.getHeight() + "px;";
+		return style;
+	}
+
+	private String generateChartStyle(Sheet sheet1, String chartId) {
+
+		ClientAnchor anchor = parent.getChartAnchorsMap().get(chartId);
+		if (anchor != null) {
+			AnchorSize anchorSize = getAnchorSize(sheet1, anchor);
+			String style = "PADDING-LEFT:" + anchorSize.getLeft()
+					+ "px;PADDING-TOP:" + anchorSize.getTop() + "px;width:"
+					+ anchorSize.getWidth() + "px; height:"
+					+ anchorSize.getHeight() + "px;";
+			return style;
+		}
+		return "";
+	}
+
+	public AnchorSize getAnchorSize(Sheet sheet1, ClientAnchor anchor) {
+
 		float picWidth = 0;
 		float picHeight = 0;
 		int left = 0;
@@ -200,10 +256,9 @@ public class TieWebSheetPicturesHelper {
 		}
 		picWidth += right - left;
 		picHeight += bottom - top;
-		String style = "PADDING-LEFT:" + left + "px;PADDING-TOP:" + top
-				+ "px;width:" + (int) picWidth + "px; height:"
-				+ (int) picHeight + "px;";
-		return style;
+
+		return new AnchorSize(left, top, (int) picWidth, (int) picHeight);
+
 	}
 
 }

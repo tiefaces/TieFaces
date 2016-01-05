@@ -8,6 +8,7 @@ package com.tiefaces.components.websheet;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class TieWebSheetLoader implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private boolean debug = true;
+	private boolean debug = false;
 
 	private void debug(String msg) {
 		if (debug) {
@@ -56,7 +57,7 @@ public class TieWebSheetLoader implements Serializable {
 
 	public TieWebSheetLoader(TieWebSheetBean parent) {
 		this.parent = parent;
-		debug("TieWebSheetBean Constructor");
+		debug("TieWebSheetLoader Constructor");
 	}
 
 	private void loadHeaderRows(SheetConfiguration sheetConfig,
@@ -180,8 +181,8 @@ public class TieWebSheetLoader implements Serializable {
 						parent.getCellHelper().convertCell(sheetConfig, fcell,
 								cell, (currentRow - top), 1, top, false,
 								cellRangeMap);
-						parent.getPicHelper().setupFacesCellPictures(sheet1,
-								fcell, sheetName + cellindex);
+						parent.getPicHelper().setupFacesCellPictureCharts(sheet1,
+								fcell, TieWebSheetUtility.getFullCellRefName(sheet1, cell));
 						parent.getCellHelper().setupCellStyle(parent.getWb(),
 								sheet1, fcell, cell, row.getHeightInPoints());
 						fcell.setColumnStyle(fcell.getColumnStyle()
@@ -249,6 +250,7 @@ public class TieWebSheetLoader implements Serializable {
 			parent.setSheetConfigMap(new TieWebSheetConfigurationHandler(parent)
 					.buildConfiguration());
 			parent.getPicHelper().loadPictureMap();
+			parent.getChartHelper().loadChartsMap();
 			parent.loadData();
 			initSheet();
 			initTabs();
@@ -486,6 +488,7 @@ public class TieWebSheetLoader implements Serializable {
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
 
 		parent.setBodyRows(new ArrayList<FacesRow>());
+		clearCache();
 		boolean repeatZone = false;
 		for (int i = top; i <= bottom; i++) {
 			repeatZone = false;
@@ -529,12 +532,13 @@ public class TieWebSheetLoader implements Serializable {
 					parent.getCellHelper().convertCell(sheetConfig, fcell,
 							cell, (rowIndex - top), initRows, top, repeatZone,
 							cellRangeMap);
-					parent.getPicHelper().setupFacesCellPictures(sheet1, fcell,
-							sheet1.getSheetName() + cellindex);
+					parent.getPicHelper().setupFacesCellPictureCharts(sheet1, fcell,
+							TieWebSheetUtility.getFullCellRefName(sheet1, cell));
 					parent.getCellHelper().setupCellStyle(parent.getWb(),
 							sheet1, fcell, cell, row.getHeightInPoints());
 					fcell.setColumnIndex(cindex);
 					bodycells.add(fcell);
+					addCache(sheet1, cell);
 				} else {
 					bodycells.add(null);
 				}
@@ -546,6 +550,30 @@ public class TieWebSheetLoader implements Serializable {
 		return facesRow;
 	}
 
+	
+	private void addCache(Sheet sheet1, Cell cell) {
+		parent.getCachedCells().put(sheet1, cell, Cell.CELL_TYPE_FORMULA);
+	}
+	
+	private void clearCache() {
+		parent.getCachedCells().clear();;
+	}
+	
+	public void refreshCachedCell(String tblName, int i, int index, Sheet sheet1, Cell cell ) {
+		
+		if ((cell!=null) && (cell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
+			if (parent.getCachedCells().isValueChanged(sheet1, cell)) {
+				debug("refresh obj name =" + tblName + ":" + i
+						+ ":cocalc" + index + " formula = "
+						+ cell.getCellFormula());
+				RequestContext.getCurrentInstance().update(
+						tblName + ":" + i + ":cocalc" + index);
+				parent.getCachedCells().put(sheet1, cell, Cell.CELL_TYPE_FORMULA);
+			}
+		}
+	}
+	
+	
 	private void createDynamicColumns(String tabName) {
 
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap()

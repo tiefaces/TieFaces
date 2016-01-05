@@ -5,12 +5,14 @@
 
 package com.tiefaces.components.websheet;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,19 +23,24 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.tiefaces.common.FacesUtility;
+import com.tiefaces.components.websheet.dataobjects.CachedCells;
 import com.tiefaces.components.websheet.dataobjects.CellMap;
+import com.tiefaces.components.websheet.dataobjects.ChartData;
 import com.tiefaces.components.websheet.dataobjects.FacesRow;
 import com.tiefaces.components.websheet.dataobjects.HeaderCell;
 import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
@@ -55,6 +62,11 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 	private DataFormatter dataFormatter;
 
 	private Map<String, Picture> picturesMap;
+	private Map<String, ChartData> chartDataMap;
+	private Map<String, BufferedImage> chartsMap;
+	private Map<String, ClientAnchor> chartAnchorsMap;
+	private Map<String, String> chartPositionMap;
+	private CachedCells cachedCells;
 	private Map<String, SheetConfiguration> sheetConfigMap;
 	private ScriptEngine engine;
 	private String currentTabName;
@@ -67,6 +79,7 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 	private TieWebSheetPicturesHelper picHelper = null;
 	private TieWebSheetDataHandler dataHandler = null;
 	private TieWebSheetValidationHandler validationHandler = null;
+	private TieWebSheetChartHelper chartHelper = null;
 
 	private String clientId = null;
 	private String webFormClientId = null;
@@ -96,6 +109,7 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		dataHandler = new TieWebSheetDataHandler(this);
 		validationHandler = new TieWebSheetValidationHandler(this);
 		picHelper = new TieWebSheetPicturesHelper(this);
+		chartHelper = new TieWebSheetChartHelper(this);
 		initialLoad();
 	}
 
@@ -203,6 +217,10 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 		return picHelper;
 	}
 
+	public TieWebSheetChartHelper getChartHelper() {
+		return chartHelper;
+	}
+
 	public String getExcelType() {
 		return excelType;
 	}
@@ -233,6 +251,63 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 
 	public void setPicturesMap(Map<String, Picture> picturesMap) {
 		this.picturesMap = picturesMap;
+	}
+
+	public Map<String, BufferedImage> getChartsMap() {
+		if (chartsMap == null) {
+			chartsMap = new HashMap<String, BufferedImage>();
+		}
+		return chartsMap;
+	}
+
+	public void setChartsMap(Map<String, BufferedImage> chartsMap) {
+		this.chartsMap = chartsMap;
+	}
+	
+
+	public Map<String, ChartData> getChartDataMap() {
+		if (chartDataMap== null) {
+			chartDataMap = new HashMap<String, ChartData>();
+		}
+		return chartDataMap;
+	}
+
+	public void setChartDataMap(Map<String, ChartData> chartDataMap) {
+		this.chartDataMap = chartDataMap;
+	}
+
+	public Map<String, ClientAnchor> getChartAnchorsMap() {
+		if (chartAnchorsMap == null) {
+			chartAnchorsMap = new HashMap<String, ClientAnchor>();
+		}
+		return chartAnchorsMap;
+	}
+
+	public void setChartAnchorsMap(Map<String, ClientAnchor> chartAnchorsMap) {
+		this.chartAnchorsMap = chartAnchorsMap;
+	}
+
+	
+	public Map<String, String> getChartPositionMap() {
+		if (chartPositionMap == null) {
+			chartPositionMap = new HashMap<String, String>();
+		}
+		return chartPositionMap;
+	}
+
+	public void setChartPositionMap(Map<String, String> chartPositionMap) {
+		this.chartPositionMap = chartPositionMap;
+	}
+
+	public CachedCells getCachedCells() {
+		if (cachedCells == null) {
+			cachedCells = new CachedCells(this);
+		}
+		return cachedCells;
+	}
+
+	public void setCachedCells(CachedCells cachedCells) {
+		this.cachedCells = cachedCells;
 	}
 
 	public String getConfigurationTab() {
@@ -434,6 +509,10 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 				int rowCounts = webDataTable.getRowCount();
 				int top = this.getCurrentTopRow();
 				int left = this.getCurrentLeftColumn();
+				
+				String sheetName = getSheetConfigMap().get(this.getCurrentTabName())
+						.getSheetName();
+				Sheet sheet1 = getWb().getSheet(sheetName);
 				for (int i = first; i <= (first + rowsToRender); i++) {
 					if (i < rowCounts) {
 						FacesRow dataRow = bodyRows.get(i);
@@ -441,13 +520,8 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 							Cell poiCell = this.getCellHelper()
 									.getPoiCellWithRowColFromCurrentPage(
 											i + top, index + left);
-							if ((poiCell != null)
-									&& (poiCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
-								debug("refresh obj name =" + tblName + ":" + i
-										+ ":cocalc" + index + " formula = "
-										+ poiCell.getCellFormula());
-								RequestContext.getCurrentInstance().update(
-										tblName + ":" + i + ":cocalc" + index);
+							if (poiCell != null) {
+									getWebSheetLoader().refreshCachedCell(tblName, i, index, sheet1, poiCell);
 							}
 						}
 					}

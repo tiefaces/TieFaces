@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
+import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +42,67 @@ public final class TieWebSheetUtility {
 		return converted;
 	}
 
+	/**
+	 * return full name for cell with sheet name and $ format 
+	 * e.g. Sheet1$A$1
+	 * 
+	 * @param sheet1 sheet
+	 * @param cell cell
+	 * @return String full cell reference name
+	 */
+	
+	public static String getFullCellRefName(Sheet sheet1, Cell cell) {
+		if ((sheet1 !=null) && ( cell !=null ) ) {
+			return sheet1.getSheetName()+"!$" + GetExcelColumnName(cell.getColumnIndex()) +"$"+( cell.getRowIndex() + 1);
+		}
+		return null;
+	}	
+	/**
+	 * return full name for cell with sheet name and $ format 
+	 * e.g. Sheet1$A$1
+	 * 
+	 * @param sheet1 sheet
+	 * @param cell cell
+	 * @return String full cell reference name
+	 */
+	
+	public static String getFullCellRefName(String sheetName, int rowIndex, int colIndex) {
+		if (sheetName !=null) {
+			return sheetName+"!$" + GetExcelColumnName(colIndex) +"$"+ ( rowIndex + 1);
+		}
+		return null;
+	}	
+	
+	/**
+	 * return sheet name from cell full name 
+	 * e.g. return Sheet1 from Sheet1$A$1
+	 * 
+	 * @param String fullName
+	 * @return String Sheet Name
+	 */
+	
+	public static String getSheetNameFromFullCellRefName(String fullName) {
+		if ( (fullName!=null ) && ( fullName.contains("!")) ) {
+			return fullName.substring(0, fullName.indexOf("!"));
+		}
+		return null;
+	}	
+
+	/**
+	 * remove sheet name from cell full name 
+	 * e.g. return $A$1 from Sheet1$A$1
+	 * 
+	 * @param String full name
+	 * @return remove Sheet Name from full  name
+	 */
+	
+	public static String removeSheetNameFromFullCellRefName(String fullName) {
+		if ( (fullName!=null ) && ( fullName.contains("!")) ) {
+			return fullName.substring(fullName.indexOf("!") + 1);
+		}
+		return fullName;
+	}	
+	
 	// public static String convertIntToCol(int colNum) {
 	// int col = colNum + 1;
 	// String retVal = "";
@@ -187,7 +249,8 @@ public final class TieWebSheetUtility {
 
 		short[] rgbfix = { 256, 256, 256 };
 		if (xssfColor != null) {
-			byte[] rgb = xssfColor.getRgb();
+			byte[] rgb = xssfColor.getRgbWithTint(); //getRgbWithTint();
+			if (rgb==null) rgb = xssfColor.getRgb();
 			// Bytes are signed, so values of 128+ are negative!
 			// 0: red, 1: green, 2: blue
 			rgbfix[0] = (short) ((rgb[0] < 0) ? (rgb[0] + 256) : rgb[0]);
@@ -900,5 +963,37 @@ public final class TieWebSheetUtility {
 		}
 		return regex;
 	}
+	
+	public static int getThemeIndexFromName(String idxName) {
+		
+		final String[] idxArray = {"bg1", "tx1","bg2", "tx2","accent1","accent2","accent3","accent4","accent5","accent6","hlink","folHlink"};
+		try {
+			for (int i=0; i<idxArray.length; i++) {
+				if (idxArray[i].equalsIgnoreCase(idxName)) {
+					return i;
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return -1;
+	}
 
+	public static double getAutomaticTint(int index) {
+		
+		final double[] idxArray = {0, 0.25,0.5, -0.25,-0.5,0.1,0.3,-0.1,-0.3};
+		int i = index / 6;
+		if (i>= idxArray.length) {
+			return 0;
+		} else {
+			return idxArray[i];
+		}
+	}
+	
+	public static Color xssfClrToClr(XSSFColor xssfColor) {
+	    short[] rgb = TieWebSheetUtility.getTripletFromXSSFColor(xssfColor);
+	    return new Color(rgb[0],rgb[1],rgb[2]);
+	}  
+	
 }

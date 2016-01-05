@@ -22,7 +22,7 @@ public class CellMap implements Serializable, java.util.Map {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean debug = true;
+	private static boolean debug = false;
 
 	private static void debug(String msg) {
 		if (debug) {
@@ -121,6 +121,29 @@ public class CellMap implements Serializable, java.util.Map {
 		}
 	}
 
+	private String loadChart(int rowIndex, int colIndex) {
+
+		FacesCell facesCell = parent.getCellHelper()
+				.getFacesCellWithRowColFromCurrentPage(rowIndex, colIndex);
+		if (facesCell != null && facesCell.isContainChart()) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			String chartId = facesCell.getChartId();
+			String chartViewId = context.getViewRoot().getViewId()
+					+ chartId;
+			Map<String, Object> sessionMap = context.getExternalContext()
+					.getSessionMap();
+			if (sessionMap.get(chartViewId) == null) {
+				sessionMap
+						.put(chartViewId,
+								parent.getChartsMap().get(chartId));
+				debug("load picture put session map id = " + chartViewId);
+			}
+			return chartViewId;
+		} else {
+			return null;
+		}
+	}
+	
 	@Override
 	public Object get(Object key) {
 		// TODO Auto-generated method stub
@@ -132,12 +155,18 @@ public class CellMap implements Serializable, java.util.Map {
 						.getPoiCellWithRowColFromCurrentPage(
 								mkey.getRowIndex(), mkey.getColIndex());
 				if (poiCell != null) {
-					if (mkey.isFormatted()) {
-						result = parent.getCellHelper().getCellValueWithFormat(poiCell);
-					} 
-					else
-					{
-						result = parent.getCellHelper().getCellValueWithoutFormat(poiCell);
+					if (mkey.isCharted()) {
+						result = loadChart(mkey.getRowIndex(),
+								mkey.getColIndex());
+					} else if (mkey.isPictured()) {
+						result = loadPicture(mkey.getRowIndex(),
+								mkey.getColIndex());
+					} else if (mkey.isFormatted()) {
+						result = parent.getCellHelper().getCellValueWithFormat(
+								poiCell);
+					} else {
+						result = parent.getCellHelper()
+								.getCellValueWithoutFormat(poiCell);
 					}
 					debug("Web Form CellMap getCellValue row = "
 							+ mkey.getRowIndex() + " col = "

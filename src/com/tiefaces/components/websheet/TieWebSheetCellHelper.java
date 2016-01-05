@@ -735,7 +735,7 @@ public class TieWebSheetCellHelper {
 		CellStyle cellStyle = poiCell.getCellStyle();
 		StringBuffer webStyle = new StringBuffer();
 		if (cellStyle != null) {
-			if (fcell.isContainPic()) {
+			if (fcell.isContainPic() || fcell.isContainChart()) {
 				webStyle.append("vertical-align: top;");
 			} else {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
@@ -844,10 +844,22 @@ public class TieWebSheetCellHelper {
 
 		int totalWidth = additionalWidth;
 		for (int i = firstCol; i <= lastCol; i++) {
-
+System.out.println(" column "+i+" width = "+sheet1.getColumnWidth(i));
 			totalWidth += sheet1.getColumnWidth(i);
 		}
 		return totalWidth;
+	}
+	
+	public int calcTotalHeight(Sheet sheet1, int firstRow, int lastRow,
+			int additionalHeight) {
+
+		int totalHeight = additionalHeight;
+		for (int i = firstRow; i <= lastRow; i++) {
+
+System.out.println(" row "+i+" height = "+sheet1.getRow(i).getHeight());
+			totalHeight += sheet1.getRow(i).getHeight();
+		}
+		return totalHeight;
 	}
 
 	public void setupCellStyle(Workbook wb, Sheet sheet1, FacesCell fcell,
@@ -868,6 +880,8 @@ public class TieWebSheetCellHelper {
 		fcell.setColumnStyle(getColumnStyle(wb, fcell, poiCell, rowHeight));
 	}
 
+
+	
 	/**
 	 * set up Input Style parameter for input number component which
 	 * need those parameters to make it work. e.g. symbol, symbol

@@ -26,7 +26,7 @@ public class TieWebSheetValidationHandler {
 
 	private TieWebSheetBean parent = null;
 
-	private static boolean debug = true;
+	private static boolean debug = false;
 
 	private static void debug(String msg) {
 		if (debug) {

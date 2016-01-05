@@ -20,6 +20,7 @@ public class CellMapKey {
 	private boolean formatted = false;
 	private boolean percented = false;
 	private boolean pictured = false;
+	private boolean charted = false;
 	private boolean parseSuccess = false;
 
 	public CellMapKey(String skey) {
@@ -27,35 +28,38 @@ public class CellMapKey {
 		try {
 			String[] keyList = skey.split(":");
 			int keylength = keyList.length;
-			if (keylength >= 2) {
+			if ((keylength >= 2) && (!keyList[0].isEmpty())
+					&& (!keyList[1].isEmpty())) {
 				this.rowIndex = Integer.parseInt(keyList[0]);
 				this.colIndex = Integer.parseInt(keyList[1]);
-				
-			if (keylength > 2) {
-			     switch (keyList[2].toLowerCase()) {
-			         case "picture":
-			        	 this.pictured = true;
-			        	 break;
-			         case "format":
-			        	 this.formatted = true;
-			        	 break;
-			         case "percent":
-			        	 this.percented = true;
-			        	 break;
-			     }
+
+				if (keylength > 2) {
+					switch (keyList[2].toLowerCase()) {
+					case "chart":
+						this.charted = true;
+						break;
+					case "picture":
+						this.pictured = true;
+						break;
+					case "format":
+						this.formatted = true;
+						break;
+					case "percent":
+						this.percented = true;
+						break;
+					}
+				}
+				this.parseSuccess = true;
 			}
-			this.parseSuccess = true;
-			}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-				
-			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+	}
 
 	public int getRowIndex() {
 		return rowIndex;
 	}
-
 
 	public int getColIndex() {
 		return colIndex;
@@ -65,7 +69,6 @@ public class CellMapKey {
 		return formatted;
 	}
 
-
 	public boolean isPercented() {
 		return percented;
 	}
@@ -73,11 +76,12 @@ public class CellMapKey {
 	public boolean isPictured() {
 		return pictured;
 	}
-	
-	
 
 	public boolean isParseSuccess() {
 		return parseSuccess;
+	}
+	public boolean isCharted() {
+		return charted;
 	}
 
 	/**
@@ -85,8 +89,7 @@ public class CellMapKey {
 	 * 
 	 * @return String Human readable label
 	 */
-	
-	
+
 	public String toString() {
 
 		StringBuffer sb = new StringBuffer();
@@ -102,6 +105,8 @@ public class CellMapKey {
 		sb.append("percented = " + percented);
 		sb.append(",");
 		sb.append("pictured = " + pictured);
+		sb.append(",");
+		sb.append("charted = " + charted);
 		sb.append("}");
 		return sb.toString();
 	}

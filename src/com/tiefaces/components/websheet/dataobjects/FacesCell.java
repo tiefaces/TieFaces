@@ -43,6 +43,12 @@ public class FacesCell {
 	private String symbol;
 	/** symbolPosition. default is prefix */
 	private String symbolPosition = "p";
+	/** indicate the cell hold chart when set to true. */
+	private boolean containChart = false;
+	/** chart Id for retrieve picture when containPic = true. */
+	private String chartId;
+	/** cell web css style. */
+	private String chartStyle = "";
 
 	public String getStyle() {
 		return style;
@@ -164,6 +170,32 @@ public class FacesCell {
 	}
 
 	
+	public boolean isContainChart() {
+		return containChart;
+	}
+
+	public void setContainChart(boolean containChart) {
+		this.containChart = containChart;
+	}
+
+	public String getChartId() {
+		return chartId;
+	}
+
+	public void setChartId(String chartId) {
+		this.chartId = chartId;
+	}
+	
+	
+
+	public String getChartStyle() {
+		return chartStyle;
+	}
+
+	public void setChartStyle(String chartStyle) {
+		this.chartStyle = chartStyle;
+	}
+
 	/**
 	 * Obtain a human readable representation.
 	 * 
@@ -200,6 +232,12 @@ public class FacesCell {
 		sb.append("symbol = " + symbol);
 		sb.append(",");
 		sb.append("symbolPosition = " + symbolPosition);
+		sb.append(",");
+		sb.append("containChart = " + containChart);
+		sb.append(",");
+		sb.append("chartId = " + chartId);
+		sb.append(",");
+		sb.append("chartStyle = " + chartStyle);
 		sb.append("}");
 		return sb.toString();
 	}

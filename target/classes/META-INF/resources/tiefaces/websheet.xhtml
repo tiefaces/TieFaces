@@ -167,6 +167,13 @@
 									<f:param name="pictureViewId"
 										value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex).concat(':picture')]}" />
 								</p:graphicImage>
+								<p:graphicImage id="charts#{loop.index}"
+									style="#{dataRow.cells[loop.index].chartStyle}"
+									value="#{tieWebSheetChartsService.chart}"
+									rendered="#{(dataRow.cells[loop.index].containChart)}">
+									<f:param name="chartViewId"
+										value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex).concat(':chart')]}" />
+								</p:graphicImage>
 							</h:panelGroup>
 						</p:column>
 					</c:forEach>

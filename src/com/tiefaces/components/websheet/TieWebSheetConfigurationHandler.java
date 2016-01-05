@@ -115,8 +115,7 @@ public class TieWebSheetConfigurationHandler {
 	public Map<String, SheetConfiguration> buildConfiguration() {
 
 		Map<String, SheetConfiguration> sheetConfigMap = new LinkedHashMap<String, SheetConfiguration>();
-		debug("parent configuration tab = "
-				+ parent.getConfigurationTab());
+		debug("parent configuration tab = " + parent.getConfigurationTab());
 		Sheet sheet1 = parent.getWb().getSheet(parent.getConfigurationTab());
 
 		if (sheet1 == null) // no configuration tab
@@ -312,62 +311,75 @@ public class TieWebSheetConfigurationHandler {
 			Map<String, SheetConfiguration> sheetConfigMap) {
 
 		for (int i = 0; i < parent.getWb().getNumberOfSheets(); i++) {
-			Sheet sheet = parent.getWb().getSheetAt(i);
 
-			String tabName = sheet.getSheetName();
-			SheetConfiguration sheetConfig = new SheetConfiguration();
-			sheetConfig.setTabName(tabName);
-			sheetConfig.setSheetName(tabName);
-			int leftCol = sheet.getLeftCol();
-			int lastRow = sheet.getLastRowNum();
-			int firstRow = 0;
-			int rightCol = 0;
-			int maxRow = 0;
-			for (Row row : sheet) {
-				if (row.getRowNum() > TIEConstants.TIE_WEB_SHEET_MAX_ROWS)
-					break;
-				maxRow = row.getRowNum();
-				int firstCellNum = row.getFirstCellNum();
-				if (firstCellNum >= 0 && firstCellNum < leftCol) {
-					leftCol = firstCellNum;
-				}
-				if ((row.getLastCellNum() - 1) > rightCol) {
-					int verifiedcol = verifyLastCell(row, rightCol);
-					if (verifiedcol > rightCol)
-						rightCol = verifiedcol;
-				}
+			if (!(parent.getWb().isSheetHidden(i) || parent.getWb()
+					.isSheetVeryHidden(i))) {
+				Sheet sheet = parent.getWb().getSheetAt(i);
+				String tabName = sheet.getSheetName();
+				sheetConfigMap.put(tabName, getSheetConfiguration(sheet, tabName));
 			}
-			if (maxRow < lastRow)
-				lastRow = maxRow;
-			debug("tabName = " + tabName + " maxRow = " + maxRow);
-
-			// header range row set to 0 while column set to first column to max
-			// column (FF) e.g. $A$0 : $FF$0
-			String tempStr = "$"
-					+ TieWebSheetUtility.GetExcelColumnName(leftCol) + "$0 : $"
-					+ TieWebSheetUtility.GetExcelColumnName(rightCol) + "$0";
-			sheetConfig.setFormHeaderRange(tempStr);
-			sheetConfig.setHeaderCellRange(new CellRange(tempStr));
-			// body range row set to first row to last row while column set to
-			// first column to max column (FF) e.g. $A$1 : $FF$1000
-			tempStr = "$" + TieWebSheetUtility.GetExcelColumnName(leftCol)
-					+ "$" + (firstRow + 1) + " : $"
-					+ TieWebSheetUtility.GetExcelColumnName(rightCol) + "$"
-					+ (lastRow + 1);
-			sheetConfig.setFormBodyRange(tempStr);
-			sheetConfig.setBodyCellRange(new CellRange(tempStr));
-			sheetConfig
-					.setFormBodyType(TieWebSheetConstants.TIE_WEBSHEET_FORM_TYPE_FREE);
-			sheetConfig
-					.setCellFormAttributes(new HashMap<String, List<CellFormAttributes>>());
-
-			sheetConfigMap.put(tabName, sheetConfig);
 		}
 		debug("without config tab = " + sheetConfigMap);
 
 		return sheetConfigMap;
 	}
 
+	private SheetConfiguration getSheetConfiguration(Sheet sheet, String tabName) {
+		
+		SheetConfiguration sheetConfig = new SheetConfiguration();
+		sheetConfig.setTabName(tabName);
+		sheetConfig.setSheetName(tabName);
+		int leftCol = sheet.getLeftCol();
+		int lastRow = sheet.getLastRowNum();
+		int firstRow = 0;
+		int rightCol = 0;
+		int maxRow = 0;
+		for (Row row : sheet) {
+			if (row.getRowNum() > TIEConstants.TIE_WEB_SHEET_MAX_ROWS)
+				break;
+			maxRow = row.getRowNum();
+			int firstCellNum = row.getFirstCellNum();
+			if (firstCellNum >= 0 && firstCellNum < leftCol) {
+				leftCol = firstCellNum;
+			}
+			if ((row.getLastCellNum() - 1) > rightCol) {
+				int verifiedcol = verifyLastCell(row, rightCol);
+				if (verifiedcol > rightCol)
+					rightCol = verifiedcol;
+			}
+		}
+		if (maxRow < lastRow)
+			lastRow = maxRow;
+		debug("tabName = " + tabName + " maxRow = " + maxRow);
+
+		// header range row set to 0 while column set to first column to
+		// max
+		// column (FF) e.g. $A$0 : $FF$0
+		String tempStr = "$"
+				+ TieWebSheetUtility.GetExcelColumnName(leftCol)
+				+ "$0 : $"
+				+ TieWebSheetUtility.GetExcelColumnName(rightCol)
+				+ "$0";
+		sheetConfig.setFormHeaderRange(tempStr);
+		sheetConfig.setHeaderCellRange(new CellRange(tempStr));
+		// body range row set to first row to last row while column set
+		// to
+		// first column to max column (FF) e.g. $A$1 : $FF$1000
+		tempStr = "$" + TieWebSheetUtility.GetExcelColumnName(leftCol)
+				+ "$" + (firstRow + 1) + " : $"
+				+ TieWebSheetUtility.GetExcelColumnName(rightCol) + "$"
+				+ (lastRow + 1);
+		sheetConfig.setFormBodyRange(tempStr);
+		sheetConfig.setBodyCellRange(new CellRange(tempStr));
+		sheetConfig
+				.setFormBodyType(TieWebSheetConstants.TIE_WEBSHEET_FORM_TYPE_FREE);
+		sheetConfig
+				.setCellFormAttributes(new HashMap<String, List<CellFormAttributes>>());
+		
+		return sheetConfig;
+		
+	}
+	
 	private String rowCell(Row row, Integer cn) {
 		String value = null;
 		if (cn != null)
