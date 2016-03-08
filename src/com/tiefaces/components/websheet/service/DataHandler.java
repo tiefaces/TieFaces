@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet;
+package com.tiefaces.components.websheet.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,9 +19,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.primefaces.context.RequestContext;
 
+import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
 
-public class TieWebSheetDataHandler {
+public class DataHandler {
 
 	private TieWebSheetBean parent = null;
 
@@ -33,7 +34,7 @@ public class TieWebSheetDataHandler {
 		}
 	}
 
-	public TieWebSheetDataHandler(TieWebSheetBean parent) {
+	public DataHandler(TieWebSheetBean parent) {
 		super();
 		this.parent = parent;
 	}

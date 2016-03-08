@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet;
+package com.tiefaces.components.websheet.service;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -35,11 +35,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import org.primefaces.model.DefaultStreamedContent;
 
+import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.dataobjects.AnchorSize;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.ParsedCell;
+import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
-public class TieWebSheetPicturesHelper {
+public class PicturesHelper {
 
 	private TieWebSheetBean parent = null;
 
@@ -51,7 +53,7 @@ public class TieWebSheetPicturesHelper {
 		}
 	}
 
-	public TieWebSheetPicturesHelper(TieWebSheetBean parent) {
+	public PicturesHelper(TieWebSheetBean parent) {
 		this.parent = parent;
 		debug("TieWebSheetBean Constructor");
 	}

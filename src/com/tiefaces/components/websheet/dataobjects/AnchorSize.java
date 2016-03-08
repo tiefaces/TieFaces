@@ -1,42 +1,60 @@
 package com.tiefaces.components.websheet.dataobjects;
-
+/**
+ * Class object hold anchor.
+ * @author Jason Jiang
+ *
+ */
 public class AnchorSize {
+	/** anchor's left. */
+	private int left;
+	/** anchor's top. */
+	private int top;
+	/** anchor's width. */
+	private int width;
+	/** anchor's height. */
+	private int height;
 	
-	int left;
-	int top;
-	int width;
-	int height;
-	public int getTop() {
+	public final int getTop() {
 		return top;
 	}
-	public void setTop(int top) {
+	public final void setTop(final int top) {
 		this.top = top;
 	}
-	public int getLeft() {
+	public final int getLeft() {
 		return left;
 	}
-	public void setLeft(int left) {
+	public final void setLeft(final int left) {
 		this.left = left;
 	}
-	public int getWidth() {
+	public final int getWidth() {
 		return width;
 	}
-	public void setWidth(int width) {
+	public final void setWidth(final int width) {
 		this.width = width;
 	}
-	public int getHeight() {
+	public final int getHeight() {
 		return height;
 	}
-	public void setHeight(int height) {
+	public final void setHeight(final int height) {
 		this.height = height;
 	}
-	public AnchorSize(int left, int top, int width, int height) {
+	/**
+	 * Constructor.
+	 * @param left anchor's left.
+	 * @param top anchor's top.
+	 * @param width anchor's width.
+	 * @param height anchor's height.
+	 */
+	public AnchorSize(final int left, final int top, final int width, final int height) {
 		super();
 		this.left = left;
 		this.top = top;
 		this.width = width;
 		this.height = height;
 	}
+	/**
+	 * show human readable message.
+	 */
 	public String toString() {
 
 		StringBuffer sb = new StringBuffer();

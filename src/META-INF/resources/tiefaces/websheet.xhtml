@@ -58,7 +58,7 @@
 					binding="#{cc.attrs.webSheetBean.webFormTabView}"
 					rendered="#{cc.attrs.rendered}">
 					<p:ajax event="tabChange"
-						listener="#{cc.attrs.webSheetBean.onTabChange}" update="@parent" />
+						listener="#{cc.attrs.webSheetBean.onTabChange}" update="@form" />
 					<c:forEach items="#{cc.attrs.webSheetBean.tabs}" var="tab"
 						varStatus="status">
 						<p:tab title="#{tab.title}" rendered="#{cc.attrs.rendered}" />
@@ -93,7 +93,9 @@
 									varStatus="loopheaderrowcolumn">
 									<p:column rowspan="#{headerrowcolumn.rowspan}"
 										colspan="#{headerrowcolumn.colspan}"
-										style="#{headerrowcolumn.columnStyle}">
+										style="#{headerrowcolumn.columnStyle}"
+										rendered="#{headerrowcolumn.columnRendered}"
+										 >
 										<f:facet name="header">
 											<h:outputText value="#{headerrowcolumn.cellValue}"
 												style="#{headerrowcolumn.style}"

@@ -3,31 +3,34 @@
  * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet;
+package com.tiefaces.components.websheet.utility;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+
+import com.tiefaces.components.websheet.dataobjects.XColor;
 
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class TieWebSheetUtility {
 
-	private static boolean debug = false;
-
-	private static void debug(String msg) {
-		if (debug) {
-			System.out.println("TieWebSheetUtility: " + msg);
-		}
-	}
+	private static final Logger log = Logger.getLogger(Thread.currentThread()
+			.getStackTrace()[0].getClassName());
 
 	public static String GetExcelColumnName(int number) {
 		String converted = "";
@@ -141,7 +144,7 @@ public final class TieWebSheetUtility {
 			}
 		} catch (Exception ex) {
 			// use log.debug because mostly it's expected
-			debug("WebForm WebFormHelper getCellByReference cellRef = "
+			log.severe("WebForm WebFormHelper getCellByReference cellRef = "
 					+ cellRef + "; error = " + ex.getLocalizedMessage());
 		}
 		return c;
@@ -245,20 +248,7 @@ public final class TieWebSheetUtility {
 		return points / 72D * 25.4;
 	}
 
-	public static short[] getTripletFromXSSFColor(XSSFColor xssfColor) {
 
-		short[] rgbfix = { 256, 256, 256 };
-		if (xssfColor != null) {
-			byte[] rgb = xssfColor.getRgbWithTint(); //getRgbWithTint();
-			if (rgb==null) rgb = xssfColor.getRgb();
-			// Bytes are signed, so values of 128+ are negative!
-			// 0: red, 1: green, 2: blue
-			rgbfix[0] = (short) ((rgb[0] < 0) ? (rgb[0] + 256) : rgb[0]);
-			rgbfix[1] = (short) ((rgb[1] < 0) ? (rgb[1] + 256) : rgb[1]);
-			rgbfix[2] = (short) ((rgb[2] < 0) ? (rgb[2] + 256) : rgb[2]);
-		}
-		return rgbfix;
-	}
 
 	// Below are utility functions for colors searched from internet. Maybe
 	// could used for future.
@@ -964,36 +954,7 @@ public final class TieWebSheetUtility {
 		return regex;
 	}
 	
-	public static int getThemeIndexFromName(String idxName) {
-		
-		final String[] idxArray = {"bg1", "tx1","bg2", "tx2","accent1","accent2","accent3","accent4","accent5","accent6","hlink","folHlink"};
-		try {
-			for (int i=0; i<idxArray.length; i++) {
-				if (idxArray[i].equalsIgnoreCase(idxName)) {
-					return i;
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		
-		return -1;
-	}
 
-	public static double getAutomaticTint(int index) {
-		
-		final double[] idxArray = {0, 0.25,0.5, -0.25,-0.5,0.1,0.3,-0.1,-0.3};
-		int i = index / 6;
-		if (i>= idxArray.length) {
-			return 0;
-		} else {
-			return idxArray[i];
-		}
-	}
-	
-	public static Color xssfClrToClr(XSSFColor xssfColor) {
-	    short[] rgb = TieWebSheetUtility.getTripletFromXSSFColor(xssfColor);
-	    return new Color(rgb[0],rgb[1],rgb[2]);
-	}  
-	
+
+
 }

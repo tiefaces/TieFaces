@@ -11,24 +11,31 @@ import javax.faces.bean.ManagedBean;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+/**
+ * Application scope bean.
+ * Hold instance for share objects across sessions.
+ * @author Jason Jiang
+ *
+ */
 @ManagedBean(eager = true)
 @ApplicationScoped
 public class TieWebSheetApp {
-
+	/** script engine. */
 	private ScriptEngine engine;
 
+	/** initialize. */
 	@PostConstruct
-	public void init() {
+	public final void init() {
 
 		setEngine(new ScriptEngineManager().getEngineByName("JavaScript"));
 
 	}
 
-	public ScriptEngine getEngine() {
+	public final ScriptEngine getEngine() {
 		return engine;
 	}
 
-	public void setEngine(ScriptEngine engine) {
+	public final void setEngine(final ScriptEngine engine) {
 		this.engine = engine;
 	}
 

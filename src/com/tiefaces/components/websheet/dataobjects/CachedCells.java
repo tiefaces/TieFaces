@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import com.tiefaces.components.websheet.TieWebSheetBean;
-import com.tiefaces.components.websheet.TieWebSheetUtility;
+import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
 public class CachedCells {
 	

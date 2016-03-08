@@ -1,7 +1,8 @@
 package com.tiefaces.components.websheet.dataobjects;
 
 import org.apache.poi.ss.util.CellReference;
-import com.tiefaces.components.websheet.TieWebSheetUtility;
+
+import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
 public class ParsedCell {
 

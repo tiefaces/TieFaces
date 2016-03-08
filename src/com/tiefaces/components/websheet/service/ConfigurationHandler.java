@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet;
+package com.tiefaces.components.websheet.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,11 +18,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import com.tiefaces.common.FacesUtility;
 import com.tiefaces.common.TIEConstants;
+import com.tiefaces.components.websheet.TieWebSheetBean;
+import com.tiefaces.components.websheet.TieWebSheetConstants;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.CellRange;
 import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
+import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
-public class TieWebSheetConfigurationHandler {
+public class ConfigurationHandler {
 
 	private TieWebSheetBean parent = null;
 
@@ -42,7 +45,7 @@ public class TieWebSheetConfigurationHandler {
 	// attribute column starting index
 	// private int attrCol = 9;
 
-	public TieWebSheetConfigurationHandler(TieWebSheetBean parent) {
+	public ConfigurationHandler(TieWebSheetBean parent) {
 		super();
 		this.parent = parent;
 	}

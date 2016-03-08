@@ -9,7 +9,7 @@ package com.tiefaces.components.websheet.dataobjects;
  * Form attributes object defined in configuration tab.
  * 
  * @author Jason Jiang
- * @note This object corresponds to attributes columns ( type, value, message)
+ * This object corresponds to attributes columns ( type, value, message)
  *       in configuration tab.
  */
 

@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet;
+package com.tiefaces.components.websheet.service;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -30,6 +30,9 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 
 import com.tiefaces.common.FacesUtility;
+import com.tiefaces.components.websheet.TieWebSheetBean;
+import com.tiefaces.components.websheet.TieWebSheetConstants;
+import com.tiefaces.components.websheet.TieWebSheetView;
 import com.tiefaces.components.websheet.TieWebSheetView.tabModel;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
@@ -37,8 +40,9 @@ import com.tiefaces.components.websheet.dataobjects.FacesRow;
 import com.tiefaces.components.websheet.dataobjects.HeaderCell;
 import com.tiefaces.components.websheet.dataobjects.RowInfo;
 import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
+import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
-public class TieWebSheetLoader implements Serializable {
+public class WebSheetLoader implements Serializable {
 
 	private TieWebSheetBean parent = null;
 
@@ -55,7 +59,7 @@ public class TieWebSheetLoader implements Serializable {
 		}
 	}
 
-	public TieWebSheetLoader(TieWebSheetBean parent) {
+	public WebSheetLoader(TieWebSheetBean parent) {
 		this.parent = parent;
 		debug("TieWebSheetLoader Constructor");
 	}
@@ -99,7 +103,7 @@ public class TieWebSheetLoader implements Serializable {
 				+ " addRowColumnWidthStyle= "
 				+ parent.getAddRowColumnWidthStyle());
 
-		parent.setHeaderRows(new ArrayList<List<HeaderCell>>());
+		parent.getHeaderRows().clear();
 
 		if (top < 0) {
 			// this is blank configuration. set column letter as header
@@ -135,11 +139,21 @@ public class TieWebSheetLoader implements Serializable {
 				String style = getHeaderColumnStyle(parent.getWb(), null,
 						sheet1.getColumnWidth(i), totalWidth, 12);
 				headercells.add(new HeaderCell("1", "1", style, style,
-						TieWebSheetUtility.GetExcelColumnName(i), rendered));
+						TieWebSheetUtility.GetExcelColumnName(i), rendered, true));
 			}
 		}
+		fillToMaxColumns(headercells);
 		return headercells;
 
+	}
+	
+	private void fillToMaxColumns(List<HeaderCell> headercells) {
+		if (headercells.size() < parent.getMaxColCounts()) {
+			int fills = parent.getMaxColCounts() - headercells.size();
+			for ( int s = 0 ; s < fills ; s++) {
+				headercells.add(new HeaderCell( "1","1", "", "" , "", false, false ));
+			}
+		}
 	}
 
 	private String getHeaderColumnStyle(Workbook wb, Cell cell,
@@ -193,12 +207,13 @@ public class TieWebSheetLoader implements Serializable {
 						headercells.add(new HeaderCell(fcell.getRowspan() + "",
 								fcell.getColspan() + "", fcell.getStyle(),
 								fcell.getColumnStyle(), parent.getCellHelper()
-										.getCellValueWithFormat(cell), true));
+										.getCellValueWithFormat(cell), true, true));
 					}
 				}
 
 			}
 		}
+		fillToMaxColumns(headercells);
 		return headercells;
 	}
 
@@ -231,13 +246,34 @@ public class TieWebSheetLoader implements Serializable {
 		parent.setBodyRows(null);
 		parent.setSheetConfigMap(null);
 		parent.setTabs(null);
+		parent.getChartsMap().clear();
+		parent.getChartDataMap().clear();
+		parent.getChartAnchorsMap().clear();
+		parent.getChartPositionMap().clear();
+System.out.println(" workbook cleared.");		
 	}
 
 	public int loadWorkbook(InputStream fis) {
 
-		clearWorkbook();
 		try {
-			parent.setWb(WorkbookFactory.create(fis));
+			Workbook wb = WorkbookFactory.create(fis);
+			int ireturn = loadWorkbook(wb);
+			fis.close();
+			return ireturn;
+		} catch (Exception e) {
+			e.printStackTrace();
+			debug("Web Form loadWorkbook Error Exception = "
+					+ e.getLocalizedMessage());
+			return -1;
+		}
+
+	}
+
+	public int loadWorkbook(Workbook wb) {
+
+		try {
+			clearWorkbook();
+			parent.setWb(wb);
 			if (parent.getWb() instanceof XSSFWorkbook) {
 				parent.setExcelType(TieWebSheetConstants.EXCEL_2007_TYPE);
 			} else if (parent.getWb() instanceof HSSFWorkbook) {
@@ -247,8 +283,9 @@ public class TieWebSheetLoader implements Serializable {
 			parent.setFormulaEvaluator(parent.getWb().getCreationHelper()
 					.createFormulaEvaluator());
 			parent.setDataFormatter(new DataFormatter());
-			parent.setSheetConfigMap(new TieWebSheetConfigurationHandler(parent)
+			parent.setSheetConfigMap(new ConfigurationHandler(parent)
 					.buildConfiguration());
+			parent.reCalcMaxColCounts();
 			parent.getPicHelper().loadPictureMap();
 			parent.getChartHelper().loadChartsMap();
 			parent.loadData();
@@ -257,7 +294,6 @@ public class TieWebSheetLoader implements Serializable {
 			if (parent.getTabs().size() > 0) {
 				loadWorkSheet(parent.getTabs().get(0).getTitle());
 			}
-			fis.close();
 			// remove configuration sheet
 			if (parent.getWb().getSheet(parent.getConfigurationTab()) != null)
 				parent.getWb().removeSheetAt(

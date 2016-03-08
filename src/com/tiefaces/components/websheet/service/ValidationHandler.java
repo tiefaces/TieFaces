@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet;
+package com.tiefaces.components.websheet.service;
 
 import java.util.List;
 import java.util.Map;
@@ -18,11 +18,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.primefaces.context.RequestContext;
 
 import com.tiefaces.common.FacesUtility;
+import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
 
-public class TieWebSheetValidationHandler {
+public class ValidationHandler {
 
 	private TieWebSheetBean parent = null;
 
@@ -34,7 +35,7 @@ public class TieWebSheetValidationHandler {
 		}
 	}
 
-	public TieWebSheetValidationHandler(TieWebSheetBean parent) {
+	public ValidationHandler(TieWebSheetBean parent) {
 		super();
 		this.parent = parent;
 		// TODO Auto-generated constructor stub

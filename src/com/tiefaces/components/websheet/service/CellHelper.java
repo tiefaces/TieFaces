@@ -1,25 +1,16 @@
 /*
  * Copyright 2015 TieFaces.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet;
+package com.tiefaces.components.websheet.service;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
@@ -30,79 +21,108 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
 import com.tiefaces.common.FacesUtility;
+import com.tiefaces.components.websheet.TieWebSheetBean;
+import com.tiefaces.components.websheet.TieWebSheetConstants;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.FacesRow;
 import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
+import com.tiefaces.components.websheet.utility.ColorUtility;
+import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
-public class TieWebSheetCellHelper {
+/**
+ * Helper class for web sheet cells.
+ * 
+ * @author Jason Jiang
+ *
+ */
+public class CellHelper {
 
+	/** instance to parent websheet bean. */
 	private TieWebSheetBean parent = null;
+	/** logger. */
+	private static final Logger log = Logger.getLogger(Thread.currentThread()
+			.getStackTrace()[0].getClassName());
 
-	private static boolean debug = false;
-
-	private static void debug(String msg) {
-		if (debug) {
-			System.out.println("TieWebSheetCellHelper: " + msg);
-		}
-	}
-
-	public TieWebSheetCellHelper() {
+/**
+ * 
+ */
+	public CellHelper() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public TieWebSheetCellHelper(TieWebSheetBean parent) {
+	/**
+	 * 
+	 * @param parent
+	 *            parent bean.
+	 */
+	public CellHelper(TieWebSheetBean parent) {
 		super();
 		this.parent = parent;
 	}
 
+	/**
+	 * 
+	 * @param poiCell
+	 *            cell.
+	 * @return String cell value with format.
+	 */
 	public String getCellValueWithFormat(Cell poiCell) {
 
-		if (poiCell == null)
+		if (poiCell == null) {
 			return null;
+		}
 
 		String result;
 		try {
 			int cellType = poiCell.getCellType();
-			if (cellType == Cell.CELL_TYPE_FORMULA)
+			if (cellType == Cell.CELL_TYPE_FORMULA) {
 				cellType = parent.getFormulaEvaluator().evaluate(poiCell)
 						.getCellType();
-			if (cellType == Cell.CELL_TYPE_ERROR)
+			}
+			if (cellType == Cell.CELL_TYPE_ERROR) {
 				result = "";
-			else
+			} else {
 				result = parent.getDataFormatter().formatCellValue(poiCell,
 						parent.getFormulaEvaluator());
+			}
 		} catch (Exception e) {
-			debug("Web Form WebFormHelper getCellValue Error row = "
+			log.severe("Web Form WebFormHelper getCellValue Error row = "
 					+ poiCell.getRowIndex() + " col = "
 					+ poiCell.getColumnIndex() + " error = "
 					+ e.getLocalizedMessage()
 					+ "; Change return result to blank");
 			result = "";
 		}
-		debug("getCellValueWithFormat result = " + result + " row = "
+		log.fine("getCellValueWithFormat result = " + result + " row = "
 				+ poiCell.getRowIndex() + " col = " + poiCell.getColumnIndex());
 		return result;
 	}
 
-	// get input cell value. non input return blank
+	/**
+	 * get input cell value. none input return blank
+	 * 
+	 * @param poiCell
+	 *            cell.
+	 * @return String cell value.
+	 */
 	public String getCellValueWithoutFormat(Cell poiCell) {
 
-		if (poiCell == null)
+		if (poiCell == null) {
 			return null;
+		}
 
 		if (poiCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 			return getCellStringValueWithType(poiCell,
@@ -112,14 +132,24 @@ public class TieWebSheetCellHelper {
 		}
 	}
 
+	/**
+	 * Get cell value as string but with giving type.
+	 * 
+	 * @param poiCell
+	 *            cell.
+	 * @param cellType
+	 *            cell type.
+	 * @return Sting cell value.
+	 */
 	private String getCellStringValueWithType(Cell poiCell, int cellType) {
 
 		switch (cellType) {
 		case Cell.CELL_TYPE_BOOLEAN:
-			if (poiCell.getBooleanCellValue())
+			if (poiCell.getBooleanCellValue()) {
 				return "Y";
-			else
+			} else {
 				return "N";
+			}
 		case Cell.CELL_TYPE_NUMERIC:
 			String result;
 			if (DateUtil.isCellDateFormatted(poiCell)) {
@@ -128,8 +158,9 @@ public class TieWebSheetCellHelper {
 				result = BigDecimal.valueOf(poiCell.getNumericCellValue())
 						.toPlainString();
 				// remove .0 from end for int
-				if (result.endsWith(".0"))
+				if (result.endsWith(".0")) {
 					result = result.substring(0, result.length() - 2);
+				}
 			}
 			return result;
 		case Cell.CELL_TYPE_STRING:
@@ -140,6 +171,15 @@ public class TieWebSheetCellHelper {
 		return "";
 	}
 
+	/**
+	 * Set cell value with giving String value.
+	 * 
+	 * @param c
+	 *            cell.
+	 * @param value
+	 *            giving value.
+	 * @return cell.
+	 */
 	public Cell setCellValue(Cell c, String value) {
 
 		try {
@@ -155,10 +195,11 @@ public class TieWebSheetCellHelper {
 				c.setCellValue(date);
 			} else {
 				if (c.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
-					if (value.equalsIgnoreCase("Y"))
+					if (value.equalsIgnoreCase("Y")) {
 						c.setCellValue(true);
-					else
+					} else {
 						c.setCellValue(false);
+					}
 				} else {
 					c.setCellType(Cell.CELL_TYPE_STRING);
 					c.setCellValue(value);
@@ -168,24 +209,34 @@ public class TieWebSheetCellHelper {
 			c.setCellType(Cell.CELL_TYPE_STRING);
 			c.setCellValue(value);
 		}
-		debug(" set cell value row = " + c.getRowIndex() + " col = "
+		log.fine(" set cell value row = " + c.getRowIndex() + " col = "
 				+ c.getColumnIndex() + " value = " + value + " cellType = "
 				+ c.getCellType());
 		return c;
 	}
 
-	public void reCalc() {
+	/**
+	 * recalc whole workbook.
+	 */
+	public final void reCalc() {
 
 		parent.getFormulaEvaluator().clearAllCachedResultValues();
 		try {
 			parent.getFormulaEvaluator().evaluateAll();
 		} catch (Exception ex) {
 			// skip the formula exception when recalc but log it
-			debug(" recalc formula error : " + ex.getLocalizedMessage());
+			log.severe(" recalc formula error : " + ex.getLocalizedMessage());
 		}
 
 	}
 
+	/**
+	 * evaluate boolean express
+	 * 
+	 * @param script
+	 *            express.
+	 * @return true (express is true) false ( express is false or invalid).
+	 */
 	public boolean evalBoolExpression(String script) {
 		Object result = null;
 		script = "( " + script + " )";
@@ -195,31 +246,32 @@ public class TieWebSheetCellHelper {
 			result = parent.getEngine().eval(script);
 		} catch (Exception e) {
 			e.printStackTrace();
-			debug("WebForm WebFormHelper evalBoolExpression script = " + script
-					+ "; error = " + e.getLocalizedMessage());
+			log.severe("WebForm WebFormHelper evalBoolExpression script = "
+					+ script + "; error = " + e.getLocalizedMessage());
 		}
-		if (result != null)
+		if (result != null) {
 			return ((Boolean) result).booleanValue();
-		else
+		} else {
 			return false;
+		}
 	}
 
-	// / <summary>
-	// / Row Copy Command
-	// /
-	// / Description: Inserts a existing row into a new row, will automatically
-	// push down
-	// / any existing rows. Copy is done cell by cell and supports, and the
-	// / command tries to copy all properties available (style, merged cells,
-	// values, etc...)
-	// / </summary>
-	// / <param name="workbook">Workbook containing the worksheet that will be
-	// changed</param>
-	// / <param name="worksheet">WorkSheet containing rows to be copied</param>
-	// / <param name="sourceRowNum">Source Row Number</param>
-	// / <param name="destinationRowNum">Destination Row Number</param>
-	public void copyRow(Workbook wb, Sheet worksheet, int sourceRowNum,
-			int destinationRowNum) {
+	/**
+	 * Inserts a existing row into a new row, will automatically push down any existing rows.
+	 * Copy is done cell by cell and supports, and the command tries to copy all
+	 * properties available (style, merged cells, values,etc...)
+	 * 
+	 * @param wb
+	 *            workbook.
+	 * @param worksheet
+	 *            worksheet.
+	 * @param sourceRowNum
+	 *            Source Row Number.
+	 * @param destinationRowNum
+	 *            Destination Row Number.
+	 */
+	public final void copyRow(final Workbook wb, final Sheet worksheet, final int sourceRowNum,
+			final int destinationRowNum) {
 		// Get the source / new row
 		Row newRow = worksheet.getRow(destinationRowNum);
 		Row sourceRow = worksheet.getRow(sourceRowNum);
@@ -248,7 +300,6 @@ public class TieWebSheetCellHelper {
 			// Copy style from old cell and apply to new cell
 			CellStyle newCellStyle = wb.createCellStyle();
 			newCellStyle.cloneStyleFrom(oldCell.getCellStyle());
-			;
 			newCell.setCellStyle(newCellStyle);
 
 			// If there is a cell comment, copy
@@ -266,17 +317,15 @@ public class TieWebSheetCellHelper {
 
 			// Set the cell data value
 			switch (oldCell.getCellType()) {
-			case Cell.CELL_TYPE_BLANK:
-				if (newCellStyle.getLocked())
-					newCell.setCellValue(oldCell.getStringCellValue());
-				break;
 			case Cell.CELL_TYPE_BOOLEAN:
-				if (newCellStyle.getLocked())
+				if (newCellStyle.getLocked()) {
 					newCell.setCellValue(oldCell.getBooleanCellValue());
+				}
 				break;
 			case Cell.CELL_TYPE_ERROR:
-				if (newCellStyle.getLocked())
+				if (newCellStyle.getLocked()) {
 					newCell.setCellErrorValue(oldCell.getErrorCellValue());
+				}
 				break;
 			case Cell.CELL_TYPE_FORMULA:
 				String newformula = oldCell.getCellFormula().replace(
@@ -285,17 +334,24 @@ public class TieWebSheetCellHelper {
 				newCell.setCellFormula(newformula);
 				// formulaEvaluator.notifySetFormula(newCell);
 				// formulaEvaluator.evaluate(newCell);
-
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				if (newCellStyle.getLocked())
+				if (newCellStyle.getLocked()) {
 					newCell.setCellValue(oldCell.getNumericCellValue());
+				}
 				break;
 			case Cell.CELL_TYPE_STRING:
-				if (newCellStyle.getLocked())
+				if (newCellStyle.getLocked()) {
 					newCell.setCellValue(oldCell.getRichStringCellValue());
+				}
+				break;
+			default:
+				if (newCellStyle.getLocked()) {
+					newCell.setCellValue(oldCell.getStringCellValue());
+				}
 				break;
 			}
+				
 			// formulaEvaluator.notifyUpdateCell(newCell);
 		}
 
@@ -315,8 +371,10 @@ public class TieWebSheetCellHelper {
 		}
 	}
 
-	/* Refactor row formulas */
-	// properly refactor an excel formulat on a row change
+// comment out below. Maybe used in future.	
+/* Refactor row formulas */
+// properly refactor an excel formulat on a row change
+/*	
 	public String formulaRowRefactor(String formula, int sourceRow, int copyRow) {
 		String buf = "";
 		String new_formula = "";
@@ -430,10 +488,20 @@ public class TieWebSheetCellHelper {
 		}
 		return false;
 	}
-
-	public List<CellFormAttributes> findCellAttributesWithOffset(
-			SheetConfiguration sheetConfig, Cell cell, int initRows,
-			int bodyTopRow, boolean repeatZone) {
+*/
+	/**
+	 * Return cell attributes with offset.
+	 * This is used for repeat row which use same attribute for a group rows.
+	 * @param sheetConfig sheet configuration.
+	 * @param cell cell.
+	 * @param initRows initial and actual row size of the group.
+	 * @param bodyTopRow top row.
+	 * @param repeatZone ture ( in the repeat zone) false ( not in the repeat zone).
+	 * @return list of the attributes.
+	 */
+	public final List<CellFormAttributes> findCellAttributesWithOffset(
+			final SheetConfiguration sheetConfig, final Cell cell, final int initRows,
+			final int bodyTopRow, final boolean repeatZone) {
 		Map<String, List<CellFormAttributes>> map = sheetConfig
 				.getCellFormAttributes();
 
@@ -593,7 +661,7 @@ public class TieWebSheetCellHelper {
 				}
 			}
 		}
-		debug("skipCellList = " + skipCellList);
+		log.fine("skipCellList = " + skipCellList);
 		return skipCellList;
 	}
 
@@ -698,7 +766,7 @@ public class TieWebSheetCellHelper {
 			} else if (font instanceof XSSFFont) {
 				XSSFColor color = ((XSSFFont) font).getXSSFColor();
 				if (color != null) {
-					rgbfix = TieWebSheetUtility.getTripletFromXSSFColor(color);
+					rgbfix = ColorUtility.getTripletFromXSSFColor(color);
 				}
 			}
 			if (rgbfix[0] != 256)
@@ -830,8 +898,9 @@ public class TieWebSheetCellHelper {
 					.getFillForegroundColorColor();
 			if (color != null)
 				style = "background-color:rgb("
-						+ FacesUtility.strJoin(TieWebSheetUtility
-								.getTripletFromXSSFColor(color), ",") + ");";
+						+ FacesUtility.strJoin(
+								ColorUtility.getTripletFromXSSFColor(color),
+								",") + ");";
 		}
 		return style;
 	}
@@ -844,19 +913,21 @@ public class TieWebSheetCellHelper {
 
 		int totalWidth = additionalWidth;
 		for (int i = firstCol; i <= lastCol; i++) {
-System.out.println(" column "+i+" width = "+sheet1.getColumnWidth(i));
+			System.out.println(" column " + i + " width = "
+					+ sheet1.getColumnWidth(i));
 			totalWidth += sheet1.getColumnWidth(i);
 		}
 		return totalWidth;
 	}
-	
+
 	public int calcTotalHeight(Sheet sheet1, int firstRow, int lastRow,
 			int additionalHeight) {
 
 		int totalHeight = additionalHeight;
 		for (int i = firstRow; i <= lastRow; i++) {
 
-System.out.println(" row "+i+" height = "+sheet1.getRow(i).getHeight());
+			System.out.println(" row " + i + " height = "
+					+ sheet1.getRow(i).getHeight());
 			totalHeight += sheet1.getRow(i).getHeight();
 		}
 		return totalHeight;
@@ -880,12 +951,9 @@ System.out.println(" row "+i+" height = "+sheet1.getRow(i).getHeight());
 		fcell.setColumnStyle(getColumnStyle(wb, fcell, poiCell, rowHeight));
 	}
 
-
-	
 	/**
-	 * set up Input Style parameter for input number component which
-	 * need those parameters to make it work. e.g. symbol, symbol
-	 * position, decimal places.
+	 * set up Input Style parameter for input number component which need those
+	 * parameters to make it work. e.g. symbol, symbol position, decimal places.
 	 * 
 	 * @param fcell
 	 *            faces cell
@@ -1063,7 +1131,7 @@ System.out.println(" row "+i+" height = "+sheet1.getRow(i).getHeight());
 
 		int rowIndex = (Integer) target.getAttributes().get("data-row");
 		int colIndex = (Integer) target.getAttributes().get("data-column");
-		debug("getRowColFromComponentAttributes rowindex = " + rowIndex
+		log.fine("getRowColFromComponentAttributes rowindex = " + rowIndex
 				+ " colindex = " + colIndex);
 		int[] list = { rowIndex, colIndex };
 		return list;
@@ -1156,7 +1224,7 @@ System.out.println(" row "+i+" height = "+sheet1.getRow(i).getHeight());
 			if (bodyRows.get(bodyrow).getCells().size() > bodycol)
 				cell = bodyRows.get(bodyrow).getCells().get(bodycol);
 		} catch (Exception e) {
-			debug("Web Form WebFormHelper getFacesCellFromBodyRow Error bodyrow = "
+			log.severe("Web Form WebFormHelper getFacesCellFromBodyRow Error bodyrow = "
 					+ bodyrow
 					+ " bodycol = "
 					+ bodycol

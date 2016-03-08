@@ -25,7 +25,8 @@ public class HeaderCell {
 	private String cellValue; // header text label
 	private String style; // cell web css style attriubte
 	private String columnStyle; // cell web css style attriubte
-	private boolean rendered = true;;
+	private boolean rendered = true;
+	private boolean columnRendered = true;
 
 	/**
 	 * Constructor.
@@ -40,7 +41,7 @@ public class HeaderCell {
 	 *            header text label
 	 */
 	public HeaderCell(String rowspan, String colspan, String style,
-			String columnStyle, String cellValue, boolean rendered) {
+			String columnStyle, String cellValue, boolean rendered, boolean columnRendered) {
 		super();
 		this.rowspan = rowspan;
 		this.colspan = colspan;
@@ -48,9 +49,10 @@ public class HeaderCell {
 		this.columnStyle = columnStyle;
 		this.cellValue = cellValue;
 		this.rendered = rendered;
+		this.columnRendered = columnRendered;
 		debug("header cell construction: rowspan = " + rowspan + " colspan="
 				+ colspan + " style=" + style + " columnStyle=" + columnStyle
-				+ " cellValue=" + cellValue);
+				+ " cellValue=" + cellValue+" rendered = "+rendered+" columnRendered = "+ columnRendered);
 	}
 
 	public String getRowspan() {
@@ -100,6 +102,16 @@ public class HeaderCell {
 	public void setRendered(boolean rendered) {
 		this.rendered = rendered;
 	}
+	
+	
+
+	public boolean isColumnRendered() {
+		return columnRendered;
+	}
+
+	public void setColumnRendered(boolean columnRendered) {
+		this.columnRendered = columnRendered;
+	}
 
 	/**
 	 * Obtain a human readable representation.
@@ -119,6 +131,10 @@ public class HeaderCell {
 		sb.append("columnStyle = " + columnStyle);
 		sb.append(",");
 		sb.append("cellValue = " + cellValue);
+		sb.append(",");
+		sb.append("rendered = " + rendered);
+		sb.append(",");
+		sb.append("columnRendered = " + columnRendered);
 		sb.append("}");
 		return sb.toString();
 	}

@@ -50,7 +50,7 @@ public class FacesCell {
 	/** cell web css style. */
 	private String chartStyle = "";
 
-	public String getStyle() {
+	public final String getStyle() {
 		return style;
 	}
 
