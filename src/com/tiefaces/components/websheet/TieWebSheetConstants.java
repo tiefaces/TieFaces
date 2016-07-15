@@ -5,6 +5,8 @@
 
 package com.tiefaces.components.websheet;
 
+import java.util.regex.Pattern;
+
 public final class TieWebSheetConstants {
 
 	public static final String TIE_WEBSHEET_COMPONENT_ID = "websheettable";
@@ -44,6 +46,19 @@ public final class TieWebSheetConstants {
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT = "text";
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXTAREA = "textarea";
 	
-	
+	public static final String COPY_SHEET_PREFIX = "copy_template_tie_commands_";
+	/** command's prefix. */
+	public static final String COMMAND_PREFIX = "tie:";
+	/** form command. */
+	public static final String COMMAND_FORM = "form";
+	/** attribute prefix. */
+	public static final String ATTR_PREFIX = "(";
+	/** attribute suffix. */
+	public static final String ATTR_SUFFIX = ")";
+	/** attribute's regex. */
+	public static final String ATTR_REGEX = "\\s*\\w+\\s*=\\s*([\"|'])(?:(?!\\1).)*\\1";
+	/** attribute's regex pattern. */
+	public static final Pattern ATTR_REGEX_PATTERN = Pattern
+			.compile(ATTR_REGEX);	
 
 }

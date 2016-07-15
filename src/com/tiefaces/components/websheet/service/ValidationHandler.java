@@ -19,9 +19,9 @@ import org.primefaces.context.RequestContext;
 
 import com.tiefaces.common.FacesUtility;
 import com.tiefaces.components.websheet.TieWebSheetBean;
+import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
-import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
 
 public class ValidationHandler {
 

@@ -14,7 +14,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 public class ChartAxis {
 
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
+	private final Logger log = Logger.getLogger(Thread.currentThread()
 			.getStackTrace()[0].getClassName());
 	/** position. */
 	private String position;
@@ -27,24 +27,24 @@ public class ChartAxis {
 		return position;
 	}
 
-	public final void setPosition(final String position) {
-		this.position = position;
+	public final void setPosition(final String pPosition) {
+		this.position = pPosition;
 	}
 
 	public final String getOrientation() {
 		return orientation;
 	}
 
-	public final void setOrientation(final String orientation) {
-		this.orientation = orientation;
+	public final void setOrientation(final String pOrientation) {
+		this.orientation = pOrientation;
 	}
 
 	public final String getTitle() {
 		return title;
 	}
 
-	public final void setTitle(final String title) {
-		this.title = title;
+	public final void setTitle(final String pTitle) {
+		this.title = pTitle;
 	}
 
 	/**

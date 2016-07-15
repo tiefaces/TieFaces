@@ -128,7 +128,7 @@ public final class ColorUtility {
 
 		log.fine("assmebleXcolor lumOff = " + lumOff + " lumMod = " + lumMod
 				+ " tint = " + tint + " alpha = " + alpha + " xssfcolor = "
-				+ bcolor.getRgbWithTint());
+				+ bcolor.getRGBWithTint());
 
 		return new XColor(bcolor, alpha);
 
@@ -376,9 +376,9 @@ public final class ColorUtility {
 
 		short[] rgbfix = { RGB8BITS, RGB8BITS, RGB8BITS };
 		if (xssfColor != null) {
-			byte[] rgb = xssfColor.getRgbWithTint(); // getRgbWithTint();
+			byte[] rgb = xssfColor.getRGBWithTint(); // getRgbWithTint();
 			if (rgb == null) {
-				rgb = xssfColor.getRgb();
+				rgb = xssfColor.getRGB();
 			}
 			// Bytes are signed, so values of 128+ are negative!
 			// 0: red, 1: green, 2: blue

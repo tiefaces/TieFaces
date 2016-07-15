@@ -5,32 +5,37 @@
 
 package com.tiefaces.components.websheet.utility;
 
+import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.model.ThemesTable;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
 
-import com.tiefaces.components.websheet.dataobjects.XColor;
+import com.tiefaces.components.websheet.configuration.ConfigCommand;
+import com.tiefaces.components.websheet.configuration.ConfigRange;
 
-import java.awt.Color;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class TieWebSheetUtility {
 
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
+	private static final Logger log = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
 
 	public static String GetExcelColumnName(int number) {
 		String converted = "";
@@ -46,66 +51,74 @@ public final class TieWebSheetUtility {
 	}
 
 	/**
-	 * return full name for cell with sheet name and $ format 
-	 * e.g. Sheet1$A$1
+	 * return full name for cell with sheet name and $ format e.g. Sheet1$A$1
 	 * 
-	 * @param sheet1 sheet
-	 * @param cell cell
+	 * @param sheet1
+	 *            sheet
+	 * @param cell
+	 *            cell
 	 * @return String full cell reference name
 	 */
-	
+
 	public static String getFullCellRefName(Sheet sheet1, Cell cell) {
-		if ((sheet1 !=null) && ( cell !=null ) ) {
-			return sheet1.getSheetName()+"!$" + GetExcelColumnName(cell.getColumnIndex()) +"$"+( cell.getRowIndex() + 1);
+		if ((sheet1 != null) && (cell != null)) {
+			return sheet1.getSheetName() + "!$"
+					+ GetExcelColumnName(cell.getColumnIndex()) + "$"
+					+ (cell.getRowIndex() + 1);
 		}
 		return null;
-	}	
+	}
+
 	/**
-	 * return full name for cell with sheet name and $ format 
-	 * e.g. Sheet1$A$1
+	 * return full name for cell with sheet name and $ format e.g. Sheet1$A$1
 	 * 
-	 * @param sheet1 sheet
-	 * @param cell cell
+	 * @param sheet1
+	 *            sheet
+	 * @param cell
+	 *            cell
 	 * @return String full cell reference name
 	 */
-	
-	public static String getFullCellRefName(String sheetName, int rowIndex, int colIndex) {
-		if (sheetName !=null) {
-			return sheetName+"!$" + GetExcelColumnName(colIndex) +"$"+ ( rowIndex + 1);
+
+	public static String getFullCellRefName(String sheetName,
+			int rowIndex, int colIndex) {
+		if (sheetName != null) {
+			return sheetName + "!$" + GetExcelColumnName(colIndex) + "$"
+					+ (rowIndex + 1);
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
-	 * return sheet name from cell full name 
-	 * e.g. return Sheet1 from Sheet1$A$1
+	 * return sheet name from cell full name e.g. return Sheet1 from Sheet1$A$1
 	 * 
-	 * @param String fullName
+	 * @param String
+	 *            fullName
 	 * @return String Sheet Name
 	 */
-	
+
 	public static String getSheetNameFromFullCellRefName(String fullName) {
-		if ( (fullName!=null ) && ( fullName.contains("!")) ) {
+		if ((fullName != null) && (fullName.contains("!"))) {
 			return fullName.substring(0, fullName.indexOf("!"));
 		}
 		return null;
-	}	
+	}
 
 	/**
-	 * remove sheet name from cell full name 
-	 * e.g. return $A$1 from Sheet1$A$1
+	 * remove sheet name from cell full name e.g. return $A$1 from Sheet1$A$1
 	 * 
-	 * @param String full name
-	 * @return remove Sheet Name from full  name
+	 * @param String
+	 *            full name
+	 * @return remove Sheet Name from full name
 	 */
-	
-	public static String removeSheetNameFromFullCellRefName(String fullName) {
-		if ( (fullName!=null ) && ( fullName.contains("!")) ) {
+
+	public static String removeSheetNameFromFullCellRefName(
+			String fullName) {
+		if ((fullName != null) && (fullName.contains("!"))) {
 			return fullName.substring(fullName.indexOf("!") + 1);
 		}
 		return fullName;
-	}	
-	
+	}
+
 	// public static String convertIntToCol(int colNum) {
 	// int col = colNum + 1;
 	// String retVal = "";
@@ -171,8 +184,8 @@ public final class TieWebSheetUtility {
 	public static final double CELL_BORDER_WIDTH_MILLIMETRES = 2.0D; // MB
 	public static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
 	public static final int UNIT_OFFSET_LENGTH = 7;
-	public static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73, 109,
-			146, 182, 219 };
+	public static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73,
+			109, 146, 182, 219 };
 	public static final short EXCEL_ROW_HEIGHT_FACTOR = 20;
 	public static final int EMU_PER_MM = 36000;
 	public static final int EMU_PER_POINTS = 12700;
@@ -199,16 +212,19 @@ public final class TieWebSheetUtility {
 		int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)
 				* UNIT_OFFSET_LENGTH;
 		int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
-		pixels += Math.round(offsetWidthUnits
-				/ ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
+		pixels += Math
+				.round(offsetWidthUnits
+						/ ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
 		return pixels;
 	}
 
 	public static int heightUnits2Pixel(short heightUnits) {
 		int pixels = (heightUnits / EXCEL_ROW_HEIGHT_FACTOR);
 		int offsetHeightUnits = heightUnits % EXCEL_ROW_HEIGHT_FACTOR;
-		pixels += Math.round((float) offsetHeightUnits
-				/ ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH / 2));
+		pixels += Math
+				.round((float) offsetHeightUnits
+						/ ((float) EXCEL_COLUMN_WIDTH_FACTOR
+								/ UNIT_OFFSET_LENGTH / 2));
 		pixels += (Math.floor(pixels / 14) + 1) * 4;
 
 		return pixels;
@@ -247,8 +263,6 @@ public final class TieWebSheetUtility {
 	public static double pointsToMillimeters(double points) {
 		return points / 72D * 25.4;
 	}
-
-
 
 	// Below are utility functions for colors searched from internet. Maybe
 	// could used for future.
@@ -477,16 +491,16 @@ public final class TieWebSheetUtility {
 	public final static String DATE_REGEX_4_DIGIT_YEAR = "("
 			+ "(19|20)[0-9]{2}" + "([-/.\\\\]{1})"
 			+ "[0?[1-9]|[1-9]|1[012]]{1,2}" + "\\3"
-			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + ")" + "|" + "("
-			+ "[0?[1-9]|[1-9]|1[012]]{1,2}" + "([-/.\\\\]{1})"
+			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + ")" + "|"
+			+ "(" + "[0?[1-9]|[1-9]|1[012]]{1,2}" + "([-/.\\\\]{1})"
 			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + "\\6"
 			+ "(19|20)[0-9]{2}" + ")";
 	public final static String DATE_REGEX_2_DIGIT_YEAR = "(" + "[0-9]{2}"
 			+ "([-/.\\\\]{1})" + "[0?[1-9]|[1-9]|1[012]]{1,2}" + "\\3"
-			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + ")" + "|" + "("
-			+ "[0?[1-9]|[1-9]|1[012]]{1,2}" + "([-/.\\\\]{1})"
-			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + "\\6" + "[0-9]{2}"
-			+ ")";
+			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + ")" + "|"
+			+ "(" + "[0?[1-9]|[1-9]|1[012]]{1,2}" + "([-/.\\\\]{1})"
+			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + "\\6"
+			+ "[0-9]{2}" + ")";
 
 	/* Date Handling tools */
 	public static boolean isWeekend(Calendar date) {
@@ -559,7 +573,8 @@ public final class TieWebSheetUtility {
 		return "";
 	}
 
-	public static int compareDates(String date1, String date2, String format) {
+	public static int compareDates(String date1, String date2,
+			String format) {
 		if (format.length() == 0) {
 			return 0;
 		}
@@ -587,32 +602,35 @@ public final class TieWebSheetUtility {
 			}
 		}
 		if (y_count > 0) {
-			if (Integer.parseInt(date1.substring(y_start, y_start + y_count)) > Integer
-					.parseInt(date2.substring(y_start, y_start + y_count))) {
+			if (Integer.parseInt(date1.substring(y_start, y_start
+					+ y_count)) > Integer.parseInt(date2.substring(
+					y_start, y_start + y_count))) {
 				return 1;
 			} else if (Integer.parseInt(date1.substring(y_start, y_start
-					+ y_count)) < Integer.parseInt(date2.substring(y_start,
-					y_start + y_count))) {
+					+ y_count)) < Integer.parseInt(date2.substring(
+					y_start, y_start + y_count))) {
 				return -1;
 			}
 		}
 		if (m_count > 0) {
-			if (Integer.parseInt(date1.substring(m_start, m_start + m_count)) > Integer
-					.parseInt(date2.substring(m_start, m_start + m_count))) {
+			if (Integer.parseInt(date1.substring(m_start, m_start
+					+ m_count)) > Integer.parseInt(date2.substring(
+					m_start, m_start + m_count))) {
 				return 1;
 			} else if (Integer.parseInt(date1.substring(m_start, m_start
-					+ m_count)) < Integer.parseInt(date2.substring(m_start,
-					m_start + m_count))) {
+					+ m_count)) < Integer.parseInt(date2.substring(
+					m_start, m_start + m_count))) {
 				return -1;
 			}
 		}
 		if (d_count > 0) {
-			if (Integer.parseInt(date1.substring(d_start, d_start + d_count)) > Integer
-					.parseInt(date2.substring(d_start, d_start + d_count))) {
+			if (Integer.parseInt(date1.substring(d_start, d_start
+					+ d_count)) > Integer.parseInt(date2.substring(
+					d_start, d_start + d_count))) {
 				return 1;
 			} else if (Integer.parseInt(date1.substring(d_start, d_start
-					+ d_count)) < Integer.parseInt(date2.substring(d_start,
-					d_start + d_count))) {
+					+ d_count)) < Integer.parseInt(date2.substring(
+					d_start, d_start + d_count))) {
 				return -1;
 			}
 		}
@@ -664,7 +682,8 @@ public final class TieWebSheetUtility {
 			entry.trim();
 			if (entry.startsWith("(") && entry.endsWith(")")
 					&& isNumeric(entry.substring(1, entry.length() - 1))) {
-				parsedLine.set(i, "-" + entry.substring(1, entry.length() - 1));
+				parsedLine.set(i,
+						"-" + entry.substring(1, entry.length() - 1));
 			}
 		}
 		return parsedLine;
@@ -894,7 +913,8 @@ public final class TieWebSheetUtility {
 				}
 				if (buf.equalsIgnoreCase("NUMBER")) {
 					buf = "\\d+";
-				} else if (buf.toLowerCase().contains("DATE".toLowerCase())) {
+				} else if (buf.toLowerCase().contains(
+						"DATE".toLowerCase())) {
 					buf = "{$@" + buf + "@$}";
 				} else if (buf.equalsIgnoreCase("RANDOM")) {
 					buf = ".*?";
@@ -920,7 +940,8 @@ public final class TieWebSheetUtility {
 				format = regex.substring(begin, end);
 				format = format.replace('m', 'M').replace('D', 'd')
 						.replace('Y', 'y');
-				regex = regex.substring(0, begin - ("{$@DATE:TODAY:").length())
+				regex = regex.substring(0,
+						begin - ("{$@DATE:TODAY:").length())
 						+ formatToday(format)
 						+ regex.substring(end + ("@$}").length());
 			} else if (ref_format.contains("YESTERDAY")) {
@@ -937,8 +958,8 @@ public final class TieWebSheetUtility {
 				format = regex.substring(begin, end);
 				format = format.replace('m', 'M').replace('D', 'd')
 						.replace('Y', 'y');
-				regex = regex.substring(0,
-						begin - ("{$@DATE:LASTWEEKDAY:").length())
+				regex = regex.substring(0, begin
+						- ("{$@DATE:LASTWEEKDAY:").length())
 						+ formatLastWeekday(format)
 						+ regex.substring(end + ("@$}").length());
 			} else {
@@ -953,8 +974,112 @@ public final class TieWebSheetUtility {
 		}
 		return regex;
 	}
+
+	public static void setObjectProperty(Object obj, String propertyName,
+			String propertyValue, boolean ignoreNonExisting) {
+		try {
+			Method method = obj.getClass().getMethod(
+					"set" + Character.toUpperCase(propertyName.charAt(0))
+							+ propertyName.substring(1),
+					new Class[] { String.class });
+			method.invoke(obj, propertyValue);
+		} catch (Exception e) {
+			String msg = "failed to set property '" + propertyName
+					+ "' to value '" + propertyValue + "' for object "
+					+ obj;
+			if (ignoreNonExisting) {
+				log.info(msg);
+			} else {
+				log.warning(msg);
+				throw new IllegalArgumentException(e);
+			}
+		}
+	}
+
+	public static int cellCompareTo(Cell thisCell, Cell otherCell) {
+		int r = thisCell.getRowIndex() - otherCell.getRowIndex();
+		if (r != 0)
+			return r;
+
+		r = thisCell.getColumnIndex() - otherCell.getColumnIndex();
+		if (r != 0)
+			return r;
+
+		return 0;
+	}
+
+	public static boolean insideRange(ConfigRange child,
+			ConfigRange parent) {
+
+		if ((cellCompareTo(child.getFirstRowRef(), parent.getFirstRowRef()) >= 0)
+				&& (cellCompareTo(child.getLastRowPlusRef(),
+						parent.getLastRowPlusRef()) <= 0)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * return the last column of the sheet.
+	 * @param sheet sheet.
+	 * @return last column number (A column will return 0).
+	 */
+	public static int getSheetRightCol(final Sheet sheet) {
+
+		try {
+			if (sheet instanceof XSSFSheet) {
+				XSSFSheet xsheet = (XSSFSheet) sheet;
+				CTSheetDimension dimension = xsheet.getCTWorksheet()
+						.getDimension();
+				String sheetDimensions = dimension.getRef();
+				if (sheetDimensions.indexOf(':')>0) {
+					return CellRangeAddress.valueOf(sheetDimensions)
+							.getLastColumn();
+				} 
+			} else if (sheet instanceof HSSFSheet) {
+				HSSFSheet hsheet = (HSSFSheet) sheet;
+				Field sheetField;
+				sheetField = HSSFSheet.class.getDeclaredField("_sheet");
+				sheetField.setAccessible(true);
+				InternalSheet internalsheet = (InternalSheet) sheetField
+						.get(hsheet);
+				DimensionsRecord record = (DimensionsRecord) internalsheet
+						.findFirstRecordBySid(DimensionsRecord.sid);
+				if ((record != null) && (record.getLastCol()>0)) {
+					return record.getLastCol() - 1;
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	
-
-
-
+	
+	/**
+	 * Build last cell for command Region.
+	 * Last cell's row actually is the below the actually range.
+	 * e.g. range is A1 : F8, then last cell is F9
+	 * The reason is to hold the reference while the range expanding.
+	 * i.e. one row expand to multiple rows. if last cell in the same row,
+	 * then cannot hold the actual expand area with rowshift method.
+	 * @param sheet
+	 * @param rightCol
+	 * @param lastRow
+	 * @return cell lastCell 
+	 */
+	
+	public static Cell buildLastCell(Sheet sheet, int rightCol, int lastRow) {
+		
+		if ((lastRow >=0) && (sheet != null) && (rightCol >= 0)) {
+			Row row = sheet.getRow(lastRow + 1);
+			if (row == null) {
+				row = sheet.createRow(lastRow + 1);
+			}
+			return row.getCell(rightCol, Row.RETURN_BLANK_AS_NULL);
+		}
+		return null;
+	}	
+	
 }

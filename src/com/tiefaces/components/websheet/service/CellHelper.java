@@ -30,14 +30,15 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.tiefaces.common.FacesUtility;
 import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.TieWebSheetConstants;
+import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.FacesRow;
-import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
 import com.tiefaces.components.websheet.utility.ColorUtility;
 import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
@@ -52,10 +53,10 @@ public class CellHelper {
 	/** instance to parent websheet bean. */
 	private TieWebSheetBean parent = null;
 	/** logger. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
+	private static final Logger log = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
 
-/**
+	/**
  * 
  */
 	public CellHelper() {
@@ -95,8 +96,8 @@ public class CellHelper {
 			if (cellType == Cell.CELL_TYPE_ERROR) {
 				result = "";
 			} else {
-				result = parent.getDataFormatter().formatCellValue(poiCell,
-						parent.getFormulaEvaluator());
+				result = parent.getDataFormatter().formatCellValue(
+						poiCell, parent.getFormulaEvaluator());
 			}
 		} catch (Exception e) {
 			log.severe("Web Form WebFormHelper getCellValue Error row = "
@@ -107,7 +108,8 @@ public class CellHelper {
 			result = "";
 		}
 		log.fine("getCellValueWithFormat result = " + result + " row = "
-				+ poiCell.getRowIndex() + " col = " + poiCell.getColumnIndex());
+				+ poiCell.getRowIndex() + " col = "
+				+ poiCell.getColumnIndex());
 		return result;
 	}
 
@@ -128,7 +130,8 @@ public class CellHelper {
 			return getCellStringValueWithType(poiCell,
 					poiCell.getCachedFormulaResultType());
 		} else {
-			return getCellStringValueWithType(poiCell, poiCell.getCellType());
+			return getCellStringValueWithType(poiCell,
+					poiCell.getCellType());
 		}
 	}
 
@@ -155,7 +158,8 @@ public class CellHelper {
 			if (DateUtil.isCellDateFormatted(poiCell)) {
 				result = poiCell.getDateCellValue().toString();
 			} else {
-				result = BigDecimal.valueOf(poiCell.getNumericCellValue())
+				result = BigDecimal
+						.valueOf(poiCell.getNumericCellValue())
 						.toPlainString();
 				// remove .0 from end for int
 				if (result.endsWith(".0")) {
@@ -186,7 +190,8 @@ public class CellHelper {
 			if (value.length() == 0) {
 				c.setCellType(Cell.CELL_TYPE_BLANK);
 			} else if (TieWebSheetUtility.isNumeric(value)) {
-				double val = Double.parseDouble(value.replace("" + ',', ""));
+				double val = Double.parseDouble(value.replace("" + ',',
+						""));
 				c.setCellType(Cell.CELL_TYPE_NUMERIC);
 				c.setCellValue(val);
 			} else if (TieWebSheetUtility.isDate(value)) {
@@ -210,8 +215,8 @@ public class CellHelper {
 			c.setCellValue(value);
 		}
 		log.fine(" set cell value row = " + c.getRowIndex() + " col = "
-				+ c.getColumnIndex() + " value = " + value + " cellType = "
-				+ c.getCellType());
+				+ c.getColumnIndex() + " value = " + value
+				+ " cellType = " + c.getCellType());
 		return c;
 	}
 
@@ -225,7 +230,8 @@ public class CellHelper {
 			parent.getFormulaEvaluator().evaluateAll();
 		} catch (Exception ex) {
 			// skip the formula exception when recalc but log it
-			log.severe(" recalc formula error : " + ex.getLocalizedMessage());
+			log.severe(" recalc formula error : "
+					+ ex.getLocalizedMessage());
 		}
 
 	}
@@ -257,9 +263,10 @@ public class CellHelper {
 	}
 
 	/**
-	 * Inserts a existing row into a new row, will automatically push down any existing rows.
-	 * Copy is done cell by cell and supports, and the command tries to copy all
-	 * properties available (style, merged cells, values,etc...)
+	 * Inserts a existing row into a new row, will automatically push down any
+	 * existing rows. Copy is done cell by cell and supports, and the command
+	 * tries to copy all properties available (style, merged cells,
+	 * values,etc...)
 	 * 
 	 * @param wb
 	 *            workbook.
@@ -270,19 +277,56 @@ public class CellHelper {
 	 * @param destinationRowNum
 	 *            Destination Row Number.
 	 */
-	public final void copyRow(final Workbook wb, final Sheet worksheet, final int sourceRowNum,
-			final int destinationRowNum) {
+	public final void copyRow(final Workbook wb, final Sheet srcSheet,
+			final Sheet destSheet,
+			final int srcRow, final int destRow) {
+		
+		copyRows(wb, srcSheet,
+				destSheet,
+				srcRow,srcRow, destRow);		
+	}
+
+	public final void copyRows(final Workbook wb, final Sheet srcSheet,
+			final Sheet destSheet,
+			final int srcRowStart,final int srcRowEnd, final int destRow) {
+		int length = srcRowStart - srcRowEnd + 1;
+		if (length <= 0) return;
+		destSheet.shiftRows(destRow,
+				destSheet.getLastRowNum(), length, true, false);		
+		for (int i=0; i<length; i++) {
+			copySingleRow(wb, srcSheet, destSheet, srcRowStart + i, destRow + i);
+		}	
+		// If there are are any merged regions in the source row, copy to new
+		// row
+		for (int i = 0; i < srcSheet.getNumMergedRegions(); i++) {
+			CellRangeAddress cellRangeAddress = srcSheet.getMergedRegion(i);
+			if ((cellRangeAddress.getFirstRow() >= srcRowStart)
+					&& (cellRangeAddress.getLastRow() <= srcRowEnd)) {
+				int targetRowFrom = cellRangeAddress.getFirstRow() - srcRowStart
+						+ destRow;
+				int targetRowTo = cellRangeAddress.getLastRow() - srcRowStart + destRow;
+				
+				CellRangeAddress newCellRangeAddress = new CellRangeAddress(
+						targetRowFrom,
+						targetRowTo,
+						cellRangeAddress.getFirstColumn(),
+						cellRangeAddress.getLastColumn());
+				destSheet.addMergedRegion(newCellRangeAddress);
+			}
+		}		
+	}
+
+	private final void copySingleRow(final Workbook wb, final Sheet srcSheet,
+			final Sheet destSheet,
+			final int sourceRowNum, final int destinationRowNum) {
 		// Get the source / new row
-		Row newRow = worksheet.getRow(destinationRowNum);
-		Row sourceRow = worksheet.getRow(sourceRowNum);
+		Row newRow = destSheet.getRow(destinationRowNum);
+		Row sourceRow = srcSheet.getRow(sourceRowNum);
 
 		// If the row exist in destination, push down all rows by 1 else create
 		// a new row
-		if (newRow != null) {
-			worksheet.shiftRows(destinationRowNum, worksheet.getLastRowNum(),
-					1, true, false);
-		} else {
-			newRow = worksheet.createRow(destinationRowNum);
+		if (newRow == null) {
+			newRow = destSheet.createRow(destinationRowNum);
 		}
 		newRow.setHeight(sourceRow.getHeight());
 		// Loop through source columns to add to new row
@@ -291,222 +335,202 @@ public class CellHelper {
 			Cell oldCell = sourceRow.getCell(i);
 			Cell newCell = newRow.createCell(i);
 
-			// If the old cell is null jump to next cell
-			if (oldCell == null) {
-				newCell = null;
-				continue;
-			}
+			copyCell(wb, sourceRow, newRow, oldCell, newCell);
+		}
+		return;
 
-			// Copy style from old cell and apply to new cell
-			CellStyle newCellStyle = wb.createCellStyle();
-			newCellStyle.cloneStyleFrom(oldCell.getCellStyle());
-			newCell.setCellStyle(newCellStyle);
-
-			// If there is a cell comment, copy
-			if (oldCell.getCellComment() != null) {
-				newCell.setCellComment(oldCell.getCellComment());
-			}
-
-			// If there is a cell hyperlink, copy
-			if (oldCell.getHyperlink() != null) {
-				newCell.setHyperlink(oldCell.getHyperlink());
-			}
-
-			// Set the cell data type
-			newCell.setCellType(oldCell.getCellType());
-
-			// Set the cell data value
-			switch (oldCell.getCellType()) {
-			case Cell.CELL_TYPE_BOOLEAN:
-				if (newCellStyle.getLocked()) {
-					newCell.setCellValue(oldCell.getBooleanCellValue());
-				}
-				break;
-			case Cell.CELL_TYPE_ERROR:
-				if (newCellStyle.getLocked()) {
-					newCell.setCellErrorValue(oldCell.getErrorCellValue());
-				}
-				break;
-			case Cell.CELL_TYPE_FORMULA:
-				String newformula = oldCell.getCellFormula().replace(
-						"$" + (sourceRow.getRowNum() + 1),
-						"$" + (newRow.getRowNum() + 1));
-				newCell.setCellFormula(newformula);
-				// formulaEvaluator.notifySetFormula(newCell);
-				// formulaEvaluator.evaluate(newCell);
-				break;
-			case Cell.CELL_TYPE_NUMERIC:
-				if (newCellStyle.getLocked()) {
-					newCell.setCellValue(oldCell.getNumericCellValue());
-				}
-				break;
-			case Cell.CELL_TYPE_STRING:
-				if (newCellStyle.getLocked()) {
-					newCell.setCellValue(oldCell.getRichStringCellValue());
-				}
-				break;
-			default:
-				if (newCellStyle.getLocked()) {
-					newCell.setCellValue(oldCell.getStringCellValue());
-				}
-				break;
-			}
-				
-			// formulaEvaluator.notifyUpdateCell(newCell);
+	}
+	
+	public int copyCell(final Workbook wb, final Row sourceRow, final Row newRow, final Cell sourceCell,
+			Cell newCell) {
+		// If the old cell is null jump to next cell
+		if (sourceCell == null) {
+			newCell = null;
+			return -1;
 		}
 
-		// If there are are any merged regions in the source row, copy to new
-		// row
-		for (int i = 0; i < worksheet.getNumMergedRegions(); i++) {
-			CellRangeAddress cellRangeAddress = worksheet.getMergedRegion(i);
-			if (cellRangeAddress.getFirstRow() == sourceRow.getRowNum()) {
-				CellRangeAddress newCellRangeAddress = new CellRangeAddress(
-						newRow.getRowNum(),
-						(newRow.getRowNum() + (cellRangeAddress.getLastRow() - cellRangeAddress
-								.getFirstRow())), cellRangeAddress
-								.getFirstColumn(), cellRangeAddress
-								.getLastColumn());
-				worksheet.addMergedRegion(newCellRangeAddress);
-			}
+		// Copy style from old cell and apply to new cell
+		CellStyle newCellStyle = wb.createCellStyle();
+		newCellStyle.cloneStyleFrom(sourceCell.getCellStyle());
+		newCell.setCellStyle(newCellStyle);
+
+		// If there is a cell comment, copy
+		if (sourceCell.getCellComment() != null) {
+			newCell.setCellComment(sourceCell.getCellComment());
 		}
+
+		// If there is a cell hyperlink, copy
+		if (sourceCell.getHyperlink() != null) {
+			newCell.setHyperlink(sourceCell.getHyperlink());
+		}
+
+		// Set the cell data type
+		newCell.setCellType(sourceCell.getCellType());
+
+		// Set the cell data value
+		switch (sourceCell.getCellType()) {
+		case Cell.CELL_TYPE_BOOLEAN:
+			if (newCellStyle.getLocked()) {
+				newCell.setCellValue(sourceCell.getBooleanCellValue());
+			}
+			break;
+		case Cell.CELL_TYPE_ERROR:
+			if (newCellStyle.getLocked()) {
+				newCell.setCellErrorValue(sourceCell.getErrorCellValue());
+			}
+			break;
+		case Cell.CELL_TYPE_FORMULA:
+			String newformula = sourceCell.getCellFormula().replace(
+					"$" + (sourceRow.getRowNum() + 1),
+					"$" + (newRow.getRowNum() + 1));
+			newCell.setCellFormula(newformula);
+			// formulaEvaluator.notifySetFormula(newCell);
+			// formulaEvaluator.evaluate(newCell);
+			break;
+		case Cell.CELL_TYPE_NUMERIC:
+			if (newCellStyle.getLocked()) {
+				newCell.setCellValue(sourceCell.getNumericCellValue());
+			}
+			break;
+		case Cell.CELL_TYPE_STRING:
+			if (newCellStyle.getLocked()) {
+				newCell.setCellValue(sourceCell.getRichStringCellValue());
+			}
+			break;
+		default:
+			if (newCellStyle.getLocked()) {
+				newCell.setCellValue(sourceCell.getStringCellValue());
+			}
+			break;
+		}
+
+		// formulaEvaluator.notifyUpdateCell(newCell);
+		return 1;
 	}
 
-// comment out below. Maybe used in future.	
-/* Refactor row formulas */
-// properly refactor an excel formulat on a row change
-/*	
-	public String formulaRowRefactor(String formula, int sourceRow, int copyRow) {
-		String buf = "";
-		String new_formula = "";
+	/**
+	 * 
+	public final void copyRows(final Workbook wb, final Sheet srcSheet,
+			final Sheet descSheet,
+			final int srcStartRow, final int srcEndRow, final int destStartRow) {
+	 
+		int pStartRow = startRow - 1;
+		int pEndRow = endRow - 1;
+		int targetRowFrom;
+		int targetRowTo;
+		int columnCount;
+		CellRangeAddress region = null;
 		int i;
-		char c;
-		boolean skipNext = false, inParen = false;
-		for (i = 0; i < formula.length(); i++) {
-			c = formula.charAt(i);
-			if (c == '\'') {
-				if (buf.length() > 0
-						&& buf.length() < 4
-						&& i - buf.length() - 1 >= 0
-						&& TieWebSheetUtility.isUpperAlpha(formula.charAt(i
-								- buf.length() - 1))) {
-					if (!skipNext) {
-						new_formula += carefulRowFormulaRefactorString(buf,
-								sourceRow, copyRow);
-						buf = "";
-					} else {
-						new_formula += buf;
-						skipNext = false;
-						buf = "";
-					}
-				} else {
-					new_formula += buf;
-					buf = "";
-				}
-				inParen = (inParen ? false : true);
-				new_formula += c;
-			} else if (!inParen) {
-				if (c == '$') {
-					if (buf.length() > 0
-							&& buf.length() < 4
-							&& i - buf.length() - 1 >= 0
-							&& TieWebSheetUtility.isUpperAlpha(formula.charAt(i
-									- buf.length() - 1))) {
-						if (!skipNext) {
-							new_formula += carefulColFormulaRefactorString(buf,
-									sourceRow, copyRow);
-							buf = "";
-						} else {
-							new_formula += buf;
-							skipNext = false;
-							buf = "";
-						}
-					} else {
-						new_formula += buf;
-						buf = "";
-					}
-					skipNext = true;
-					new_formula += c;
-				} else if (skipNext) {
-					if (!TieWebSheetUtility.isNumeric(c)) {
-						skipNext = false;
-					}
-					new_formula += c;
-				} else {
-					if (TieWebSheetUtility.isNumeric(c)) {
-						buf += c;
-					} else {
-						if (buf.length() > 0
-								&& i - buf.length() - 1 >= 0
-								&& TieWebSheetUtility.isUpperAlpha(formula
-										.charAt(i - buf.length() - 1))) {
-							new_formula += carefulRowFormulaRefactorString(buf,
-									sourceRow, copyRow);
-							buf = "";
-						} else {
-							new_formula += buf;
-							buf = "";
-						}
-						new_formula += c;
-					}
-				}
-			} else {
-				new_formula += c;
+		int j;
+		if (pStartRow == -1 || pEndRow == -1) {
+			return;
+		}
+		// 拷贝合并的单元格
+		for (i = 0; i < sheet.getNumMergedRegions(); i++) {
+			region = sheet.getMergedRegion(i);
+			if ((region.getFirstRow() >= pStartRow)
+					&& (region.getLastRow() <= pEndRow)) {
+				targetRowFrom = region.getFirstRow() - pStartRow
+						+ pPosition;
+				targetRowTo = region.getLastRow() - pStartRow + pPosition;
+				CellRangeAddress newRegion = region.copy();
+				newRegion.setFirstRow(targetRowFrom);
+				newRegion.setFirstColumn(region.getFirstColumn());
+				newRegion.setLastRow(targetRowTo);
+				newRegion.setLastColumn(region.getLastColumn());
+				sheet.addMergedRegion(newRegion);
 			}
 		}
-		if (!skipNext
-				&& !inParen
-				&& buf.length() > 0
-				&& i - buf.length() - 1 >= 0
-				&& TieWebSheetUtility.isUpperAlpha(formula.charAt(i
-						- buf.length() - 1))) {
-			new_formula += carefulRowFormulaRefactorString(buf, sourceRow,
-					copyRow);
-			buf = "";
-		} else {
-			new_formula += buf;
-			buf = "";
+		// 设置列宽
+		for (i = pStartRow; i <= pEndRow; i++) {
+			HSSFRow sourceRow = sheet.getRow(i);
+			columnCount = sourceRow.getLastCellNum();
+			if (sourceRow != null) {
+				HSSFRow newRow = sheet.createRow(pPosition - pStartRow
+						+ i);
+				newRow.setHeight(sourceRow.getHeight());
+				for (j = 0; j < columnCount; j++) {
+					HSSFCell templateCell = sourceRow.getCell(j);
+					if (templateCell != null) {
+						HSSFCell newCell = newRow.createCell(j);
+						copyCell(templateCell, newCell);
+					}
+				}
+			}
 		}
-		return new_formula;
-	}
-
-	public int carefulRowFormulaRefactorString(String formula, int sourceRow,
-			int copyRow) {
-		return copyRow + (Integer.parseInt(formula) - sourceRow);
-	}
-
-	public String carefulColFormulaRefactorString(String formula,
-			int sourceCol, int copyCol) {
-		return TieWebSheetUtility
-				.GetExcelColumnName((copyCol + (TieWebSheetUtility
-						.convertColToInt(formula) - sourceCol)));
-	}
-
-	public boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
-		if (cr.getFirstRow() <= rowIx && cr.getLastRow() >= rowIx
-				&& cr.getFirstColumn() <= colIx && cr.getLastColumn() >= colIx) {
-			return true;
-		}
-		return false;
 	}
 */
+	// comment out below. Maybe used in future.
+	/* Refactor row formulas */
+	// properly refactor an excel formulat on a row change
+	/*
+	 * public String formulaRowRefactor(String formula, int sourceRow, int
+	 * copyRow) { String buf = ""; String new_formula = ""; int i; char c;
+	 * boolean skipNext = false, inParen = false; for (i = 0; i <
+	 * formula.length(); i++) { c = formula.charAt(i); if (c == '\'') { if
+	 * (buf.length() > 0 && buf.length() < 4 && i - buf.length() - 1 >= 0 &&
+	 * TieWebSheetUtility.isUpperAlpha(formula.charAt(i - buf.length() - 1))) {
+	 * if (!skipNext) { new_formula += carefulRowFormulaRefactorString(buf,
+	 * sourceRow, copyRow); buf = ""; } else { new_formula += buf; skipNext =
+	 * false; buf = ""; } } else { new_formula += buf; buf = ""; } inParen =
+	 * (inParen ? false : true); new_formula += c; } else if (!inParen) { if (c
+	 * == '$') { if (buf.length() > 0 && buf.length() < 4 && i - buf.length() -
+	 * 1 >= 0 && TieWebSheetUtility.isUpperAlpha(formula.charAt(i - buf.length()
+	 * - 1))) { if (!skipNext) { new_formula +=
+	 * carefulColFormulaRefactorString(buf, sourceRow, copyRow); buf = ""; }
+	 * else { new_formula += buf; skipNext = false; buf = ""; } } else {
+	 * new_formula += buf; buf = ""; } skipNext = true; new_formula += c; } else
+	 * if (skipNext) { if (!TieWebSheetUtility.isNumeric(c)) { skipNext = false;
+	 * } new_formula += c; } else { if (TieWebSheetUtility.isNumeric(c)) { buf
+	 * += c; } else { if (buf.length() > 0 && i - buf.length() - 1 >= 0 &&
+	 * TieWebSheetUtility.isUpperAlpha(formula .charAt(i - buf.length() - 1))) {
+	 * new_formula += carefulRowFormulaRefactorString(buf, sourceRow, copyRow);
+	 * buf = ""; } else { new_formula += buf; buf = ""; } new_formula += c; } }
+	 * } else { new_formula += c; } } if (!skipNext && !inParen && buf.length()
+	 * > 0 && i - buf.length() - 1 >= 0 &&
+	 * TieWebSheetUtility.isUpperAlpha(formula.charAt(i - buf.length() - 1))) {
+	 * new_formula += carefulRowFormulaRefactorString(buf, sourceRow, copyRow);
+	 * buf = ""; } else { new_formula += buf; buf = ""; } return new_formula; }
+	 * 
+	 * public int carefulRowFormulaRefactorString(String formula, int sourceRow,
+	 * int copyRow) { return copyRow + (Integer.parseInt(formula) - sourceRow);
+	 * }
+	 * 
+	 * public String carefulColFormulaRefactorString(String formula, int
+	 * sourceCol, int copyCol) { return TieWebSheetUtility
+	 * .GetExcelColumnName((copyCol + (TieWebSheetUtility
+	 * .convertColToInt(formula) - sourceCol))); }
+	 * 
+	 * public boolean containsCell(CellRangeAddress cr, int rowIx, int colIx) {
+	 * if (cr.getFirstRow() <= rowIx && cr.getLastRow() >= rowIx &&
+	 * cr.getFirstColumn() <= colIx && cr.getLastColumn() >= colIx) { return
+	 * true; } return false; }
+	 */
 	/**
-	 * Return cell attributes with offset.
-	 * This is used for repeat row which use same attribute for a group rows.
-	 * @param sheetConfig sheet configuration.
-	 * @param cell cell.
-	 * @param initRows initial and actual row size of the group.
-	 * @param bodyTopRow top row.
-	 * @param repeatZone ture ( in the repeat zone) false ( not in the repeat zone).
+	 * Return cell attributes with offset. This is used for repeat row which use
+	 * same attribute for a group rows.
+	 * 
+	 * @param sheetConfig
+	 *            sheet configuration.
+	 * @param cell
+	 *            cell.
+	 * @param initRows
+	 *            initial and actual row size of the group.
+	 * @param bodyTopRow
+	 *            top row.
+	 * @param repeatZone
+	 *            ture ( in the repeat zone) false ( not in the repeat zone).
 	 * @return list of the attributes.
 	 */
 	public final List<CellFormAttributes> findCellAttributesWithOffset(
-			final SheetConfiguration sheetConfig, final Cell cell, final int initRows,
-			final int bodyTopRow, final boolean repeatZone) {
+			final SheetConfiguration sheetConfig, final Cell cell,
+			final int initRows, final int bodyTopRow,
+			final boolean repeatZone) {
 		Map<String, List<CellFormAttributes>> map = sheetConfig
 				.getCellFormAttributes();
 
-		String key = findCellAddressWithOffset(cell, initRows, bodyTopRow,
-				repeatZone);
+		String key = findCellAddressWithOffset(cell, initRows,
+				bodyTopRow, repeatZone);
 		List<CellFormAttributes> result = map.get(key);
 		if ((result == null) && repeatZone) {
 			key = "$"
@@ -570,7 +594,8 @@ public class CellHelper {
 	// }
 
 	public List<CellFormAttributes> findCellAttributes(
-			SheetConfiguration sheetConfig, Cell cell, int row, int bodyTopRow) {
+			SheetConfiguration sheetConfig, Cell cell, int row,
+			int bodyTopRow) {
 
 		boolean repeatZone = false;
 		if (sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat")) {
@@ -579,11 +604,11 @@ public class CellHelper {
 				initRows = 1;
 			if ((row >= bodyTopRow) && (row < (bodyTopRow + initRows)))
 				repeatZone = true;
-			return findCellAttributesWithOffset(sheetConfig, cell, initRows,
-					bodyTopRow, repeatZone);
+			return findCellAttributesWithOffset(sheetConfig, cell,
+					initRows, bodyTopRow, repeatZone);
 		}
-		return findCellAttributesWithOffset(sheetConfig, cell, 1, bodyTopRow,
-				false);
+		return findCellAttributesWithOffset(sheetConfig, cell, 1,
+				bodyTopRow, false);
 
 	}
 
@@ -679,9 +704,10 @@ public class CellHelper {
 	}
 
 	// set up facesCell's attribute from poiCell and others.
-	public void convertCell(SheetConfiguration sheetConfig, FacesCell fcell,
-			Cell poiCell, int rowindex, int initRows, int bodyTopRow,
-			boolean repeatZone, Map<String, CellRangeAddress> cellRangeMap) {
+	public void convertCell(SheetConfiguration sheetConfig,
+			FacesCell fcell, Cell poiCell, int rowindex, int initRows,
+			int bodyTopRow, boolean repeatZone,
+			Map<String, CellRangeAddress> cellRangeMap) {
 		boolean bodyPopulated = sheetConfig.isBodyPopulated();
 		List<CellFormAttributes> cellAttributes = findCellAttributesWithOffset(
 				sheetConfig, poiCell, initRows, bodyTopRow, repeatZone);
@@ -690,10 +716,11 @@ public class CellHelper {
 				String attrType = attr.getType().trim();
 				if (attrType.equalsIgnoreCase("load") && (!bodyPopulated)) {
 					String attrValue = attr.getValue();
-					attrValue = attrValue.replace("$rowIndex", rowindex + "");
+					attrValue = attrValue.replace("$rowIndex", rowindex
+							+ "");
 					if (attrValue.contains("#{")) {
-						attrValue = FacesUtility.evaluateExpression(attrValue,
-								String.class);
+						attrValue = FacesUtility.evaluateExpression(
+								attrValue, String.class);
 						setCellValue(poiCell, attrValue);
 					}
 				} else if (attrType.equalsIgnoreCase("input")) {
@@ -714,12 +741,13 @@ public class CellHelper {
 			// has col or row span
 			fcell.setColspan((caddress.getLastColumn()
 					- caddress.getFirstColumn() + 1));
-			fcell.setRowspan((caddress.getLastRow() - caddress.getFirstRow() + 1));
+			fcell.setRowspan((caddress.getLastRow()
+					- caddress.getFirstRow() + 1));
 		}
 	}
 
-	public String getRowStyle(Workbook wb, Cell poiCell, String inputType,
-			float rowHeight) {
+	public String getRowStyle(Workbook wb, Cell poiCell,
+			String inputType, float rowHeight) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		if (cellStyle != null) {
@@ -730,14 +758,15 @@ public class CellHelper {
 				maxHeight = Math.min(font.getFontHeightInPoints() + 6,
 						rowHeight);
 			}
-			return "height:" + TieWebSheetUtility.pointsToPixels(maxHeight)
+			return "height:"
+					+ TieWebSheetUtility.pointsToPixels(maxHeight)
 					+ "px;";
 		}
 		return "";
 	}
 
-	public String getCellFontStyle(Workbook wb, Cell poiCell, String inputType,
-			float rowHeight) {
+	public String getCellFontStyle(Workbook wb, Cell poiCell,
+			String inputType, float rowHeight) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		StringBuffer webStyle = new StringBuffer();
@@ -785,7 +814,8 @@ public class CellHelper {
 		if (cellStyle != null) {
 			if (!inputType.isEmpty()) {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(getVerticalAlignmentFromCell(poiCell, cellStyle));
+				webStyle.append(getVerticalAlignmentFromCell(poiCell,
+						cellStyle));
 			}
 			;
 			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
@@ -796,8 +826,8 @@ public class CellHelper {
 
 	}
 
-	public String getColumnStyle(Workbook wb, FacesCell fcell, Cell poiCell,
-			float rowHeight) {
+	public String getColumnStyle(Workbook wb, FacesCell fcell,
+			Cell poiCell, float rowHeight) {
 
 		String inputType = fcell.getInputType();
 		CellStyle cellStyle = poiCell.getCellStyle();
@@ -807,7 +837,8 @@ public class CellHelper {
 				webStyle.append("vertical-align: top;");
 			} else {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(getVerticalAlignmentFromCell(poiCell, cellStyle));
+				webStyle.append(getVerticalAlignmentFromCell(poiCell,
+						cellStyle));
 			}
 			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
 			webStyle.append(getRowStyle(wb, poiCell, inputType, rowHeight));
@@ -872,7 +903,8 @@ public class CellHelper {
 			HSSFColor color = HSSFColor.getIndexHash().get(bkColorIndex);
 			if (color != null) {
 				// correct color for customPalette
-				HSSFPalette palette = ((HSSFWorkbook) wb).getCustomPalette();
+				HSSFPalette palette = ((HSSFWorkbook) wb)
+						.getCustomPalette();
 				HSSFColor color2 = palette.getColor(bkColorIndex);
 				if (!color.getHexString().equalsIgnoreCase(
 						color2.getHexString()))
@@ -890,7 +922,8 @@ public class CellHelper {
 				// }
 				// else
 				style = "background-color:rgb("
-						+ FacesUtility.strJoin(color.getTriplet(), ",") + ");";
+						+ FacesUtility.strJoin(color.getTriplet(), ",")
+						+ ");";
 				// }
 			}
 		} else if (poiCell instanceof XSSFCell) {
@@ -898,9 +931,9 @@ public class CellHelper {
 					.getFillForegroundColorColor();
 			if (color != null)
 				style = "background-color:rgb("
-						+ FacesUtility.strJoin(
-								ColorUtility.getTripletFromXSSFColor(color),
-								",") + ");";
+						+ FacesUtility.strJoin(ColorUtility
+								.getTripletFromXSSFColor(color), ",")
+						+ ");";
 		}
 		return style;
 	}
@@ -933,8 +966,8 @@ public class CellHelper {
 		return totalHeight;
 	}
 
-	public void setupCellStyle(Workbook wb, Sheet sheet1, FacesCell fcell,
-			Cell poiCell, float rowHeight) {
+	public void setupCellStyle(Workbook wb, Sheet sheet1,
+			FacesCell fcell, Cell poiCell, float rowHeight) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		if ((cellStyle != null) && (!cellStyle.getLocked())) {
@@ -945,8 +978,10 @@ public class CellHelper {
 			setInputStyleBaseOnInputType(fcell, poiCell);
 		}
 		String webStyle = getCellStyle(wb, poiCell, fcell.getInputType())
-				+ getCellFontStyle(wb, poiCell, fcell.getInputType(), rowHeight)
-				+ getRowStyle(wb, poiCell, fcell.getInputType(), rowHeight);
+				+ getCellFontStyle(wb, poiCell, fcell.getInputType(),
+						rowHeight)
+				+ getRowStyle(wb, poiCell, fcell.getInputType(),
+						rowHeight);
 		fcell.setStyle(webStyle);
 		fcell.setColumnStyle(getColumnStyle(wb, fcell, poiCell, rowHeight));
 	}
@@ -971,7 +1006,8 @@ public class CellHelper {
 		case TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE:
 			fcell.setSymbol("%");
 			fcell.setSymbolPosition("p");
-			fcell.setDecimalPlaces(this.getDecimalPlacesFromFormat(poiCell));
+			fcell.setDecimalPlaces(this
+					.getDecimalPlacesFromFormat(poiCell));
 			break;
 
 		case TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_INTEGER:
@@ -1095,8 +1131,8 @@ public class CellHelper {
 			return "$";
 		}
 		// return specified dollar symbol
-		return formatString
-				.substring(ipos + 2, formatString.indexOf("]", ipos));
+		return formatString.substring(ipos + 2,
+				formatString.indexOf("]", ipos));
 	}
 
 	/**
@@ -1130,9 +1166,10 @@ public class CellHelper {
 	public int[] getRowColFromComponentAttributes(UIComponent target) {
 
 		int rowIndex = (Integer) target.getAttributes().get("data-row");
-		int colIndex = (Integer) target.getAttributes().get("data-column");
-		log.fine("getRowColFromComponentAttributes rowindex = " + rowIndex
-				+ " colindex = " + colIndex);
+		int colIndex = (Integer) target.getAttributes()
+				.get("data-column");
+		log.fine("getRowColFromComponentAttributes rowindex = "
+				+ rowIndex + " colindex = " + colIndex);
 		int[] list = { rowIndex, colIndex };
 		return list;
 	}
@@ -1195,8 +1232,9 @@ public class CellHelper {
 		return "";
 	}
 
-	public Cell getCellReferenceWithConfig(String targetCell, int datarow,
-			int initialRows, SheetConfiguration sheetConfig, Sheet sheet) {
+	public Cell getCellReferenceWithConfig(String targetCell,
+			int datarow, int initialRows, SheetConfiguration sheetConfig,
+			Sheet sheet) {
 
 		String[] rowcol = getRowColFromExcelReferenceName(targetCell);
 		if (rowcol[0].isEmpty()) {
@@ -1205,15 +1243,18 @@ public class CellHelper {
 			targetCell = "$"
 					+ rowcol[1]
 					+ "$"
-					+ (datarow + sheetConfig.getBodyCellRange().getTopRow() + 1);
+					+ (datarow
+							+ sheetConfig.getBodyCellRange().getTopRow() + 1);
 		} else {
 			int row = Integer.parseInt(rowcol[0]);
 			if ((sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat"))
 					&& (row > (sheetConfig.getBodyCellRange().getTopRow() + 1))) {
-				targetCell = "$" + rowcol[1] + "$" + (row + initialRows - 1);
+				targetCell = "$" + rowcol[1] + "$"
+						+ (row + initialRows - 1);
 			}
 		}
-		Cell cell = TieWebSheetUtility.getCellByReference(targetCell, sheet);
+		Cell cell = TieWebSheetUtility.getCellByReference(targetCell,
+				sheet);
 		return cell;
 	}
 
@@ -1234,7 +1275,8 @@ public class CellHelper {
 		return cell;
 	}
 
-	public Cell getPoiCellWithRowColFromCurrentPage(int rowIndex, int colIndex) {
+	public Cell getPoiCellWithRowColFromCurrentPage(int rowIndex,
+			int colIndex) {
 		if (parent.getWb() != null) {
 			return getPoiCellFromSheet(rowIndex, colIndex, parent.getWb()
 					.getSheetAt(parent.getWb().getActiveSheetIndex()));
@@ -1255,7 +1297,8 @@ public class CellHelper {
 		return null;
 	}
 
-	private Cell getPoiCellFromSheet(int rowIndex, int colIndex, Sheet sheet1) {
+	private Cell getPoiCellFromSheet(int rowIndex, int colIndex,
+			Sheet sheet1) {
 		if ((sheet1 != null) && (sheet1.getRow(rowIndex) != null))
 			return sheet1.getRow(rowIndex).getCell(colIndex);
 		return null;
@@ -1266,8 +1309,8 @@ public class CellHelper {
 		if (parent.getBodyRows() != null) {
 			int top = parent.getCurrentTopRow();
 			int left = parent.getCurrentLeftColumn();
-			List<FacesCell> cellList = parent.getBodyRows().get(rowIndex - top)
-					.getCells();
+			List<FacesCell> cellList = parent.getBodyRows()
+					.get(rowIndex - top).getCells();
 			return parent.getBodyRows().get(rowIndex - top).getCells()
 					.get(colIndex - left);
 		}

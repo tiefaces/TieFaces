@@ -34,12 +34,13 @@ import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.TieWebSheetConstants;
 import com.tiefaces.components.websheet.TieWebSheetView;
 import com.tiefaces.components.websheet.TieWebSheetView.tabModel;
+import com.tiefaces.components.websheet.configuration.ConfigurationHandler;
+import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.FacesRow;
 import com.tiefaces.components.websheet.dataobjects.HeaderCell;
 import com.tiefaces.components.websheet.dataobjects.RowInfo;
-import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
 import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
 public class WebSheetLoader implements Serializable {
@@ -273,12 +274,14 @@ System.out.println(" workbook cleared.");
 
 		try {
 			clearWorkbook();
-			parent.setWb(wb);
-			if (parent.getWb() instanceof XSSFWorkbook) {
-				parent.setExcelType(TieWebSheetConstants.EXCEL_2007_TYPE);
-			} else if (parent.getWb() instanceof HSSFWorkbook) {
-				parent.setExcelType(TieWebSheetConstants.EXCEL_2003_TYPE);
+			// only support xssf workbook now since 2016 July
+			if (!(wb instanceof XSSFWorkbook)) {
+				debug("Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
+				return -1;
 			}
+			parent.setWb(wb);
+			// only support xssf workbook now since 2016 July
+			parent.setExcelType(TieWebSheetConstants.EXCEL_2007_TYPE);
 			debug(" load excel type = " + parent.getExcelType());
 			parent.setFormulaEvaluator(parent.getWb().getCreationHelper()
 					.createFormulaEvaluator());
@@ -344,7 +347,7 @@ System.out.println(" workbook cleared.");
 
 		for (int i = top; i < (top + initRows); i++) {
 			if ((!bodyPopulated) && (i > top))
-				parent.getCellHelper().copyRow(wb, sheet1, top, i);
+				parent.getCellHelper().copyRow(wb, sheet1, sheet1, top, i);
 			initExcelRow(i, top, sheet1, sheetConfig);
 		}
 		if (initRows > 0)
@@ -482,7 +485,7 @@ System.out.println(" workbook cleared.");
 		for (int i = top; i <= bottom; i++) {
 			if ((i >= top) && (i < (top + initRows))) {
 				if (i > top)
-					parent.getCellHelper().copyRow(parent.getWb(), sheet1, top,
+					parent.getCellHelper().copyRow(parent.getWb(), sheet1, sheet1, top,
 							i);
 				debug("Web Form populateBodyRepeatRows copy row = " + i);
 			}
@@ -691,7 +694,7 @@ System.out.println(" workbook cleared.");
 		String sheetName = parent.getSheetConfigMap().get(tabName)
 				.getSheetName();
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
-		parent.getCellHelper().copyRow(parent.getWb(), sheet1, rowIndex,
+		parent.getCellHelper().copyRow(parent.getWb(), sheet1, sheet1,  rowIndex,
 				rowIndex + 1);
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
 				.get(tabName);

@@ -3,10 +3,16 @@
  * Licensed under MIT
  */
 
-package com.tiefaces.components.websheet.dataobjects;
+package com.tiefaces.components.websheet.configuration;
 
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.util.CellAddress;
+
+import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
+import com.tiefaces.components.websheet.dataobjects.CellRange;
 
 /**
  * Configuration object hold all the attributes defined in Configuration tab
@@ -48,8 +54,13 @@ public class SheetConfiguration {
 																		// for
 																		// form
 																		// attributes
+	
+	private ConfigRange configRange;
+	
 	private int savedRowsBefore = 0; // Saved Rows before repeat row
 	private int savedRowsAfter = 0; // Saved Rows after repeat row
+	
+	private boolean hidden = false; // in some case e.g. prepop, we choose to hide the sheet.
 
 	public String getSheetName() {
 		return sheetName;
@@ -59,12 +70,12 @@ public class SheetConfiguration {
 		this.sheetName = sheetName;
 	}
 
-	public String getTabName() {
+	public String getFormName() {
 		return formName;
 	}
 
-	public void setTabName(String tabName) {
-		this.formName = tabName;
+	public void setFormName(String formName) {
+		this.formName = formName;
 	}
 
 	public String getFormHeaderRange() {
@@ -212,6 +223,27 @@ public class SheetConfiguration {
 		this.savedRowsAfter = savedRowsAfter;
 	}
 
+	
+	public ConfigRange getConfigRange() {
+		if (this.configRange == null) {
+			configRange = new ConfigRange();
+		}
+		return configRange;
+	}
+
+	public void setConfigRange(ConfigRange configRange) {
+		this.configRange = configRange;
+	}
+
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
+	}
+
 	/**
 	 * Obtain a human readable representation.
 	 * 
@@ -250,7 +282,11 @@ public class SheetConfiguration {
 		sb.append(",");
 		sb.append("FooterCellRange = " + footerCellRange);
 		sb.append(",");
+		sb.append("ConfigRange = " + configRange);
+		sb.append(",");
 		sb.append("cellFormAttributes = " + cellFormAttributes);
+		sb.append(",");
+		sb.append("hidden = " + hidden);
 		sb.append("}");
 		return sb.toString();
 	}

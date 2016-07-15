@@ -20,7 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.primefaces.context.RequestContext;
 
 import com.tiefaces.components.websheet.TieWebSheetBean;
-import com.tiefaces.components.websheet.dataobjects.SheetConfiguration;
+import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 
 public class DataHandler {
 

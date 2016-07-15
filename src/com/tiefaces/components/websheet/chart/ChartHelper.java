@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -24,17 +23,9 @@ import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBar3DChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STBarDir;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STBarGrouping;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.w3c.dom.NodeList;
@@ -85,7 +76,7 @@ public class ChartHelper {
 	/** instance to parent websheet bean. */
 	private TieWebSheetBean parent = null;
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
+	private final Logger log = Logger.getLogger(Thread.currentThread()
 			.getStackTrace()[0].getClassName());
 
 	/**
@@ -145,15 +136,6 @@ public class ChartHelper {
 		}
 	}
 
-	/**
-	 * build chartData for line chart. chartData include categoryList and
-	 * seriesList which used for generate jfreechart.
-	 * 
-	 * @param chartData
-	 * @param ctChart
-	 * @param themeTable
-	 *            themeTable used for get color with theme name
-	 */
 
 	// below code demo how to read theme
 	// ThemeDocument theme;
@@ -167,7 +149,18 @@ public class ChartHelper {
 	// // TODO Auto-generated catch block
 	// e.printStackTrace();
 	// }
-
+	
+	/**
+	 * build chartData for line chart. chartData include categoryList and
+	 * seriesList which used for generate jfreechart.
+	 * 
+	 * @param chartData chart data.
+	 * @param ctChart ct chart.
+	 * @param themeTable
+	 *            themeTable used for get color with theme name.
+	 * @param ctObj ct object.
+	 */
+	
 	public final void setUpChartData(final ChartData chartData,
 			final CTChart ctChart, final ThemesTable themeTable,
 			final ChartObject ctObj) {
