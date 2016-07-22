@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
@@ -324,13 +325,14 @@ System.out.println(" workbook cleared.");
 	private void initSheet() {
 		for (SheetConfiguration sheetConfig : parent.getSheetConfigMap()
 				.values()) {
-			initPageData(sheetConfig, parent.getWb(),
+			initPageData(sheetConfig, parent.getWb(), parent.getWbWrapper(),
 					parent.getFormulaEvaluator());
 		}
 		parent.getCellHelper().reCalc();
 	}
 
-	private void initPageData(SheetConfiguration sheetConfig, Workbook wb,
+	private void initPageData(SheetConfiguration sheetConfig, Workbook wb, 
+			XSSFEvaluationWorkbook wbWrapper,
 			FormulaEvaluator formulaEvaluator) {
 
 		boolean bodyPopulated = sheetConfig.isBodyPopulated();
@@ -347,7 +349,7 @@ System.out.println(" workbook cleared.");
 
 		for (int i = top; i < (top + initRows); i++) {
 			if ((!bodyPopulated) && (i > top))
-				parent.getCellHelper().copyRow(wb, sheet1, sheet1, top, i);
+				parent.getCellHelper().copyRow(wb, wbWrapper, sheet1, sheet1, top, i);
 			initExcelRow(i, top, sheet1, sheetConfig);
 		}
 		if (initRows > 0)
@@ -485,7 +487,7 @@ System.out.println(" workbook cleared.");
 		for (int i = top; i <= bottom; i++) {
 			if ((i >= top) && (i < (top + initRows))) {
 				if (i > top)
-					parent.getCellHelper().copyRow(parent.getWb(), sheet1, sheet1, top,
+					parent.getCellHelper().copyRow(parent.getWb(), parent.getWbWrapper(), sheet1, sheet1, top,
 							i);
 				debug("Web Form populateBodyRepeatRows copy row = " + i);
 			}
@@ -694,7 +696,7 @@ System.out.println(" workbook cleared.");
 		String sheetName = parent.getSheetConfigMap().get(tabName)
 				.getSheetName();
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
-		parent.getCellHelper().copyRow(parent.getWb(), sheet1, sheet1,  rowIndex,
+		parent.getCellHelper().copyRow(parent.getWb(), parent.getWbWrapper(), sheet1, sheet1,  rowIndex,
 				rowIndex + 1);
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
 				.get(tabName);

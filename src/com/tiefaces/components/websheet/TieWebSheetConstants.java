@@ -51,6 +51,10 @@ public final class TieWebSheetConstants {
 	public static final String COMMAND_PREFIX = "tie:";
 	/** form command. */
 	public static final String COMMAND_FORM = "form";
+	/** true string. */
+	public static final String TRUE_STRING = "true";
+	/** false string. */
+	public static final String FALSE_STRING = "false";
 	/** attribute prefix. */
 	public static final String ATTR_PREFIX = "(";
 	/** attribute suffix. */

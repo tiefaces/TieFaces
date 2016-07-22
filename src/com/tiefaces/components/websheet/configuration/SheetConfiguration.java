@@ -55,7 +55,7 @@ public class SheetConfiguration {
 																		// form
 																		// attributes
 	
-	private ConfigRange configRange;
+	private FormCommand formCommand;
 	
 	private int savedRowsBefore = 0; // Saved Rows before repeat row
 	private int savedRowsAfter = 0; // Saved Rows after repeat row
@@ -223,7 +223,7 @@ public class SheetConfiguration {
 		this.savedRowsAfter = savedRowsAfter;
 	}
 
-	
+/*	
 	public ConfigRange getConfigRange() {
 		if (this.configRange == null) {
 			configRange = new ConfigRange();
@@ -235,10 +235,25 @@ public class SheetConfiguration {
 		this.configRange = configRange;
 	}
 
+*/
+	
+	public FormCommand getFormCommand() {
+		if (this.formCommand == null) {
+			this.formCommand = new FormCommand();
+		}
+		return formCommand;
+	}
 
+	public void setFormCommand(FormCommand formCommand) {
+		this.formCommand = formCommand;
+	}
+
+	
+	
 	public boolean isHidden() {
 		return hidden;
 	}
+
 
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
@@ -282,8 +297,8 @@ public class SheetConfiguration {
 		sb.append(",");
 		sb.append("FooterCellRange = " + footerCellRange);
 		sb.append(",");
-		sb.append("ConfigRange = " + configRange);
-		sb.append(",");
+//		sb.append("ConfigRange = " + configRange);
+//		sb.append(",");
 		sb.append("cellFormAttributes = " + cellFormAttributes);
 		sb.append(",");
 		sb.append("hidden = " + hidden);

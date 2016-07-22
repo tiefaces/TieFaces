@@ -30,6 +30,8 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
@@ -73,6 +75,8 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 	private List<List<HeaderCell>> headerRows;
 	/** current workbook. */
 	private Workbook wb;
+	/** current workbook wrapper for formula parser. */
+	private XSSFEvaluationWorkbook wbWrapper;
 	/** current formula evaluator. */
 	private FormulaEvaluator formulaEvaluator;
 	/** current dataFormatter. */
@@ -227,6 +231,17 @@ public class TieWebSheetBean extends TieWebSheetView implements Serializable {
 
 	public final void setWb(final Workbook wb) {
 		this.wb = wb;
+		this.wbWrapper = XSSFEvaluationWorkbook
+				.create((XSSFWorkbook) wb);		
+	}
+
+	
+	public XSSFEvaluationWorkbook getWbWrapper() {
+		if ((this.wbWrapper == null) && ( this.wb != null)) {
+			this.wbWrapper = XSSFEvaluationWorkbook
+					.create((XSSFWorkbook) wb);		
+		}
+		return wbWrapper;
 	}
 
 	public final FormulaEvaluator getFormulaEvaluator() {

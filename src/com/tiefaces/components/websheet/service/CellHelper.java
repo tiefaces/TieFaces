@@ -19,6 +19,12 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParsingWorkbook;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.SharedFormula;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -29,8 +35,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.tiefaces.common.FacesUtility;
 import com.tiefaces.components.websheet.TieWebSheetBean;
@@ -277,54 +285,55 @@ public class CellHelper {
 	 * @param destinationRowNum
 	 *            Destination Row Number.
 	 */
-	public final void copyRow(final Workbook wb, final Sheet srcSheet,
-			final Sheet destSheet,
-			final int srcRow, final int destRow) {
-		
-		copyRows(wb, srcSheet,
-				destSheet,
-				srcRow,srcRow, destRow);		
+	public final void copyRow(final Workbook wb, final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
+			final Sheet destSheet, final int srcRow, final int destRow) {
+
+		copyRows(wb, wbWrapper, srcSheet, destSheet, srcRow, srcRow, destRow);
 	}
 
-	public final void copyRows(final Workbook wb, final Sheet srcSheet,
-			final Sheet destSheet,
-			final int srcRowStart,final int srcRowEnd, final int destRow) {
+	public final void copyRows(final Workbook wb, final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
+			final Sheet destSheet, final int srcRowStart,
+			final int srcRowEnd, final int destRow) {
+
 		int length = srcRowStart - srcRowEnd + 1;
-		if (length <= 0) return;
-		destSheet.shiftRows(destRow,
-				destSheet.getLastRowNum(), length, true, false);		
-		for (int i=0; i<length; i++) {
-			copySingleRow(wb, srcSheet, destSheet, srcRowStart + i, destRow + i);
-		}	
+		if (length <= 0)
+			return;
+		destSheet.shiftRows(destRow, destSheet.getLastRowNum(), length,
+				true, false);
+		for (int i = 0; i < length; i++) {
+			copySingleRow(wb, wbWrapper, srcSheet, destSheet, srcRowStart
+					+ i, destRow + i, true, srcRowStart, srcRowEnd);
+		}
 		// If there are are any merged regions in the source row, copy to new
 		// row
 		for (int i = 0; i < srcSheet.getNumMergedRegions(); i++) {
-			CellRangeAddress cellRangeAddress = srcSheet.getMergedRegion(i);
+			CellRangeAddress cellRangeAddress = srcSheet
+					.getMergedRegion(i);
 			if ((cellRangeAddress.getFirstRow() >= srcRowStart)
 					&& (cellRangeAddress.getLastRow() <= srcRowEnd)) {
-				int targetRowFrom = cellRangeAddress.getFirstRow() - srcRowStart
-						+ destRow;
-				int targetRowTo = cellRangeAddress.getLastRow() - srcRowStart + destRow;
-				
+				int targetRowFrom = cellRangeAddress.getFirstRow()
+						- srcRowStart + destRow;
+				int targetRowTo = cellRangeAddress.getLastRow()
+						- srcRowStart + destRow;
+
 				CellRangeAddress newCellRangeAddress = new CellRangeAddress(
-						targetRowFrom,
-						targetRowTo,
+						targetRowFrom, targetRowTo,
 						cellRangeAddress.getFirstColumn(),
 						cellRangeAddress.getLastColumn());
 				destSheet.addMergedRegion(newCellRangeAddress);
 			}
-		}		
+		}
 	}
 
-	private final void copySingleRow(final Workbook wb, final Sheet srcSheet,
-			final Sheet destSheet,
-			final int sourceRowNum, final int destinationRowNum) {
+	private final void copySingleRow(final Workbook wb,
+			XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
+			final Sheet destSheet, final int sourceRowNum,
+			final int destinationRowNum, final boolean shiftFormula,
+			final int shiftRowStart, final int shiftRowEnd) {
 		// Get the source / new row
 		Row newRow = destSheet.getRow(destinationRowNum);
 		Row sourceRow = srcSheet.getRow(sourceRowNum);
 
-		// If the row exist in destination, push down all rows by 1 else create
-		// a new row
 		if (newRow == null) {
 			newRow = destSheet.createRow(destinationRowNum);
 		}
@@ -335,14 +344,20 @@ public class CellHelper {
 			Cell oldCell = sourceRow.getCell(i);
 			Cell newCell = newRow.createCell(i);
 
-			copyCell(wb, sourceRow, newRow, oldCell, newCell);
+			copyCell(wb, wbWrapper, srcSheet, destSheet, sourceRow,
+					newRow, oldCell, newCell, shiftFormula,
+					shiftRowStart, shiftRowEnd);
 		}
 		return;
 
 	}
-	
-	public int copyCell(final Workbook wb, final Row sourceRow, final Row newRow, final Cell sourceCell,
-			Cell newCell) {
+
+	public int copyCell(final Workbook wb,
+			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
+			final Sheet destSheet, final Row sourceRow, final Row newRow,
+			final Cell sourceCell, Cell newCell,
+			final boolean shiftFormula, final int shiftRowStart,
+			final int shiftRowEnd) {
 		// If the old cell is null jump to next cell
 		if (sourceCell == null) {
 			newCell = null;
@@ -380,10 +395,20 @@ public class CellHelper {
 			}
 			break;
 		case Cell.CELL_TYPE_FORMULA:
-			String newformula = sourceCell.getCellFormula().replace(
-					"$" + (sourceRow.getRowNum() + 1),
-					"$" + (newRow.getRowNum() + 1));
-			newCell.setCellFormula(newformula);
+			if (shiftFormula) {
+				Ptg[] sharedFormulaPtg = FormulaParser.parse(
+						sourceCell.getCellFormula(), wbWrapper,
+						FormulaType.CELL, wb.getSheetIndex(srcSheet));
+				Ptg[] convertedFormulaPtg = ShiftFormula
+						.convertSharedFormulas(sharedFormulaPtg, (newRow
+								.getRowNum() - sourceRow.getRowNum()),
+								shiftRowStart, shiftRowEnd);
+				newCell.setCellFormula(FormulaRenderer.toFormulaString(
+						wbWrapper, convertedFormulaPtg));
+			} else {
+				newCell.setCellFormula(sourceCell.getCellFormula());
+			}
+
 			// formulaEvaluator.notifySetFormula(newCell);
 			// formulaEvaluator.evaluate(newCell);
 			break;
@@ -410,56 +435,31 @@ public class CellHelper {
 
 	/**
 	 * 
-	public final void copyRows(final Workbook wb, final Sheet srcSheet,
-			final Sheet descSheet,
-			final int srcStartRow, final int srcEndRow, final int destStartRow) {
-	 
-		int pStartRow = startRow - 1;
-		int pEndRow = endRow - 1;
-		int targetRowFrom;
-		int targetRowTo;
-		int columnCount;
-		CellRangeAddress region = null;
-		int i;
-		int j;
-		if (pStartRow == -1 || pEndRow == -1) {
-			return;
-		}
-		// 拷贝合并的单元格
-		for (i = 0; i < sheet.getNumMergedRegions(); i++) {
-			region = sheet.getMergedRegion(i);
-			if ((region.getFirstRow() >= pStartRow)
-					&& (region.getLastRow() <= pEndRow)) {
-				targetRowFrom = region.getFirstRow() - pStartRow
-						+ pPosition;
-				targetRowTo = region.getLastRow() - pStartRow + pPosition;
-				CellRangeAddress newRegion = region.copy();
-				newRegion.setFirstRow(targetRowFrom);
-				newRegion.setFirstColumn(region.getFirstColumn());
-				newRegion.setLastRow(targetRowTo);
-				newRegion.setLastColumn(region.getLastColumn());
-				sheet.addMergedRegion(newRegion);
-			}
-		}
-		// 设置列宽
-		for (i = pStartRow; i <= pEndRow; i++) {
-			HSSFRow sourceRow = sheet.getRow(i);
-			columnCount = sourceRow.getLastCellNum();
-			if (sourceRow != null) {
-				HSSFRow newRow = sheet.createRow(pPosition - pStartRow
-						+ i);
-				newRow.setHeight(sourceRow.getHeight());
-				for (j = 0; j < columnCount; j++) {
-					HSSFCell templateCell = sourceRow.getCell(j);
-					if (templateCell != null) {
-						HSSFCell newCell = newRow.createCell(j);
-						copyCell(templateCell, newCell);
-					}
-				}
-			}
-		}
-	}
-*/
+	 public final void copyRows(final Workbook wb, final Sheet srcSheet, final
+	 * Sheet descSheet, final int srcStartRow, final int srcEndRow, final int
+	 * destStartRow) {
+	 * 
+	 * int pStartRow = startRow - 1; int pEndRow = endRow - 1; int
+	 * targetRowFrom; int targetRowTo; int columnCount; CellRangeAddress region
+	 * = null; int i; int j; if (pStartRow == -1 || pEndRow == -1) { return; }
+	 * // 拷贝合并的单元格 for (i = 0; i < sheet.getNumMergedRegions(); i++) { region =
+	 * sheet.getMergedRegion(i); if ((region.getFirstRow() >= pStartRow) &&
+	 * (region.getLastRow() <= pEndRow)) { targetRowFrom = region.getFirstRow()
+	 * - pStartRow + pPosition; targetRowTo = region.getLastRow() - pStartRow +
+	 * pPosition; CellRangeAddress newRegion = region.copy();
+	 * newRegion.setFirstRow(targetRowFrom);
+	 * newRegion.setFirstColumn(region.getFirstColumn());
+	 * newRegion.setLastRow(targetRowTo);
+	 * newRegion.setLastColumn(region.getLastColumn());
+	 * sheet.addMergedRegion(newRegion); } } // 设置列宽 for (i = pStartRow; i <=
+	 * pEndRow; i++) { HSSFRow sourceRow = sheet.getRow(i); columnCount =
+	 * sourceRow.getLastCellNum(); if (sourceRow != null) { HSSFRow newRow =
+	 * sheet.createRow(pPosition - pStartRow + i);
+	 * newRow.setHeight(sourceRow.getHeight()); for (j = 0; j < columnCount;
+	 * j++) { HSSFCell templateCell = sourceRow.getCell(j); if (templateCell !=
+	 * null) { HSSFCell newCell = newRow.createCell(j); copyCell(templateCell,
+	 * newCell); } } } } }
+	 */
 	// comment out below. Maybe used in future.
 	/* Refactor row formulas */
 	// properly refactor an excel formulat on a row change

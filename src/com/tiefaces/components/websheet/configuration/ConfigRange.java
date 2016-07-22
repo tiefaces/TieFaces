@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.jxls.area.CommandData;
 import org.jxls.common.AreaRef;
@@ -65,7 +66,8 @@ public class ConfigRange implements Cloneable {
 	 * @param pFirstRowRef
 	 *            first cell.
 	 */
-	public final void setFirstRowRef(final Cell pFirstRowRef, final boolean alsoCreateAddr) {
+	public final void setFirstRowRef(final Cell pFirstRowRef,
+			final boolean alsoCreateAddr) {
 		this.firstRowRef = pFirstRowRef;
 		if (alsoCreateAddr) {
 			this.setFirstRowAddr(new CellAddress(pFirstRowRef));
@@ -109,7 +111,7 @@ public class ConfigRange implements Cloneable {
 			this.lastRowPlusRef = null;
 			if (alsoSetAddr) {
 				this.lastRowPlusAddr = null;
-			}	
+			}
 		}
 	}
 
@@ -179,25 +181,47 @@ public class ConfigRange implements Cloneable {
 	 *            context map.
 	 * @return final length.
 	 */
-	public final int buildAt(final Sheet sheet, final int atRow,
-			final Map<String, Object> context, final ExpressionEngine engine, final CellHelper cellHelper) {
+	public final int buildAt(
+			XSSFEvaluationWorkbook wbWrapper, 
+			Sheet sheet,
+			int atRow, 
+			Map<String, Object> context,
+			List<Integer> watchList,
+			List<RowsMapping> currentRowsMappingList,
+			List<RowsMapping> allRowsMappingList,
+			List<Cell> processedFormula,
+			ExpressionEngine engine,
+			final CellHelper cellHelper) {
 		log.fine("build xls sheet at row : " + atRow);
-		
-		//List<Row> staticRows = setUpBuildRows(sheet, this.getFirstRowRef().getRowIndex(), this.getLastRowPlusRef().getRowIndex(), this.getCommandList());
 
-		
+		// List<Row> staticRows = setUpBuildRows(sheet,
+		// this.getFirstRowRef().getRowIndex(),
+		// this.getLastRowPlusRef().getRowIndex(), this.getCommandList());
+
 		for (int i = 0; i < commandList.size(); i++) {
 			// cellRange.resetChangeMatrix();
 			Command command = commandList.get(i);
 			command.setFinalLength(0);
-			int populatedLength = command.buildAt(sheet, command.getConfigRange().getFirstRowRef().getRowIndex(),
-					context, engine, cellHelper);
+			int populatedLength = command.buildAt(
+					wbWrapper, 
+					sheet, 
+					command
+					.getConfigRange().getFirstRowRef().getRowIndex(),
+					context,
+					watchList, 
+					currentRowsMappingList, 
+					allRowsMappingList, 
+					processedFormula,
+					engine, 
+					cellHelper);
+			currentRowsMappingList.clear();
+			currentRowsMappingList.addAll(allRowsMappingList);
 			command.setFinalLength(populatedLength);
 		}
 
 		buildCells(sheet, atRow, context, engine, cellHelper);
-		
-		//updateCellDataFinalAreaForFormulaCells(newAreaRef);
+
+		// updateCellDataFinalAreaForFormulaCells(newAreaRef);
 
 		int finalLength = this.getLastRowPlusRef().getRowIndex()
 				- this.getFirstRowRef().getRowIndex() - 1;
@@ -207,49 +231,27 @@ public class ConfigRange implements Cloneable {
 	}
 
 	/*
-	private List<Row> setUpBuildRows(final Sheet sheet, final int startRow, final int endRow, final List<ConfigCommand> commandList) {
-		List<Row> staticRows = new ArrayList<Row>();
-		int endStaticRow = endRow + 1;
-		boolean emptyCommand = false;
-		if ((commandList != null)&&(commandList.size()>0)&&(commandList.get(0).getTopRow()>=0)) {
-			endStaticRow = commandList.get(0).getTopRow();
-		} else {
-			emptyCommand = true;
-		}
-		for (int i= startRow; i< endStaticRow; i++ ) {
-			Row row = sheet.getRow(i);
-			if (row != null) {
-				staticRows.add(row);
-			}
-		}
-		if (!emptyCommand) {
-			for (int i=endStaticRow; i<= endRow; i++) {
-				Row row = sheet.getRow(i);
-				if (row != null) {
-					if (isStaticRow(row.getRowNum(),commandList)) {
-						staticRows.add(row);
-					}
-				}
-				
-			}
-		}
-		return staticRows;
-	}
-		
-	private boolean  isStaticRow(int rowIndex, final List<ConfigCommand> commandList) {
-		for (int i = 0; i < commandList.size(); i++) {
-			Command command = commandList.get(i);
-			if ((rowIndex >= command.getTopRow())
-					&& (rowIndex <= (command.getTopRow() + command
-							.getFinalLength()))) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	*/
-	private boolean rowNotProcessed(Row row) {
+	 * private List<Row> setUpBuildRows(final Sheet sheet, final int startRow,
+	 * final int endRow, final List<ConfigCommand> commandList) { List<Row>
+	 * staticRows = new ArrayList<Row>(); int endStaticRow = endRow + 1; boolean
+	 * emptyCommand = false; if ((commandList !=
+	 * null)&&(commandList.size()>0)&&(commandList.get(0).getTopRow()>=0)) {
+	 * endStaticRow = commandList.get(0).getTopRow(); } else { emptyCommand =
+	 * true; } for (int i= startRow; i< endStaticRow; i++ ) { Row row =
+	 * sheet.getRow(i); if (row != null) { staticRows.add(row); } } if
+	 * (!emptyCommand) { for (int i=endStaticRow; i<= endRow; i++) { Row row =
+	 * sheet.getRow(i); if (row != null) { if
+	 * (isStaticRow(row.getRowNum(),commandList)) { staticRows.add(row); } }
+	 * 
+	 * } } return staticRows; }
+	 * 
+	 * private boolean isStaticRow(int rowIndex, final List<ConfigCommand>
+	 * commandList) { for (int i = 0; i < commandList.size(); i++) { Command
+	 * command = commandList.get(i); if ((rowIndex >= command.getTopRow()) &&
+	 * (rowIndex <= (command.getTopRow() + command .getFinalLength()))) { return
+	 * false; } } return true; }
+	 */
+	public boolean isStaticRow(Row row) {
 		for (int i = 0; i < commandList.size(); i++) {
 			Command command = commandList.get(i);
 			int rowIndex = row.getRowNum();
@@ -263,24 +265,26 @@ public class ConfigRange implements Cloneable {
 	}
 
 	private void buildCells(Sheet sheet, int startRow,
-			Map<String, Object> context, final ExpressionEngine engine, final CellHelper cellHelper) {
+			Map<String, Object> context, final ExpressionEngine engine,
+			final CellHelper cellHelper) {
 		int lastRowPlus = this.getLastRowPlusRef().getRowIndex();
 		for (int i = startRow; i < lastRowPlus; i++) {
 			Row row = sheet.getRow(i);
-			if ((row != null) && rowNotProcessed(row)) {
+			if ((row != null) && isStaticRow(row)) {
 				for (Cell cell : row) {
-	                ExpressionHelper.evaluate(context, cell, engine, cellHelper);
-	            }				
+					ExpressionHelper.evaluate(context, cell, engine,
+							cellHelper);
+				}
 			}
 		}
 	}
-	
-	public Object clone(){  
-	    try{  
-	        return super.clone();  
-	    }catch(Exception e){ 
-	        return null; 
-	    }
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (Exception e) {
+			return null;
+		}
 	}
-	
+
 }

@@ -358,9 +358,7 @@ public class ConfigurationHandler {
 		log.fine("form tabName = " + formName + " maxRow = " + maxRow);
 
 		Cell firstCell = sheet.getRow(firstRow).getCell(leftCol,
-				Row.RETURN_BLANK_AS_NULL); 
-		sheetConfig.getConfigRange().setFirstRowRef(firstCell, true);
-		sheetConfig.getConfigRange().setLastRowPlusRef(sheet, rightCol, lastRow, true);
+				Row.RETURN_BLANK_AS_NULL);
 		// header range row set to 0 while column set to first column to
 		// max
 		// column (FF) e.g. $A$0 : $FF$0
@@ -389,8 +387,29 @@ public class ConfigurationHandler {
 				.isSheetVeryHidden(sheetIndex))) {
 			sheetConfig.setHidden(true);
 		}
+
+		FormCommand fcommand = buildFormCommandFromSheetConfig(
+				sheetConfig, sheet, firstCell, rightCol, lastRow);
+		sheetConfig.setFormCommand(fcommand);
 		return sheetConfig;
 
+	}
+
+	private FormCommand buildFormCommandFromSheetConfig(
+			SheetConfiguration sheetConfig, Sheet sheet, Cell firstCell,
+			int rightCol, int lastRow) {
+		FormCommand fcommand = new FormCommand();
+		fcommand.setCommandTypeName(COMMAND_FORM);
+		if (sheetConfig.isHidden()) {
+			fcommand.setHidden(TRUE_STRING);
+		} else {
+			fcommand.setHidden(FALSE_STRING);
+		}
+		fcommand.setName(sheetConfig.getFormName());
+		fcommand.getConfigRange().setFirstRowRef(firstCell, true);
+		fcommand.getConfigRange().setLastRowPlusRef(sheet, rightCol,
+				lastRow, true);
+		return fcommand;
 	}
 
 	private String rowCell(Row row, Integer cn) {
@@ -463,7 +482,6 @@ public class ConfigurationHandler {
 	 * new implement of configuration with setting in comments
 	 * 
 	 */
-
 
 	/** command map. */
 	@SuppressWarnings("rawtypes")
@@ -640,10 +658,11 @@ public class ConfigurationHandler {
 				for (String formname : formList) {
 					SheetConfiguration sheetConfig = sheetConfigMap
 							.get(formname);
-					if (TieWebSheetUtility.insideRange(
-							command.getConfigRange(),
-							sheetConfig.getConfigRange())) {
-						sheetConfig.getConfigRange().addCommand(command);
+					if (TieWebSheetUtility.insideRange(command
+							.getConfigRange(), sheetConfig
+							.getFormCommand().getConfigRange())) {
+						sheetConfig.getFormCommand().getConfigRange()
+								.addCommand(command);
 						copyTemplateForTieCommands(sheet);
 						break;
 					}
@@ -789,9 +808,9 @@ public class ConfigurationHandler {
 				TieWebSheetUtility.setObjectProperty(command,
 						attr.getKey(), attr.getValue(), true);
 			}
-			command.getConfigRange().setFirstRowRef(firstCell,true);
+			command.getConfigRange().setFirstRowRef(firstCell, true);
 			command.getConfigRange().setLastRowPlusRef(sheet,
-							sheetRightCol, command.getLastRow(),true);
+					sheetRightCol, command.getLastRow(), true);
 			return command;
 		} catch (Exception e) {
 			log.warning("Failed to instantiate command class '"
@@ -851,8 +870,11 @@ public class ConfigurationHandler {
 
 	/**
 	 * Create sheet configuration from form command.
-	 * @param sheet sheet.
-	 * @param fcommand form command.
+	 * 
+	 * @param sheet
+	 *            sheet.
+	 * @param fcommand
+	 *            form command.
 	 * @return sheet configuration.
 	 */
 	private SheetConfiguration getSheetConfigurationFromConfigCommand(
@@ -883,10 +905,7 @@ public class ConfigurationHandler {
 		log.fine("tabName = " + fcommand.getName() + " maxRow = "
 				+ maxRow);
 
-		sheetConfig.getConfigRange().setFirstRowRef(
-				fcommand.getConfigRange().getFirstRowRef(), true);
-		sheetConfig.getConfigRange().setLastRowPlusRef(sheet, rightCol,
-				lastRow, true);
+		sheetConfig.setFormCommand(fcommand);
 
 		// header range row set to 0 while column set to first column to
 		// max

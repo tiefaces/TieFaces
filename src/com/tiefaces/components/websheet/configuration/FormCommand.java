@@ -1,10 +1,23 @@
 package com.tiefaces.components.websheet.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.AreaPtgBase;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtgBase;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.service.CellHelper;
+import com.tiefaces.components.websheet.service.ShiftFormula;
 
 /**
  * Form command. i.e. tie:form(name="departments" length="9" header="0"
@@ -107,12 +120,97 @@ public class FormCommand extends ConfigCommand {
 
 	}
 
+
+	// Form is top level, Form cannot include another Form
+	private List<Integer> buildFormWatchList(XSSFEvaluationWorkbook wbWrapper,
+			Sheet sheet) {
+		
+		ConfigRange cRange = this.getConfigRange();
+		List<ConfigCommand> commandList = cRange.getCommandList();
+		if (commandList.size()<=0) {
+			return null;
+		}
+		int lastStaticRow = commandList.get(0).getTopRow() - 1;
+		if (lastStaticRow < 0) {
+			lastStaticRow = this.getTopRow();
+		}
+		
+		Workbook wb = sheet.getWorkbook();
+		
+		List<Integer> watchList = new ArrayList<Integer>();
+		
+		
+		for (int i = this.getTopRow(); i<= this.getLastRow(); i++) {
+			Row row = sheet.getRow(i);
+			for (Cell cell : row) {
+				if (cell.getCellType() ==  Cell.CELL_TYPE_FORMULA) {
+					
+					Ptg[] ptgs = FormulaParser.parse(
+							cell.getCellFormula(), wbWrapper,
+							FormulaType.CELL, wb.getSheetIndex(sheet));
+					
+					for (int k = 0; k < ptgs.length; k++) {
+						Object ptg = ptgs[k];
+						int[] areaInt = ShiftFormula.getRowNumFromPtg(ptg);
+						if (areaInt[0] >= 0) {
+							addToWatchList(sheet,areaInt[0],lastStaticRow,watchList);
+							if (areaInt[1] >= 0) {
+								addToWatchList(sheet,areaInt[1],lastStaticRow,watchList);
+							}
+						}
+					}	
+					
+				}
+			}
+		}
+		
+		return watchList;
+		
+	}
+	
+	private void addToWatchList(Sheet sheet, int addRow, int lastStaticRow, List<Integer> watchList) {
+		if (addRow > lastStaticRow) {
+			watchList.add(addRow);
+		}	
+	}
+	
+	
+
 	@Override
-	public int buildAt(Sheet sheet, int startRow,
-			Map<String, Object> context, ExpressionEngine engine,
+	public int buildAt(
+			XSSFEvaluationWorkbook wbWrapper, 
+			Sheet sheet,
+			int atRow, 
+			Map<String, Object> context,
+			List<Integer> watchList,
+			List<RowsMapping> currentRowsMappingList,
+			List<RowsMapping> allRowsMappingList,
+			List<Cell> processedFormula,
+			ExpressionEngine engine, 
 			CellHelper cellHelper) {
 		// TODO Auto-generated method stub
-		return 0;
+		
+		watchList = buildFormWatchList(wbWrapper, sheet);
+		
+		RowsMapping currentMapping = new RowsMapping();
+		for (Integer index: watchList) {
+			Row row = sheet.getRow(index);
+			if (this.getConfigRange().isStaticRow(row)) {
+				currentMapping.addRow(index, row);
+			}	
+		}
+		currentRowsMappingList = new ArrayList<RowsMapping>();
+		allRowsMappingList = new ArrayList<RowsMapping>();
+		currentRowsMappingList.add(currentMapping);
+		allRowsMappingList.add(currentMapping);
+		
+        int length = this.getConfigRange().buildAt(wbWrapper, sheet, atRow, context, watchList, currentRowsMappingList, allRowsMappingList, processedFormula, engine, cellHelper);
+        		
+        this.setFinalLength(length);
+
+		return length;
 	}
+
+
 
 }

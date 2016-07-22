@@ -1,10 +1,15 @@
 package com.tiefaces.components.websheet.configuration;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
 import com.tiefaces.components.websheet.service.CellHelper;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+
 
 public interface Command {
 
@@ -59,7 +64,16 @@ public interface Command {
 
 	public abstract void setFinalLength(int populatedLength);
 	
-	public abstract int buildAt(final Sheet sheet,final int startRow,
-			final Map<String, Object> context, final ExpressionEngine engine, final CellHelper cellHelper);
+	public abstract int buildAt(
+			XSSFEvaluationWorkbook wbWrapper, 
+			Sheet sheet,
+			int atRow, 
+			Map<String, Object> context,
+			List<Integer> watchList,
+			List<RowsMapping> currentRowsMappingList,
+			List<RowsMapping> allRowsMappingList,
+			List<Cell> processedFormula,
+			ExpressionEngine engine,
+			final CellHelper cellHelper);
 
 }

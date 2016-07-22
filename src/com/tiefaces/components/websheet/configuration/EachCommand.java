@@ -6,9 +6,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.service.CellHelper;
 
@@ -92,12 +94,19 @@ public class EachCommand extends ConfigCommand {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public int buildAt(Sheet sheet, int atRow,
-			Map<String, Object> context, ExpressionEngine engine,
+	public int buildAt(
+			XSSFEvaluationWorkbook wbWrapper, 
+			Sheet sheet,
+			int atRow, 
+			Map<String, Object> context,
+			List<Integer> watchList,
+			List<RowsMapping> currentRowsMappingList,
+			List<RowsMapping> allRowsMappingList,
+			List<Cell> processedFormula,
+			ExpressionEngine engine, 
 			CellHelper cellHelper) {
+		
         Collection itemsCollection = ExpressionHelper.transformToCollectionObject(engine, items, context);
-        int width = 0;
-        int height = 0;
         int index = 0;
         ExpressionEngine selectEngine = null;
         if (select != null) {
@@ -105,7 +114,9 @@ public class EachCommand extends ConfigCommand {
         }
         
         int insertPosition = atRow;
+        
         for (Object obj : itemsCollection) {
+        	RowsMapping unitRowsMapping = new RowsMapping();
             context.put(var, obj);
             if (selectEngine != null && !ExpressionHelper.isConditionTrue(selectEngine, context)) {
                 context.remove(var);
@@ -113,11 +124,14 @@ public class EachCommand extends ConfigCommand {
             }
             ConfigRange currentRange = null;
             if (index > 0 ) {
-            	insertEachTemplate(sheet, insertPosition, cellHelper);
+            	insertEachTemplate(wbWrapper, sheet, insertPosition, watchList, unitRowsMapping, cellHelper);
             }
         	currentRange = buildCurrentRange(sheet, insertPosition);
-            int length = currentRange.buildAt(sheet, insertPosition, context, selectEngine, cellHelper);
+        	currentRowsMappingList.add(unitRowsMapping);
+        	allRowsMappingList.add(unitRowsMapping);
+            int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, allRowsMappingList, processedFormula, selectEngine, cellHelper);
             insertPosition += length;
+            currentRowsMappingList.remove(unitRowsMapping);
             index++;
             context.remove(var);
         }
@@ -136,13 +150,34 @@ public class EachCommand extends ConfigCommand {
 		return current;
 	}
 
-	private void insertEachTemplate(Sheet sheet, int insertPosition, CellHelper cellHelper) {
+	private void insertEachTemplate(XSSFEvaluationWorkbook wbWrapper, Sheet sheet, int insertPosition, List<Integer> watchList, RowsMapping unitRowsMapping, CellHelper cellHelper) {
 		// TODO Auto-generated method stub
 		Workbook wb = sheet.getWorkbook();
 		String copyName = COPY_SHEET_PREFIX + sheet.getSheetName();
 		Sheet srcSheet = wb.getSheet(copyName);
-		cellHelper.copyRows(sheet.getWorkbook(), srcSheet, sheet, this.getConfigRange().getFirstRowAddr().getRow(), this.getConfigRange().getLastRowPlusAddr().getRow() - 1, insertPosition);
+		
+		int srcStartRow =  this.getConfigRange().getFirstRowAddr().getRow();
+		int srcEndRow = this.getConfigRange().getLastRowPlusAddr().getRow() - 1;
+		cellHelper.copyRows(sheet.getWorkbook(), wbWrapper,srcSheet, sheet, srcStartRow, srcEndRow, insertPosition);
+		
+		for (int rowIndex= srcStartRow; rowIndex<= srcEndRow; rowIndex++) {
+			if (watchList.contains(rowIndex)) {
+				unitRowsMapping.addRow(rowIndex, sheet.getRow(insertPosition + rowIndex - srcStartRow));
+			}
+		}
 	}
+	
+	private void shiftFormulas(Sheet srcSheet, Sheet sheet, int top, int bottom, int insertPosition ) {
+		
+		int shiftRows = insertPosition - top;
+		if (shiftRows == 0) {
+			return;
+		}
+		
+		
+		
+	}
+
 
 
 }
