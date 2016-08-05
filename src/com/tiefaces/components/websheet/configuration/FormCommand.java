@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.ptg.AreaPtgBase;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -120,97 +117,121 @@ public class FormCommand extends ConfigCommand {
 
 	}
 
-
 	// Form is top level, Form cannot include another Form
-	private List<Integer> buildFormWatchList(XSSFEvaluationWorkbook wbWrapper,
-			Sheet sheet) {
-		
+	/**
+	 * Watch list serve for formula changes. Basically all the rows appeared in
+	 * the formula in the current sheet will be watched. Note if the cell
+	 * reference is from other sheet or workbooks, it will be ignored.
+	 * 
+	 * @param wbWrapper
+	 *            XSSFEvaluationWorkbook used for formula parse.
+	 * @param sheet
+	 *            current sheet.
+	 * @return List row number for monitoring.
+	 */
+	private List<Integer> buildFormWatchList(
+			final XSSFEvaluationWorkbook wbWrapper, final Sheet sheet) {
+
+		List<Integer> watchList = new ArrayList<Integer>();
+
 		ConfigRange cRange = this.getConfigRange();
 		List<ConfigCommand> commandList = cRange.getCommandList();
-		if (commandList.size()<=0) {
-			return null;
+		if (commandList.size() <= 0) {
+			return watchList;
 		}
 		int lastStaticRow = commandList.get(0).getTopRow() - 1;
 		if (lastStaticRow < 0) {
 			lastStaticRow = this.getTopRow();
 		}
-		
+
 		Workbook wb = sheet.getWorkbook();
-		
-		List<Integer> watchList = new ArrayList<Integer>();
-		
-		
-		for (int i = this.getTopRow(); i<= this.getLastRow(); i++) {
+
+
+		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
 			Row row = sheet.getRow(i);
 			for (Cell cell : row) {
-				if (cell.getCellType() ==  Cell.CELL_TYPE_FORMULA) {
-					
+				if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+
 					Ptg[] ptgs = FormulaParser.parse(
 							cell.getCellFormula(), wbWrapper,
 							FormulaType.CELL, wb.getSheetIndex(sheet));
-					
+
 					for (int k = 0; k < ptgs.length; k++) {
 						Object ptg = ptgs[k];
-						int[] areaInt = ShiftFormula.getRowNumFromPtg(ptg);
-						if (areaInt[0] >= 0) {
-							addToWatchList(sheet,areaInt[0],lastStaticRow,watchList);
-							if (areaInt[1] >= 0) {
-								addToWatchList(sheet,areaInt[1],lastStaticRow,watchList);
-							}
+						// For area formula, only first row is watched.
+						// Reason is the lastRow must shift same rows with
+						// firstRow.
+						// Otherwise it's difficult to calculate.
+						// In case some situation cannot fit, then should make
+						// change to the formula.
+						int areaInt = ShiftFormula
+								.getFirstSupportedRowNumFromPtg(ptg);
+						if (areaInt >= 0) {
+							addToWatchList(sheet, areaInt, lastStaticRow,
+									watchList);
 						}
-					}	
-					
+					}
+
 				}
 			}
 		}
-		
+
 		return watchList;
-		
+
 	}
-	
-	private void addToWatchList(Sheet sheet, int addRow, int lastStaticRow, List<Integer> watchList) {
+
+	/**
+	 * Only rows in dynamic area will be added to watch list.
+	 * 
+	 * @param sheet
+	 *            current sheet.
+	 * @param addRow
+	 *            row want to add.
+	 * @param lastStaticRow
+	 *            last static row.
+	 * @param watchList
+	 *            watch list.
+	 */
+	private void addToWatchList(final Sheet sheet, final int addRow,
+			final int lastStaticRow, final List<Integer> watchList) {
 		if (addRow > lastStaticRow) {
 			watchList.add(addRow);
-		}	
+		}
 	}
-	
-	
 
 	@Override
-	public int buildAt(
-			XSSFEvaluationWorkbook wbWrapper, 
-			Sheet sheet,
-			int atRow, 
-			Map<String, Object> context,
-			List<Integer> watchList,
+	/**
+	 * build the command area at the row.
+	 */
+	public final int buildAt(final XSSFEvaluationWorkbook wbWrapper,
+			final Sheet sheet, final int atRow,
+			final Map<String, Object> context, List<Integer> watchList,
 			List<RowsMapping> currentRowsMappingList,
 			List<RowsMapping> allRowsMappingList,
-			List<Cell> processedFormula,
-			ExpressionEngine engine, 
-			CellHelper cellHelper) {
+			final ExpressionEngine engine, final CellHelper cellHelper) {
 		// TODO Auto-generated method stub
-		
+
 		watchList = buildFormWatchList(wbWrapper, sheet);
-		
+
 		RowsMapping currentMapping = new RowsMapping();
-		for (Integer index: watchList) {
+		for (Integer index : watchList) {
 			Row row = sheet.getRow(index);
 			if (this.getConfigRange().isStaticRow(row)) {
 				currentMapping.addRow(index, row);
-			}	
+			}
 		}
 		currentRowsMappingList = new ArrayList<RowsMapping>();
 		allRowsMappingList = new ArrayList<RowsMapping>();
 		currentRowsMappingList.add(currentMapping);
 		allRowsMappingList.add(currentMapping);
-		
-        int length = this.getConfigRange().buildAt(wbWrapper, sheet, atRow, context, watchList, currentRowsMappingList, allRowsMappingList, processedFormula, engine, cellHelper);
-        		
-        this.setFinalLength(length);
+
+		int length = this.getConfigRange().buildAt(wbWrapper, sheet,
+				atRow, context, watchList, currentRowsMappingList,
+				allRowsMappingList, engine, cellHelper);
+
+		this.setFinalLength(length);
 
 		return length;
 	}
-
-
 
 }

@@ -7,15 +7,27 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import com.tiefaces.components.websheet.service.CellHelper;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
-
+/**
+ * Interface for all the command.
+ * 
+ * @author Jason Jiang
+ *
+ */
 public interface Command {
 
-	public abstract String getCommandTypeName();
+	/**
+	 * Return command type.
+	 * @return command type name.
+	 */
+	String getCommandTypeName();
 
-	public abstract void setCommandTypeName(String pCommandTypeName);
+	/**
+	 * Set command type.
+	 * @param pCommandTypeName command type name.
+	 */
+	void setCommandTypeName(String pCommandTypeName);
 
 	/**
 	 * Constructor configRange if it's null. Always return an object for
@@ -23,57 +35,97 @@ public interface Command {
 	 * 
 	 * @return ConfigRange object.
 	 */
-	public abstract ConfigRange getConfigRange();
+	ConfigRange getConfigRange();
 
-	public abstract void setConfigRange(ConfigRange pConfigRange);
+	/**
+	 * Set config range.
+	 * @param pConfigRange config range.
+	 */
+	void setConfigRange(ConfigRange pConfigRange);
 
-	public abstract Command getParentCommand();
+	/**
+	 * Return parent command.
+	 * @return parent command.
+	 */
+	Command getParentCommand();
 
-	public abstract void setParentCommand(Command pParentCommand);
+	/**
+	 * Set parent command.
+	 * @param pParentCommand parent command.
+	 */
+	void setParentCommand(Command pParentCommand);
 
-	public abstract String getLength();
+	/**
+	 * command area length.
+	 * @return length.
+	 */
+	String getLength();
 
-	public abstract void setLength(String pLength);
+	/**
+	 * Set command area length.
+	 * @param pLength length.
+	 */
+	void setLength(String pLength);
 
 	/**
 	 * Get top row of command range.
+	 * 
 	 * @return int top row index.
 	 */
-	public abstract int getTopRow();
+	int getTopRow();
 
 	/**
 	 * Get last row of command range.
+	 * 
 	 * @return int last row index.
 	 */
 
-	public abstract int getLastRow();
+	int getLastRow();
 
 	/**
 	 * get left column index of the command range.
+	 * 
 	 * @return int left column index.
 	 */
-	public abstract int getLeftCol();
+	int getLeftCol();
 
 	/**
 	 * get right column index of the command range.
+	 * 
 	 * @return int right column index.
 	 */
-	public abstract int getRightCol();
+	int getRightCol();
 
-	public abstract int getFinalLength();
+	/**
+	 * the final length of command area.
+	 * @return final length.
+	 */
+	int getFinalLength();
 
-	public abstract void setFinalLength(int populatedLength);
-	
-	public abstract int buildAt(
-			XSSFEvaluationWorkbook wbWrapper, 
-			Sheet sheet,
-			int atRow, 
-			Map<String, Object> context,
+	/**
+	 * Set the final length.
+	 * @param populatedLength final length.
+	 */
+	void setFinalLength(int populatedLength);
+
+	/**
+	 * build the command area.
+	 * @param wbWrapper workbook wrapper.
+	 * @param sheet sheet.
+	 * @param atRow populate at the row.
+	 * @param context context map.
+	 * @param watchList watch list for formula.
+	 * @param currentRowsMappingList rowsMapping for formula.
+	 * @param allRowsMappingList all rowsMapping for formula.
+	 * @param engine evaluation engine.
+	 * @param cellHelper cell helper.
+	 * @return
+	 */
+	int buildAt(XSSFEvaluationWorkbook wbWrapper,
+			Sheet sheet, int atRow, Map<String, Object> context,
 			List<Integer> watchList,
 			List<RowsMapping> currentRowsMappingList,
 			List<RowsMapping> allRowsMappingList,
-			List<Cell> processedFormula,
-			ExpressionEngine engine,
-			final CellHelper cellHelper);
+			ExpressionEngine engine, final CellHelper cellHelper);
 
 }

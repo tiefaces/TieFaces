@@ -35,8 +35,8 @@ public class TieWebSheetApp {
 		return engine;
 	}
 
-	public final void setEngine(final ScriptEngine engine) {
-		this.engine = engine;
+	public final void setEngine(final ScriptEngine pEngine) {
+		this.engine = pEngine;
 	}
 
 }

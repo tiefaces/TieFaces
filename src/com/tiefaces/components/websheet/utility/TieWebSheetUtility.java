@@ -1077,7 +1077,7 @@ public final class TieWebSheetUtility {
 			if (row == null) {
 				row = sheet.createRow(lastRow + 1);
 			}
-			return row.getCell(rightCol, Row.RETURN_BLANK_AS_NULL);
+			return row.getCell(rightCol, Row.CREATE_NULL_AS_BLANK);
 		}
 		return null;
 	}	

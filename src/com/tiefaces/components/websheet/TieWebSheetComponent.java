@@ -6,35 +6,44 @@
 package com.tiefaces.components.websheet;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.faces.component.FacesComponent;
 import javax.faces.component.UINamingContainer;
 import javax.faces.context.FacesContext;
 
+/**
+ * component class.
+ * @author Jason Jiang
+ *
+ */
 @FacesComponent("tieWebSheetComponent")
 public class TieWebSheetComponent extends UINamingContainer {
 
+	/** parent. */
 	private TieWebSheetBean webSheetBean = null;
 
-	private boolean debug = true;
+	/** logger. */
+	private static final Logger log = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
 
-	private void debug(String msg) {
-		if (debug) {
-			System.out.println("DEBUG: " + msg);
-		}
-	}
-
+	/** constructor. */
 	public TieWebSheetComponent() {
-		debug("TieWebSheetBean Constructor");
+		log.fine("TieWebSheetBean Constructor");
 	}
 
-	public TieWebSheetBean getWebSheetBean() {
+	/**
+	 * Return the bean.
+	 * 
+	 * @return bean.
+	 */
+	public final TieWebSheetBean getWebSheetBean() {
 		return webSheetBean;
 	}
 
 	@Override
-	public void encodeBegin(FacesContext context) throws IOException {
+	public final void encodeBegin(final FacesContext context)
+			throws IOException {
 		webSheetBean = (TieWebSheetBean) this.getAttributes().get(
 				TieWebSheetConstants.TIE_WEBSHEET_ATTRS_WEBSHEETBEAN);
 		if ((webSheetBean != null)
@@ -43,12 +52,14 @@ public class TieWebSheetComponent extends UINamingContainer {
 			webSheetBean.setWebFormClientId(this.getClientId() + ":"
 					+ TieWebSheetConstants.TIE_WEBSHEET_COMPONENT_ID);
 
-			String maxrows = (String) this.getAttributes()
-					.get("maxRowsPerPage");
-			if ((maxrows != null) && (!maxrows.isEmpty()))
+			String maxrows = (String) this.getAttributes().get(
+					"maxRowsPerPage");
+			if ((maxrows != null) && (!maxrows.isEmpty())) {
 				webSheetBean.setMaxRowsPerPage(Integer.valueOf(maxrows));
-			debug("websheetbean max rows = " + webSheetBean.getMaxRowsPerPage());
-			debug("webclientid = " + webSheetBean.getWebFormClientId());
+			}
+			log.fine("websheetbean max rows = "
+					+ webSheetBean.getMaxRowsPerPage());
+			log.fine("webclientid = " + webSheetBean.getWebFormClientId());
 		}
 		super.encodeBegin(context);
 	}

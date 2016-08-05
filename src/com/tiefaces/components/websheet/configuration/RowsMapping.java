@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 
-public class RowsMapping implements Cloneable {
-
+public class RowsMapping  {
+//implements Cloneable
 	private Map<Integer, List<Row>> rowsMap = new HashMap<Integer, List<Row>>();
 
 	public Map<Integer, List<Row>> getRowsMap() {
@@ -40,7 +40,7 @@ public class RowsMapping implements Cloneable {
 	}
 	
 	
-	
+	/*
 	public Object clone() {
 		try {
 			return super.clone();
@@ -48,7 +48,7 @@ public class RowsMapping implements Cloneable {
 			return null;
 		}
 	}
-	
+	*/
 	public void mergeMap(RowsMapping addMap) {
 		Map<Integer, List<Row>>  map = addMap.getRowsMap();
 		for (Map.Entry<Integer, List<Row>> entry : map.entrySet()) {

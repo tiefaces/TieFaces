@@ -395,7 +395,7 @@ public class CellHelper {
 			}
 			break;
 		case Cell.CELL_TYPE_FORMULA:
-			if (shiftFormula) {
+/*			if (shiftFormula) {
 				Ptg[] sharedFormulaPtg = FormulaParser.parse(
 						sourceCell.getCellFormula(), wbWrapper,
 						FormulaType.CELL, wb.getSheetIndex(srcSheet));
@@ -405,9 +405,9 @@ public class CellHelper {
 								shiftRowStart, shiftRowEnd);
 				newCell.setCellFormula(FormulaRenderer.toFormulaString(
 						wbWrapper, convertedFormulaPtg));
-			} else {
+			} else { */
 				newCell.setCellFormula(sourceCell.getCellFormula());
-			}
+			//}
 
 			// formulaEvaluator.notifySetFormula(newCell);
 			// formulaEvaluator.evaluate(newCell);

@@ -3,24 +3,20 @@ package com.tiefaces.components.websheet.configuration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.jxls.area.CommandData;
-import org.jxls.common.AreaRef;
-import org.jxls.common.CellRef;
-import org.jxls.common.Size;
-import org.jxls.common.cellshift.CellShiftStrategy;
 
 import com.tiefaces.components.websheet.service.CellHelper;
+import com.tiefaces.components.websheet.service.ShiftFormula;
 
 /**
  * Simple class for area range. Also include nested command list. Note: command
@@ -36,7 +32,7 @@ import com.tiefaces.components.websheet.service.CellHelper;
  * @author Jason Jiang
  *
  */
-public class ConfigRange implements Cloneable {
+public class ConfigRange {
 
 	/** logger. */
 	private final Logger log = Logger.getLogger(Thread.currentThread()
@@ -65,6 +61,8 @@ public class ConfigRange implements Cloneable {
 	 * 
 	 * @param pFirstRowRef
 	 *            first cell.
+	 * @param alsoCreateAddr
+	 *            whether need create cell address.
 	 */
 	public final void setFirstRowRef(final Cell pFirstRowRef,
 			final boolean alsoCreateAddr) {
@@ -87,9 +85,12 @@ public class ConfigRange implements Cloneable {
 	 *            rightColumn.
 	 * @param lastRow
 	 *            lastRow.
+	 * @param alsoSetAddr
+	 *            whether need create cell address.
 	 */
-	public final void setLastRowPlusRef(Sheet sheet, int rightCol,
-			int lastRow, boolean alsoSetAddr) {
+	public final void setLastRowPlusRef(final Sheet sheet,
+			final int rightCol, final int lastRow,
+			final boolean alsoSetAddr) {
 
 		if ((lastRow >= 0) && (sheet != null) && (rightCol >= 0)) {
 			Row row = sheet.getRow(lastRow + 1);
@@ -98,7 +99,7 @@ public class ConfigRange implements Cloneable {
 			}
 			Cell cell = row.getCell(rightCol);
 			if (cell == null) {
-				cell = row.getCell(rightCol, Row.RETURN_BLANK_AS_NULL);
+				cell = row.getCell(rightCol, Row.CREATE_NULL_AS_BLANK);
 				this.lastCellCreated = true;
 			} else {
 				this.lastCellCreated = false;
@@ -149,7 +150,7 @@ public class ConfigRange implements Cloneable {
 		this.commandList = pCommandList;
 	}
 
-	public boolean isLastCellCreated() {
+	public final boolean isLastCellCreated() {
 		return lastCellCreated;
 	}
 
@@ -181,17 +182,13 @@ public class ConfigRange implements Cloneable {
 	 *            context map.
 	 * @return final length.
 	 */
-	public final int buildAt(
-			XSSFEvaluationWorkbook wbWrapper, 
-			Sheet sheet,
-			int atRow, 
-			Map<String, Object> context,
-			List<Integer> watchList,
-			List<RowsMapping> currentRowsMappingList,
-			List<RowsMapping> allRowsMappingList,
-			List<Cell> processedFormula,
-			ExpressionEngine engine,
-			final CellHelper cellHelper) {
+	public final int buildAt(final XSSFEvaluationWorkbook wbWrapper,
+			final Sheet sheet, final int atRow,
+			final Map<String, Object> context,
+			final List<Integer> watchList,
+			final List<RowsMapping> currentRowsMappingList,
+			final List<RowsMapping> allRowsMappingList,
+			final ExpressionEngine engine, final CellHelper cellHelper) {
 		log.fine("build xls sheet at row : " + atRow);
 
 		// List<Row> staticRows = setUpBuildRows(sheet,
@@ -202,26 +199,18 @@ public class ConfigRange implements Cloneable {
 			// cellRange.resetChangeMatrix();
 			Command command = commandList.get(i);
 			command.setFinalLength(0);
-			int populatedLength = command.buildAt(
-					wbWrapper, 
-					sheet, 
-					command
-					.getConfigRange().getFirstRowRef().getRowIndex(),
-					context,
-					watchList, 
-					currentRowsMappingList, 
-					allRowsMappingList, 
-					processedFormula,
-					engine, 
+			int populatedLength = command.buildAt(wbWrapper, sheet,
+					command.getConfigRange().getFirstRowRef()
+							.getRowIndex(), context, watchList,
+					currentRowsMappingList, allRowsMappingList, engine,
 					cellHelper);
 			currentRowsMappingList.clear();
 			currentRowsMappingList.addAll(allRowsMappingList);
 			command.setFinalLength(populatedLength);
 		}
 
-		buildCells(sheet, atRow, context, engine, cellHelper);
-
-		// updateCellDataFinalAreaForFormulaCells(newAreaRef);
+		buildCells(sheet, atRow, context, wbWrapper, watchList,
+				currentRowsMappingList, engine, cellHelper);
 
 		int finalLength = this.getLastRowPlusRef().getRowIndex()
 				- this.getFirstRowRef().getRowIndex() - 1;
@@ -230,26 +219,10 @@ public class ConfigRange implements Cloneable {
 
 	}
 
-	/*
-	 * private List<Row> setUpBuildRows(final Sheet sheet, final int startRow,
-	 * final int endRow, final List<ConfigCommand> commandList) { List<Row>
-	 * staticRows = new ArrayList<Row>(); int endStaticRow = endRow + 1; boolean
-	 * emptyCommand = false; if ((commandList !=
-	 * null)&&(commandList.size()>0)&&(commandList.get(0).getTopRow()>=0)) {
-	 * endStaticRow = commandList.get(0).getTopRow(); } else { emptyCommand =
-	 * true; } for (int i= startRow; i< endStaticRow; i++ ) { Row row =
-	 * sheet.getRow(i); if (row != null) { staticRows.add(row); } } if
-	 * (!emptyCommand) { for (int i=endStaticRow; i<= endRow; i++) { Row row =
-	 * sheet.getRow(i); if (row != null) { if
-	 * (isStaticRow(row.getRowNum(),commandList)) { staticRows.add(row); } }
-	 * 
-	 * } } return staticRows; }
-	 * 
-	 * private boolean isStaticRow(int rowIndex, final List<ConfigCommand>
-	 * commandList) { for (int i = 0; i < commandList.size(); i++) { Command
-	 * command = commandList.get(i); if ((rowIndex >= command.getTopRow()) &&
-	 * (rowIndex <= (command.getTopRow() + command .getFinalLength()))) { return
-	 * false; } } return true; }
+	/**
+	 * Whether the row is static.
+	 * @param row the row for check.
+	 * @return true is static false is not.
 	 */
 	public boolean isStaticRow(Row row) {
 		for (int i = 0; i < commandList.size(); i++) {
@@ -264,27 +237,69 @@ public class ConfigRange implements Cloneable {
 		return true;
 	}
 
-	private void buildCells(Sheet sheet, int startRow,
-			Map<String, Object> context, final ExpressionEngine engine,
-			final CellHelper cellHelper) {
+	/**
+	 * Build all the static cells in the range (exclude command areas).
+	 * @param sheet sheet.
+	 * @param atRow start row.
+	 * @param context context.
+	 * @param wbWrapper workbook wrapper.
+	 * @param watchList watch list.
+	 * @param currentRowsMappingList current rows mapping.
+	 * @param engine engine.
+	 * @param cellHelper cell helper.
+	 */
+	private void buildCells(final Sheet sheet, final int atRow,
+			final Map<String, Object> context,
+			final XSSFEvaluationWorkbook wbWrapper, final List<Integer> watchList,
+			final List<RowsMapping> currentRowsMappingList,
+			final ExpressionEngine engine, final CellHelper cellHelper) {
+		
+		if ((context==null) || (context.size()==0)) {
+			// no need to evaluate as there's no data object.
+			return ;
+		}
 		int lastRowPlus = this.getLastRowPlusRef().getRowIndex();
-		for (int i = startRow; i < lastRowPlus; i++) {
+		for (int i = atRow; i < lastRowPlus; i++) {
 			Row row = sheet.getRow(i);
 			if ((row != null) && isStaticRow(row)) {
 				for (Cell cell : row) {
 					ExpressionHelper.evaluate(context, cell, engine,
 							cellHelper);
+					if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+						// rebuild formula if necessary for dynamic row
+						buildCellFormulaForShiftedRows(sheet,
+								wbWrapper, watchList,
+								currentRowsMappingList, cell);
+
+					}
 				}
 			}
 		}
 	}
 
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (Exception e) {
-			return null;
-		}
+	private void buildCellFormulaForShiftedRows(final Sheet sheet,
+			final XSSFEvaluationWorkbook wbWrapper,
+			final List<Integer> watchList,
+			final List<RowsMapping> currentRowsMappingList, Cell cell) {
+		// only shift when there's watchlist exist.
+		if ((watchList!=null)&&(watchList.size()>0)) {
+			Ptg[] ptgs = FormulaParser.parse(cell
+					.getCellFormula(), wbWrapper,
+					FormulaType.CELL, sheet.getWorkbook()
+							.getSheetIndex(sheet));
+			Boolean formulaChanged = false;
+			Ptg[] convertedFormulaPtg = ShiftFormula
+					.convertSharedFormulas(ptgs, watchList,
+							currentRowsMappingList, 
+							formulaChanged);
+			if (formulaChanged) {
+				// only change formula when indicator is true
+				cell.setCellFormula(FormulaRenderer
+						.toFormulaString(wbWrapper,
+								convertedFormulaPtg));
+			}
+		}	
 	}
+
 
 }

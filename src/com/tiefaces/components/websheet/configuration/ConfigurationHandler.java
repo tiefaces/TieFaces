@@ -358,7 +358,7 @@ public class ConfigurationHandler {
 		log.fine("form tabName = " + formName + " maxRow = " + maxRow);
 
 		Cell firstCell = sheet.getRow(firstRow).getCell(leftCol,
-				Row.RETURN_BLANK_AS_NULL);
+				Row.CREATE_NULL_AS_BLANK);
 		// header range row set to 0 while column set to first column to
 		// max
 		// column (FF) e.g. $A$0 : $FF$0
@@ -383,8 +383,8 @@ public class ConfigurationHandler {
 
 		// check it's a hidden sheet
 		int sheetIndex = parent.getWb().getSheetIndex(sheet);
-		if (!(parent.getWb().isSheetHidden(sheetIndex) || parent.getWb()
-				.isSheetVeryHidden(sheetIndex))) {
+		if (parent.getWb().isSheetHidden(sheetIndex) || parent.getWb()
+				.isSheetVeryHidden(sheetIndex)) {
 			sheetConfig.setHidden(true);
 		}
 
@@ -538,7 +538,7 @@ public class ConfigurationHandler {
 		// comments.
 		for (CellAddress key : keys) {
 			Cell firstCell = sheet.getRow(key.getRow()).getCell(
-					key.getColumn(), Row.RETURN_BLANK_AS_NULL);
+					key.getColumn(), Row.CREATE_NULL_AS_BLANK);
 			commandList = buildCommandList(sheet, sheetRightCol,
 					firstCell, comments.get(key), commandList);
 		}

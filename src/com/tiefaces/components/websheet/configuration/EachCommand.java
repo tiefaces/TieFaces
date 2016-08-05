@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
+import com.rits.cloning.Cloner;
 import com.tiefaces.components.websheet.service.CellHelper;
 
 /**
@@ -102,7 +103,6 @@ public class EachCommand extends ConfigCommand {
 			List<Integer> watchList,
 			List<RowsMapping> currentRowsMappingList,
 			List<RowsMapping> allRowsMappingList,
-			List<Cell> processedFormula,
 			ExpressionEngine engine, 
 			CellHelper cellHelper) {
 		
@@ -115,6 +115,9 @@ public class EachCommand extends ConfigCommand {
         
         int insertPosition = atRow;
         
+        Cloner cloner=new Cloner();
+
+        // clone is a deep-clone of o
         for (Object obj : itemsCollection) {
         	RowsMapping unitRowsMapping = new RowsMapping();
             context.put(var, obj);
@@ -126,10 +129,10 @@ public class EachCommand extends ConfigCommand {
             if (index > 0 ) {
             	insertEachTemplate(wbWrapper, sheet, insertPosition, watchList, unitRowsMapping, cellHelper);
             }
-        	currentRange = buildCurrentRange(sheet, insertPosition);
+        	currentRange = buildCurrentRange(sheet, insertPosition, cloner);
         	currentRowsMappingList.add(unitRowsMapping);
         	allRowsMappingList.add(unitRowsMapping);
-            int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, allRowsMappingList, processedFormula, selectEngine, cellHelper);
+            int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, allRowsMappingList, selectEngine, cellHelper);
             insertPosition += length;
             currentRowsMappingList.remove(unitRowsMapping);
             index++;
@@ -139,11 +142,11 @@ public class EachCommand extends ConfigCommand {
         return finalLength;
      }
 	
-	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition) {
-		ConfigRange current = (ConfigRange) this.getConfigRange().clone();
+	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition, Cloner cloner) {
+		ConfigRange current = cloner.deepClone(this.getConfigRange());
 		int firstCellColumn = this.getConfigRange().getFirstRowAddr().getColumn();
 		int firstCellRow = this.getConfigRange().getFirstRowAddr().getRow();
-		current.setFirstRowRef(sheet.getRow(insertPosition).getCell(firstCellColumn, Row.RETURN_BLANK_AS_NULL), false);
+		current.setFirstRowRef(sheet.getRow(insertPosition).getCell(firstCellColumn, Row.CREATE_NULL_AS_BLANK), false);
 		int lastPlusRow = this.getConfigRange().getLastRowPlusAddr().getRow() + insertPosition - firstCellRow;
 		int lastPlusColumn = this.getConfigRange().getLastRowPlusAddr().getColumn();
 		current.setLastRowPlusRef(sheet, lastPlusColumn, lastPlusRow -1, false);
