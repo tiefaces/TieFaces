@@ -47,13 +47,10 @@ public interface Command {
 	 * Return parent command.
 	 * @return parent command.
 	 */
-	Command getParentCommand();
+	Boolean isParentFound();
+	
+	void setParentFound(Boolean parentFound);
 
-	/**
-	 * Set parent command.
-	 * @param pParentCommand parent command.
-	 */
-	void setParentCommand(Command pParentCommand);
 
 	/**
 	 * command area length.

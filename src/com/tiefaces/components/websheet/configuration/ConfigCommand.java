@@ -13,8 +13,6 @@ public abstract class ConfigCommand implements Command {
 	private String commandTypeName;
 	/** Range. */
 	private ConfigRange configRange;
-	/** Parent command. */
-	private Command parentCommand = null;
 	/**
 	 * The command's area's rows number. This is convenient way to set up area
 	 * compare to set the last cell attribute. As in some case we only want to
@@ -25,6 +23,8 @@ public abstract class ConfigCommand implements Command {
 	 * command actual length after populate data.
 	 */
 	private int finalLength = 0;
+	
+	private Boolean parentFound = false;
 
 	@Override
 	public final String getCommandTypeName() {
@@ -50,13 +50,15 @@ public abstract class ConfigCommand implements Command {
 	}
 
 	@Override
-	public final Command getParentCommand() {
-		return parentCommand;
+	public	Boolean isParentFound() {
+		return parentFound;
 	}
-
+	
+	
+	
 	@Override
-	public final void setParentCommand(final Command pParentCommand) {
-		this.parentCommand = pParentCommand;
+	public void setParentFound(Boolean parentFound) {
+		this.parentFound = parentFound;
 	}
 
 	@Override
@@ -120,6 +122,9 @@ public abstract class ConfigCommand implements Command {
 
 	@Override
 	public final int getFinalLength() {
+		if (finalLength <= 0) {
+			finalLength =  calcLength(this.getLength());
+		}
 		return finalLength;
 	}
 

@@ -6,13 +6,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
-import com.rits.cloning.Cloner;
+import com.google.gson.Gson;
 import com.tiefaces.components.websheet.service.CellHelper;
 
 /**
@@ -115,7 +114,9 @@ public class EachCommand extends ConfigCommand {
         
         int insertPosition = atRow;
         
-        Cloner cloner=new Cloner();
+        Gson gson = new Gson();
+        String jsonCurrentRange = gson.toJson(this.getConfigRange(), this.getConfigRange().getClass());
+        
 
         // clone is a deep-clone of o
         for (Object obj : itemsCollection) {
@@ -129,7 +130,7 @@ public class EachCommand extends ConfigCommand {
             if (index > 0 ) {
             	insertEachTemplate(wbWrapper, sheet, insertPosition, watchList, unitRowsMapping, cellHelper);
             }
-        	currentRange = buildCurrentRange(sheet, insertPosition, cloner);
+        	currentRange = buildCurrentRange(sheet, insertPosition, gson, jsonCurrentRange);
         	currentRowsMappingList.add(unitRowsMapping);
         	allRowsMappingList.add(unitRowsMapping);
             int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, allRowsMappingList, selectEngine, cellHelper);
@@ -142,8 +143,18 @@ public class EachCommand extends ConfigCommand {
         return finalLength;
      }
 	
-	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition, Cloner cloner) {
-		ConfigRange current = cloner.deepClone(this.getConfigRange());
+	public <T> T deepCopy(T object, Class<T> type) {
+	    try {
+	        Gson gson = new Gson();
+	        return gson.fromJson(gson.toJson(object, type), type);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
+	}	
+	
+	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition, Gson gson, String jsonRange) {
+		ConfigRange current = gson.fromJson(jsonRange, this.getConfigRange().getClass());
 		int firstCellColumn = this.getConfigRange().getFirstRowAddr().getColumn();
 		int firstCellRow = this.getConfigRange().getFirstRowAddr().getRow();
 		current.setFirstRowRef(sheet.getRow(insertPosition).getCell(firstCellColumn, Row.CREATE_NULL_AS_BLANK), false);

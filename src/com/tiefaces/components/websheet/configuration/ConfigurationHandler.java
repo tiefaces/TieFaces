@@ -123,6 +123,24 @@ public class ConfigurationHandler {
 	public Map<String, SheetConfiguration> buildConfiguration() {
 
 		Map<String, SheetConfiguration> sheetConfigMap = new LinkedHashMap<String, SheetConfiguration>();
+		// in buildsheet, it's possible to add sheets in workbook.
+		// so cache the sheetname first here.
+		List<String> sheetNames = new ArrayList<String>();
+		String sname = null;
+		for (int i=0; i< parent.getWb().getNumberOfSheets(); i++) {
+			sname = parent.getWb().getSheetName(i);
+			if (!sname.startsWith(COPY_SHEET_PREFIX)) {
+				sheetNames.add(sname);
+			}	
+		}		
+		
+		for ( String sheetName : sheetNames) {
+			Sheet sheet = parent.getWb().getSheet(sheetName);
+			buildSheet(sheet, sheetConfigMap);
+		}
+		log.fine("buildConfiguration map = " + sheetConfigMap);
+		return sheetConfigMap;		
+/*		
 		log.fine("parent configuration tab = "
 				+ parent.getConfigurationTab());
 		Sheet sheet1 = parent.getWb().getSheet(
@@ -132,6 +150,7 @@ public class ConfigurationHandler {
 			return buildConfigurationWithoutTab(sheetConfigMap);
 		else
 			return buildConfigurationWithTab(sheet1, sheetConfigMap);
+*/			
 	}
 
 	private Map<String, SheetConfiguration> buildConfigurationWithTab(
@@ -505,7 +524,7 @@ public class ConfigurationHandler {
 
 		int sheetRightCol = TieWebSheetUtility.getSheetRightCol(sheet);
 		List<ConfigCommand> commandList = buildCommandListFromSheetComment(
-				sheet, sheetRightCol);
+				(XSSFSheet) sheet, sheetRightCol);
 		List<String> formList = new ArrayList<String>();
 
 		buildSheetConfigMapFromFormCommand(sheet, sheetConfigMap,
@@ -526,10 +545,20 @@ public class ConfigurationHandler {
 	 * @return command list.
 	 */
 	private List<ConfigCommand> buildCommandListFromSheetComment(
-			final Sheet sheet, final int sheetRightCol) {
+			final XSSFSheet sheet, final int sheetRightCol) {
 		List<ConfigCommand> commandList = new ArrayList<ConfigCommand>();
-		Map<CellAddress, ? extends Comment> comments = sheet
-				.getCellComments();
+		Map<CellAddress, ? extends Comment> comments = null;
+		
+		try {
+			// due to a poi bug. null exception throwed if no comments in the sheet. 
+			comments = sheet.getCellComments();
+		} catch (Exception ex) {
+			log.fine("due to a poi bug, null exception throwed where there's no comment. exeption = "+ex.getLocalizedMessage() );
+		}
+		if (comments == null) {
+			return commandList;
+		}
+		
 		// not sure the map is sorted. So use tree map to sort it.
 		SortedSet<CellAddress> keys = new TreeSet<CellAddress>(
 				comments.keySet());
@@ -625,9 +654,9 @@ public class ConfigurationHandler {
 					}
 				}
 				if (matchIndex >= 0) {
-					child.setParentCommand(commandList.get(matchIndex));
 					commandList.get(matchIndex).getConfigRange()
 							.addCommand(child);
+					child.setParentFound(true);
 				}
 			}
 		}
@@ -654,7 +683,7 @@ public class ConfigurationHandler {
 			// check is not form command
 			if (!command.getCommandTypeName().equalsIgnoreCase(
 					COMMAND_FORM)
-					&& (command.getParentCommand() == null)) {
+					&& (!command.isParentFound())) {
 				for (String formname : formList) {
 					SheetConfiguration sheetConfig = sheetConfigMap
 							.get(formname);
@@ -905,8 +934,6 @@ public class ConfigurationHandler {
 		log.fine("tabName = " + fcommand.getName() + " maxRow = "
 				+ maxRow);
 
-		sheetConfig.setFormCommand(fcommand);
-
 		// header range row set to 0 while column set to first column to
 		// max
 		// column (FF) e.g. $A$0 : $FF$0
@@ -975,6 +1002,7 @@ public class ConfigurationHandler {
 		if ((hidden != null) && (Boolean.parseBoolean(hidden))) {
 			sheetConfig.setHidden(true);
 		}
+		sheetConfig.setFormCommand(fcommand);
 		return sheetConfig;
 
 	}

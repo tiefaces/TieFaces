@@ -29,9 +29,9 @@ public class FormCommand extends ConfigCommand {
 	/** name holder. */
 	private String name;
 	/** header holder. */
-	private String header;
+	private String headerLength;
 	/** footer holder. */
-	private String footer;
+	private String footerLength;
 	/** hidden holder. */
 	private String hidden;
 
@@ -43,20 +43,20 @@ public class FormCommand extends ConfigCommand {
 		this.name = pName;
 	}
 
-	public final String getHeader() {
-		return header;
+	public String getHeaderLength() {
+		return headerLength;
 	}
 
-	public final void setHeader(final String pHeader) {
-		this.header = pHeader;
+	public void setHeaderLength(String headerLength) {
+		this.headerLength = headerLength;
 	}
 
-	public final String getFooter() {
-		return footer;
+	public String getFooterLength() {
+		return footerLength;
 	}
 
-	public final void setFooter(final String pFooter) {
-		this.footer = pFooter;
+	public void setFooterLength(String footerLength) {
+		this.footerLength = footerLength;
 	}
 
 	public final String getHidden() {
@@ -73,7 +73,7 @@ public class FormCommand extends ConfigCommand {
 	 * @return int header length.
 	 */
 	public final int calcHeaderLength() {
-		return calcLength(this.getHeader());
+		return calcLength(this.getHeaderLength());
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class FormCommand extends ConfigCommand {
 	 * @return int footer length.
 	 */
 	public final int calcFooterLength() {
-		return calcLength(this.getFooter());
+		return calcLength(this.getFooterLength());
 	}
 
 	/**
@@ -109,9 +109,9 @@ public class FormCommand extends ConfigCommand {
 		sb.append(",");
 		sb.append("length = " + this.getLength());
 		sb.append(",");
-		sb.append("header = " + this.getHeader());
+		sb.append("header length = " + this.getHeaderLength());
 		sb.append(",");
-		sb.append("footer = " + this.getFooter());
+		sb.append("footer length = " + this.getFooterLength());
 		sb.append("}");
 		return sb.toString();
 
@@ -145,7 +145,6 @@ public class FormCommand extends ConfigCommand {
 		}
 
 		Workbook wb = sheet.getWorkbook();
-
 
 		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
 			Row row = sheet.getRow(i);
@@ -194,7 +193,7 @@ public class FormCommand extends ConfigCommand {
 	 */
 	private void addToWatchList(final Sheet sheet, final int addRow,
 			final int lastStaticRow, final List<Integer> watchList) {
-		if (addRow > lastStaticRow) {
+		if ((addRow > lastStaticRow) && !(watchList.contains(addRow))) {
 			watchList.add(addRow);
 		}
 	}

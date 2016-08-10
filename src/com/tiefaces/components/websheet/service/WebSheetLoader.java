@@ -261,11 +261,11 @@ public class WebSheetLoader implements Serializable {
 		parent.setBodyRows(null);
 		parent.setSheetConfigMap(null);
 		parent.setTabs(null);
+		parent.setDataContext(null);
 		parent.getChartsMap().clear();
 		parent.getChartDataMap().clear();
 		parent.getChartAnchorsMap().clear();
 		parent.getChartPositionMap().clear();
-		parent.getDataContext().clear();
 	}
 
 	public int loadWorkbook(final InputStream fis,
@@ -352,6 +352,12 @@ public class WebSheetLoader implements Serializable {
 	 * load data process. unfinished.
 	 */
 	private void loadData() {
+		
+		if (parent.getDataContext() == null) {
+			// no data objects available.
+			return;
+		}
+		
 		ExpressionEngine expEngine = new ExpressionEngine(
 				parent.getDataContext());
 		for (SheetConfiguration sheetConfig : parent.getSheetConfigMap()

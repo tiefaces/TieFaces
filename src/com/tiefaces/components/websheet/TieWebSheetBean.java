@@ -439,9 +439,6 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return map.
 	 */
 	public final Map<String, Object> getDataContext() {
-		if (dataContext == null) {
-			dataContext = new HashMap<String, Object>();
-		}
 		return dataContext;
 	}
 
