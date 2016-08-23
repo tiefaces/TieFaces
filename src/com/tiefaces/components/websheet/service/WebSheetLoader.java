@@ -365,12 +365,13 @@ public class WebSheetLoader implements Serializable {
 			List<Integer> watchList = null;
 			List<RowsMapping> currentRowsMappingList = null;
 			List<RowsMapping> allRowsMappingList = null;
-			sheetConfig.getFormCommand().buildAt(parent.getWbWrapper(),
+			int length = sheetConfig.getFormCommand().buildAt(parent.getWbWrapper(),
 					parent.getWb().getSheet(sheetConfig.getSheetName()),
 					sheetConfig.getFormCommand().getTopRow(),
 					parent.getDataContext(), watchList,
 					currentRowsMappingList, allRowsMappingList,
 					expEngine, parent.getCellHelper());
+			sheetConfig.getBodyCellRange().setBottomRow( sheetConfig.getFormCommand().getTopRow() + length - 1);
 			sheetConfig.setBodyPopulated(true);
 		}
 		parent.getCellHelper().reCalc();

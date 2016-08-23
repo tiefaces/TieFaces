@@ -36,7 +36,10 @@ public class ExpressionHelper {
                 }
             }else{
             	evaluationResult = evaluate(strValue, context, engine);
-            	cellHelper.setCellValue(cell, evaluationResult.toString());
+            	if (evaluationResult == null) {
+            		evaluationResult = "";
+            	} 
+               	cellHelper.setCellValue(cell, evaluationResult.toString());
             }
         }
     }

@@ -34,6 +34,20 @@ public class FormCommand extends ConfigCommand {
 	private String footerLength;
 	/** hidden holder. */
 	private String hidden;
+	
+	
+
+	public FormCommand() {
+		super();
+	}
+
+	public FormCommand(FormCommand sourceCommand) {
+		super((ConfigCommand) sourceCommand);
+		this.name = sourceCommand.name;
+		this.headerLength = sourceCommand.headerLength;
+		this.footerLength = sourceCommand.footerLength;
+		this.hidden = sourceCommand.hidden;
+	}
 
 	public final String getName() {
 		return name;

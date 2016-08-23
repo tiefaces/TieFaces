@@ -1,5 +1,7 @@
 package com.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
+
 
 /**
  * Base class for all configuration command.
@@ -26,6 +28,20 @@ public abstract class ConfigCommand implements Command {
 	
 	private Boolean parentFound = false;
 
+	
+	public ConfigCommand() {
+		super();
+	}
+
+
+	public ConfigCommand(ConfigCommand source) {
+		this.commandTypeName = source.commandTypeName;
+		this.length = source.length;
+		this.finalLength = source.finalLength;
+		this.configRange = new ConfigRange(source.configRange);
+	}
+	
+	
 	@Override
 	public final String getCommandTypeName() {
 		return commandTypeName;

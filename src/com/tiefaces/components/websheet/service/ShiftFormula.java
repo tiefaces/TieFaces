@@ -16,6 +16,7 @@ import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtgBase;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.OperandPtg;
 import org.apache.poi.ss.formula.ptg.OperationPtg;
 import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
@@ -35,6 +36,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.configuration.RowsMapping;
+import com.tiefaces.components.websheet.configuration.ShiftFormulaRef;
 
 public class ShiftFormula {
 	// only support xlsx
@@ -42,18 +44,17 @@ public class ShiftFormula {
 			.getLastRowIndex();
 
 	public static Ptg[] convertSharedFormulas(Ptg[] ptgs,
-			final List<Integer> watchList,
-			final List<RowsMapping> currentRowsMappingList,
-			Boolean formulaChanged) {
+			final ShiftFormulaRef shiftFormulaRef) {
 		
 		List<Ptg> newPtgList = new ArrayList<Ptg>();
 		Object ptg = null;
 		for (int k = 0; k < ptgs.length; ++k) {
 			ptg = ptgs[k];
-			newPtgList.addAll(Arrays.asList(convertPtg(ptgs, k, watchList,currentRowsMappingList, ptg, formulaChanged )));
+			newPtgList.addAll(Arrays.asList(convertPtg(ptgs, k, shiftFormulaRef, ptg )));
 		}
 
-		return (Ptg[]) newPtgList.toArray();
+		//String [] stockArr = stockList.toArray(new String[stockList.size()]);
+		return  newPtgList.toArray(new Ptg[newPtgList.size()]);
 	}
 
 /*	public static int[] getRowNumFromPtg(Object ptg) {
@@ -120,10 +121,9 @@ public class ShiftFormula {
 	
 
 	private static Ptg[] convertPtg(final Ptg[] ptgs,
-			final int position, final List<Integer> watchList,
-			final List<RowsMapping> currentRowsMappingList,
-			Object ptg,
-			Boolean formulaChanged) {
+			final int position, final ShiftFormulaRef shiftFormulaRef,
+			Object ptg
+			) {
 		
 		
 		//SharedFormula sharedFormula.convertSharedFormulas(sharedFormulaPtg, 0, 1);
@@ -135,25 +135,33 @@ public class ShiftFormula {
 		
 		int currentRow;
 		currentRow = getFirstSupportedRowNumFromPtg(ptg);
-		if ( (currentRow >=0) && watchList.contains(currentRow)) {
-			List<Row> rowlist = getRowsList(currentRow,currentRowsMappingList);
-			if (rowlist.size()==0) {
+		if ( (currentRow >=0) && shiftFormulaRef.getWatchList().contains(currentRow)) {
+			List<Row> rowlist = getRowsList(currentRow,shiftFormulaRef.getCurrentRowsMappingList());
+			if ((rowlist == null) || (rowlist.size() == 0)) {
 				// no need change ptg
 				return singlePtg(ptg, originalOperandClass);
 			} else {
-				formulaChanged = true;
+				shiftFormulaRef.setFormulaChanged(1);
 				// one to one or has no round brackets
 				if ((rowlist.size()==1) || ((position+1) >= ptgs.length) || !(ptgs[position+1]  instanceof ParenthesisPtg ) ) {
 					// change ptg one to one
 					// return changed ptg
 					return singlePtg(fixupRefRelativeRowOneToOne(ptg, rowlist.get(0)), originalOperandClass);
 				} else {
+					shiftFormulaRef.setFormulaChanged(rowlist.size());
 					return fixupRefRelativeRowOneToMany(ptg, originalOperandClass, rowlist,ptgs,position);							
 				}
 			}
 			
 		} else {
 			// no need change ptg
+			if ((ptg instanceof AttrPtg) && (shiftFormulaRef.getFormulaChanged()>1)) {
+				Ptg newPtg = (AttrPtg) ptg;
+				if (newPtg.toFormulaString().toLowerCase().contains("sum")) {
+					FuncVarPtg fptg = FuncVarPtg.create("sum", shiftFormulaRef.getFormulaChanged());
+					return singlePtg(fptg, fptg.getPtgClass());
+				}
+			}
 			return singlePtg(ptg, originalOperandClass);
 		}
 	}

@@ -46,7 +46,8 @@ public final class TieWebSheetConstants {
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT = "text";
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXTAREA = "textarea";
 	
-	public static final String COPY_SHEET_PREFIX = "copy_template_tie_commands_";
+	public static final String COPY_SHEET_PREFIX = "cptieTemp_";
+	public static final short EXCEL_SHEET_NAME_LIMIT = 31;
 	/** command's prefix. */
 	public static final String COMMAND_PREFIX = "tie:";
 	/** form command. */

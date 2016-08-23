@@ -1,5 +1,6 @@
 package com.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import com.tiefaces.components.websheet.service.ShiftFormula;
  */
 public class ConfigRange {
 
+
 	/** logger. */
 	private final Logger log = Logger.getLogger(Thread.currentThread()
 			.getStackTrace()[0].getClassName());
@@ -51,6 +53,38 @@ public class ConfigRange {
 
 	/** command list. */
 	private List<ConfigCommand> commandList;
+	
+
+	public ConfigRange() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+    /**
+     * Copy constructor
+     */
+    public ConfigRange(ConfigRange source) {
+        this.firstRowRef = source.firstRowRef;
+        this.firstRowAddr = source.firstRowAddr;
+        this.lastRowPlusRef = source.lastRowPlusRef;
+        this.lastRowPlusAddr = source.lastRowPlusAddr;
+        this.lastCellCreated = source.lastCellCreated;
+        
+        if (source.commandList != null) { 
+        	this.commandList = this.getCommandList();
+	        for (ConfigCommand sourceCommand : source.commandList) {
+	        	Object newCommand = null;
+	        	if (sourceCommand instanceof FormCommand) {
+	        		newCommand = new FormCommand((FormCommand) sourceCommand);
+	        	} else {
+	        		newCommand = new EachCommand((EachCommand) sourceCommand);
+	        	}
+	            this.commandList.add((ConfigCommand) newCommand);
+	        }
+        }  
+        
+    }	
+	
 
 	public final Cell getFirstRowRef() {
 		return firstRowRef;
@@ -194,26 +228,27 @@ public class ConfigRange {
 		// List<Row> staticRows = setUpBuildRows(sheet,
 		// this.getFirstRowRef().getRowIndex(),
 		// this.getLastRowPlusRef().getRowIndex(), this.getCommandList());
-
-		for (int i = 0; i < commandList.size(); i++) {
-			// cellRange.resetChangeMatrix();
-			Command command = commandList.get(i);
-			command.setFinalLength(0);
-			int populatedLength = command.buildAt(wbWrapper, sheet,
-					command.getConfigRange().getFirstRowRef()
-							.getRowIndex(), context, watchList,
-					currentRowsMappingList, allRowsMappingList, engine,
-					cellHelper);
-			currentRowsMappingList.clear();
-			currentRowsMappingList.addAll(allRowsMappingList);
-			command.setFinalLength(populatedLength);
-		}
+		if (commandList != null) {
+			for (int i = 0; i < commandList.size(); i++) {
+				// cellRange.resetChangeMatrix();
+				Command command = commandList.get(i);
+				command.setFinalLength(0);
+				int populatedLength = command.buildAt(wbWrapper, sheet,
+						command.getConfigRange().getFirstRowRef()
+								.getRowIndex(), context, watchList,
+						currentRowsMappingList, allRowsMappingList, engine,
+						cellHelper);
+				currentRowsMappingList.clear();
+				currentRowsMappingList.addAll(allRowsMappingList);
+				command.setFinalLength(populatedLength);
+			}
+		}	
 
 		buildCells(sheet, atRow, context, wbWrapper, watchList,
 				currentRowsMappingList, engine, cellHelper);
 
 		int finalLength = this.getLastRowPlusRef().getRowIndex()
-				- this.getFirstRowRef().getRowIndex() - 1;
+				- this.getFirstRowRef().getRowIndex() ;
 
 		return finalLength;
 
@@ -225,13 +260,15 @@ public class ConfigRange {
 	 * @return true is static false is not.
 	 */
 	public boolean isStaticRow(Row row) {
-		for (int i = 0; i < commandList.size(); i++) {
-			Command command = commandList.get(i);
-			int rowIndex = row.getRowNum();
-			if ((rowIndex >= command.getTopRow())
-					&& (rowIndex <= (command.getTopRow() + command
-							.getFinalLength()))) {
-				return false;
+		if (commandList != null) {
+			for (int i = 0; i < commandList.size(); i++) {
+				Command command = commandList.get(i);
+				int rowIndex = row.getRowNum();
+				if ((rowIndex >= command.getTopRow())
+						&& (rowIndex < (command.getTopRow() + command
+								.getFinalLength()))) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -259,6 +296,7 @@ public class ConfigRange {
 			return ;
 		}
 		int lastRowPlus = this.getLastRowPlusRef().getRowIndex();
+		ShiftFormulaRef  shiftFormulaRef = new ShiftFormulaRef(watchList, currentRowsMappingList);
 		for (int i = atRow; i < lastRowPlus; i++) {
 			Row row = sheet.getRow(i);
 			if ((row != null) && isStaticRow(row)) {
@@ -268,8 +306,7 @@ public class ConfigRange {
 					if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 						// rebuild formula if necessary for dynamic row
 						buildCellFormulaForShiftedRows(sheet,
-								wbWrapper, watchList,
-								currentRowsMappingList, cell);
+								wbWrapper, shiftFormulaRef, cell);
 
 					}
 				}
@@ -279,20 +316,17 @@ public class ConfigRange {
 
 	private void buildCellFormulaForShiftedRows(final Sheet sheet,
 			final XSSFEvaluationWorkbook wbWrapper,
-			final List<Integer> watchList,
-			final List<RowsMapping> currentRowsMappingList, Cell cell) {
+			final ShiftFormulaRef shiftFormulaRef, Cell cell) {
 		// only shift when there's watchlist exist.
-		if ((watchList!=null)&&(watchList.size()>0)) {
+		if ((shiftFormulaRef.getWatchList()!=null)&&(shiftFormulaRef.getWatchList().size()>0)) {
 			Ptg[] ptgs = FormulaParser.parse(cell
 					.getCellFormula(), wbWrapper,
 					FormulaType.CELL, sheet.getWorkbook()
 							.getSheetIndex(sheet));
-			Boolean formulaChanged = false;
+			shiftFormulaRef.setFormulaChanged(0);
 			Ptg[] convertedFormulaPtg = ShiftFormula
-					.convertSharedFormulas(ptgs, watchList,
-							currentRowsMappingList, 
-							formulaChanged);
-			if (formulaChanged) {
+					.convertSharedFormulas(ptgs, shiftFormulaRef);
+			if (shiftFormulaRef.getFormulaChanged()>0) {
 				// only change formula when indicator is true
 				cell.setCellFormula(FormulaRenderer
 						.toFormulaString(wbWrapper,

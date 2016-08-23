@@ -1,7 +1,12 @@
 package com.tiefaces.components.websheet.configuration;
 
 import static com.tiefaces.components.websheet.TieWebSheetConstants.COPY_SHEET_PREFIX;
+import static com.tiefaces.components.websheet.TieWebSheetConstants.EXCEL_SHEET_NAME_LIMIT;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +16,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
-import com.google.gson.Gson;
 import com.tiefaces.components.websheet.service.CellHelper;
 
 /**
@@ -33,6 +37,19 @@ public class EachCommand extends ConfigCommand {
 	private String allowAdd;
 	/** select holder. */
 	private String select;
+
+	
+	public EachCommand() {
+		super();
+	}
+
+	public EachCommand(EachCommand sourceCommand) {
+		super((ConfigCommand) sourceCommand);
+		this.items = sourceCommand.items;
+		this.var = sourceCommand.var;
+		this.allowAdd = sourceCommand.allowAdd;
+		this.select = sourceCommand.select;
+	}
 
 	public final String getItems() {
 		return items;
@@ -114,10 +131,6 @@ public class EachCommand extends ConfigCommand {
         
         int insertPosition = atRow;
         
-        Gson gson = new Gson();
-        String jsonCurrentRange = gson.toJson(this.getConfigRange(), this.getConfigRange().getClass());
-        
-
         // clone is a deep-clone of o
         for (Object obj : itemsCollection) {
         	RowsMapping unitRowsMapping = new RowsMapping();
@@ -130,10 +143,10 @@ public class EachCommand extends ConfigCommand {
             if (index > 0 ) {
             	insertEachTemplate(wbWrapper, sheet, insertPosition, watchList, unitRowsMapping, cellHelper);
             }
-        	currentRange = buildCurrentRange(sheet, insertPosition, gson, jsonCurrentRange);
+        	currentRange = buildCurrentRange(sheet, insertPosition);
         	currentRowsMappingList.add(unitRowsMapping);
         	allRowsMappingList.add(unitRowsMapping);
-            int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, allRowsMappingList, selectEngine, cellHelper);
+            int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, allRowsMappingList, engine, cellHelper);
             insertPosition += length;
             currentRowsMappingList.remove(unitRowsMapping);
             index++;
@@ -143,18 +156,22 @@ public class EachCommand extends ConfigCommand {
         return finalLength;
      }
 	
-	public <T> T deepCopy(T object, Class<T> type) {
-	    try {
-	        Gson gson = new Gson();
-	        return gson.fromJson(gson.toJson(object, type), type);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null;
-	    }
-	}	
-	
-	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition, Gson gson, String jsonRange) {
-		ConfigRange current = gson.fromJson(jsonRange, this.getConfigRange().getClass());
+	 public Object deepClone(Object object) {
+		   try {
+		     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		     ObjectOutputStream oos = new ObjectOutputStream(baos);
+		     oos.writeObject(object);
+		     ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+		     ObjectInputStream ois = new ObjectInputStream(bais);
+		     return ois.readObject();
+		   }
+		   catch (Exception e) {
+		     e.printStackTrace();
+		     return null;
+		   }
+		 }	
+	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition) {
+		ConfigRange current = new ConfigRange(this.getConfigRange());
 		int firstCellColumn = this.getConfigRange().getFirstRowAddr().getColumn();
 		int firstCellRow = this.getConfigRange().getFirstRowAddr().getRow();
 		current.setFirstRowRef(sheet.getRow(insertPosition).getCell(firstCellColumn, Row.CREATE_NULL_AS_BLANK), false);
@@ -167,7 +184,11 @@ public class EachCommand extends ConfigCommand {
 	private void insertEachTemplate(XSSFEvaluationWorkbook wbWrapper, Sheet sheet, int insertPosition, List<Integer> watchList, RowsMapping unitRowsMapping, CellHelper cellHelper) {
 		// TODO Auto-generated method stub
 		Workbook wb = sheet.getWorkbook();
-		String copyName = COPY_SHEET_PREFIX + sheet.getSheetName();
+		// excel sheet name has limit 31 chars
+		String copyName = (COPY_SHEET_PREFIX + sheet.getSheetName());
+		if (copyName.length() >  EXCEL_SHEET_NAME_LIMIT) {
+			copyName = copyName.substring(0, EXCEL_SHEET_NAME_LIMIT);
+		}	
 		Sheet srcSheet = wb.getSheet(copyName);
 		
 		int srcStartRow =  this.getConfigRange().getFirstRowAddr().getRow();
@@ -181,16 +202,7 @@ public class EachCommand extends ConfigCommand {
 		}
 	}
 	
-	private void shiftFormulas(Sheet srcSheet, Sheet sheet, int top, int bottom, int insertPosition ) {
-		
-		int shiftRows = insertPosition - top;
-		if (shiftRows == 0) {
-			return;
-		}
-		
-		
-		
-	}
+
 
 
 

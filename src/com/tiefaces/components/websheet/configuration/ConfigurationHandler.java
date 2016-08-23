@@ -625,40 +625,42 @@ public class ConfigurationHandler {
 	 */
 	private void matchParentCommand(final List<ConfigCommand> commandList) {
 
-		for (int i = 0; i < commandList.size(); i++) {
-			ConfigCommand child = commandList.get(i);
-			if (!child.getCommandTypeName()
-					.equalsIgnoreCase(COMMAND_FORM)) {
-				int matchIndex = -1;
-				ConfigRange matchRange = null;
-				for (int j = 0; j < commandList.size(); j++) {
-					if (j != i) {
-						Command commandParent = commandList.get(j);
-						if (!commandParent.getCommandTypeName()
-								.equalsIgnoreCase(COMMAND_FORM)) {
-							if (TieWebSheetUtility.insideRange(
-									child.getConfigRange(),
-									commandParent.getConfigRange())) {
-								if ((matchRange == null)
-										|| (TieWebSheetUtility
-												.insideRange(
-														commandParent
-																.getConfigRange(),
-														matchRange))) {
-									matchRange = commandParent
-											.getConfigRange();
-									matchIndex = j;
+		if (commandList != null) {
+			for (int i = 0; i < commandList.size(); i++) {
+				ConfigCommand child = commandList.get(i);
+				if (!child.getCommandTypeName()
+						.equalsIgnoreCase(COMMAND_FORM)) {
+					int matchIndex = -1;
+					ConfigRange matchRange = null;
+					for (int j = 0; j < commandList.size(); j++) {
+						if (j != i) {
+							Command commandParent = commandList.get(j);
+							if (!commandParent.getCommandTypeName()
+									.equalsIgnoreCase(COMMAND_FORM)) {
+								if (TieWebSheetUtility.insideRange(
+										child.getConfigRange(),
+										commandParent.getConfigRange())) {
+									if ((matchRange == null)
+											|| (TieWebSheetUtility
+													.insideRange(
+															commandParent
+																	.getConfigRange(),
+															matchRange))) {
+										matchRange = commandParent
+												.getConfigRange();
+										matchIndex = j;
+									}
 								}
 							}
 						}
 					}
+					if (matchIndex >= 0) {
+						commandList.get(matchIndex).getConfigRange()
+								.addCommand(child);
+						child.setParentFound(true);
+					}
 				}
-				if (matchIndex >= 0) {
-					commandList.get(matchIndex).getConfigRange()
-							.addCommand(child);
-					child.setParentFound(true);
-				}
-			}
+			}	
 		}
 	}
 
