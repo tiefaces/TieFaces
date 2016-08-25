@@ -122,7 +122,6 @@ public interface Command {
 			Sheet sheet, int atRow, Map<String, Object> context,
 			List<Integer> watchList,
 			List<RowsMapping> currentRowsMappingList,
-			List<RowsMapping> allRowsMappingList,
 			ExpressionEngine engine, final CellHelper cellHelper);
 
 }

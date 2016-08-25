@@ -2,6 +2,7 @@ package com.tiefaces.components.websheet.configuration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -84,6 +85,24 @@ public class ConfigRange {
         }  
         
     }	
+    
+    public void shiftRowRef(Sheet sheet, int shiftnum) {
+    	try {
+    		this.setFirstRowRef(sheet.getRow( firstRowAddr.getRow() + shiftnum).getCell(firstRowAddr.getColumn(), Row.CREATE_NULL_AS_BLANK), false);
+    		this.setLastRowPlusRef(sheet, lastRowPlusAddr.getColumn(), lastRowPlusAddr.getRow() + shiftnum -1, false);
+    		
+            if (commandList != null) { 
+    	        for (ConfigCommand command : commandList) {
+    	        	command.shiftRowRef(sheet, shiftnum);
+    	        }
+            }  
+    		
+    		
+    	} catch (Exception ex) {
+    		ex.printStackTrace();
+    		log.severe("shiftRowRef error ="+ex.getLocalizedMessage());
+    	}
+    }
 	
 
 	public final Cell getFirstRowRef() {
@@ -221,7 +240,6 @@ public class ConfigRange {
 			final Map<String, Object> context,
 			final List<Integer> watchList,
 			final List<RowsMapping> currentRowsMappingList,
-			final List<RowsMapping> allRowsMappingList,
 			final ExpressionEngine engine, final CellHelper cellHelper) {
 		log.fine("build xls sheet at row : " + atRow);
 
@@ -236,10 +254,8 @@ public class ConfigRange {
 				int populatedLength = command.buildAt(wbWrapper, sheet,
 						command.getConfigRange().getFirstRowRef()
 								.getRowIndex(), context, watchList,
-						currentRowsMappingList, allRowsMappingList, engine,
+						currentRowsMappingList, engine,
 						cellHelper);
-				currentRowsMappingList.clear();
-				currentRowsMappingList.addAll(allRowsMappingList);
 				command.setFinalLength(populatedLength);
 			}
 		}	
@@ -255,11 +271,11 @@ public class ConfigRange {
 	}
 
 	/**
-	 * Whether the row is static.
+	 * Whether the row is static.This check row after shifted.
 	 * @param row the row for check.
 	 * @return true is static false is not.
 	 */
-	public boolean isStaticRow(Row row) {
+	public boolean isStaticRowRef(Row row) {
 		if (commandList != null) {
 			for (int i = 0; i < commandList.size(); i++) {
 				Command command = commandList.get(i);
@@ -267,6 +283,23 @@ public class ConfigRange {
 				if ((rowIndex >= command.getTopRow())
 						&& (rowIndex < (command.getTopRow() + command
 								.getFinalLength()))) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	/**
+	 * Whether the row is static. This only check rowIndex against original template.
+	 * @param row the row for check.
+	 * @return true is static false is not.
+	 */
+	public boolean isStaticRow(int rowIndex) {
+		if (commandList != null) {
+			for (int i = 0; i < commandList.size(); i++) {
+				Command command = commandList.get(i);
+				if ((rowIndex >= command.getConfigRange().getFirstRowAddr().getRow())
+						&& (rowIndex < ( command.getConfigRange().getLastRowPlusAddr().getRow()))) {
 					return false;
 				}
 			}
@@ -299,7 +332,7 @@ public class ConfigRange {
 		ShiftFormulaRef  shiftFormulaRef = new ShiftFormulaRef(watchList, currentRowsMappingList);
 		for (int i = atRow; i < lastRowPlus; i++) {
 			Row row = sheet.getRow(i);
-			if ((row != null) && isStaticRow(row)) {
+			if ((row != null) && isStaticRowRef(row)) {
 				for (Cell cell : row) {
 					ExpressionHelper.evaluate(context, cell, engine,
 							cellHelper);

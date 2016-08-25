@@ -566,10 +566,10 @@ public class ConfigurationHandler {
 		// if found tie command then transfer it to list also remove from
 		// comments.
 		for (CellAddress key : keys) {
-			Cell firstCell = sheet.getRow(key.getRow()).getCell(
+			Cell cell = sheet.getRow(key.getRow()).getCell(
 					key.getColumn(), Row.CREATE_NULL_AS_BLANK);
 			commandList = buildCommandList(sheet, sheetRightCol,
-					firstCell, comments.get(key), commandList);
+					cell,  commandList);
 		}
 		return commandList;
 
@@ -745,9 +745,9 @@ public class ConfigurationHandler {
 	 * @return command list.
 	 */
 	private List<ConfigCommand> buildCommandList(final Sheet sheet,
-			final int sheetRightCol, final Cell firstCell,
-			final Comment comment, final List<ConfigCommand> cList) {
+			final int sheetRightCol, final Cell cell, final List<ConfigCommand> cList) {
 
+		Comment comment = cell.getCellComment();
 		String text = comment.getString().getString();
 		String[] commentLines = text.split("\\n");
 		String newComment = null;
@@ -769,7 +769,7 @@ public class ConfigurationHandler {
 				Map<String, String> attrMap = buildAttrMap(line,
 						nameEndIndex);
 				ConfigCommand configCommand = createConfigCommand(sheet,
-						firstCell, sheetRightCol, commandName, attrMap);
+						cell, sheetRightCol, commandName, attrMap);
 				if (configCommand != null) {
 					cList.add(configCommand);
 				}
@@ -782,7 +782,7 @@ public class ConfigurationHandler {
 			}
 		}
 		if (changed) {
-			changeCellComment(sheet, comment, newComment);
+			changeCellComment(sheet, cell, newComment);
 		}
 		return cList;
 	}
@@ -798,12 +798,15 @@ public class ConfigurationHandler {
 	 *            updated comment.
 	 */
 	private void changeCellComment(final Sheet sheet,
-			final Comment comment, final String newComment) {
-		Workbook wb = sheet.getWorkbook();
-		CreationHelper factory = wb.getCreationHelper();
-		RichTextString str = factory.createRichTextString(newComment);
-		comment.setString(str);
-
+			final Cell cell, final String newComment) {
+//		Workbook wb = sheet.getWorkbook();
+//		CreationHelper factory = wb.getCreationHelper();
+//		if ((newComment == null) || newComment.trim().isEmpty()) {
+//			cell.removeCellComment();
+//		} else {
+//			RichTextString str = factory.createRichTextString(newComment);
+//			cell.getCellComment().setString(str);
+//		}	
 	}
 
 	/**

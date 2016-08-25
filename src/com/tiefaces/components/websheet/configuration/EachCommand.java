@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +119,6 @@ public class EachCommand extends ConfigCommand {
 			Map<String, Object> context,
 			List<Integer> watchList,
 			List<RowsMapping> currentRowsMappingList,
-			List<RowsMapping> allRowsMappingList,
 			ExpressionEngine engine, 
 			CellHelper cellHelper) {
 		
@@ -130,7 +130,7 @@ public class EachCommand extends ConfigCommand {
         }
         
         int insertPosition = atRow;
-        
+        List<RowsMapping> commandRowsMappingList = new ArrayList<RowsMapping>();
         // clone is a deep-clone of o
         for (Object obj : itemsCollection) {
         	RowsMapping unitRowsMapping = new RowsMapping();
@@ -140,17 +140,19 @@ public class EachCommand extends ConfigCommand {
                 continue;
             }
             ConfigRange currentRange = null;
-            if (index > 0 ) {
-            	insertEachTemplate(wbWrapper, sheet, insertPosition, watchList, unitRowsMapping, cellHelper);
-            }
+           	insertEachTemplate(index, wbWrapper, sheet, insertPosition, watchList, unitRowsMapping, cellHelper);
         	currentRange = buildCurrentRange(sheet, insertPosition);
         	currentRowsMappingList.add(unitRowsMapping);
-        	allRowsMappingList.add(unitRowsMapping);
-            int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, allRowsMappingList, engine, cellHelper);
+        	commandRowsMappingList.add(unitRowsMapping);
+            int length = currentRange.buildAt(wbWrapper, sheet, insertPosition, context, watchList, currentRowsMappingList, engine, cellHelper);
             insertPosition += length;
             currentRowsMappingList.remove(unitRowsMapping);
             index++;
             context.remove(var);
+        }
+        RowsMapping parentRowsMapping = currentRowsMappingList.get(currentRowsMappingList.size() - 1);
+        for (RowsMapping rowsMapping: commandRowsMappingList) {
+        	parentRowsMapping.mergeMap(rowsMapping);
         }
 		int finalLength = insertPosition - atRow;
         return finalLength;
@@ -172,17 +174,16 @@ public class EachCommand extends ConfigCommand {
 		 }	
 	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition) {
 		ConfigRange current = new ConfigRange(this.getConfigRange());
-		int firstCellColumn = this.getConfigRange().getFirstRowAddr().getColumn();
-		int firstCellRow = this.getConfigRange().getFirstRowAddr().getRow();
-		current.setFirstRowRef(sheet.getRow(insertPosition).getCell(firstCellColumn, Row.CREATE_NULL_AS_BLANK), false);
-		int lastPlusRow = this.getConfigRange().getLastRowPlusAddr().getRow() + insertPosition - firstCellRow;
-		int lastPlusColumn = this.getConfigRange().getLastRowPlusAddr().getColumn();
-		current.setLastRowPlusRef(sheet, lastPlusColumn, lastPlusRow -1, false);
+		int shiftNum = insertPosition - this.getConfigRange().getFirstRowAddr().getRow();
+		current.shiftRowRef(sheet, shiftNum);
 		return current;
 	}
 
-	private void insertEachTemplate(XSSFEvaluationWorkbook wbWrapper, Sheet sheet, int insertPosition, List<Integer> watchList, RowsMapping unitRowsMapping, CellHelper cellHelper) {
+	private void insertEachTemplate(int index, XSSFEvaluationWorkbook wbWrapper, Sheet sheet, int insertPosition, List<Integer> watchList, RowsMapping unitRowsMapping, CellHelper cellHelper) {
 		// TODO Auto-generated method stub
+		int srcStartRow =  this.getConfigRange().getFirstRowAddr().getRow();
+		int srcEndRow = this.getConfigRange().getLastRowPlusAddr().getRow() - 1;
+
 		Workbook wb = sheet.getWorkbook();
 		// excel sheet name has limit 31 chars
 		String copyName = (COPY_SHEET_PREFIX + sheet.getSheetName());
@@ -190,13 +191,12 @@ public class EachCommand extends ConfigCommand {
 			copyName = copyName.substring(0, EXCEL_SHEET_NAME_LIMIT);
 		}	
 		Sheet srcSheet = wb.getSheet(copyName);
-		
-		int srcStartRow =  this.getConfigRange().getFirstRowAddr().getRow();
-		int srcEndRow = this.getConfigRange().getLastRowPlusAddr().getRow() - 1;
-		cellHelper.copyRows(sheet.getWorkbook(), wbWrapper,srcSheet, sheet, srcStartRow, srcEndRow, insertPosition);
+		if (index > 0) {
+			cellHelper.copyRows(sheet.getWorkbook(), wbWrapper,srcSheet, sheet, srcStartRow, srcEndRow, insertPosition);
+		}	
 		
 		for (int rowIndex= srcStartRow; rowIndex<= srcEndRow; rowIndex++) {
-			if (watchList.contains(rowIndex)) {
+			if (watchList.contains(rowIndex)&&(this.getConfigRange().isStaticRow(rowIndex))) {
 				unitRowsMapping.addRow(rowIndex, sheet.getRow(insertPosition + rowIndex - srcStartRow));
 			}
 		}

@@ -220,7 +220,6 @@ public class FormCommand extends ConfigCommand {
 			final Sheet sheet, final int atRow,
 			final Map<String, Object> context, List<Integer> watchList,
 			List<RowsMapping> currentRowsMappingList,
-			List<RowsMapping> allRowsMappingList,
 			final ExpressionEngine engine, final CellHelper cellHelper) {
 		// TODO Auto-generated method stub
 
@@ -228,19 +227,16 @@ public class FormCommand extends ConfigCommand {
 
 		RowsMapping currentMapping = new RowsMapping();
 		for (Integer index : watchList) {
-			Row row = sheet.getRow(index);
-			if (this.getConfigRange().isStaticRow(row)) {
-				currentMapping.addRow(index, row);
+			if (this.getConfigRange().isStaticRow(index)) {
+				currentMapping.addRow(index, sheet.getRow(index));
 			}
 		}
 		currentRowsMappingList = new ArrayList<RowsMapping>();
-		allRowsMappingList = new ArrayList<RowsMapping>();
 		currentRowsMappingList.add(currentMapping);
-		allRowsMappingList.add(currentMapping);
 
 		int length = this.getConfigRange().buildAt(wbWrapper, sheet,
 				atRow, context, watchList, currentRowsMappingList,
-				allRowsMappingList, engine, cellHelper);
+				engine, cellHelper);
 
 		this.setFinalLength(length);
 

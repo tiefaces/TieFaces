@@ -2,6 +2,8 @@ package com.tiefaces.components.websheet.configuration;
 
 import java.io.Serializable;
 
+import org.apache.poi.ss.usermodel.Sheet;
+
 
 /**
  * Base class for all configuration command.
@@ -41,6 +43,9 @@ public abstract class ConfigCommand implements Command {
 		this.configRange = new ConfigRange(source.configRange);
 	}
 	
+	public void shiftRowRef(Sheet sheet, int shiftnum) {
+		this.getConfigRange().shiftRowRef(sheet, shiftnum);
+	}
 	
 	@Override
 	public final String getCommandTypeName() {

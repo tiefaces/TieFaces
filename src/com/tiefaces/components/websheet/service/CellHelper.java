@@ -295,14 +295,14 @@ public class CellHelper {
 			final Sheet destSheet, final int srcRowStart,
 			final int srcRowEnd, final int destRow) {
 
-		int length = srcRowStart - srcRowEnd + 1;
+		int length = srcRowEnd - srcRowStart + 1;
 		if (length <= 0)
 			return;
 		destSheet.shiftRows(destRow, destSheet.getLastRowNum(), length,
 				true, false);
 		for (int i = 0; i < length; i++) {
 			copySingleRow(wb, wbWrapper, srcSheet, destSheet, srcRowStart
-					+ i, destRow + i, true, srcRowStart, srcRowEnd);
+					+ i, destRow + i);
 		}
 		// If there are are any merged regions in the source row, copy to new
 		// row
@@ -328,8 +328,7 @@ public class CellHelper {
 	private final void copySingleRow(final Workbook wb,
 			XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int sourceRowNum,
-			final int destinationRowNum, final boolean shiftFormula,
-			final int shiftRowStart, final int shiftRowEnd) {
+			final int destinationRowNum ) {
 		// Get the source / new row
 		Row newRow = destSheet.getRow(destinationRowNum);
 		Row sourceRow = srcSheet.getRow(sourceRowNum);
@@ -345,8 +344,7 @@ public class CellHelper {
 			Cell newCell = newRow.createCell(i);
 
 			copyCell(wb, wbWrapper, srcSheet, destSheet, sourceRow,
-					newRow, oldCell, newCell, shiftFormula,
-					shiftRowStart, shiftRowEnd);
+					newRow, oldCell, newCell);
 		}
 		return;
 
@@ -355,9 +353,7 @@ public class CellHelper {
 	public int copyCell(final Workbook wb,
 			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final Row sourceRow, final Row newRow,
-			final Cell sourceCell, Cell newCell,
-			final boolean shiftFormula, final int shiftRowStart,
-			final int shiftRowEnd) {
+			final Cell sourceCell, Cell newCell) {
 		// If the old cell is null jump to next cell
 		if (sourceCell == null) {
 			newCell = null;
