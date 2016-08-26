@@ -15,7 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.service.CellHelper;
 import com.tiefaces.components.websheet.service.ShiftFormula;
-
+import com.tiefaces.components.websheet.configuration.ExpressionHelper;
 /**
  * Form command. i.e. tie:form(name="departments" length="9" header="0"
  * footer="0")
@@ -151,6 +151,7 @@ public class FormCommand extends ConfigCommand {
 		ConfigRange cRange = this.getConfigRange();
 		List<ConfigCommand> commandList = cRange.getCommandList();
 		if (commandList.size() <= 0) {
+			// if no command then no dynamic changes. then no need formula shifts.
 			return watchList;
 		}
 		int lastStaticRow = commandList.get(0).getTopRow() - 1;
@@ -164,9 +165,11 @@ public class FormCommand extends ConfigCommand {
 			Row row = sheet.getRow(i);
 			for (Cell cell : row) {
 				if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+					
+					String formula = cell.getCellFormula();
 
 					Ptg[] ptgs = FormulaParser.parse(
-							cell.getCellFormula(), wbWrapper,
+							formula, wbWrapper,
 							FormulaType.CELL, wb.getSheetIndex(sheet));
 
 					for (int k = 0; k < ptgs.length; k++) {
@@ -184,6 +187,12 @@ public class FormCommand extends ConfigCommand {
 									watchList);
 						}
 					}
+					
+					// when insert row, the formula may changed. so here is the workaround.
+					// change formula to user formula to preserve the row changes.
+					cell.setCellType(Cell.CELL_TYPE_STRING);
+					cell.setCellValue(ExpressionHelper.USER_FORMULA_PREFIX + formula + ExpressionHelper.USER_FORMULA_SUFFIX);
+					
 
 				}
 			}

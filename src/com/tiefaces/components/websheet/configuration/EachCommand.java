@@ -192,7 +192,7 @@ public class EachCommand extends ConfigCommand {
 		}	
 		Sheet srcSheet = wb.getSheet(copyName);
 		if (index > 0) {
-			cellHelper.copyRows(sheet.getWorkbook(), wbWrapper,srcSheet, sheet, srcStartRow, srcEndRow, insertPosition);
+			cellHelper.copyRows(sheet.getWorkbook(), wbWrapper,srcSheet, sheet, srcStartRow, srcEndRow, insertPosition, false);
 		}	
 		
 		for (int rowIndex= srcStartRow; rowIndex<= srcEndRow; rowIndex++) {

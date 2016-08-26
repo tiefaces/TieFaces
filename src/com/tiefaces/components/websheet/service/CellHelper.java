@@ -288,12 +288,12 @@ public class CellHelper {
 	public final void copyRow(final Workbook wb, final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int srcRow, final int destRow) {
 
-		copyRows(wb, wbWrapper, srcSheet, destSheet, srcRow, srcRow, destRow);
+		copyRows(wb, wbWrapper, srcSheet, destSheet, srcRow, srcRow, destRow, true);
 	}
 
 	public final void copyRows(final Workbook wb, final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int srcRowStart,
-			final int srcRowEnd, final int destRow) {
+			final int srcRowEnd, final int destRow, final boolean checkLock) {
 
 		int length = srcRowEnd - srcRowStart + 1;
 		if (length <= 0)
@@ -302,7 +302,7 @@ public class CellHelper {
 				true, false);
 		for (int i = 0; i < length; i++) {
 			copySingleRow(wb, wbWrapper, srcSheet, destSheet, srcRowStart
-					+ i, destRow + i);
+					+ i, destRow + i, checkLock);
 		}
 		// If there are are any merged regions in the source row, copy to new
 		// row
@@ -328,7 +328,7 @@ public class CellHelper {
 	private final void copySingleRow(final Workbook wb,
 			XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int sourceRowNum,
-			final int destinationRowNum ) {
+			final int destinationRowNum, final boolean checkLock ) {
 		// Get the source / new row
 		Row newRow = destSheet.getRow(destinationRowNum);
 		Row sourceRow = srcSheet.getRow(sourceRowNum);
@@ -344,7 +344,7 @@ public class CellHelper {
 			Cell newCell = newRow.createCell(i);
 
 			copyCell(wb, wbWrapper, srcSheet, destSheet, sourceRow,
-					newRow, oldCell, newCell);
+					newRow, oldCell, newCell, checkLock);
 		}
 		return;
 
@@ -353,7 +353,7 @@ public class CellHelper {
 	public int copyCell(final Workbook wb,
 			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final Row sourceRow, final Row newRow,
-			final Cell sourceCell, Cell newCell) {
+			final Cell sourceCell, Cell newCell, final boolean checkLock) {
 		// If the old cell is null jump to next cell
 		if (sourceCell == null) {
 			newCell = null;
@@ -381,12 +381,12 @@ public class CellHelper {
 		// Set the cell data value
 		switch (sourceCell.getCellType()) {
 		case Cell.CELL_TYPE_BOOLEAN:
-			if (newCellStyle.getLocked()) {
+			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellValue(sourceCell.getBooleanCellValue());
 			}
 			break;
 		case Cell.CELL_TYPE_ERROR:
-			if (newCellStyle.getLocked()) {
+			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellErrorValue(sourceCell.getErrorCellValue());
 			}
 			break;
@@ -409,17 +409,17 @@ public class CellHelper {
 			// formulaEvaluator.evaluate(newCell);
 			break;
 		case Cell.CELL_TYPE_NUMERIC:
-			if (newCellStyle.getLocked()) {
+			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellValue(sourceCell.getNumericCellValue());
 			}
 			break;
 		case Cell.CELL_TYPE_STRING:
-			if (newCellStyle.getLocked()) {
+			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellValue(sourceCell.getRichStringCellValue());
 			}
 			break;
 		default:
-			if (newCellStyle.getLocked()) {
+			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellValue(sourceCell.getStringCellValue());
 			}
 			break;

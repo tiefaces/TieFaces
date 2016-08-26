@@ -18,8 +18,8 @@ public class ExpressionHelper {
     private static String expressionNotationEnd = "}";
     private static Pattern expressionNotationPattern = Pattern.compile("\\$\\{[^}]*}");
     
-    private static final String USER_FORMULA_PREFIX = "$[";
-    private static final String USER_FORMULA_SUFFIX = "]";
+    public static final String USER_FORMULA_PREFIX = "$[";
+    public static final String USER_FORMULA_SUFFIX = "]";
     
 	
 	
@@ -30,9 +30,8 @@ public class ExpressionHelper {
             String strValue = cell.getStringCellValue();
             if( isUserFormula(strValue) ){
                 String formulaStr = strValue.substring(2, strValue.length()-1);
-                evaluationResult = evaluate(formulaStr, context, engine);
-                if( evaluationResult != null ){
-                    cell.setCellFormula(evaluationResult.toString());
+                if ((formulaStr!=null)&&(!formulaStr.isEmpty())) {
+                	cell.setCellFormula(formulaStr);
                 }
             }else{
             	evaluationResult = evaluate(strValue, context, engine);

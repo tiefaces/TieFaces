@@ -570,6 +570,7 @@ public class ConfigurationHandler {
 					key.getColumn(), Row.CREATE_NULL_AS_BLANK);
 			commandList = buildCommandList(sheet, sheetRightCol,
 					cell,  commandList);
+			cell.removeCellComment();
 		}
 		return commandList;
 
