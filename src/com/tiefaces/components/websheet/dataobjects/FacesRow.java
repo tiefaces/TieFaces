@@ -15,57 +15,57 @@ import java.util.List;
  */
 public class FacesRow {
 
-	private boolean debug = true;
-
-	private void debug(String msg) {
-		if (debug) {
-			System.out.println("debug: " + msg);
-		}
-	}
-
+	/** row number. */
 	private int rowIndex;
+	/** whether the row is visible. */
 	private boolean rendered;
-	private float rowheight; 
+	/** the row height. */
+	private float rowheight;
+	/** whether the row is repeat. */
 	private boolean repeatZone;
+	/** cells in the row. */
 	private List<FacesCell> cells;
 	
-
-	public FacesRow(int rowIndex) {
+	/**
+	 * constructor.
+	 * @param pRowIndex the row index.
+	 */
+	public FacesRow(final int pRowIndex) {
 		super();
-		this.rowIndex = rowIndex;
+		this.rowIndex = pRowIndex;
 	}
 	
-	public int getRowIndex() {
+	public final int getRowIndex() {
 		return rowIndex;
 	}
-	public void setRowIndex(int rowIndex) {
-		this.rowIndex = rowIndex;
+	public final void setRowIndex(final int pRowIndex) {
+		this.rowIndex = pRowIndex;
 	}
-	public boolean isRendered() {
+	public final boolean isRendered() {
 		return rendered;
 	}
-	public void setRendered(boolean rendered) {
-		this.rendered = rendered;
+	public final void setRendered(final boolean pRendered) {
+		this.rendered = pRendered;
 	}
-	public float getRowheight() {
+	public final float getRowheight() {
 		return rowheight;
 	}
-	public void setRowheight(float rowheight) {
-		this.rowheight = rowheight;
+	public final void setRowheight(final float pRowheight) {
+		this.rowheight = pRowheight;
 	}
-	public boolean isRepeatZone() {
+	public final boolean isRepeatZone() {
 		return repeatZone;
 	}
-	public void setRepeatZone(boolean repeatZone) {
-		this.repeatZone = repeatZone;
+	public final void setRepeatZone(final boolean pRepeatZone) {
+		this.repeatZone = pRepeatZone;
 	}
 
-	public List<FacesCell> getCells() {
+	public final List<FacesCell> getCells() {
 		return cells;
 	}
 
-	public void setCells(List<FacesCell> cells) {
-		this.cells = cells;
+	public final void setCells(final List<FacesCell> pCells) {
+		this.cells = pCells;
 	}
 	
 }

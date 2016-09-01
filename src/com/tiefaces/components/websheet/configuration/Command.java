@@ -118,10 +118,7 @@ public interface Command {
 	 * @param cellHelper cell helper.
 	 * @return
 	 */
-	int buildAt(XSSFEvaluationWorkbook wbWrapper,
-			Sheet sheet, int atRow, Map<String, Object> context,
-			List<Integer> watchList,
-			List<RowsMapping> currentRowsMappingList,
-			ExpressionEngine engine, final CellHelper cellHelper);
+	int buildAt(String fullName, ConfigBuildRef configBuildRef, int atRow, Map<String, Object> context,
+			List<RowsMapping> currentRowsMappingList);
 
 }
