@@ -32,6 +32,7 @@ import com.tiefaces.common.FacesUtility;
 import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.TieWebSheetConstants;
 import com.tiefaces.components.websheet.TieWebSheetView.tabModel;
+import com.tiefaces.components.websheet.configuration.ConfigBuildRef;
 import com.tiefaces.components.websheet.configuration.ConfigurationHandler;
 import com.tiefaces.components.websheet.configuration.ExpressionEngine;
 import com.tiefaces.components.websheet.configuration.RowsMapping;
@@ -362,14 +363,16 @@ public class WebSheetLoader implements Serializable {
 				parent.getDataContext());
 		for (SheetConfiguration sheetConfig : parent.getSheetConfigMap()
 				.values()) {
-			List<Integer> watchList = null;
 			List<RowsMapping> currentRowsMappingList = null;
-			int length = sheetConfig.getFormCommand().buildAt(parent.getWbWrapper(),
+			ConfigBuildRef configBuildRef = new ConfigBuildRef(parent.getWbWrapper(),
 					parent.getWb().getSheet(sheetConfig.getSheetName()),
+					expEngine,
+					parent.getCellHelper());
+			int length = sheetConfig.getFormCommand().buildAt(null, configBuildRef,
 					sheetConfig.getFormCommand().getTopRow(),
-					parent.getDataContext(), watchList,
-					currentRowsMappingList, 
-					expEngine, parent.getCellHelper());
+					parent.getDataContext(), 
+					currentRowsMappingList 
+					);
 			sheetConfig.getBodyCellRange().setBottomRow( sheetConfig.getFormCommand().getTopRow() + length - 1);
 			sheetConfig.setBodyPopulated(true);
 		}

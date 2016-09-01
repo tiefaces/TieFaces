@@ -225,27 +225,29 @@ public class FormCommand extends ConfigCommand {
 	/**
 	 * build the command area at the row.
 	 */
-	public final int buildAt(final XSSFEvaluationWorkbook wbWrapper,
-			final Sheet sheet, final int atRow,
-			final Map<String, Object> context, List<Integer> watchList,
-			List<RowsMapping> currentRowsMappingList,
-			final ExpressionEngine engine, final CellHelper cellHelper) {
+	public final int buildAt(String fullName, final ConfigBuildRef configBuildRef,
+			final int atRow,
+			final Map<String, Object> context, 
+			List<RowsMapping> currentRowsMappingList) {
 		// TODO Auto-generated method stub
 
-		watchList = buildFormWatchList(wbWrapper, sheet);
+		configBuildRef.setWatchList(buildFormWatchList(configBuildRef.getWbWrapper(), configBuildRef.getSheet()));
+		fullName = this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getName().trim();
 
 		RowsMapping currentMapping = new RowsMapping();
-		for (Integer index : watchList) {
+		for (Integer index : configBuildRef.getWatchList()) {
 			if (this.getConfigRange().isStaticRow(index)) {
-				currentMapping.addRow(index, sheet.getRow(index));
+				currentMapping.addRow(index, configBuildRef.getSheet().getRow(index));
 			}
 		}
 		currentRowsMappingList = new ArrayList<RowsMapping>();
 		currentRowsMappingList.add(currentMapping);
+		
+		configBuildRef.getShiftMap().put(fullName, currentMapping);
 
-		int length = this.getConfigRange().buildAt(wbWrapper, sheet,
-				atRow, context, watchList, currentRowsMappingList,
-				engine, cellHelper);
+		int length = this.getConfigRange().buildAt(fullName, configBuildRef,
+				atRow, context, currentRowsMappingList,
+				null);
 
 		this.setFinalLength(length);
 

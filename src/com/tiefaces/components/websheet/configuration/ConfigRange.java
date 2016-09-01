@@ -235,12 +235,12 @@ public class ConfigRange {
 	 *            context map.
 	 * @return final length.
 	 */
-	public final int buildAt(final XSSFEvaluationWorkbook wbWrapper,
-			final Sheet sheet, final int atRow,
+	public final int buildAt(String fullName, final ConfigBuildRef configBuildRef,
+			final int atRow,
 			final Map<String, Object> context,
-			final List<Integer> watchList,
 			final List<RowsMapping> currentRowsMappingList,
-			final ExpressionEngine engine, final CellHelper cellHelper) {
+			final AddRowRef addRowRef
+			) {
 		log.fine("build xls sheet at row : " + atRow);
 
 		// List<Row> staticRows = setUpBuildRows(sheet,
@@ -251,17 +251,16 @@ public class ConfigRange {
 				// cellRange.resetChangeMatrix();
 				Command command = commandList.get(i);
 				command.setFinalLength(0);
-				int populatedLength = command.buildAt(wbWrapper, sheet,
+				int populatedLength = command.buildAt(fullName, configBuildRef,
 						command.getConfigRange().getFirstRowRef()
-								.getRowIndex(), context, watchList,
-						currentRowsMappingList, engine,
-						cellHelper);
+								.getRowIndex(), context, 
+						currentRowsMappingList);
 				command.setFinalLength(populatedLength);
 			}
 		}	
 
-		buildCells(sheet, atRow, context, wbWrapper, watchList,
-				currentRowsMappingList, engine, cellHelper);
+		buildCells(fullName, configBuildRef, atRow, context, 
+				currentRowsMappingList, addRowRef);
 
 		int finalLength = this.getLastRowPlusRef().getRowIndex()
 				- this.getFirstRowRef().getRowIndex() ;
@@ -318,32 +317,36 @@ public class ConfigRange {
 	 * @param engine engine.
 	 * @param cellHelper cell helper.
 	 */
-	private void buildCells(final Sheet sheet, final int atRow,
+	private void buildCells(String fullName, ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
-			final XSSFEvaluationWorkbook wbWrapper, final List<Integer> watchList,
 			final List<RowsMapping> currentRowsMappingList,
-			final ExpressionEngine engine, final CellHelper cellHelper) {
+			final AddRowRef addRowRef
+			) {
 		
 		if ((context==null) || (context.size()==0)) {
 			// no need to evaluate as there's no data object.
 			return ;
 		}
 		int lastRowPlus = this.getLastRowPlusRef().getRowIndex();
-		ShiftFormulaRef  shiftFormulaRef = new ShiftFormulaRef(watchList, currentRowsMappingList);
+		ShiftFormulaRef  shiftFormulaRef = new ShiftFormulaRef(configBuildRef.getWatchList(), currentRowsMappingList);
 		for (int i = atRow; i < lastRowPlus; i++) {
-			Row row = sheet.getRow(i);
+			Row row = configBuildRef.getSheet().getRow(i);
 			if ((row != null) && isStaticRowRef(row)) {
 				for (Cell cell : row) {
-					ExpressionHelper.evaluate(context, cell, engine,
-							cellHelper);
+					ExpressionHelper.evaluate(context, cell, configBuildRef.getEngine(),
+							configBuildRef.getCellHelper());
 					if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 						// rebuild formula if necessary for dynamic row
-						buildCellFormulaForShiftedRows(sheet,
-								wbWrapper, shiftFormulaRef, cell);
+						buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
+								configBuildRef.getWbWrapper(), shiftFormulaRef, cell);
 
 					}
 				}
 			}
+		}
+		// has addRow mapping
+		if (addRowRef != null) {
+			configBuildRef.getAddRowMap().put(atRow, addRowRef);
 		}
 	}
 
