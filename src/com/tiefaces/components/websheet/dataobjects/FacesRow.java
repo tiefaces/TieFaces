@@ -25,6 +25,8 @@ public class FacesRow {
 	private boolean repeatZone;
 	/** cells in the row. */
 	private List<FacesCell> cells;
+	/** whether the row allow add/delete */
+	private boolean allowAdd;
 	
 	/**
 	 * constructor.
@@ -58,6 +60,13 @@ public class FacesRow {
 	}
 	public final void setRepeatZone(final boolean pRepeatZone) {
 		this.repeatZone = pRepeatZone;
+	}
+	public boolean isAllowAdd() {
+		return allowAdd;
+	}
+
+	public void setAllowAdd(boolean allowAdd) {
+		this.allowAdd = allowAdd;
 	}
 
 	public final List<FacesCell> getCells() {

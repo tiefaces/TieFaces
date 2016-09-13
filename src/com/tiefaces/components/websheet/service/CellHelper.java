@@ -43,6 +43,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.tiefaces.common.FacesUtility;
 import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.TieWebSheetConstants;
+import com.tiefaces.components.websheet.configuration.ConfigurationHelper;
 import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
@@ -288,12 +289,12 @@ public class CellHelper {
 	public final void copyRow(final Workbook wb, final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int srcRow, final int destRow) {
 
-		copyRows(wb, wbWrapper, srcSheet, destSheet, srcRow, srcRow, destRow, true);
+		copyRows(wb, wbWrapper, srcSheet, destSheet, srcRow, srcRow, destRow, true, false);
 	}
 
 	public final void copyRows(final Workbook wb, final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int srcRowStart,
-			final int srcRowEnd, final int destRow, final boolean checkLock) {
+			final int srcRowEnd, final int destRow, final boolean checkLock, final boolean setHiddenColumn) {
 
 		int length = srcRowEnd - srcRowStart + 1;
 		if (length <= 0)
@@ -302,7 +303,7 @@ public class CellHelper {
 				true, false);
 		for (int i = 0; i < length; i++) {
 			copySingleRow(wb, wbWrapper, srcSheet, destSheet, srcRowStart
-					+ i, destRow + i, checkLock);
+					+ i, destRow + i, checkLock, setHiddenColumn);
 		}
 		// If there are are any merged regions in the source row, copy to new
 		// row
@@ -328,7 +329,8 @@ public class CellHelper {
 	private final void copySingleRow(final Workbook wb,
 			XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int sourceRowNum,
-			final int destinationRowNum, final boolean checkLock ) {
+			final int destinationRowNum, final boolean checkLock,
+			final boolean setHiddenColumn) {
 		// Get the source / new row
 		Row newRow = destSheet.getRow(destinationRowNum);
 		Row sourceRow = srcSheet.getRow(sourceRowNum);
@@ -345,6 +347,11 @@ public class CellHelper {
 
 			copyCell(wb, wbWrapper, srcSheet, destSheet, sourceRow,
 					newRow, oldCell, newCell, checkLock);
+		}
+		if (setHiddenColumn) {
+			Cell cell = newRow.getCell(ConfigurationHelper.hiddenFullNameColumn, Row.CREATE_NULL_AS_BLANK); 
+			cell.setCellValue(sourceRow.getRowNum()+":");
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 		}
 		return;
 

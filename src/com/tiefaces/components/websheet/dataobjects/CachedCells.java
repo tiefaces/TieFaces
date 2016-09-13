@@ -1,17 +1,25 @@
 package com.tiefaces.components.websheet.dataobjects;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import com.tiefaces.components.websheet.TieWebSheetBean;
-import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
-
+import com.tiefaces.components.websheet.configuration.ShiftRow;
+/**
+ * Use to cache formula cells.
+ * The purpose is to compare current cell with cached one.
+ * If they are different, then mean need to refresh them.
+ * All cached cells are in current display sheet.
+ * @author Jason Jiang
+ *
+ */
 public class CachedCells {
 	
-	private Map<String, String> cachedMap= new HashMap<String, String>();
+	private Map<Cell, FormulaMapping> cachedMap= new HashMap<Cell, FormulaMapping>();
 
 	private TieWebSheetBean parent = null;
 
@@ -32,23 +40,41 @@ public class CachedCells {
 		debug("CachedCells Constructor");
 	}
 	
-	public  void put(Sheet sheet1, Cell cell, Integer cellType) {
-		Map<String, String> map = cachedMap;
+	public  void put(Cell cell, Integer cellType) {
+		Map<Cell, FormulaMapping> map = cachedMap;
 		// if cellType not null then only specified Type will be put into Cache
 		// e.g. only formula cell will be cached then pass in Cell.CELL_TYPE_FORMULA
 		if ((cell!=null) && ( (cellType == null) || (cell.getCellType() == cellType) )) {
-			String refName = TieWebSheetUtility.getFullCellRefName(sheet1, cell);
-			if (refName != null) {
-				String value = parent.getCellHelper().getCellValueWithFormat(cell);
-				map.put(refName, value );
-				debug("put cache key= "+refName+" value = "+value);
+			//String refName = TieWebSheetUtility.getFullCellRefName(sheet1, cell);
+			String value = parent.getCellHelper().getCellValueWithFormat(cell);
+			FormulaMapping f = map.get(cell);
+			if (f == null) {
+				f = new FormulaMapping();
 			}
+			f.setValue(value);
+			map.put(cell, f );
+			debug("put cache key= "+cell.getAddress()+" value = "+value);
 		}
 	}	
-	public  String get(Sheet sheet1, Cell cell) {
-		Map<String, String> map = cachedMap;
-		String refName = TieWebSheetUtility.getFullCellRefName(sheet1, cell);
-		return map.get(refName);
+	public  void put(Cell cell, String originFormula, List<ShiftRow> rowsList) {
+		Map<Cell, FormulaMapping> map = cachedMap;
+		// if cellType not null then only specified Type will be put into Cache
+		// e.g. only formula cell will be cached then pass in Cell.CELL_TYPE_FORMULA
+		if ((cell!=null) && ( originFormula != null) && (rowsList != null)) {
+			FormulaMapping f = map.get(cell);
+			if (f == null) {
+				f = new FormulaMapping();
+			}
+			f.setOriginFormula(originFormula);
+			f.setRowMappingList(rowsList);
+			String value = parent.getCellHelper().getCellValueWithFormat(cell);
+			f.setValue(value);
+			map.put(cell, f );
+			debug("put cache key= "+cell.getAddress()+" origin formula = "+originFormula+" rowsList = "+rowsList+" value = "+value);
+		}
+	}	
+	public  String getValue(Cell cell) {
+		return cachedMap.get(cell).getValue();
 	}	
 	
 	public void clear() {
@@ -57,9 +83,8 @@ public class CachedCells {
 	}
 	
 	public boolean isValueChanged(Sheet sheet1, Cell cell) {
-			String refName = TieWebSheetUtility.getFullCellRefName(sheet1, cell);
-			Map<String, String> map = cachedMap;
-			String oldValue = map.get(refName);
+			Map<Cell, FormulaMapping> map = cachedMap;
+			String oldValue = map.get(cell).getValue();
 			String newValue = parent.getCellHelper().getCellValueWithFormat(cell);
 			if (oldValue == null) oldValue="";
 			if (newValue == null) newValue="";

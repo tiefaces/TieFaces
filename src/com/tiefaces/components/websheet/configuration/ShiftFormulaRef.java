@@ -32,7 +32,5 @@ public class ShiftFormulaRef {
 		this.watchList = watchList;
 		this.currentRowsMappingList = currentRowsMappingList;
 	}
-	
-	
 
 }

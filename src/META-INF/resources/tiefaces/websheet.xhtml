@@ -183,7 +183,7 @@
 						style="text-align: center;#{cc.attrs.webSheetBean.addRowColumnWidthStyle}"
 						rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows}">
 						<h:panelGroup
-							rendered="#{dataRow.rendered and dataRow.repeatZone}">
+							rendered="#{dataRow.rendered and dataRow.allowAdd}">
 							<p:commandButton
 								actionListener="#{cc.attrs.webSheetBean.addRepeatRow(dataRow.rowIndex)}"
 								update="@form" title="Add Row" alt="Add Row" icon="ui-icon-plus"

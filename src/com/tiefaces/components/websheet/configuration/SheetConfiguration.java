@@ -5,6 +5,7 @@
 
 package com.tiefaces.components.websheet.configuration;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,12 @@ public class SheetConfiguration {
 																		// attributes
 	
 	private FormCommand formCommand;
+	
+	private Map<String, ConfigRangeAttrs> shiftMap;
+	
+	private Map<String, Command> commandIndexMap;
+	private Map<String, String> collectionObjNameMap;	
+	private List<Integer> watchList;
 	
 	private int savedRowsBefore = 0; // Saved Rows before repeat row
 	private int savedRowsAfter = 0; // Saved Rows after repeat row
@@ -223,6 +230,8 @@ public class SheetConfiguration {
 		this.savedRowsAfter = savedRowsAfter;
 	}
 
+	
+	
 /*	
 	public ConfigRange getConfigRange() {
 		if (this.configRange == null) {
@@ -237,6 +246,41 @@ public class SheetConfiguration {
 
 */
 	
+	public List<Integer> getWatchList() {
+		return watchList;
+	}
+
+	public void setWatchList(List<Integer> watchList) {
+		this.watchList = watchList;
+	}
+
+	public Map<String, ConfigRangeAttrs> getShiftMap() {
+		return shiftMap;
+	}
+
+	public void setShiftMap(Map<String, ConfigRangeAttrs> shiftMap) {
+		this.shiftMap = shiftMap;
+	}
+
+	
+	
+	public Map<String, Command> getCommandIndexMap() {
+		return commandIndexMap;
+	}
+
+	public void setCommandIndexMap(Map<String, Command> commandIndexMap) {
+		this.commandIndexMap = commandIndexMap;
+	}
+
+	public Map<String, String> getCollectionObjNameMap() {
+		return collectionObjNameMap;
+	}
+
+	public void setCollectionObjNameMap(
+			Map<String, String> collectionObjNameMap) {
+		this.collectionObjNameMap = collectionObjNameMap;
+	}
+
 	public FormCommand getFormCommand() {
 		if (this.formCommand == null) {
 			this.formCommand = new FormCommand();
@@ -258,6 +302,7 @@ public class SheetConfiguration {
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
+	
 
 	/**
 	 * Obtain a human readable representation.

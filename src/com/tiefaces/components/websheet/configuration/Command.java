@@ -120,5 +120,8 @@ public interface Command {
 	 */
 	int buildAt(String fullName, ConfigBuildRef configBuildRef, int atRow, Map<String, Object> context,
 			List<RowsMapping> currentRowsMappingList);
+	
+	
+	String getCommandName();
 
 }

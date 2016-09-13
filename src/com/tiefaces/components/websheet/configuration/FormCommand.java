@@ -15,7 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.service.CellHelper;
 import com.tiefaces.components.websheet.service.ShiftFormula;
-import com.tiefaces.components.websheet.configuration.ExpressionHelper;
+import com.tiefaces.components.websheet.configuration.ConfigurationHelper;
 /**
  * Form command. i.e. tie:form(name="departments" length="9" header="0"
  * footer="0")
@@ -191,7 +191,7 @@ public class FormCommand extends ConfigCommand {
 					// when insert row, the formula may changed. so here is the workaround.
 					// change formula to user formula to preserve the row changes.
 					cell.setCellType(Cell.CELL_TYPE_STRING);
-					cell.setCellValue(ExpressionHelper.USER_FORMULA_PREFIX + formula + ExpressionHelper.USER_FORMULA_SUFFIX);
+					cell.setCellValue(ConfigurationHelper.USER_FORMULA_PREFIX + formula + ConfigurationHelper.USER_FORMULA_SUFFIX);
 					
 
 				}
@@ -232,26 +232,47 @@ public class FormCommand extends ConfigCommand {
 		// TODO Auto-generated method stub
 
 		configBuildRef.setWatchList(buildFormWatchList(configBuildRef.getWbWrapper(), configBuildRef.getSheet()));
-		fullName = this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getName().trim();
+		fullName = this.getCommandName();
 
-		RowsMapping currentMapping = new RowsMapping();
+		RowsMapping unitRowsMapping = this.getConfigRange().getAttrs().unitRowsMapping;
 		for (Integer index : configBuildRef.getWatchList()) {
-			if (this.getConfigRange().isStaticRow(index)) {
-				currentMapping.addRow(index, configBuildRef.getSheet().getRow(index));
+			if (ConfigurationHelper.isStaticRow(this.getConfigRange(),index)) {
+				unitRowsMapping.addRow(index, configBuildRef.getSheet().getRow(index));
 			}
 		}
 		currentRowsMappingList = new ArrayList<RowsMapping>();
-		currentRowsMappingList.add(currentMapping);
-		
-		configBuildRef.getShiftMap().put(fullName, currentMapping);
-
+		currentRowsMappingList.add(unitRowsMapping);
+		this.getConfigRange().getAttrs().allowAdd = false;
+		configBuildRef.putShiftAttrs(fullName, this.getConfigRange().getAttrs(), unitRowsMapping);
+		initFullNameInHiddenColumn(configBuildRef.getSheet());
+		configBuildRef.setOriginConfigRange(new ConfigRange(this.getConfigRange()));
+		configBuildRef.getOriginConfigRange().indexCommandRange(configBuildRef.getCommandIndexMap());
 		int length = this.getConfigRange().buildAt(fullName, configBuildRef,
-				atRow, context, currentRowsMappingList,
-				null);
+				atRow, context, currentRowsMappingList);
 
 		this.setFinalLength(length);
+		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenFullNameColumn, true);
 
 		return length;
 	}
 
+	private void initFullNameInHiddenColumn(Sheet sheet) {
+		
+		for (int i= this.getTopRow(); i<= this.getLastRow(); i++) {
+			Row row = sheet.getRow(i);
+			if (row == null) {
+				row = sheet.createRow(i);
+			}
+			Cell cell = row.getCell(ConfigurationHelper.hiddenFullNameColumn, Row.CREATE_NULL_AS_BLANK); 
+			cell.setCellValue(i+":");
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+		}
+		
+	}
+
+	@Override
+	public String getCommandName() {
+		return this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getName().trim();
+	}
+	
 }

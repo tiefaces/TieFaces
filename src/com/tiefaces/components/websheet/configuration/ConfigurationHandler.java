@@ -525,6 +525,7 @@ public class ConfigurationHandler {
 		int sheetRightCol = TieWebSheetUtility.getSheetRightCol(sheet);
 		List<ConfigCommand> commandList = buildCommandListFromSheetComment(
 				(XSSFSheet) sheet, sheetRightCol);
+
 		List<String> formList = new ArrayList<String>();
 
 		buildSheetConfigMapFromFormCommand(sheet, sheetConfigMap,

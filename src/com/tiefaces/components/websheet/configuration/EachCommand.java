@@ -3,6 +3,7 @@ package com.tiefaces.components.websheet.configuration;
 import static com.tiefaces.components.websheet.TieWebSheetConstants.COPY_SHEET_PREFIX;
 import static com.tiefaces.components.websheet.TieWebSheetConstants.EXCEL_SHEET_NAME_LIMIT;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,11 +34,9 @@ public class EachCommand extends ConfigCommand {
 	private String allowAdd;
 	/** select holder. */
 	private String select;
+	/** class name holder. */
+	private String className;
 
-	@SuppressWarnings("rawtypes")
-	private Collection itemsCollection;
-
-	private RowsMapping savedRowsMapping = null;
 
 	public EachCommand() {
 		super();
@@ -82,14 +81,12 @@ public class EachCommand extends ConfigCommand {
 	public void setSelect(String select) {
 		this.select = select;
 	}
-
-	@SuppressWarnings("rawtypes")
-	public Collection getItemsCollection() {
-		return itemsCollection;
+	public String getClassName() {
+		return className;
 	}
 
-	public void setItemsCollection(Collection itemsCollection) {
-		this.itemsCollection = itemsCollection;
+	public void setClassName(String className) {
+		this.className = className;
 	}
 
 	/**
@@ -108,6 +105,8 @@ public class EachCommand extends ConfigCommand {
 		sb.append(",");
 		sb.append("var = " + this.getVar());
 		sb.append(",");
+		sb.append("className = " + this.getClassName());
+		sb.append(",");
 		sb.append("select = " + this.getSelect());
 		sb.append(",");
 		sb.append("Allow Add = " + this.getAllowAdd());
@@ -123,19 +122,9 @@ public class EachCommand extends ConfigCommand {
 			List<RowsMapping> currentRowsMappingList
 			) {
 
-		fullName = fullName + ":"+ this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getVar().trim();
-		this.setItemsCollection(ExpressionHelper
-				.transformToCollectionObject(configBuildRef.getEngine(), items, context));
-		// only in (allowdAdd = true) condition, we saved the rows mapping for
-		// future usage
-		AddRowRef addRowRef = null;
-		if ((this.allowAdd != null)
-				&& (this.allowAdd.trim().equalsIgnoreCase("true"))) {
-			this.savedRowsMapping = new RowsMapping();
-			for (RowsMapping rowsMapping : currentRowsMappingList) {
-				this.savedRowsMapping.mergeMap(rowsMapping);
-			}
-		}
+		fullName = fullName + ":"+ this.getCommandName();
+		Collection itemsCollection = ConfigurationHelper
+				.transformToCollectionObject(configBuildRef.getEngine(), items, context);
 
 		int index = 0;
 		ExpressionEngine selectEngine = null;
@@ -145,32 +134,55 @@ public class EachCommand extends ConfigCommand {
 
 		int insertPosition = atRow;
 		List<RowsMapping> commandRowsMappingList = new ArrayList<RowsMapping>();
+		
+		String objClassName = this.getClassName(); 
+		
+		if (objClassName == null) {
+			configBuildRef.getCollectionObjNameMap().get(this.var);
+		}		
+		if (configBuildRef.isAddMode() && itemsCollection.isEmpty()) {
+			// do something here to insert one empty object
+			try {
+				itemsCollection.add(Class.forName(objClassName).newInstance());
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
 		// clone is a deep-clone of o
-		for (Object obj : this.getItemsCollection()) {
+		for (Object obj : itemsCollection) {
+			if (objClassName == null) {
+				objClassName = obj.getClass().getName();
+				configBuildRef.getCollectionObjNameMap().put(this.var, objClassName);
+			}
 			// allow add row
 			RowsMapping unitRowsMapping = new RowsMapping();
 			context.put(var, obj);
 			if (selectEngine != null
-					&& !ExpressionHelper.isConditionTrue(selectEngine,
+					&& !ConfigurationHelper.isConditionTrue(selectEngine,
 							context)) {
 				context.remove(var);
 				continue;
 			}
 			ConfigRange currentRange = null;
-			insertEachTemplate(configBuildRef, index, insertPosition,
+			ConfigurationHelper.insertEachTemplate(this.getConfigRange(), configBuildRef, index, insertPosition,
 					unitRowsMapping);
-			currentRange = buildCurrentRange(configBuildRef.getSheet(), insertPosition);
+			currentRange = ConfigurationHelper.buildCurrentRange(this.getConfigRange(), configBuildRef.getSheet(), insertPosition);
 			currentRowsMappingList.add(unitRowsMapping);
 			commandRowsMappingList.add(unitRowsMapping);
-			String unitFullName = fullName + "." + index;
-			configBuildRef.getShiftMap().put(unitFullName, unitRowsMapping);
 			
-			if (this.savedRowsMapping != null) {
-				addRowRef = new AddRowRef(this, index);
-			}
+			String unitFullName = fullName + "." + index;
+			currentRange.getAttrs().allowAdd = false;
+			if ((this.allowAdd != null)
+					&& (this.allowAdd.trim().equalsIgnoreCase("true"))) {			
+				currentRange.getAttrs().allowAdd = true;
+				configBuildRef.setBodyAllowAdd(true);
+			} 
+			configBuildRef.putShiftAttrs(unitFullName, currentRange.getAttrs(), unitRowsMapping);
+			
 			int length = currentRange.buildAt( unitFullName, configBuildRef,
 					insertPosition, context, 
-					currentRowsMappingList, addRowRef );
+					currentRowsMappingList );
 			insertPosition += length;
 			currentRowsMappingList.remove(unitRowsMapping);
 			index++;
@@ -187,6 +199,11 @@ public class EachCommand extends ConfigCommand {
 		return finalLength;
 	}
 
+	@Override
+	public String getCommandName() {
+		return this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getVar().trim();
+	}
+
 	// public Object deepClone(Object object) {
 	// try {
 	// ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -201,47 +218,6 @@ public class EachCommand extends ConfigCommand {
 	// return null;
 	// }
 	// }
-	private ConfigRange buildCurrentRange(Sheet sheet, int insertPosition) {
-		ConfigRange current = new ConfigRange(this.getConfigRange());
-		int shiftNum = insertPosition
-				- this.getConfigRange().getFirstRowAddr().getRow();
-		current.shiftRowRef(sheet, shiftNum);
-		return current;
-	}
 
-	private void insertEachTemplate(ConfigBuildRef configBuildRef, int index,
-			int insertPosition, 
-			RowsMapping unitRowsMapping) {
-		// TODO Auto-generated method stub
-		int srcStartRow = this.getConfigRange().getFirstRowAddr()
-				.getRow();
-		int srcEndRow = this.getConfigRange().getLastRowPlusAddr()
-				.getRow() - 1;
-
-		Sheet sheet = configBuildRef.getSheet();
-		CellHelper cellHelper = configBuildRef.getCellHelper();
-		
-		Workbook wb = sheet.getWorkbook();
-		// excel sheet name has limit 31 chars
-		String copyName = (COPY_SHEET_PREFIX + sheet.getSheetName());
-		if (copyName.length() > EXCEL_SHEET_NAME_LIMIT) {
-			copyName = copyName.substring(0, EXCEL_SHEET_NAME_LIMIT);
-		}
-		Sheet srcSheet = wb.getSheet(copyName);
-		if (index > 0) {
-			cellHelper.copyRows(sheet.getWorkbook(), configBuildRef.getWbWrapper(), srcSheet,
-					sheet, srcStartRow, srcEndRow, insertPosition, false);
-		}
-
-		for (int rowIndex = srcStartRow; rowIndex <= srcEndRow; rowIndex++) {
-			if (configBuildRef.getWatchList().contains(rowIndex)
-					&& (this.getConfigRange().isStaticRow(rowIndex))) {
-				unitRowsMapping.addRow(
-						rowIndex,
-						sheet.getRow(insertPosition + rowIndex
-								- srcStartRow));
-			}
-		}
-	}
 
 }

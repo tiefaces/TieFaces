@@ -1,5 +1,6 @@
 package com.tiefaces.components.websheet.configuration;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
+import com.tiefaces.components.websheet.dataobjects.CachedCells;
 import com.tiefaces.components.websheet.service.CellHelper;
 
 public class ConfigBuildRef {
@@ -16,18 +18,49 @@ public class ConfigBuildRef {
     List<Integer> watchList;
 	ExpressionEngine engine;
 	CellHelper cellHelper;
-	Map<Integer, AddRowRef> addRowMap;
-	Map<String, RowsMapping> shiftMap;
-	
-	public ConfigBuildRef(XSSFEvaluationWorkbook wbWrapper, Sheet sheet,
-			ExpressionEngine engine, CellHelper cellHelper) {
+	boolean bodyAllowAdd = false;
+	boolean addMode = false;
+
+	/**
+	 * Saved configRange attributes for each full name.
+	 * String : full name.
+	 * ConfigRangeAttrs : include range (top, bottom) and rows mapping.
+	 */
+	Map<String, ConfigRangeAttrs> shiftMap;
+
+	/**
+	 * Saved formula cells.
+	 * include original formula and rows mapping for this cell.
+	 */
+	CachedCells cachedCells;
+
+	/**
+	 * used for cache origin config range tree.
+	 */
+	ConfigRange originConfigRange;
+
+	/**
+	 * used for originConfigRange to finding command through full name.
+	 * key (String) - command name. i.e. F.deparments or E.department
+	 * value (Command) - configuration command.
+	 */
+	Map<String, Command> commandIndexMap= new HashMap<String, Command>();
+	/**
+	 * used for save the object for create new one.
+	 * key (String) - var name.
+	 * value (String) - object class name.
+	 */
+	Map<String, String> collectionObjNameMap= new HashMap<String, String>();
+
+	public ConfigBuildRef(XSSFEvaluationWorkbook pWbWrapper, Sheet pSheet,
+			ExpressionEngine pEngine, CellHelper pCellHelper, CachedCells pCachedCells) {
 		super();
-		this.wbWrapper = wbWrapper;
-		this.sheet = sheet;
-		this.engine = engine;
-		this.cellHelper = cellHelper;
-		this.addRowMap = new HashMap<Integer, AddRowRef>();
-		this.shiftMap = new HashMap<String, RowsMapping>();
+		this.wbWrapper = pWbWrapper;
+		this.sheet = pSheet;
+		this.engine = pEngine;
+		this.cellHelper = pCellHelper;
+		this.cachedCells = pCachedCells;
+		this.shiftMap = new HashMap<String, ConfigRangeAttrs>();
 	}
 	public List<Integer> getWatchList() {
 		return watchList;
@@ -47,19 +80,53 @@ public class ConfigBuildRef {
 	public CellHelper getCellHelper() {
 		return cellHelper;
 	}
-	public Map<Integer, AddRowRef> getAddRowMap() {
-		return addRowMap;
+	
+	public CachedCells getCachedCells() {
+		return cachedCells;
 	}
-	public void setAddRowMap(Map<Integer, AddRowRef> addRowMap) {
-		this.addRowMap = addRowMap;
+	public void putShiftAttrs(String fullName, ConfigRangeAttrs attrs, RowsMapping unitRowsMapping) {
+		attrs.unitRowsMapping = unitRowsMapping;
+		this.shiftMap.put(fullName, attrs);
 	}
-	public Map<String, RowsMapping> getShiftMap() {
+	
+	public Map<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
-	public void setShiftMap(Map<String, RowsMapping> shiftMap) {
+	public void setShiftMap(Map<String, ConfigRangeAttrs> shiftMap) {
 		this.shiftMap = shiftMap;
-	}	
-
+	}
+	public boolean isBodyAllowAdd() {
+		return bodyAllowAdd;
+	}
+	public void setBodyAllowAdd(boolean bodyAllowAdd) {
+		this.bodyAllowAdd = bodyAllowAdd;
+	}
+	public ConfigRange getOriginConfigRange() {
+		return originConfigRange;
+	}
+	public void setOriginConfigRange(ConfigRange originConfigRange) {
+		this.originConfigRange = originConfigRange;
+	}
+	public Map<String, Command> getCommandIndexMap() {
+		return commandIndexMap;
+	}
+	public void setCommandIndexMap(Map<String, Command> commandIndexMap) {
+		this.commandIndexMap = commandIndexMap;
+	}
+	public boolean isAddMode() {
+		return addMode;
+	}
+	public void setAddMode(boolean addMode) {
+		this.addMode = addMode;
+	}
+	public Map<String, String> getCollectionObjNameMap() {
+		return collectionObjNameMap;
+	}
+	public void setCollectionObjNameMap(
+			Map<String, String> collectionObjNameMap) {
+		this.collectionObjNameMap = collectionObjNameMap;
+	}
+	
 	
 	
 }
