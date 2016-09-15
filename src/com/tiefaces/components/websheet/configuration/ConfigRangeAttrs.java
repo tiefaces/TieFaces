@@ -15,9 +15,11 @@ public class ConfigRangeAttrs {
 	/** if true then the lastCell is created instead of exist cell. */
 	public boolean lastCellCreated;
 	
+	public int finalLengh = 0;
+	
 	public boolean allowAdd = false;
 	
-	public RowsMapping unitRowsMapping = new RowsMapping();
+	public RowsMapping unitRowsMapping = null;
 
 	public ConfigRangeAttrs(boolean lastCellCreated) {
 		this.lastCellCreated = lastCellCreated;

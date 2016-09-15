@@ -27,17 +27,11 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.formula.ptg.AddPtg;
 import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.configuration.RowsMapping;
 import com.tiefaces.components.websheet.configuration.ShiftFormulaRef;
-import com.tiefaces.components.websheet.configuration.ShiftRow;
 
 public class ShiftFormula {
 	// only support xlsx
@@ -45,14 +39,13 @@ public class ShiftFormula {
 			.getLastRowIndex();
 
 	public static Ptg[] convertSharedFormulas(Ptg[] ptgs,
-			final ShiftFormulaRef shiftFormulaRef,
-			final List<ShiftRow> changedRows) {
+			final ShiftFormulaRef shiftFormulaRef) {
 		
 		List<Ptg> newPtgList = new ArrayList<Ptg>();
 		Object ptg = null;
 		for (int k = 0; k < ptgs.length; ++k) {
 			ptg = ptgs[k];
-			newPtgList.addAll(Arrays.asList(convertPtg(ptgs, k, shiftFormulaRef, changedRows, ptg )));
+			newPtgList.addAll(Arrays.asList(convertPtg(ptgs, k, shiftFormulaRef, ptg )));
 		}
 
 		//String [] stockArr = stockList.toArray(new String[stockList.size()]);
@@ -124,7 +117,6 @@ public class ShiftFormula {
 
 	private static Ptg[] convertPtg(final Ptg[] ptgs,
 			final int position, final ShiftFormulaRef shiftFormulaRef,
-			final List<ShiftRow> changedRows,
 			Object ptg
 			) {
 		
@@ -145,7 +137,6 @@ public class ShiftFormula {
 				return singlePtg(ptg, originalOperandClass);
 			} else {
 				shiftFormulaRef.setFormulaChanged(1);
-				changedRows.add(new ShiftRow(currentRow, rowlist));
 				// one to one or has no round brackets
 				if ((rowlist.size()==1) || ((position+1) >= ptgs.length) || !(ptgs[position+1]  instanceof ParenthesisPtg ) ) {
 					// change ptg one to one

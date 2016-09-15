@@ -11,6 +11,20 @@ public class RowsMapping  {
 //implements Cloneable
 	private Map<Integer, List<Row>> rowsMap = new HashMap<Integer, List<Row>>();
 
+	
+	
+   public RowsMapping() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+   /**
+     * Copy constructor
+     */
+    public  RowsMapping( RowsMapping source) {
+    	this.rowsMap.putAll(source.getRowsMap());
+    }		
+	
 	public Map<Integer, List<Row>> getRowsMap() {
 		return rowsMap;
 	}

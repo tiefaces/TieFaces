@@ -14,12 +14,20 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
+import com.tiefaces.components.websheet.dataobjects.CachedCells;
+import com.tiefaces.components.websheet.dataobjects.FormulaMapping;
 import com.tiefaces.components.websheet.service.CellHelper;
+import com.tiefaces.components.websheet.service.ShiftFormula;
 import com.tiefaces.exception.EvaluationException;
 
 public class ConfigurationHelper {
@@ -36,7 +44,7 @@ public class ConfigurationHelper {
 
 	public static final String EACH_COMMAND_FULL_NAME_PREFIX = "E.";
 	public static final String FORM_COMMAND_FULL_NAME_PREFIX = "F.";
-	
+
 	public static void evaluate(Map<String, Object> context, Cell cell,
 			ExpressionEngine engine, CellHelper cellHelper) {
 		int cellType = cell.getCellType();
@@ -188,15 +196,13 @@ public class ConfigurationHelper {
 		if (parts == null) {
 			return -1;
 		}
-		
+
 		int originRowIndex = Integer.parseInt(parts[0]);
-		
-		fullName = fullName.substring(fullName.indexOf(":")+1);
-		
+
+		fullName = fullName.substring(fullName.indexOf(":") + 1);
+
 		Collection lastCollection = null;
 		int lastCollectionIndex = -1;
-		String lastItems = null;
-		String lastVar = null;
 		EachCommand eachCommand = null;
 		// replace the lastCollection.
 		// since here's add one row.
@@ -209,73 +215,65 @@ public class ConfigurationHelper {
 			// layer.
 			// i.e. E.department.1:E.employee.0
 			// need prepare department.1 and employee.0
-			for (String part : parts) {
+			for (int i = 0; i < parts.length; i++) {
+				String part = parts[i];
 				if (part.startsWith(EACH_COMMAND_FULL_NAME_PREFIX)) {
 					String[] varparts = part.split("\\.");
-					if (varparts.length == 3) {
-						lastVar = varparts[1];
-						eachCommand = (EachCommand) configBuildRef
-								.getCommandIndexMap().get(EACH_COMMAND_FULL_NAME_PREFIX + lastVar);
-						lastItems = eachCommand.getItems();
-						lastCollection = transformToCollectionObject(
-								configBuildRef.getEngine(), lastItems,
-								dataContext);
-						lastCollectionIndex = Integer
-								.parseInt(varparts[2]);
-						dataContext.put(
-								varparts[1],
-								findItemInCollection(lastCollection,
-										lastCollectionIndex));
-					}
+					eachCommand = getEachCommandFromPartsName(configBuildRef,varparts); 
+					lastCollection = transformToCollectionObject(
+							configBuildRef.getEngine(), eachCommand.getItems(),
+							dataContext);
+					lastCollectionIndex = prepareCollectionDataInContext(
+							varparts, configBuildRef, eachCommand,
+							lastCollection, dataContext);
 				}
 			}
-			if (lastVar != null) {
-				dataContext.remove(lastVar);
-			} else {
+			if (lastCollectionIndex < 0) {
+				// no each command in the loop.
 				return 0;
 			}
-			if (!(lastCollection instanceof List)) {
-				throw new EvaluationException(
-						lastVar
-								+ " is not a list collection, cannot support add/delete function.");
-			}
-			List collectionList = (List) lastCollection;
 
-			// the object must support empty constructor.
-			Object currentObj = collectionList.get(lastCollectionIndex);
-			Object insertObj = currentObj.getClass().newInstance();
-			collectionList.add(lastCollectionIndex + 1, insertObj);
-			dataContext.put(lastVar, insertObj);
+			String unitFullName = insertEmptyObjectInContext(fullName,
+					lastCollection, eachCommand, lastCollectionIndex,
+					dataContext);
 			RowsMapping unitRowsMapping = new RowsMapping();
-
-			ConfigRangeAttrs savedRangeAttrs = configBuildRef.getShiftMap().get(fullName);
-
-			int insertPosition = savedRangeAttrs.lastRowPlusRef.getRowIndex();
-
+			ConfigRangeAttrs savedRangeAttrs = configBuildRef
+					.getShiftMap().get(fullName);
+			int insertPosition = savedRangeAttrs.firstRowRef.getRowIndex() + savedRangeAttrs.finalLengh;
 			insertEachTemplate(eachCommand.getConfigRange(),
 					configBuildRef, lastCollectionIndex + 1,
 					insertPosition, unitRowsMapping);
 			ConfigRange currentRange = buildCurrentRange(
 					eachCommand.getConfigRange(),
 					configBuildRef.getSheet(), insertPosition);
-			List<RowsMapping> currentRowsMappingList = findRowsMappingFromShiftMap(parts, configBuildRef.getShiftMap());
+			List<RowsMapping> currentRowsMappingList = findUpperRowsMappingFromShiftMap(
+					parts, configBuildRef.getShiftMap());
 			currentRowsMappingList.add(unitRowsMapping);
-			String unitFullName = EACH_COMMAND_FULL_NAME_PREFIX + lastVar + "."
-					+ (lastCollectionIndex + 1);
 			currentRange.getAttrs().allowAdd = true;
 			configBuildRef.setBodyAllowAdd(true);
 			// reverse order of changeMap.
-			Map<String, String> changeMap = new TreeMap<String, String>(Collections.reverseOrder());
-			increasIndexNumberInHiddenColumn(configBuildRef, currentRange.getAttrs().lastRowPlusRef.getRowIndex(), fullName, changeMap);
-			increadIndexNumberInShiftMap(configBuildRef.getShiftMap(), changeMap);
+			Map<String, String> changeMap = new TreeMap<String, String>(
+					Collections.reverseOrder());
+			increaseIndexNumberInHiddenColumn(configBuildRef,
+					currentRange.getAttrs().lastRowPlusRef.getRowIndex(),
+					fullName, changeMap);
+			increaseIndexNumberInShiftMap(configBuildRef.getShiftMap(),
+					changeMap);
 			configBuildRef.putShiftAttrs(unitFullName,
 					currentRange.getAttrs(), unitRowsMapping);
 			int length = currentRange.buildAt(unitFullName,
 					configBuildRef, insertPosition, dataContext,
 					currentRowsMappingList);
+			currentRange.getAttrs().finalLengh = length;
+			
+			reBuildUpperLevelFormula(configBuildRef, fullName);
+			increaseUpperLevelFinalLength(
+					configBuildRef.getShiftMap(),
+					fullName, 
+					length);			
 			insertPosition += length;
 			currentRowsMappingList.remove(unitRowsMapping);
-			dataContext.remove(lastVar);
+			dataContext.remove(eachCommand.getVar());
 
 			return 1;
 
@@ -286,75 +284,217 @@ public class ConfigurationHelper {
 
 	}
 
-public static void  increadIndexNumberInShiftMap(Map<String, ConfigRangeAttrs> shiftMap, Map<String, String> changeMap) {
-	for(Map.Entry<String,String> entry : changeMap.entrySet()) {
-		  String key = entry.getKey();
-		  String newKey = entry.getValue();
-		  ConfigRangeAttrs attrs = shiftMap.get(key);
-		  if (attrs != null) {
-			  shiftMap.remove(key);
-			  shiftMap.put(newKey, attrs);
-		  }
-	}	
-}
-	
-	
- public static void increasIndexNumberInHiddenColumn(ConfigBuildRef configBuildRef, int startRowIndex, String fullName, Map<String, String> changeMap) {
-	 String searchName = fullName.substring(0, fullName.lastIndexOf("."));
-	 Sheet sheet = configBuildRef.getSheet();
-	 for (int i = startRowIndex; i<= sheet.getLastRowNum(); i++) {
-		 Row row = sheet.getRow(i);
-		 String fname = getFullNameFromRow(row);
-		 int sindex = fname.indexOf(searchName);
-		 // no search found, then no need to change.
-		 if (sindex < 0) {
-			 break;
-		 }	 
-		 String snum = fname.substring(sindex + searchName.length());
-		 int dindex = snum.indexOf(":");
-		 if (dindex > 0) {
-			 snum = snum.substring(0,  dindex -1);
-		 }
-		 int increaseNum = Integer.parseInt(snum) + 1;
-		 String kname = fname.substring(sindex);
-		 String changeName = fname.replace( (searchName + snum ), (searchName + increaseNum));
-		 if (changeMap.get(kname)==null) {
-			 changeMap.put(kname, changeName.substring(sindex));
-		 }
-		 setFullNameInHiddenColumn(row, changeName);
-	 }
- }
-	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static String insertEmptyObjectInContext(String fullName,
+			Collection lastCollection, EachCommand eachCommand,
+			int lastCollectionIndex, Map<String, Object> dataContext)
+			throws Exception {
+		if (!(lastCollection instanceof List)) {
+			throw new EvaluationException(
+					eachCommand.getVar()
+							+ " is not a list collection, cannot support add/delete function.");
+		}
+		List collectionList = (List) lastCollection;
+		// the object must support empty constructor.
+		Object currentObj = collectionList.get(lastCollectionIndex);
+		Object insertObj = currentObj.getClass().newInstance();
+		collectionList.add(lastCollectionIndex + 1, insertObj);
+		dataContext.put(eachCommand.getVar(), insertObj);
+		return 	fullName.substring(0, fullName.lastIndexOf(".") + 1) + (lastCollectionIndex + 1);
 
-public static void setFullNameInHiddenColumn(Row row, String fullName) {
-		Cell cell = row.getCell(hiddenFullNameColumn, Row.CREATE_NULL_AS_BLANK);
+	}
+
+	private static EachCommand getEachCommandFromPartsName(
+			ConfigBuildRef configBuildRef, String[] varparts) {
+		if (varparts.length == 3) {
+			return (EachCommand) configBuildRef.getCommandIndexMap().get(
+					EACH_COMMAND_FULL_NAME_PREFIX + varparts[1]);
+		}
+		return null;
+
+	}
+
+	private static int prepareCollectionDataInContext(String[] varparts,
+			ConfigBuildRef configBuildRef, EachCommand eachCommand,
+			Collection collection, Map<String, Object> dataContext) {
+		if (varparts.length == 3) {
+			int collectionIndex = Integer.parseInt(varparts[2]);
+			Object obj = findItemInCollection(collection, collectionIndex);
+			if (obj != null) {
+				dataContext.put(varparts[1], obj);
+				return collectionIndex;
+			}
+		}
+		return -1;
+	}
+
+	public static void reBuildUpperLevelFormula(
+			ConfigBuildRef configBuildRef, String addFullName) {
+		Map<Cell, String> cachedMap = configBuildRef
+				.getCachedCells();
+		Map<String, List<RowsMapping>> rowsMap = new HashMap<String, List<RowsMapping>>();
+		for (Map.Entry<Cell, String> entry : cachedMap.entrySet()) {
+			Cell cell = entry.getKey();
+			String originFormula = entry.getValue();
+			if (originFormula != null) {
+				String fullName = getFullNameFromRow(cell.getRow());
+				fullName = fullName.substring(fullName.indexOf(":") + 1);
+				// it's upper level
+				if (addFullName.startsWith(fullName +":"))
+				 {
+					List<RowsMapping> currentRowsMappingList = rowsMap
+							.get(fullName);
+					if (currentRowsMappingList == null) {
+						currentRowsMappingList = gatherRowsMappingByFullName(
+								configBuildRef, fullName);
+						rowsMap.put(fullName, currentRowsMappingList);
+					}
+					ShiftFormulaRef shiftFormulaRef = new ShiftFormulaRef(
+							configBuildRef.getWatchList(),
+							currentRowsMappingList);
+					shiftFormulaRef.setFormulaChanged(0);
+					buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
+							configBuildRef.getWbWrapper(), shiftFormulaRef,
+							cell, originFormula);
+					if (shiftFormulaRef.getFormulaChanged() > 0) {
+						configBuildRef.getCachedCells().put(cell,
+								originFormula);
+					}
+	
+				}
+			}	
+		}
+
+	}
+
+	public static void buildCellFormulaForShiftedRows(final Sheet sheet,
+			final XSSFEvaluationWorkbook wbWrapper,
+			final ShiftFormulaRef shiftFormulaRef, Cell cell, 
+			final String originFormula) {
+		// only shift when there's watchlist exist.
+		if ((shiftFormulaRef.getWatchList() != null)
+				&& (shiftFormulaRef.getWatchList().size() > 0)) {
+			Ptg[] ptgs = FormulaParser.parse(originFormula,
+					wbWrapper, FormulaType.CELL, sheet.getWorkbook()
+							.getSheetIndex(sheet));
+			Ptg[] convertedFormulaPtg = ShiftFormula
+					.convertSharedFormulas(ptgs, shiftFormulaRef);
+			if (shiftFormulaRef.getFormulaChanged() > 0) {
+				// only change formula when indicator is true
+				cell.setCellFormula(FormulaRenderer.toFormulaString(
+						wbWrapper, convertedFormulaPtg));
+
+			}
+		}
+	}
+
+	public static List<RowsMapping> gatherRowsMappingByFullName(
+			ConfigBuildRef configBuildRef, String fullName) {
+		List<RowsMapping> list = new ArrayList<RowsMapping>();
+		Map<String, ConfigRangeAttrs> shiftMap = configBuildRef
+				.getShiftMap();
+		for (Map.Entry<String, ConfigRangeAttrs> entry : shiftMap
+				.entrySet()) {
+			String fname = entry.getKey();
+			if (fname.startsWith(fullName+":")||fname.equals(fullName)) {
+				ConfigRangeAttrs attrs = entry.getValue();
+				list.add(attrs.unitRowsMapping);
+			}
+		}
+		return list;
+	}
+
+	public static void increaseIndexNumberInShiftMap(
+			Map<String, ConfigRangeAttrs> shiftMap,
+			Map<String, String> changeMap) {
+		for (Map.Entry<String, String> entry : changeMap.entrySet()) {
+			String key = entry.getKey();
+			String newKey = entry.getValue();
+			ConfigRangeAttrs attrs = shiftMap.get(key);
+			if (attrs != null) {
+				shiftMap.remove(key);
+				shiftMap.put(newKey, attrs);
+			}
+		}
+	}
+
+	public static void increaseUpperLevelFinalLength(
+			Map<String, ConfigRangeAttrs> shiftMap,
+			String addedFullName, 
+			int increasedLength) {
+		String[] parts = addedFullName.split(":");
+		String fname = null;
+		for (int i=0; i< (parts.length - 1); i++) {
+			if (i==0) {
+				fname = parts[i];
+			} else {
+				fname = fname +":" + parts[i];
+			}
+			shiftMap.get(fname).finalLengh += increasedLength;
+		}
+	}
+
+	public static void increaseIndexNumberInHiddenColumn(
+			ConfigBuildRef configBuildRef, int startRowIndex,
+			String fullName, Map<String, String> changeMap) {
+		String searchName = fullName.substring(0,
+				fullName.lastIndexOf(".") + 1);
+		Sheet sheet = configBuildRef.getSheet();
+		for (int i = startRowIndex; i <= sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			String fname = getFullNameFromRow(row);
+			int sindex = fname.indexOf(searchName);
+			// no search found, then no need to change.
+			if (sindex < 0) {
+				break;
+			}
+			String snum = fname.substring(sindex + searchName.length());
+			int sufindex = snum.indexOf(":");
+			String suffix = "";
+			if (sufindex > 0) {
+				snum = snum.substring(0, sufindex - 1);
+				suffix = ":";
+			}
+			int increaseNum = Integer.parseInt(snum) + 1;
+			String realFullName = fname.substring(sindex);
+			String changeName = fname.replace((searchName + snum + suffix),
+					(searchName + increaseNum + suffix));
+			if (changeMap.get(realFullName) == null) {
+				changeMap.put(realFullName, changeName.substring(sindex));
+			}
+			setFullNameInHiddenColumn(row, changeName);
+		}
+	}
+
+	public static void setFullNameInHiddenColumn(Row row, String fullName) {
+		Cell cell = row.getCell(hiddenFullNameColumn,
+				Row.CREATE_NULL_AS_BLANK);
 		String rowNum = cell.getStringCellValue();
-System.out.println("set fullname hidden rownum = "+rowNum+" fullName = "+fullName);		
+		System.out.println("set fullname hidden rownum = " + rowNum
+				+ " fullName = " + fullName);
 		cell.setCellValue(rowNum + fullName);
 	}
- 
- 
- public static List<RowsMapping> findRowsMappingFromShiftMap(String[] parts, Map<String, ConfigRangeAttrs> shiftMap) {
-	 
-	 String fullName = null;
-	 List<RowsMapping> rowsMappingList = new ArrayList<RowsMapping>();
-		for (String part : parts) {
-			if (part.startsWith(FORM_COMMAND_FULL_NAME_PREFIX)) {
-				if (fullName == null) {
-					fullName = part;
-				} else {
-					fullName = fullName + ":" + part;
-				}	
+
+	public static List<RowsMapping> findUpperRowsMappingFromShiftMap(
+			String[] parts, Map<String, ConfigRangeAttrs> shiftMap) {
+
+		String fullName = null;
+		List<RowsMapping> rowsMappingList = new ArrayList<RowsMapping>();
+		for (int i=1; i< parts.length -1; i++) {
+			String part =  parts[i];
+			if (fullName == null) {
+				fullName = part;
+			} else {
+				fullName = fullName + ":" + part;
 			}
-			if (fullName != null ) {
+			if (fullName != null) {
 				ConfigRangeAttrs rangeAttrs = shiftMap.get(fullName);
 				rowsMappingList.add(rangeAttrs.unitRowsMapping);
 			}
 		}
-	return rowsMappingList;
- }	
-				
-				
+		return rowsMappingList;
+	}
+
 	@SuppressWarnings("rawtypes")
 	public static Object findItemInCollection(Collection collection,
 			int index) {

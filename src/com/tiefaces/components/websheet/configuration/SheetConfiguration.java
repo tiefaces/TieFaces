@@ -12,8 +12,10 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellAddress;
 
+import com.tiefaces.components.websheet.dataobjects.CachedCells;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.CellRange;
+import com.tiefaces.components.websheet.dataobjects.FormulaMapping;
 
 /**
  * Configuration object hold all the attributes defined in Configuration tab
@@ -68,6 +70,8 @@ public class SheetConfiguration {
 	private int savedRowsAfter = 0; // Saved Rows after repeat row
 	
 	private boolean hidden = false; // in some case e.g. prepop, we choose to hide the sheet.
+	
+	private Map<Cell, String> cachedOriginFormulas= new HashMap<Cell, String>();
 
 	public String getSheetName() {
 		return sheetName;
@@ -303,6 +307,17 @@ public class SheetConfiguration {
 		this.hidden = hidden;
 	}
 	
+	
+
+
+	public Map<Cell, String> getCachedOriginFormulas() {
+		return cachedOriginFormulas;
+	}
+
+	public void setCachedOriginFormulas(
+			Map<Cell, String> cachedOriginFormulas) {
+		this.cachedOriginFormulas = cachedOriginFormulas;
+	}
 
 	/**
 	 * Obtain a human readable representation.

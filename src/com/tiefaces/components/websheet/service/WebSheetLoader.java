@@ -368,7 +368,7 @@ public class WebSheetLoader implements Serializable {
 					parent.getWb().getSheet(sheetConfig.getSheetName()),
 					parent.getExpEngine(),
 					parent.getCellHelper(),
-					parent.getCachedCells());
+					sheetConfig.getCachedOriginFormulas());
 			int length = sheetConfig.getFormCommand().buildAt(null, configBuildRef,
 					sheetConfig.getFormCommand().getTopRow(),
 					parent.getDataContext(), 
@@ -751,7 +751,7 @@ public class WebSheetLoader implements Serializable {
 				parent.getWb().getSheet(sheetConfig.getSheetName()),
 				parent.getExpEngine(),
 				parent.getCellHelper(),
-				parent.getCachedCells());		
+				sheetConfig.getCachedOriginFormulas());		
 		// set add mode 
 		configBuildRef.setAddMode(true);
 		configBuildRef.setCollectionObjNameMap(sheetConfig.getCollectionObjNameMap());

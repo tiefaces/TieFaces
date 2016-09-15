@@ -2,7 +2,6 @@ package com.tiefaces.components.websheet.dataobjects;
 
 import java.util.List;
 
-import com.tiefaces.components.websheet.configuration.ShiftRow;
 
 /**
  * Used for cached map.
@@ -16,10 +15,6 @@ public class FormulaMapping {
 	 */
 	String originFormula;
 	/**
-	 * rows mapping for original formula.
-	 */
-	List<ShiftRow> rowMappingList;
-	/**
 	 * cached value for the cell.
 	 */
 	String value;
@@ -28,12 +23,6 @@ public class FormulaMapping {
 	}
 	public void setOriginFormula(String originFormula) {
 		this.originFormula = originFormula;
-	}
-	public List<ShiftRow> getRowMappingList() {
-		return rowMappingList;
-	}
-	public void setRowMappingList(List<ShiftRow> rowMappingList) {
-		this.rowMappingList = rowMappingList;
 	}
 	public String getValue() {
 		return value;

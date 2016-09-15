@@ -302,11 +302,10 @@ public class ConfigRange {
 						// rebuild formula if necessary for dynamic row
 						String originFormula = cell.getCellFormula();
 						shiftFormulaRef.setFormulaChanged(0);
-						List<ShiftRow> changedRows = new ArrayList<ShiftRow>();
-						buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
-								configBuildRef.getWbWrapper(), shiftFormulaRef, changedRows, cell);
+						ConfigurationHelper.buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
+								configBuildRef.getWbWrapper(), shiftFormulaRef, cell, cell.getCellFormula());
 						if (shiftFormulaRef.getFormulaChanged() > 0) {
-							configBuildRef.getCachedCells().put(cell, originFormula, changedRows);
+							configBuildRef.getCachedCells().put(cell, originFormula);
 						}
 
 					}
@@ -317,28 +316,6 @@ public class ConfigRange {
 	}
 	
 
-	private void buildCellFormulaForShiftedRows(final Sheet sheet,
-			final XSSFEvaluationWorkbook wbWrapper,
-			final ShiftFormulaRef shiftFormulaRef,
-			final List<ShiftRow> changedRows,
-			Cell cell) {
-		// only shift when there's watchlist exist.
-		if ((shiftFormulaRef.getWatchList()!=null)&&(shiftFormulaRef.getWatchList().size()>0)) {
-			Ptg[] ptgs = FormulaParser.parse(cell
-					.getCellFormula(), wbWrapper,
-					FormulaType.CELL, sheet.getWorkbook()
-							.getSheetIndex(sheet));
-			Ptg[] convertedFormulaPtg = ShiftFormula
-					.convertSharedFormulas(ptgs, shiftFormulaRef, changedRows);
-			if (shiftFormulaRef.getFormulaChanged()>0) {
-				// only change formula when indicator is true
-				cell.setCellFormula(FormulaRenderer
-						.toFormulaString(wbWrapper,
-								convertedFormulaPtg));
-				
-			}
-		}	
-	}
 
 
 }

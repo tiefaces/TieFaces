@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
@@ -32,7 +33,7 @@ public class ConfigBuildRef {
 	 * Saved formula cells.
 	 * include original formula and rows mapping for this cell.
 	 */
-	CachedCells cachedCells;
+	Map<Cell, String> cachedCells;
 
 	/**
 	 * used for cache origin config range tree.
@@ -53,7 +54,7 @@ public class ConfigBuildRef {
 	Map<String, String> collectionObjNameMap= new HashMap<String, String>();
 
 	public ConfigBuildRef(XSSFEvaluationWorkbook pWbWrapper, Sheet pSheet,
-			ExpressionEngine pEngine, CellHelper pCellHelper, CachedCells pCachedCells) {
+			ExpressionEngine pEngine, CellHelper pCellHelper, Map<Cell, String> pCachedCells) {
 		super();
 		this.wbWrapper = pWbWrapper;
 		this.sheet = pSheet;
@@ -81,7 +82,7 @@ public class ConfigBuildRef {
 		return cellHelper;
 	}
 	
-	public CachedCells getCachedCells() {
+	public Map<Cell, String> getCachedCells() {
 		return cachedCells;
 	}
 	public void putShiftAttrs(String fullName, ConfigRangeAttrs attrs, RowsMapping unitRowsMapping) {

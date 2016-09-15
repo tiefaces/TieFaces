@@ -234,7 +234,7 @@ public class FormCommand extends ConfigCommand {
 		configBuildRef.setWatchList(buildFormWatchList(configBuildRef.getWbWrapper(), configBuildRef.getSheet()));
 		fullName = this.getCommandName();
 
-		RowsMapping unitRowsMapping = this.getConfigRange().getAttrs().unitRowsMapping;
+		RowsMapping unitRowsMapping = new RowsMapping();
 		for (Integer index : configBuildRef.getWatchList()) {
 			if (ConfigurationHelper.isStaticRow(this.getConfigRange(),index)) {
 				unitRowsMapping.addRow(index, configBuildRef.getSheet().getRow(index));
@@ -243,13 +243,13 @@ public class FormCommand extends ConfigCommand {
 		currentRowsMappingList = new ArrayList<RowsMapping>();
 		currentRowsMappingList.add(unitRowsMapping);
 		this.getConfigRange().getAttrs().allowAdd = false;
-		configBuildRef.putShiftAttrs(fullName, this.getConfigRange().getAttrs(), unitRowsMapping);
+		configBuildRef.putShiftAttrs(fullName, this.getConfigRange().getAttrs(), new RowsMapping(unitRowsMapping));
 		initFullNameInHiddenColumn(configBuildRef.getSheet());
 		configBuildRef.setOriginConfigRange(new ConfigRange(this.getConfigRange()));
 		configBuildRef.getOriginConfigRange().indexCommandRange(configBuildRef.getCommandIndexMap());
 		int length = this.getConfigRange().buildAt(fullName, configBuildRef,
 				atRow, context, currentRowsMappingList);
-
+		this.getConfigRange().getAttrs().finalLengh = length;
 		this.setFinalLength(length);
 		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenFullNameColumn, true);
 

@@ -149,13 +149,13 @@ public class EachCommand extends ConfigCommand {
 			}
 		}
 		
-		// clone is a deep-clone of o
+		// loop through each object in the collection
 		for (Object obj : itemsCollection) {
+			// gather and cache object class name which used for add row
 			if (objClassName == null) {
 				objClassName = obj.getClass().getName();
 				configBuildRef.getCollectionObjNameMap().put(this.var, objClassName);
 			}
-			// allow add row
 			RowsMapping unitRowsMapping = new RowsMapping();
 			context.put(var, obj);
 			if (selectEngine != null
@@ -164,10 +164,9 @@ public class EachCommand extends ConfigCommand {
 				context.remove(var);
 				continue;
 			}
-			ConfigRange currentRange = null;
 			ConfigurationHelper.insertEachTemplate(this.getConfigRange(), configBuildRef, index, insertPosition,
 					unitRowsMapping);
-			currentRange = ConfigurationHelper.buildCurrentRange(this.getConfigRange(), configBuildRef.getSheet(), insertPosition);
+			ConfigRange currentRange = ConfigurationHelper.buildCurrentRange(this.getConfigRange(), configBuildRef.getSheet(), insertPosition);
 			currentRowsMappingList.add(unitRowsMapping);
 			commandRowsMappingList.add(unitRowsMapping);
 			
@@ -178,11 +177,12 @@ public class EachCommand extends ConfigCommand {
 				currentRange.getAttrs().allowAdd = true;
 				configBuildRef.setBodyAllowAdd(true);
 			} 
-			configBuildRef.putShiftAttrs(unitFullName, currentRange.getAttrs(), unitRowsMapping);
+			configBuildRef.putShiftAttrs(unitFullName, currentRange.getAttrs(), new RowsMapping(unitRowsMapping));
 			
 			int length = currentRange.buildAt( unitFullName, configBuildRef,
 					insertPosition, context, 
 					currentRowsMappingList );
+			currentRange.getAttrs().finalLengh = length;
 			insertPosition += length;
 			currentRowsMappingList.remove(unitRowsMapping);
 			index++;

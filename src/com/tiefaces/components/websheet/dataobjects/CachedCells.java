@@ -8,7 +8,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import com.tiefaces.components.websheet.TieWebSheetBean;
-import com.tiefaces.components.websheet.configuration.ShiftRow;
 /**
  * Use to cache formula cells.
  * The purpose is to compare current cell with cached one.
@@ -56,21 +55,20 @@ public class CachedCells {
 			debug("put cache key= "+cell.getAddress()+" value = "+value);
 		}
 	}	
-	public  void put(Cell cell, String originFormula, List<ShiftRow> rowsList) {
+	public  void put(Cell cell, String originFormula) {
 		Map<Cell, FormulaMapping> map = cachedMap;
 		// if cellType not null then only specified Type will be put into Cache
 		// e.g. only formula cell will be cached then pass in Cell.CELL_TYPE_FORMULA
-		if ((cell!=null) && ( originFormula != null) && (rowsList != null)) {
+		if ((cell!=null) && ( originFormula != null)) {
 			FormulaMapping f = map.get(cell);
 			if (f == null) {
 				f = new FormulaMapping();
 			}
 			f.setOriginFormula(originFormula);
-			f.setRowMappingList(rowsList);
 			String value = parent.getCellHelper().getCellValueWithFormat(cell);
 			f.setValue(value);
 			map.put(cell, f );
-			debug("put cache key= "+cell.getAddress()+" origin formula = "+originFormula+" rowsList = "+rowsList+" value = "+value);
+			debug("put cache key= "+cell.getAddress()+" origin formula = "+originFormula+" value = "+value);
 		}
 	}	
 	public  String getValue(Cell cell) {
@@ -93,4 +91,11 @@ public class CachedCells {
 			} 
 			return false;
 		}
+
+	public Map<Cell, FormulaMapping> getCachedMap() {
+		return cachedMap;
+	}
+	
+	
+	
 }
