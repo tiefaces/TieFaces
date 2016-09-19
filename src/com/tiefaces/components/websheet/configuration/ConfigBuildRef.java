@@ -21,6 +21,7 @@ public class ConfigBuildRef {
 	CellHelper cellHelper;
 	boolean bodyAllowAdd = false;
 	boolean addMode = false;
+	int insertPosition = -1;
 
 	/**
 	 * Saved configRange attributes for each full name.
@@ -126,6 +127,12 @@ public class ConfigBuildRef {
 	public void setCollectionObjNameMap(
 			Map<String, String> collectionObjNameMap) {
 		this.collectionObjNameMap = collectionObjNameMap;
+	}
+	public int getInsertPosition() {
+		return insertPosition;
+	}
+	public void setInsertPosition(int insertPosition) {
+		this.insertPosition = insertPosition;
 	}
 	
 	

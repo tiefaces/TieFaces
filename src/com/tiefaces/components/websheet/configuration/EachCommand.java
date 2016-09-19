@@ -138,7 +138,7 @@ public class EachCommand extends ConfigCommand {
 		String objClassName = this.getClassName(); 
 		
 		if (objClassName == null) {
-			configBuildRef.getCollectionObjNameMap().get(this.var);
+			objClassName = configBuildRef.getCollectionObjNameMap().get(this.var);
 		}		
 		if (configBuildRef.isAddMode() && itemsCollection.isEmpty()) {
 			// do something here to insert one empty object
@@ -182,7 +182,7 @@ public class EachCommand extends ConfigCommand {
 			int length = currentRange.buildAt( unitFullName, configBuildRef,
 					insertPosition, context, 
 					currentRowsMappingList );
-			currentRange.getAttrs().finalLengh = length;
+			currentRange.getAttrs().finalLength = length;
 			insertPosition += length;
 			currentRowsMappingList.remove(unitRowsMapping);
 			index++;

@@ -239,7 +239,8 @@ public class ConfigurationHelper {
 			RowsMapping unitRowsMapping = new RowsMapping();
 			ConfigRangeAttrs savedRangeAttrs = configBuildRef
 					.getShiftMap().get(fullName);
-			int insertPosition = savedRangeAttrs.firstRowRef.getRowIndex() + savedRangeAttrs.finalLengh;
+			int insertPosition = savedRangeAttrs.firstRowRef.getRowIndex() + savedRangeAttrs.finalLength;
+			configBuildRef.setInsertPosition(insertPosition);
 			insertEachTemplate(eachCommand.getConfigRange(),
 					configBuildRef, lastCollectionIndex + 1,
 					insertPosition, unitRowsMapping);
@@ -264,7 +265,7 @@ public class ConfigurationHelper {
 			int length = currentRange.buildAt(unitFullName,
 					configBuildRef, insertPosition, dataContext,
 					currentRowsMappingList);
-			currentRange.getAttrs().finalLengh = length;
+			currentRange.getAttrs().finalLength = length;
 			
 			reBuildUpperLevelFormula(configBuildRef, fullName);
 			increaseUpperLevelFinalLength(
@@ -275,7 +276,7 @@ public class ConfigurationHelper {
 			currentRowsMappingList.remove(unitRowsMapping);
 			dataContext.remove(eachCommand.getVar());
 
-			return 1;
+			return length;
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -381,6 +382,10 @@ public class ConfigurationHelper {
 					.convertSharedFormulas(ptgs, shiftFormulaRef);
 			if (shiftFormulaRef.getFormulaChanged() > 0) {
 				// only change formula when indicator is true
+System.out.println("before convert ptg =" );
+for (Ptg ptg : convertedFormulaPtg) {
+	System.out.print( ptg.toString() );
+}
 				cell.setCellFormula(FormulaRenderer.toFormulaString(
 						wbWrapper, convertedFormulaPtg));
 
@@ -430,7 +435,7 @@ public class ConfigurationHelper {
 			} else {
 				fname = fname +":" + parts[i];
 			}
-			shiftMap.get(fname).finalLengh += increasedLength;
+			shiftMap.get(fname).finalLength += increasedLength;
 		}
 	}
 
@@ -452,7 +457,7 @@ public class ConfigurationHelper {
 			int sufindex = snum.indexOf(":");
 			String suffix = "";
 			if (sufindex > 0) {
-				snum = snum.substring(0, sufindex - 1);
+				snum = snum.substring(0, sufindex );
 				suffix = ":";
 			}
 			int increaseNum = Integer.parseInt(snum) + 1;
@@ -462,14 +467,18 @@ public class ConfigurationHelper {
 			if (changeMap.get(realFullName) == null) {
 				changeMap.put(realFullName, changeName.substring(sindex));
 			}
-			setFullNameInHiddenColumn(row, changeName);
+			setFullNameInHiddenColumn(row, changeName, true);
 		}
 	}
 
-	public static void setFullNameInHiddenColumn(Row row, String fullName) {
+	public static void setFullNameInHiddenColumn(Row row, String fullName, boolean includeOriginNum) {
 		Cell cell = row.getCell(hiddenFullNameColumn,
 				Row.CREATE_NULL_AS_BLANK);
-		String rowNum = cell.getStringCellValue();
+		String rowNum = "";
+		
+		if (!includeOriginNum) {
+			rowNum =	cell.getStringCellValue();
+		}	
 		System.out.println("set fullname hidden rownum = " + rowNum
 				+ " fullName = " + fullName);
 		cell.setCellValue(rowNum + fullName);

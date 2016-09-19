@@ -134,14 +134,14 @@ public class ShiftFormula {
 			List<Row> rowlist = getRowsList(currentRow,shiftFormulaRef.getCurrentRowsMappingList());
 			if ((rowlist == null) || (rowlist.size() == 0)) {
 				// no need change ptg
-				return singlePtg(ptg, originalOperandClass);
+				return singlePtg(ptg, originalOperandClass, -1);
 			} else {
 				shiftFormulaRef.setFormulaChanged(1);
 				// one to one or has no round brackets
 				if ((rowlist.size()==1) || ((position+1) >= ptgs.length) || !(ptgs[position+1]  instanceof ParenthesisPtg ) ) {
 					// change ptg one to one
 					// return changed ptg
-					return singlePtg(fixupRefRelativeRowOneToOne(ptg, rowlist.get(0)), originalOperandClass);
+					return singlePtg(fixupRefRelativeRowOneToOne(ptg, rowlist.get(0)), originalOperandClass, -1);
 				} else {
 					shiftFormulaRef.setFormulaChanged(rowlist.size());
 					return fixupRefRelativeRowOneToMany(ptg, originalOperandClass, rowlist,ptgs,position);							
@@ -151,22 +151,28 @@ public class ShiftFormula {
 		} else {
 			// no need change ptg
 			if ((ptg instanceof AttrPtg) && (shiftFormulaRef.getFormulaChanged()>1)) {
-				Ptg newPtg = (AttrPtg) ptg;
-				if (newPtg.toFormulaString().toLowerCase().contains("sum")) {
+				AttrPtg newPtg = (AttrPtg) ptg;
+				if (newPtg.isSum()) {
 					FuncVarPtg fptg = FuncVarPtg.create("sum", shiftFormulaRef.getFormulaChanged());
-					return singlePtg(fptg, fptg.getPtgClass());
+					return singlePtg(fptg, fptg.getPtgClass(), shiftFormulaRef.getFormulaChanged());
 				}
 			}
-			return singlePtg(ptg, originalOperandClass);
+			return singlePtg(ptg, originalOperandClass, shiftFormulaRef.getFormulaChanged());
 		}
 	}
 	
 	
-	private static Ptg[] singlePtg(Object ptg,byte originalOperandClass) {
+	private static Ptg[] singlePtg(Object ptg,byte originalOperandClass, int formulaChanged) {
 		Ptg[] newPtg = new Ptg[1];
 		if (originalOperandClass != (-1)) {
 			((Ptg) ptg).setClass(originalOperandClass);
-		}	
+		}
+		if (ptg instanceof FuncVarPtg) {
+			FuncVarPtg fptg =  (FuncVarPtg) ptg;
+			if ((formulaChanged>0) && (fptg.getNumberOfOperands() != formulaChanged)) {
+				ptg = FuncVarPtg.create(((FuncVarPtg) ptg).getName(), formulaChanged);
+			}
+		}
 		newPtg[0] = (Ptg) ptg;
 		return newPtg;
 	}

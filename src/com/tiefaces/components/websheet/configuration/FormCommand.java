@@ -249,7 +249,7 @@ public class FormCommand extends ConfigCommand {
 		configBuildRef.getOriginConfigRange().indexCommandRange(configBuildRef.getCommandIndexMap());
 		int length = this.getConfigRange().buildAt(fullName, configBuildRef,
 				atRow, context, currentRowsMappingList);
-		this.getConfigRange().getAttrs().finalLengh = length;
+		this.getConfigRange().getAttrs().finalLength = length;
 		this.setFinalLength(length);
 		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenFullNameColumn, true);
 

@@ -746,9 +746,9 @@ public class WebSheetLoader implements Serializable {
 
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
 				parent.getCurrentTabName());
-		
+		Sheet sheet = parent.getWb().getSheet(sheetConfig.getSheetName()); 
 		ConfigBuildRef configBuildRef = new ConfigBuildRef(parent.getWbWrapper(),
-				parent.getWb().getSheet(sheetConfig.getSheetName()),
+				sheet,
 				parent.getExpEngine(),
 				parent.getCellHelper(),
 				sheetConfig.getCachedOriginFormulas());		
@@ -758,17 +758,17 @@ public class WebSheetLoader implements Serializable {
 		configBuildRef.setCommandIndexMap(sheetConfig.getCommandIndexMap());
 		configBuildRef.setShiftMap(sheetConfig.getShiftMap());
 		configBuildRef.setWatchList(sheetConfig.getWatchList());
-		int ireturn = ConfigurationHelper.addRow(configBuildRef, rowIndex, sheetConfig, parent.getDataContext());
-		if (ireturn < 1) {
+		int length = ConfigurationHelper.addRow(configBuildRef, rowIndex, sheetConfig, parent.getDataContext());
+		if (length <= 0) {
 			FacesContext.getCurrentInstance()
 					.addMessage(
 							null,
 							new FacesMessage(FacesMessage.SEVERITY_ERROR,
 									"System Error",
 									"Cannot add row"));
-			return;
 		}
 		
+		refreshBodyRowsInRange(configBuildRef.getInsertPosition(), length, sheet, sheetConfig);
 		parent.getCellHelper().reCalc();
 		
 		
@@ -799,6 +799,30 @@ public class WebSheetLoader implements Serializable {
 			facesrow.setRowIndex(facesrow.getRowIndex() + 1);
 		}
 	*/	
+	}
+
+	private void refreshBodyRowsInRange(int insertPosition,
+			int length, Sheet sheet, SheetConfiguration sheetConfig) {
+		Map<String, CellRangeAddress> cellRangeMap = parent
+				.getCellHelper().indexMergedRegion(sheet);
+		List<String> skippedRegionCells = parent.getCellHelper()
+				.skippedRegionCells(sheet);
+		int top = sheetConfig.getBodyCellRange().getTopRow();
+		int left = sheetConfig.getBodyCellRange().getLeftCol();
+		int right = sheetConfig.getBodyCellRange().getRightCol();
+		int initRows = 0;
+		for (int irow= insertPosition; irow< insertPosition + length; irow++) {
+			parent.getBodyRows().add(
+					irow - top,
+					assembleFacesBodyRow( irow , sheet,  true, top,
+							left, right, initRows, sheetConfig, cellRangeMap,
+							skippedRegionCells));
+		}	
+		for (int irow = insertPosition + length  - top; irow < parent.getBodyRows()
+				.size(); irow++) {
+			FacesRow facesrow = parent.getBodyRows().get(irow);
+			facesrow.setRowIndex(facesrow.getRowIndex() + length);
+		}
 	}
 
 	public void deleteRepeatRow(int rowIndex) {

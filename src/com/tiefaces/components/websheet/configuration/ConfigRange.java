@@ -296,21 +296,26 @@ public class ConfigRange {
 			Row row = configBuildRef.getSheet().getRow(i);
 			if ((row != null) && ConfigurationHelper.isStaticRowRef(this, row)) {
 				for (Cell cell : row) {
-					ConfigurationHelper.evaluate(context, cell, configBuildRef.getEngine(),
-							configBuildRef.getCellHelper());
-					if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-						// rebuild formula if necessary for dynamic row
-						String originFormula = cell.getCellFormula();
-						shiftFormulaRef.setFormulaChanged(0);
-						ConfigurationHelper.buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
-								configBuildRef.getWbWrapper(), shiftFormulaRef, cell, cell.getCellFormula());
-						if (shiftFormulaRef.getFormulaChanged() > 0) {
-							configBuildRef.getCachedCells().put(cell, originFormula);
+					try {
+						ConfigurationHelper.evaluate(context, cell, configBuildRef.getEngine(),
+								configBuildRef.getCellHelper());
+						if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+							// rebuild formula if necessary for dynamic row
+							String originFormula = cell.getCellFormula();
+							shiftFormulaRef.setFormulaChanged(0);
+							ConfigurationHelper.buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
+									configBuildRef.getWbWrapper(), shiftFormulaRef, cell, cell.getCellFormula());
+							if (shiftFormulaRef.getFormulaChanged() > 0) {
+								configBuildRef.getCachedCells().put(cell, originFormula);
+							}
+	
 						}
-
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						log.severe("build cell ( row = "+cell.getRowIndex()+" column = "+ cell.getColumnIndex()+" error = "+ex.getLocalizedMessage());
 					}
 				}
-				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName);
+				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName, false);
 			}
 		}
 	}
