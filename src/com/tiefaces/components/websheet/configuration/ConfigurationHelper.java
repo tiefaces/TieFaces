@@ -19,9 +19,15 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.dataobjects.CachedCells;
@@ -219,10 +225,11 @@ public class ConfigurationHelper {
 				String part = parts[i];
 				if (part.startsWith(EACH_COMMAND_FULL_NAME_PREFIX)) {
 					String[] varparts = part.split("\\.");
-					eachCommand = getEachCommandFromPartsName(configBuildRef,varparts); 
+					eachCommand = getEachCommandFromPartsName(
+							configBuildRef, varparts);
 					lastCollection = transformToCollectionObject(
-							configBuildRef.getEngine(), eachCommand.getItems(),
-							dataContext);
+							configBuildRef.getEngine(),
+							eachCommand.getItems(), dataContext);
 					lastCollectionIndex = prepareCollectionDataInContext(
 							varparts, configBuildRef, eachCommand,
 							lastCollection, dataContext);
@@ -239,7 +246,8 @@ public class ConfigurationHelper {
 			RowsMapping unitRowsMapping = new RowsMapping();
 			ConfigRangeAttrs savedRangeAttrs = configBuildRef
 					.getShiftMap().get(fullName);
-			int insertPosition = savedRangeAttrs.firstRowRef.getRowIndex() + savedRangeAttrs.finalLength;
+			int insertPosition = savedRangeAttrs.firstRowRef
+					.getRowIndex() + savedRangeAttrs.finalLength;
 			configBuildRef.setInsertPosition(insertPosition);
 			insertEachTemplate(eachCommand.getConfigRange(),
 					configBuildRef, lastCollectionIndex + 1,
@@ -266,12 +274,10 @@ public class ConfigurationHelper {
 					configBuildRef, insertPosition, dataContext,
 					currentRowsMappingList);
 			currentRange.getAttrs().finalLength = length;
-			
+
 			reBuildUpperLevelFormula(configBuildRef, fullName);
-			increaseUpperLevelFinalLength(
-					configBuildRef.getShiftMap(),
-					fullName, 
-					length);			
+			increaseUpperLevelFinalLength(configBuildRef.getShiftMap(),
+					fullName, length);
 			insertPosition += length;
 			currentRowsMappingList.remove(unitRowsMapping);
 			dataContext.remove(eachCommand.getVar());
@@ -301,7 +307,8 @@ public class ConfigurationHelper {
 		Object insertObj = currentObj.getClass().newInstance();
 		collectionList.add(lastCollectionIndex + 1, insertObj);
 		dataContext.put(eachCommand.getVar(), insertObj);
-		return 	fullName.substring(0, fullName.lastIndexOf(".") + 1) + (lastCollectionIndex + 1);
+		return fullName.substring(0, fullName.lastIndexOf(".") + 1)
+				+ (lastCollectionIndex + 1);
 
 	}
 
@@ -331,8 +338,7 @@ public class ConfigurationHelper {
 
 	public static void reBuildUpperLevelFormula(
 			ConfigBuildRef configBuildRef, String addFullName) {
-		Map<Cell, String> cachedMap = configBuildRef
-				.getCachedCells();
+		Map<Cell, String> cachedMap = configBuildRef.getCachedCells();
 		Map<String, List<RowsMapping>> rowsMap = new HashMap<String, List<RowsMapping>>();
 		for (Map.Entry<Cell, String> entry : cachedMap.entrySet()) {
 			Cell cell = entry.getKey();
@@ -341,8 +347,7 @@ public class ConfigurationHelper {
 				String fullName = getFullNameFromRow(cell.getRow());
 				fullName = fullName.substring(fullName.indexOf(":") + 1);
 				// it's upper level
-				if (addFullName.startsWith(fullName +":"))
-				 {
+				if (addFullName.startsWith(fullName + ":")) {
 					List<RowsMapping> currentRowsMappingList = rowsMap
 							.get(fullName);
 					if (currentRowsMappingList == null) {
@@ -354,38 +359,35 @@ public class ConfigurationHelper {
 							configBuildRef.getWatchList(),
 							currentRowsMappingList);
 					shiftFormulaRef.setFormulaChanged(0);
-					buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
-							configBuildRef.getWbWrapper(), shiftFormulaRef,
-							cell, originFormula);
+					buildCellFormulaForShiftedRows(
+							configBuildRef.getSheet(),
+							configBuildRef.getWbWrapper(),
+							shiftFormulaRef, cell, originFormula);
 					if (shiftFormulaRef.getFormulaChanged() > 0) {
 						configBuildRef.getCachedCells().put(cell,
 								originFormula);
 					}
-	
+
 				}
-			}	
+			}
 		}
 
 	}
 
 	public static void buildCellFormulaForShiftedRows(final Sheet sheet,
 			final XSSFEvaluationWorkbook wbWrapper,
-			final ShiftFormulaRef shiftFormulaRef, Cell cell, 
+			final ShiftFormulaRef shiftFormulaRef, Cell cell,
 			final String originFormula) {
 		// only shift when there's watchlist exist.
 		if ((shiftFormulaRef.getWatchList() != null)
 				&& (shiftFormulaRef.getWatchList().size() > 0)) {
-			Ptg[] ptgs = FormulaParser.parse(originFormula,
-					wbWrapper, FormulaType.CELL, sheet.getWorkbook()
-							.getSheetIndex(sheet));
+			Ptg[] ptgs = FormulaParser.parse(originFormula, wbWrapper,
+					FormulaType.CELL,
+					sheet.getWorkbook().getSheetIndex(sheet));
 			Ptg[] convertedFormulaPtg = ShiftFormula
 					.convertSharedFormulas(ptgs, shiftFormulaRef);
 			if (shiftFormulaRef.getFormulaChanged() > 0) {
 				// only change formula when indicator is true
-System.out.println("before convert ptg =" );
-for (Ptg ptg : convertedFormulaPtg) {
-	System.out.print( ptg.toString() );
-}
 				cell.setCellFormula(FormulaRenderer.toFormulaString(
 						wbWrapper, convertedFormulaPtg));
 
@@ -401,7 +403,8 @@ for (Ptg ptg : convertedFormulaPtg) {
 		for (Map.Entry<String, ConfigRangeAttrs> entry : shiftMap
 				.entrySet()) {
 			String fname = entry.getKey();
-			if (fname.startsWith(fullName+":")||fname.equals(fullName)) {
+			if (fname.startsWith(fullName + ":")
+					|| fname.equals(fullName)) {
 				ConfigRangeAttrs attrs = entry.getValue();
 				list.add(attrs.unitRowsMapping);
 			}
@@ -424,16 +427,15 @@ for (Ptg ptg : convertedFormulaPtg) {
 	}
 
 	public static void increaseUpperLevelFinalLength(
-			Map<String, ConfigRangeAttrs> shiftMap,
-			String addedFullName, 
+			Map<String, ConfigRangeAttrs> shiftMap, String addedFullName,
 			int increasedLength) {
 		String[] parts = addedFullName.split(":");
 		String fname = null;
-		for (int i=0; i< (parts.length - 1); i++) {
-			if (i==0) {
+		for (int i = 0; i < (parts.length - 1); i++) {
+			if (i == 0) {
 				fname = parts[i];
 			} else {
-				fname = fname +":" + parts[i];
+				fname = fname + ":" + parts[i];
 			}
 			shiftMap.get(fname).finalLength += increasedLength;
 		}
@@ -457,13 +459,14 @@ for (Ptg ptg : convertedFormulaPtg) {
 			int sufindex = snum.indexOf(":");
 			String suffix = "";
 			if (sufindex > 0) {
-				snum = snum.substring(0, sufindex );
+				snum = snum.substring(0, sufindex);
 				suffix = ":";
 			}
 			int increaseNum = Integer.parseInt(snum) + 1;
 			String realFullName = fname.substring(sindex);
-			String changeName = fname.replace((searchName + snum + suffix),
-					(searchName + increaseNum + suffix));
+			String changeName = fname.replace(
+					(searchName + snum + suffix), (searchName
+							+ increaseNum + suffix));
 			if (changeMap.get(realFullName) == null) {
 				changeMap.put(realFullName, changeName.substring(sindex));
 			}
@@ -471,17 +474,37 @@ for (Ptg ptg : convertedFormulaPtg) {
 		}
 	}
 
-	public static void setFullNameInHiddenColumn(Row row, String fullName, boolean includeOriginNum) {
+	public static void setFullNameInHiddenColumn(Row row,
+			String fullName, boolean includeOriginNum) {
 		Cell cell = row.getCell(hiddenFullNameColumn,
-				Row.CREATE_NULL_AS_BLANK);
+				MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		String rowNum = "";
-		
+
 		if (!includeOriginNum) {
-			rowNum =	cell.getStringCellValue();
-		}	
+			rowNum = cell.getStringCellValue();
+		}
 		System.out.println("set fullname hidden rownum = " + rowNum
 				+ " fullName = " + fullName);
 		cell.setCellValue(rowNum + fullName);
+	}
+
+	public static int getOriginalRowNumInHiddenColumn(Row row) {
+		Cell cell = row.getCell(hiddenFullNameColumn,
+				MissingCellPolicy.CREATE_NULL_AS_BLANK);
+		String rowNum = cell.getStringCellValue();
+		try {
+			if (rowNum != null) {
+				int index = rowNum.indexOf(":");
+				if (index > 0) {
+					rowNum = rowNum.substring(0, index);
+				}
+				return Integer.parseInt(rowNum);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+
+		}
+		return -1;
 	}
 
 	public static List<RowsMapping> findUpperRowsMappingFromShiftMap(
@@ -489,8 +512,8 @@ for (Ptg ptg : convertedFormulaPtg) {
 
 		String fullName = null;
 		List<RowsMapping> rowsMappingList = new ArrayList<RowsMapping>();
-		for (int i=1; i< parts.length -1; i++) {
-			String part =  parts[i];
+		for (int i = 1; i < parts.length - 1; i++) {
+			String part = parts[i];
 			if (fullName == null) {
 				fullName = part;
 			} else {
@@ -629,4 +652,39 @@ for (Ptg ptg : convertedFormulaPtg) {
 		}
 
 	}
+
+	public static void createCellComment(Cell cell, String newComment, Map<Cell, String> finalCommentMap) {
+// due to poi's bug. the comment must be set in sorted order ( row first then column), 
+// otherwise poi will mess up.
+// workaround solution is to  save all comments into a map,
+// and output them together when download workbook.
+		
+		if (newComment != null) {
+			finalCommentMap.put(cell, newComment);
+/*			
+			Row row = cell.getRow();
+			Sheet sheet = row.getSheet();
+			Workbook wb = sheet.getWorkbook();
+			CreationHelper factory = wb.getCreationHelper();
+			Drawing drawing = sheet.getDrawingPatriarch();
+			if (drawing == null) {
+				drawing = sheet.createDrawingPatriarch();
+			}
+			ClientAnchor anchor = factory.createClientAnchor();
+			anchor.setCol1(cell.getColumnIndex());
+			anchor.setCol2(cell.getColumnIndex() + 1);
+			anchor.setRow1(row.getRowNum());
+			anchor.setRow2(row.getRowNum() + 3);
+			Comment comment = drawing.createCellComment(anchor);
+			RichTextString str = factory.createRichTextString(newComment);
+			comment.setString(str);
+		    // Set the row and column here
+		    comment.setRow(cell.getRowIndex());
+		    comment.setColumn(cell.getColumnIndex());
+			cell.setCellComment(comment);
+
+*/			
+		}
+	}
+
 }

@@ -12,6 +12,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -153,7 +154,7 @@ public final class TieWebSheetUtility {
 			CellReference ref = new CellReference(cellRef);
 			Row r = sheet.getRow(ref.getRow());
 			if (r != null) {
-				c = r.getCell(ref.getCol(), Row.CREATE_NULL_AS_BLANK);
+				c = r.getCell(ref.getCol(), MissingCellPolicy.CREATE_NULL_AS_BLANK);
 			}
 		} catch (Exception ex) {
 			// use log.debug because mostly it's expected
@@ -1077,7 +1078,7 @@ public final class TieWebSheetUtility {
 			if (row == null) {
 				row = sheet.createRow(lastRow + 1);
 			}
-			return row.getCell(rightCol, Row.CREATE_NULL_AS_BLANK);
+			return row.getCell(rightCol, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		}
 		return null;
 	}	

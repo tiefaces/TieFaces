@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
@@ -136,7 +137,7 @@ public class ConfigurationHandler {
 		
 		for ( String sheetName : sheetNames) {
 			Sheet sheet = parent.getWb().getSheet(sheetName);
-			buildSheet(sheet, sheetConfigMap);
+			buildSheet(sheet, sheetConfigMap, parent.getTemplateCommentMap(), parent.getSaveCommentMap());
 		}
 		log.fine("buildConfiguration map = " + sheetConfigMap);
 		return sheetConfigMap;		
@@ -377,7 +378,7 @@ public class ConfigurationHandler {
 		log.fine("form tabName = " + formName + " maxRow = " + maxRow);
 
 		Cell firstCell = sheet.getRow(firstRow).getCell(leftCol,
-				Row.CREATE_NULL_AS_BLANK);
+				MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		// header range row set to 0 while column set to first column to
 		// max
 		// column (FF) e.g. $A$0 : $FF$0
@@ -520,11 +521,11 @@ public class ConfigurationHandler {
 	 *            sheetConfiguration map.
 	 */
 	public final void buildSheet(final Sheet sheet,
-			final Map<String, SheetConfiguration> sheetConfigMap) {
+			final Map<String, SheetConfiguration> sheetConfigMap, final Map<String, String> templateCommentMap, final Map<String, String> saveCommentMap) {
 
 		int sheetRightCol = TieWebSheetUtility.getSheetRightCol(sheet);
 		List<ConfigCommand> commandList = buildCommandListFromSheetComment(
-				(XSSFSheet) sheet, sheetRightCol);
+				(XSSFSheet) sheet, sheetRightCol, templateCommentMap, saveCommentMap );
 
 		List<String> formList = new ArrayList<String>();
 
@@ -546,7 +547,7 @@ public class ConfigurationHandler {
 	 * @return command list.
 	 */
 	private List<ConfigCommand> buildCommandListFromSheetComment(
-			final XSSFSheet sheet, final int sheetRightCol) {
+			final XSSFSheet sheet, final int sheetRightCol, final Map<String, String> templateCommentMap, final Map<String, String> saveCommentMap) {
 		List<ConfigCommand> commandList = new ArrayList<ConfigCommand>();
 		Map<CellAddress, ? extends Comment> comments = null;
 		
@@ -568,10 +569,9 @@ public class ConfigurationHandler {
 		// comments.
 		for (CellAddress key : keys) {
 			Cell cell = sheet.getRow(key.getRow()).getCell(
-					key.getColumn(), Row.CREATE_NULL_AS_BLANK);
+					key.getColumn(), MissingCellPolicy.CREATE_NULL_AS_BLANK);
 			commandList = buildCommandList(sheet, sheetRightCol,
-					cell,  commandList);
-			cell.removeCellComment();
+					cell,  commandList, templateCommentMap, saveCommentMap);
 		}
 		return commandList;
 
@@ -731,6 +731,10 @@ public class ConfigurationHandler {
 		return str.startsWith(COMMAND_PREFIX);
 	}
 
+	private boolean isSaveString(final String str) {
+		return str.startsWith(SAVE_PREFIX);
+	}
+
 	/**
 	 * build command list from comment.
 	 * 
@@ -747,7 +751,8 @@ public class ConfigurationHandler {
 	 * @return command list.
 	 */
 	private List<ConfigCommand> buildCommandList(final Sheet sheet,
-			final int sheetRightCol, final Cell cell, final List<ConfigCommand> cList) {
+			final int sheetRightCol, final Cell cell, final List<ConfigCommand> cList, 
+			final Map<String, String> templateCommentMap, final Map<String, String> saveCommentMap) {
 
 		Comment comment = cell.getCellComment();
 		String text = comment.getString().getString();
@@ -776,6 +781,9 @@ public class ConfigurationHandler {
 					cList.add(configCommand);
 				}
 				changed = true;
+			} else if (isSaveString(line)) {
+				saveCellComment(cell, line, saveCommentMap);
+				changed =true;
 			} else {
 				if (newComment == null) {
 					newComment = commentLine;
@@ -783,9 +791,10 @@ public class ConfigurationHandler {
 				newComment += "\\n" + commentLine;
 			}
 		}
-		if (changed) {
-			changeCellComment(sheet, cell, newComment);
-		}
+		if (!changed) {
+			newComment = text;
+		}	
+		saveCellComment(cell, newComment, templateCommentMap);
 		return cList;
 	}
 
@@ -799,16 +808,12 @@ public class ConfigurationHandler {
 	 * @param newComment
 	 *            updated comment.
 	 */
-	private void changeCellComment(final Sheet sheet,
-			final Cell cell, final String newComment) {
-//		Workbook wb = sheet.getWorkbook();
-//		CreationHelper factory = wb.getCreationHelper();
-//		if ((newComment == null) || newComment.trim().isEmpty()) {
-//			cell.removeCellComment();
-//		} else {
-//			RichTextString str = factory.createRichTextString(newComment);
-//			cell.getCellComment().setString(str);
-//		}	
+	private void saveCellComment(final Cell cell, final String newComment, final Map<String, String> sheetCommentMap) {
+		if ((newComment != null)&&( !newComment.trim().isEmpty())) {
+			sheetCommentMap.put( "$"+ cell.getColumnIndex()+"$"+cell.getRowIndex()  ,  newComment);
+		}
+		// after saved to map. remove the cell comments.
+		cell.removeCellComment();
 	}
 
 	/**

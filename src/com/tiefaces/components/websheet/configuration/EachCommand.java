@@ -190,11 +190,14 @@ public class EachCommand extends ConfigCommand {
 		}
 		// save the commandRowsMapping to the last one in currentRowsMapping
 		// which is also the parent of the each command
-		RowsMapping parentRowsMapping = currentRowsMappingList
-				.get(currentRowsMappingList.size() - 1);
+		RowsMapping parentRowsMapping = new RowsMapping();
+		int  parentIndex = currentRowsMappingList.size() - 1; 
+		parentRowsMapping.mergeMap(currentRowsMappingList
+				.get(parentIndex));
 		for (RowsMapping rowsMapping : commandRowsMappingList) {
 			parentRowsMapping.mergeMap(rowsMapping);
 		}
+		currentRowsMappingList.set(parentIndex, parentRowsMapping);
 		int finalLength = insertPosition - atRow;
 		return finalLength;
 	}

@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.service.CellHelper;
@@ -263,7 +264,7 @@ public class FormCommand extends ConfigCommand {
 			if (row == null) {
 				row = sheet.createRow(i);
 			}
-			Cell cell = row.getCell(ConfigurationHelper.hiddenFullNameColumn, Row.CREATE_NULL_AS_BLANK); 
+			Cell cell = row.getCell(ConfigurationHelper.hiddenFullNameColumn, MissingCellPolicy.CREATE_NULL_AS_BLANK); 
 			cell.setCellValue(i+":");
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 		}

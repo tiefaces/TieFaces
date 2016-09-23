@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -349,7 +350,7 @@ public class CellHelper {
 					newRow, oldCell, newCell, checkLock);
 		}
 		if (setHiddenColumn) {
-			Cell cell = newRow.getCell(ConfigurationHelper.hiddenFullNameColumn, Row.CREATE_NULL_AS_BLANK); 
+			Cell cell = newRow.getCell(ConfigurationHelper.hiddenFullNameColumn, MissingCellPolicy.CREATE_NULL_AS_BLANK); 
 			cell.setCellValue(sourceRow.getRowNum()+":");
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 		}

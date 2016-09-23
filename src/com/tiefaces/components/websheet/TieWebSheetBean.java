@@ -87,6 +87,24 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	private Map<String, Object> dataContext;
 	/** hold pictures for current display sheet. */
 	private Map<String, Picture> picturesMap;
+	
+	/** hold comments for the current sheet config form.
+	 *  key is sheetName!$columnIndex$rowIndex. (row is original row in template).
+	 *  value is the comments without tie commands.
+	 */
+	private Map<String, String> templateCommentMap = new HashMap<String, String>();
+
+	/** hold comments for the save command.
+	 *  some formula cell need to be saved into data object.
+	 *  so we allow using comments to define the save position. 
+	 *  i.e. $save{departments.headCount}
+	 *  key is sheetName!$columnIndex$rowIndex. (row is original row in template).
+	 *  value is the comments without tie commands.
+	 */
+	private Map<String, String> saveCommentMap = new HashMap<String, String>();
+	
+	
+	
 	private ChartsData charsData = new ChartsData();
 
 	/** hold cached cells in current display sheet. */
@@ -428,6 +446,10 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	public final void setCachedCells(final CachedCells pCachedCells) {
 		this.cachedCells = pCachedCells;
 	}
+	
+	
+	
+	
 
 	/**
 	 * create datacontext map if needed.
@@ -782,4 +804,15 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		this.webSheetLoader.deleteRepeatRow(rowIndex);
 	}
 
+	public Map<String, String> getTemplateCommentMap() {
+		return templateCommentMap;
+	}
+
+	public Map<String, String> getSaveCommentMap() {
+		return saveCommentMap;
+	}
+
+	
+	
+	
 }

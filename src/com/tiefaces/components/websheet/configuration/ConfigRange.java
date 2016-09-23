@@ -12,6 +12,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
@@ -82,7 +83,7 @@ public class ConfigRange {
 
 	public void shiftRowRef(Sheet sheet, int shiftnum) {
     	try {
-    		this.setFirstRowRef(sheet.getRow( attrs.firstRowAddr.getRow() + shiftnum).getCell(attrs.firstRowAddr.getColumn(), Row.CREATE_NULL_AS_BLANK), false);
+    		this.setFirstRowRef(sheet.getRow( attrs.firstRowAddr.getRow() + shiftnum).getCell(attrs.firstRowAddr.getColumn(), MissingCellPolicy.CREATE_NULL_AS_BLANK), false);
     		this.setLastRowPlusRef(sheet, attrs.lastRowPlusAddr.getColumn(), attrs.lastRowPlusAddr.getRow() + shiftnum -1, false);
     		
             if (commandList != null) { 
@@ -146,7 +147,7 @@ public class ConfigRange {
 			}
 			Cell cell = row.getCell(rightCol);
 			if (cell == null) {
-				cell = row.getCell(rightCol, Row.CREATE_NULL_AS_BLANK);
+				cell = row.getCell(rightCol, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 				this.attrs.lastCellCreated = true;
 			} else {
 				this.attrs.lastCellCreated = false;
@@ -295,6 +296,7 @@ public class ConfigRange {
 		for (int i = atRow; i < lastRowPlus; i++) {
 			Row row = configBuildRef.getSheet().getRow(i);
 			if ((row != null) && ConfigurationHelper.isStaticRowRef(this, row)) {
+				int rowNum = ConfigurationHelper.getOriginalRowNumInHiddenColumn(row);
 				for (Cell cell : row) {
 					try {
 						ConfigurationHelper.evaluate(context, cell, configBuildRef.getEngine(),
@@ -308,8 +310,14 @@ public class ConfigRange {
 							if (shiftFormulaRef.getFormulaChanged() > 0) {
 								configBuildRef.getCachedCells().put(cell, originFormula);
 							}
-	
 						}
+						if (rowNum >= 0) {
+							String skey =configBuildRef.getSheet().getSheetName()+"!$"+cell.getColumnIndex()+"$"+rowNum;
+							String comment = configBuildRef.getTemplateCommentMap().get(skey);
+							if (comment != null) {
+								ConfigurationHelper.createCellComment(cell, comment, configBuildRef.getFinalCommentMap());
+							}
+						}	
 					} catch (Exception ex) {
 						ex.printStackTrace();
 						log.severe("build cell ( row = "+cell.getRowIndex()+" column = "+ cell.getColumnIndex()+" error = "+ex.getLocalizedMessage());

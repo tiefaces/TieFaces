@@ -66,6 +66,18 @@ public class SheetConfiguration {
 	private Map<String, String> collectionObjNameMap;	
 	private List<Integer> watchList;
 	
+	/** due to poi bug. cannot set comment during evaluate cell time.
+	 *  have to output comments following sequence. i.e. row by row.
+	 *  hold comments for the final sheet config form.
+	 *  
+	 *  key is cell.
+	 *  value is the comments.
+	 */
+	private Map<Cell, String> finalCommentMap = new HashMap<Cell, String>();
+	
+	
+	
+	
 	private int savedRowsBefore = 0; // Saved Rows before repeat row
 	private int savedRowsAfter = 0; // Saved Rows after repeat row
 	
@@ -317,6 +329,13 @@ public class SheetConfiguration {
 	public void setCachedOriginFormulas(
 			Map<Cell, String> cachedOriginFormulas) {
 		this.cachedOriginFormulas = cachedOriginFormulas;
+	}
+
+	
+	
+
+	public Map<Cell, String> getFinalCommentMap() {
+		return finalCommentMap;
 	}
 
 	/**

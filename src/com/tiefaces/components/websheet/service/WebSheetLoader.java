@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -197,7 +198,7 @@ public class WebSheetLoader implements Serializable {
 					Cell cell = null;
 					if (row != null)
 						cell = row.getCell(cindex,
-								Row.CREATE_NULL_AS_BLANK);
+								MissingCellPolicy.CREATE_NULL_AS_BLANK);
 					if (cell != null) {
 						FacesCell fcell = new FacesCell();
 						parent.getCellHelper().convertCell(sheetConfig,
@@ -368,7 +369,10 @@ public class WebSheetLoader implements Serializable {
 					parent.getWb().getSheet(sheetConfig.getSheetName()),
 					parent.getExpEngine(),
 					parent.getCellHelper(),
-					sheetConfig.getCachedOriginFormulas());
+					sheetConfig.getCachedOriginFormulas(),
+					parent.getTemplateCommentMap(),
+					parent.getSaveCommentMap(),
+					sheetConfig.getFinalCommentMap());
 			int length = sheetConfig.getFormCommand().buildAt(null, configBuildRef,
 					sheetConfig.getFormCommand().getTopRow(),
 					parent.getDataContext(), 
@@ -630,7 +634,7 @@ public class WebSheetLoader implements Serializable {
 				Cell cell = null;
 				// if (i < (top + initRows)) {
 				if (row != null) {
-					cell = row.getCell(cindex, Row.CREATE_NULL_AS_BLANK);
+					cell = row.getCell(cindex, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 					// cell = row.getCell(cindex);
 				}
 				if (cell != null) {
@@ -751,7 +755,10 @@ public class WebSheetLoader implements Serializable {
 				sheet,
 				parent.getExpEngine(),
 				parent.getCellHelper(),
-				sheetConfig.getCachedOriginFormulas());		
+				sheetConfig.getCachedOriginFormulas(),
+				parent.getTemplateCommentMap(),
+				parent.getSaveCommentMap(),
+				sheetConfig.getFinalCommentMap());		
 		// set add mode 
 		configBuildRef.setAddMode(true);
 		configBuildRef.setCollectionObjNameMap(sheetConfig.getCollectionObjNameMap());
