@@ -89,21 +89,15 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	private Map<String, Picture> picturesMap;
 	
 	/** hold comments for the current sheet config form.
-	 *  key is sheetName!$columnIndex$rowIndex. (row is original row in template).
+	 *  key is 
+	 *  $$ - for normal comment
+	 *  $ - empty method comment
+	 *  $xxx -- method comment while xxx is method name. (now only one method exist: init).
+	 *          i.e. comment could be $init{department.name} , so here init is the method name.
 	 *  value is the comments without tie commands.
 	 */
-	private Map<String, String> templateCommentMap = new HashMap<String, String>();
+	private Map<String, Map<String, String>> templateCommentMap = new HashMap<String, Map<String, String>>();
 
-	/** hold comments for the save command.
-	 *  some formula cell need to be saved into data object.
-	 *  so we allow using comments to define the save position. 
-	 *  i.e. $save{departments.headCount}
-	 *  key is sheetName!$columnIndex$rowIndex. (row is original row in template).
-	 *  value is the comments without tie commands.
-	 */
-	private Map<String, String> saveCommentMap = new HashMap<String, String>();
-	
-	
 	
 	private ChartsData charsData = new ChartsData();
 
@@ -804,13 +798,10 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		this.webSheetLoader.deleteRepeatRow(rowIndex);
 	}
 
-	public Map<String, String> getTemplateCommentMap() {
+	public Map<String, Map<String, String>> getTemplateCommentMap() {
 		return templateCommentMap;
 	}
 
-	public Map<String, String> getSaveCommentMap() {
-		return saveCommentMap;
-	}
 
 	
 	

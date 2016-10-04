@@ -371,7 +371,6 @@ public class WebSheetLoader implements Serializable {
 					parent.getCellHelper(),
 					sheetConfig.getCachedOriginFormulas(),
 					parent.getTemplateCommentMap(),
-					parent.getSaveCommentMap(),
 					sheetConfig.getFinalCommentMap());
 			int length = sheetConfig.getFormCommand().buildAt(null, configBuildRef,
 					sheetConfig.getFormCommand().getTopRow(),
@@ -757,7 +756,6 @@ public class WebSheetLoader implements Serializable {
 				parent.getCellHelper(),
 				sheetConfig.getCachedOriginFormulas(),
 				parent.getTemplateCommentMap(),
-				parent.getSaveCommentMap(),
 				sheetConfig.getFinalCommentMap());		
 		// set add mode 
 		configBuildRef.setAddMode(true);

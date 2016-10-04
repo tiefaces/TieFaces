@@ -10,6 +10,7 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -301,7 +302,7 @@ public class ConfigRange {
 					try {
 						ConfigurationHelper.evaluate(context, cell, configBuildRef.getEngine(),
 								configBuildRef.getCellHelper());
-						if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+						if (cell.getCellTypeEnum() == CellType.FORMULA) {
 							// rebuild formula if necessary for dynamic row
 							String originFormula = cell.getCellFormula();
 							shiftFormulaRef.setFormulaChanged(0);
@@ -312,11 +313,14 @@ public class ConfigRange {
 							}
 						}
 						if (rowNum >= 0) {
-							String skey =configBuildRef.getSheet().getSheetName()+"!$"+cell.getColumnIndex()+"$"+rowNum;
-							String comment = configBuildRef.getTemplateCommentMap().get(skey);
-							if (comment != null) {
-								ConfigurationHelper.createCellComment(cell, comment, configBuildRef.getFinalCommentMap());
-							}
+							Map<String, String> commentMap = configBuildRef.getTemplateCommentMap().get("$$");
+							if (commentMap != null) {
+								String skey =configBuildRef.getSheet().getSheetName()+"!$"+cell.getColumnIndex()+"$"+rowNum;
+								String comment = commentMap.get(skey);
+								if (comment != null) {
+									ConfigurationHelper.createCellComment(cell, comment, configBuildRef.getFinalCommentMap());
+								}
+							}	
 						}	
 					} catch (Exception ex) {
 						ex.printStackTrace();

@@ -19,8 +19,7 @@ public class ConfigBuildRef {
 	List<Integer> watchList;
 	ExpressionEngine engine;
 	CellHelper cellHelper;
-	Map<String, String> templateCommentMap;
-	Map<String, String> saveCommentMap;
+	Map<String, Map<String, String>> templateCommentMap;
 	Map<Cell, String> finalCommentMap;
 	boolean bodyAllowAdd = false;
 	boolean addMode = false;
@@ -58,8 +57,7 @@ public class ConfigBuildRef {
 	public ConfigBuildRef(XSSFEvaluationWorkbook pWbWrapper,
 			Sheet pSheet, ExpressionEngine pEngine,
 			CellHelper pCellHelper, Map<Cell, String> pCachedCells,
-			Map<String, String> pTemplateCommentMap,
-			Map<String, String> pSaveCommentMap,
+			Map<String, Map<String, String>> pTemplateCommentMap,
 			Map<Cell, String> pFinalCommentMap			
 			) {
 		super();
@@ -69,7 +67,6 @@ public class ConfigBuildRef {
 		this.cellHelper = pCellHelper;
 		this.cachedCells = pCachedCells;
 		this.templateCommentMap = pTemplateCommentMap;
-		this.saveCommentMap = pSaveCommentMap;
 		this.finalCommentMap = pFinalCommentMap;
 		this.shiftMap = new HashMap<String, ConfigRangeAttrs>();
 	}
@@ -165,12 +162,10 @@ public class ConfigBuildRef {
 		this.insertPosition = insertPosition;
 	}
 
-	public Map<String, String> getTemplateCommentMap() {
-		return templateCommentMap;
-	}
 
-	public Map<String, String> getSaveCommentMap() {
-		return saveCommentMap;
+	
+	public Map<String, Map<String, String>> getTemplateCommentMap() {
+		return templateCommentMap;
 	}
 
 	public Map<Cell, String> getFinalCommentMap() {

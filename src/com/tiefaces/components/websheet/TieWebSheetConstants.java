@@ -48,8 +48,10 @@ public final class TieWebSheetConstants {
 	
 	public static final String COPY_SHEET_PREFIX = "cptieTemp_";
 	public static final short EXCEL_SHEET_NAME_LIMIT = 31;
-	/** command's prefix. */
-	public static final String SAVE_PREFIX = "$save{";
+	/** method prefix. */
+	public static final String METHOD_PREFIX = "${";
+	/** method regex. */
+	public static final String METHOD_REGEX = "\\$+[^{$]+\\{+[^{}$]+\\}";
 	/** command's prefix. */
 	public static final String COMMAND_PREFIX = "tie:";
 	/** form command. */
