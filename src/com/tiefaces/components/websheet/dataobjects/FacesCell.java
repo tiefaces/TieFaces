@@ -5,6 +5,12 @@
 
 package com.tiefaces.components.websheet.dataobjects;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Cell;
+
+import com.tiefaces.components.websheet.CellAttributesMap;
 import com.tiefaces.components.websheet.TieWebSheetConstants;
 
 /**
@@ -49,6 +55,14 @@ public class FacesCell {
 	private String chartId;
 	/** cell web css style. */
 	private String chartStyle = "";
+	
+	
+	private List<CellFormAttributes> inputAttrs;
+	
+	private Map<String, String> selectItemAttrs;
+	
+	
+	
 
 	public final String getStyle() {
 		return style;
@@ -194,6 +208,25 @@ public class FacesCell {
 
 	public void setChartStyle(String chartStyle) {
 		this.chartStyle = chartStyle;
+	}
+	
+	
+	
+
+	public List<CellFormAttributes> getInputAttrs() {
+		return inputAttrs;
+	}
+
+	public void setInputAttrs(List<CellFormAttributes> inputAttrs) {
+		this.inputAttrs = inputAttrs;
+	}
+
+	public Map<String, String> getSelectItemAttrs() {
+		return selectItemAttrs;
+	}
+
+	public void setSelectItemAttrs(Map<String, String> selectItemAttrs) {
+		this.selectItemAttrs = selectItemAttrs;
 	}
 
 	/**

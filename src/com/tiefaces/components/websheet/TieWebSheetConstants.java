@@ -5,6 +5,8 @@
 
 package com.tiefaces.components.websheet;
 
+import static com.tiefaces.components.websheet.TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_ATTR_CONTROL;
+
 import java.util.regex.Pattern;
 
 public final class TieWebSheetConstants {
@@ -35,6 +37,7 @@ public final class TieWebSheetConstants {
 	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE = "Attributes Type";
 	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE = "Attributes Value";
 	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG = "Validation Error Messages";
+	public static final String TIE_WEBSHEET_CONFIGURATION_ATTR_CONTROL = "Control";
 
 	public static final String TIE_WEBSHEET_FORM_TYPE_FREE = "Free";
 	public static final String TIE_WEBSHEET_FORM_TYPE_REPEAT = "Repeat";
@@ -50,6 +53,8 @@ public final class TieWebSheetConstants {
 	public static final short EXCEL_SHEET_NAME_LIMIT = 31;
 	/** method prefix. */
 	public static final String METHOD_PREFIX = "${";
+	/** method prefix. */
+	public static final String METHOD_WIDGET_PREFIX = "$widget.";
 	/** method regex. */
 	public static final String METHOD_REGEX = "\\$+[^{$]+\\{+[^{}$]+\\}";
 	/** command's prefix. */

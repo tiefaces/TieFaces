@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
+import com.tiefaces.components.websheet.CellAttributesMap;
 import com.tiefaces.components.websheet.dataobjects.CachedCells;
 import com.tiefaces.components.websheet.service.CellHelper;
 
@@ -19,7 +20,7 @@ public class ConfigBuildRef {
 	List<Integer> watchList;
 	ExpressionEngine engine;
 	CellHelper cellHelper;
-	Map<String, Map<String, String>> templateCommentMap;
+	CellAttributesMap cellAttributesMap;
 	Map<Cell, String> finalCommentMap;
 	boolean bodyAllowAdd = false;
 	boolean addMode = false;
@@ -57,7 +58,7 @@ public class ConfigBuildRef {
 	public ConfigBuildRef(XSSFEvaluationWorkbook pWbWrapper,
 			Sheet pSheet, ExpressionEngine pEngine,
 			CellHelper pCellHelper, Map<Cell, String> pCachedCells,
-			Map<String, Map<String, String>> pTemplateCommentMap,
+			CellAttributesMap pCellAttributesMap,
 			Map<Cell, String> pFinalCommentMap			
 			) {
 		super();
@@ -66,7 +67,7 @@ public class ConfigBuildRef {
 		this.engine = pEngine;
 		this.cellHelper = pCellHelper;
 		this.cachedCells = pCachedCells;
-		this.templateCommentMap = pTemplateCommentMap;
+		this.cellAttributesMap = pCellAttributesMap;
 		this.finalCommentMap = pFinalCommentMap;
 		this.shiftMap = new HashMap<String, ConfigRangeAttrs>();
 	}
@@ -164,8 +165,9 @@ public class ConfigBuildRef {
 
 
 	
-	public Map<String, Map<String, String>> getTemplateCommentMap() {
-		return templateCommentMap;
+
+	public CellAttributesMap getCellAttributesMap() {
+		return cellAttributesMap;
 	}
 
 	public Map<Cell, String> getFinalCommentMap() {

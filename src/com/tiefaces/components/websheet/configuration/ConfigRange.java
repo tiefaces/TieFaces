@@ -313,7 +313,7 @@ public class ConfigRange {
 							}
 						}
 						if (rowNum >= 0) {
-							Map<String, String> commentMap = configBuildRef.getTemplateCommentMap().get("$$");
+							Map<String, String> commentMap = configBuildRef.getCellAttributesMap().templateCommentMap.get("$$");
 							if (commentMap != null) {
 								String skey =configBuildRef.getSheet().getSheetName()+"!$"+cell.getColumnIndex()+"$"+rowNum;
 								String comment = commentMap.get(skey);

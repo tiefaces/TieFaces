@@ -5,6 +5,7 @@
 
 package com.tiefaces.components.websheet;
 
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -44,6 +45,7 @@ import com.tiefaces.components.websheet.chart.ChartHelper;
 import com.tiefaces.components.websheet.configuration.ExpressionEngine;
 import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 import com.tiefaces.components.websheet.dataobjects.CachedCells;
+import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.CellMap;
 import com.tiefaces.components.websheet.dataobjects.FacesRow;
 import com.tiefaces.components.websheet.dataobjects.HeaderCell;
@@ -88,17 +90,12 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	/** hold pictures for current display sheet. */
 	private Map<String, Picture> picturesMap;
 	
-	/** hold comments for the current sheet config form.
-	 *  key is 
-	 *  $$ - for normal comment
-	 *  $ - empty method comment
-	 *  $xxx -- method comment while xxx is method name. (now only one method exist: init).
-	 *          i.e. comment could be $init{department.name} , so here init is the method name.
-	 *  value is the comments without tie commands.
-	 */
-	private Map<String, Map<String, String>> templateCommentMap = new HashMap<String, Map<String, String>>();
+	private CellAttributesMap cellAttributesMap = new CellAttributesMap(
+			new HashMap<String, Map<String, String>>(), 
+			new HashMap<String, String>(), 
+			new HashMap<String, List<CellFormAttributes>>(), 
+			new HashMap<String, Map<String,String>>());
 
-	
 	private ChartsData charsData = new ChartsData();
 
 	/** hold cached cells in current display sheet. */
@@ -798,8 +795,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		this.webSheetLoader.deleteRepeatRow(rowIndex);
 	}
 
-	public Map<String, Map<String, String>> getTemplateCommentMap() {
-		return templateCommentMap;
+	public CellAttributesMap getCellAttributesMap() {
+		return cellAttributesMap;
 	}
 
 
