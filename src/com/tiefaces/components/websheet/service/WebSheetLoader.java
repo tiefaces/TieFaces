@@ -199,11 +199,14 @@ public class WebSheetLoader implements Serializable {
 					if (row != null)
 						cell = row.getCell(cindex,
 								MissingCellPolicy.CREATE_NULL_AS_BLANK);
+					int originRowIndex = ConfigurationHelper.getOriginalRowNumInHiddenColumn(row);					
 					if (cell != null) {
 						FacesCell fcell = new FacesCell();
 						parent.getCellHelper().convertCell(sheetConfig,
 								fcell, cell, (currentRow - top), 1, top,
-								false, cellRangeMap);
+								false, cellRangeMap,
+								originRowIndex,
+								parent.getCellAttributesMap());
 						parent.getPicHelper()
 								.setupFacesCellPictureCharts(
 										sheet1,
@@ -568,9 +571,12 @@ public class WebSheetLoader implements Serializable {
 		if (row != null) {
 			facesRow.setRendered(!row.getZeroHeight());
 			facesRow.setRowheight(row.getHeight());
+			int rowNum = ConfigurationHelper.getOriginalRowNumInHiddenColumn(row);
+			facesRow.setOriginRowIndex(rowNum);
 		} else {
 			facesRow.setRendered(true);
 			facesRow.setRowheight(sheet1.getDefaultRowHeight());
+			facesRow.setOriginRowIndex(rowIndex);
 		}
 
 	}
@@ -640,7 +646,9 @@ public class WebSheetLoader implements Serializable {
 					FacesCell fcell = new FacesCell();
 					parent.getCellHelper().convertCell(sheetConfig,
 							fcell, cell, (rowIndex - top), initRows, top,
-							repeatZone, cellRangeMap);
+							repeatZone, cellRangeMap,
+							facesRow.getOriginRowIndex(),
+							parent.getCellAttributesMap());
 					parent.getPicHelper().setupFacesCellPictureCharts(
 							sheet1,
 							fcell,

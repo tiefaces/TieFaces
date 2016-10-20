@@ -56,6 +56,7 @@ public class FacesCell {
 	/** cell web css style. */
 	private String chartStyle = "";
 	
+	private String control = "";
 	
 	private List<CellFormAttributes> inputAttrs;
 	
@@ -229,6 +230,14 @@ public class FacesCell {
 		this.selectItemAttrs = selectItemAttrs;
 	}
 
+	public String getControl() {
+		return control;
+	}
+
+	public void setControl(String control) {
+		this.control = control;
+	}
+
 	/**
 	 * Obtain a human readable representation.
 	 * 
@@ -271,6 +280,8 @@ public class FacesCell {
 		sb.append("chartId = " + chartId);
 		sb.append(",");
 		sb.append("chartStyle = " + chartStyle);
+		sb.append(",");
+		sb.append("control = " + control);
 		sb.append("}");
 		return sb.toString();
 	}

@@ -35,7 +35,6 @@ import com.tiefaces.components.websheet.service.ShiftFormula;
  */
 public class ConfigRange {
 
-
 	/** logger. */
 	private final Logger log = Logger.getLogger(Thread.currentThread()
 			.getStackTrace()[0].getClassName());
@@ -44,62 +43,66 @@ public class ConfigRange {
 
 	/** command list. */
 	private List<ConfigCommand> commandList;
-	
 
 	public ConfigRange() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-    /**
-     * Copy constructor
-     */
-    public ConfigRange(ConfigRange source) {
-        this.attrs.firstRowRef = source.attrs.firstRowRef;
-        this.attrs.firstRowAddr = source.attrs.firstRowAddr;
-        this.attrs.lastRowPlusRef = source.attrs.lastRowPlusRef;
-        this.attrs.lastRowPlusAddr = source.attrs.lastRowPlusAddr;
-        this.attrs.lastCellCreated = source.attrs.lastCellCreated;
-        
-        if (source.commandList != null) { 
-        	this.commandList = this.getCommandList();
-	        for (ConfigCommand sourceCommand : source.commandList) {
-	        	Object newCommand = null;
-	        	if (sourceCommand instanceof FormCommand) {
-	        		newCommand = new FormCommand((FormCommand) sourceCommand);
-	        	} else {
-	        		newCommand = new EachCommand((EachCommand) sourceCommand);
-	        	}
-	            this.commandList.add((ConfigCommand) newCommand);
-	        }
-        }  
-        
-    }	
-    
-    
-    
-    public ConfigRangeAttrs getAttrs() {
+
+	/**
+	 * Copy constructor
+	 */
+	public ConfigRange(ConfigRange source) {
+		this.attrs.firstRowRef = source.attrs.firstRowRef;
+		this.attrs.firstRowAddr = source.attrs.firstRowAddr;
+		this.attrs.lastRowPlusRef = source.attrs.lastRowPlusRef;
+		this.attrs.lastRowPlusAddr = source.attrs.lastRowPlusAddr;
+		this.attrs.lastCellCreated = source.attrs.lastCellCreated;
+
+		if (source.commandList != null) {
+			this.commandList = this.getCommandList();
+			for (ConfigCommand sourceCommand : source.commandList) {
+				Object newCommand = null;
+				if (sourceCommand instanceof FormCommand) {
+					newCommand = new FormCommand(
+							(FormCommand) sourceCommand);
+				} else {
+					newCommand = new EachCommand(
+							(EachCommand) sourceCommand);
+				}
+				this.commandList.add((ConfigCommand) newCommand);
+			}
+		}
+
+	}
+
+	public ConfigRangeAttrs getAttrs() {
 		return attrs;
 	}
 
 	public void shiftRowRef(Sheet sheet, int shiftnum) {
-    	try {
-    		this.setFirstRowRef(sheet.getRow( attrs.firstRowAddr.getRow() + shiftnum).getCell(attrs.firstRowAddr.getColumn(), MissingCellPolicy.CREATE_NULL_AS_BLANK), false);
-    		this.setLastRowPlusRef(sheet, attrs.lastRowPlusAddr.getColumn(), attrs.lastRowPlusAddr.getRow() + shiftnum -1, false);
-    		
-            if (commandList != null) { 
-    	        for (ConfigCommand command : commandList) {
-    	        	command.shiftRowRef(sheet, shiftnum);
-    	        }
-            }  
-    		
-    		
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    		log.severe("shiftRowRef error ="+ex.getLocalizedMessage());
-    	}
-    }
-	
+		try {
+			this.setFirstRowRef(
+					sheet.getRow(attrs.firstRowAddr.getRow() + shiftnum)
+							.getCell(
+									attrs.firstRowAddr.getColumn(),
+									MissingCellPolicy.CREATE_NULL_AS_BLANK),
+					false);
+			this.setLastRowPlusRef(sheet,
+					attrs.lastRowPlusAddr.getColumn(),
+					attrs.lastRowPlusAddr.getRow() + shiftnum - 1, false);
+
+			if (commandList != null) {
+				for (ConfigCommand command : commandList) {
+					command.shiftRowRef(sheet, shiftnum);
+				}
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			log.severe("shiftRowRef error =" + ex.getLocalizedMessage());
+		}
+	}
 
 	public final Cell getFirstRowRef() {
 		return attrs.firstRowRef;
@@ -148,7 +151,8 @@ public class ConfigRange {
 			}
 			Cell cell = row.getCell(rightCol);
 			if (cell == null) {
-				cell = row.getCell(rightCol, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+				cell = row.getCell(rightCol,
+						MissingCellPolicy.CREATE_NULL_AS_BLANK);
 				this.attrs.lastCellCreated = true;
 			} else {
 				this.attrs.lastCellCreated = false;
@@ -231,11 +235,10 @@ public class ConfigRange {
 	 *            context map.
 	 * @return final length.
 	 */
-	public final int buildAt(String fullName, final ConfigBuildRef configBuildRef,
-			final int atRow,
+	public final int buildAt(String fullName,
+			final ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
-			final List<RowsMapping> currentRowsMappingList
-			) {
+			final List<RowsMapping> currentRowsMappingList) {
 		log.fine("build xls sheet at row : " + atRow);
 
 		// List<Row> staticRows = setUpBuildRows(sheet,
@@ -246,93 +249,97 @@ public class ConfigRange {
 				// cellRange.resetChangeMatrix();
 				Command command = commandList.get(i);
 				command.setFinalLength(0);
-				int populatedLength = command.buildAt(fullName, configBuildRef,
-						command.getConfigRange().getFirstRowRef()
-								.getRowIndex(), context, 
+				int populatedLength = command.buildAt(fullName,
+						configBuildRef, command.getConfigRange()
+								.getFirstRowRef().getRowIndex(), context,
 						currentRowsMappingList);
 				command.setFinalLength(populatedLength);
 			}
-		}	
+		}
 
-		buildCells(fullName, configBuildRef, atRow, context, 
+		buildCells(fullName, configBuildRef, atRow, context,
 				currentRowsMappingList);
 
 		int finalLength = this.getLastRowPlusRef().getRowIndex()
-				- this.getFirstRowRef().getRowIndex() ;
+				- this.getFirstRowRef().getRowIndex();
 
 		return finalLength;
 
 	}
 
-
-
-	
 	public void indexCommandRange(Map<String, Command> indexMap) {
 		ConfigurationHelper.indexCommandRange(this, indexMap);
 	}
-	
 
 	/**
 	 * Build all the static cells in the range (exclude command areas).
-	 * @param sheet sheet.
-	 * @param atRow start row.
-	 * @param context context.
-	 * @param wbWrapper workbook wrapper.
-	 * @param watchList watch list.
-	 * @param currentRowsMappingList current rows mapping.
-	 * @param engine engine.
-	 * @param cellHelper cell helper.
+	 * 
+	 * @param sheet
+	 *            sheet.
+	 * @param atRow
+	 *            start row.
+	 * @param context
+	 *            context.
+	 * @param wbWrapper
+	 *            workbook wrapper.
+	 * @param watchList
+	 *            watch list.
+	 * @param currentRowsMappingList
+	 *            current rows mapping.
+	 * @param engine
+	 *            engine.
+	 * @param cellHelper
+	 *            cell helper.
 	 */
-	private void buildCells(String fullName, ConfigBuildRef configBuildRef, final int atRow,
+	private void buildCells(String fullName,
+			ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
-			final List<RowsMapping> currentRowsMappingList
-			) {
-		
-		if ((context==null) || (context.size()==0)) {
+			final List<RowsMapping> currentRowsMappingList) {
+
+		if ((context == null) || (context.size() == 0)) {
 			// no need to evaluate as there's no data object.
-			return ;
+			return;
 		}
 		int lastRowPlus = this.getLastRowPlusRef().getRowIndex();
-		ShiftFormulaRef  shiftFormulaRef = new ShiftFormulaRef(configBuildRef.getWatchList(), currentRowsMappingList);
+		ShiftFormulaRef shiftFormulaRef = new ShiftFormulaRef(
+				configBuildRef.getWatchList(), currentRowsMappingList);
 		for (int i = atRow; i < lastRowPlus; i++) {
 			Row row = configBuildRef.getSheet().getRow(i);
-			if ((row != null) && ConfigurationHelper.isStaticRowRef(this, row)) {
-				int rowNum = ConfigurationHelper.getOriginalRowNumInHiddenColumn(row);
+			if ((row != null)
+					&& ConfigurationHelper.isStaticRowRef(this, row)) {
 				for (Cell cell : row) {
 					try {
-						ConfigurationHelper.evaluate(context, cell, configBuildRef.getEngine(),
+						ConfigurationHelper.evaluate(context, cell,
+								configBuildRef.getEngine(),
 								configBuildRef.getCellHelper());
 						if (cell.getCellTypeEnum() == CellType.FORMULA) {
 							// rebuild formula if necessary for dynamic row
 							String originFormula = cell.getCellFormula();
 							shiftFormulaRef.setFormulaChanged(0);
-							ConfigurationHelper.buildCellFormulaForShiftedRows(configBuildRef.getSheet(),
-									configBuildRef.getWbWrapper(), shiftFormulaRef, cell, cell.getCellFormula());
+							ConfigurationHelper
+									.buildCellFormulaForShiftedRows(
+											configBuildRef.getSheet(),
+											configBuildRef.getWbWrapper(),
+											shiftFormulaRef, cell,
+											cell.getCellFormula());
 							if (shiftFormulaRef.getFormulaChanged() > 0) {
-								configBuildRef.getCachedCells().put(cell, originFormula);
+								configBuildRef.getCachedCells().put(cell,
+										originFormula);
 							}
 						}
-						if (rowNum >= 0) {
-							Map<String, String> commentMap = configBuildRef.getCellAttributesMap().templateCommentMap.get("$$");
-							if (commentMap != null) {
-								String skey =configBuildRef.getSheet().getSheetName()+"!$"+cell.getColumnIndex()+"$"+rowNum;
-								String comment = commentMap.get(skey);
-								if (comment != null) {
-									ConfigurationHelper.createCellComment(cell, comment, configBuildRef.getFinalCommentMap());
-								}
-							}	
-						}	
+
 					} catch (Exception ex) {
 						ex.printStackTrace();
-						log.severe("build cell ( row = "+cell.getRowIndex()+" column = "+ cell.getColumnIndex()+" error = "+ex.getLocalizedMessage());
+						log.severe("build cell ( row = "
+								+ cell.getRowIndex() + " column = "
+								+ cell.getColumnIndex() + " error = "
+								+ ex.getLocalizedMessage());
 					}
 				}
-				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName, false);
+				ConfigurationHelper.setFullNameInHiddenColumn(row,
+						fullName, false);
 			}
 		}
 	}
-	
-
-
 
 }

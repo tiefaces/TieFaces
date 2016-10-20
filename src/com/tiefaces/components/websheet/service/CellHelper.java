@@ -42,6 +42,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.tiefaces.common.FacesUtility;
+import com.tiefaces.components.websheet.CellAttributesMap;
 import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.TieWebSheetConstants;
 import com.tiefaces.components.websheet.configuration.ConfigurationHelper;
@@ -711,7 +712,9 @@ public class CellHelper {
 	public void convertCell(SheetConfiguration sheetConfig,
 			FacesCell fcell, Cell poiCell, int rowindex, int initRows,
 			int bodyTopRow, boolean repeatZone,
-			Map<String, CellRangeAddress> cellRangeMap) {
+			Map<String, CellRangeAddress> cellRangeMap,
+			int originRowIndex,
+			CellAttributesMap cellAttributesMap) {
 		boolean bodyPopulated = sheetConfig.isBodyPopulated();
 		List<CellFormAttributes> cellAttributes = findCellAttributesWithOffset(
 				sheetConfig, poiCell, initRows, bodyTopRow, repeatZone);
@@ -734,7 +737,14 @@ public class CellHelper {
 							&& (!attrValue.equalsIgnoreCase("textarea"))) {
 						fcell.setStyle("text-align: right;");
 					}
-				}
+					if (attrValue.equalsIgnoreCase("textarea")) {
+						fcell.setControl("textarea");
+					}
+					if ((fcell.getControl() == null)
+							|| (fcell.getControl().isEmpty())) {
+						fcell.setControl("text");
+					}
+				}	
 			}
 		}
 		CellRangeAddress caddress = null;
@@ -748,6 +758,37 @@ public class CellHelper {
 			fcell.setRowspan((caddress.getLastRow()
 					- caddress.getFirstRow() + 1));
 		}
+		
+		setupControlAttributes(originRowIndex, fcell, poiCell, sheetConfig,
+				cellAttributesMap);		
+		
+		
+	}
+
+	private void setupControlAttributes(int originRowIndex, FacesCell fcell,
+			Cell poiCell, SheetConfiguration sheetConfig,
+			CellAttributesMap cellAttributesMap) {
+		if (originRowIndex >= 0) {
+			Map<String, String> commentMap = cellAttributesMap.templateCommentMap.get("$$");
+			String skey =poiCell.getSheet().getSheetName()+"!$"+poiCell.getColumnIndex()+"$"+originRowIndex;
+			if (commentMap != null) {
+				String comment = commentMap.get(skey);
+				if (comment != null) {
+					ConfigurationHelper.createCellComment(poiCell, comment, sheetConfig.getFinalCommentMap());
+				}
+			}
+			String widgetType = cellAttributesMap.cellInputType.get(skey).toLowerCase();
+			if (widgetType != null) {
+				fcell.setControl(widgetType);
+				
+				fcell.setInputAttrs(cellAttributesMap.cellInputAttributes.get(skey));
+System.out.println(" control attributes = "+fcell.getInputAttrs());
+				fcell.setSelectItemAttrs(cellAttributesMap.cellSelectItemsAttributes.get(skey));
+			}
+				
+				
+				
+			}
 	}
 
 	public String getRowStyle(Workbook wb, Cell poiCell,

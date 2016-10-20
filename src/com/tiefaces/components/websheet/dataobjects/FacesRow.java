@@ -28,6 +28,7 @@ public class FacesRow {
 	/** whether the row allow add/delete */
 	private boolean allowAdd;
 	
+	private int originRowIndex = -1;
 	/**
 	 * constructor.
 	 * @param pRowIndex the row index.
@@ -75,6 +76,14 @@ public class FacesRow {
 
 	public final void setCells(final List<FacesCell> pCells) {
 		this.cells = pCells;
+	}
+
+	public int getOriginRowIndex() {
+		return originRowIndex;
+	}
+
+	public void setOriginRowIndex(int originRowIndex) {
+		this.originRowIndex = originRowIndex;
 	}
 	
 }
