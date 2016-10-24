@@ -130,8 +130,8 @@ public class TieWebSheetView {
 	}
 
 	// width use pixel 24 = 24px;
-	private int lineNumberColumnWidth = 24;
-	private int addRowColumnWidth = 36;
+	private int lineNumberColumnWidth = 26;
+	private int addRowColumnWidth = 38;
 
 	private String lineNumberColumnWidthStyle = "";
 	private String addRowColumnWidthStyle = "";

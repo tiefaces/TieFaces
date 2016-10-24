@@ -62,6 +62,7 @@ public class FacesCell {
 	
 	private Map<String, String> selectItemAttrs;
 	
+	private String datePattern = "";
 	
 	
 
@@ -236,6 +237,19 @@ public class FacesCell {
 
 	public void setControl(String control) {
 		this.control = control;
+	}
+	
+	
+
+	public String getDatePattern() {
+System.out.println(" **************************** get datepattern = "+datePattern+" for control = "+this.control+" column = "+this.getColumnIndex());		
+		return datePattern;
+	}
+
+	public void setDatePattern(String datePattern) {
+		this.datePattern = datePattern;
+		System.out.println(" ******** set datepattern = "+datePattern+" for control = "+this.control+" column = "+this.getColumnIndex());		
+		
 	}
 
 	/**

@@ -8,14 +8,16 @@
 }
 
 #websheet .ui-inputfield {
-    padding: 5px !important;
+    padding:  3px !important;
 }
 
 #websheet .ui-datatable td {
     padding: 2px !important;
 }
 
-
+#websheet .ui-selectonemenu-label {
+    overflow: visible !important;
+}
 
 #websheet .inputColumnWidth {
 	width:  100% !important;
@@ -25,6 +27,16 @@
     white-space: pre-wrap !important;
     border-radius: 0 !important;
 }
+
+#websheet .inputColumnWidthCalendar input {
+
+	width: calc(100% - 2.566em);  
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+	font-weight: normal !important;
+ 
+}
+
 
 #websheet .inputLabel {
 	display: block;

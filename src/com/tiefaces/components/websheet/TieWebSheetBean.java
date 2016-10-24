@@ -23,6 +23,7 @@ import javax.annotation.PreDestroy;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ComponentSystemEvent;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -42,11 +43,13 @@ import org.primefaces.model.StreamedContent;
 import com.tiefaces.common.FacesUtility;
 import com.tiefaces.components.websheet.chart.ChartData;
 import com.tiefaces.components.websheet.chart.ChartHelper;
+import com.tiefaces.components.websheet.configuration.CellControlsHelper;
 import com.tiefaces.components.websheet.configuration.ExpressionEngine;
 import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 import com.tiefaces.components.websheet.dataobjects.CachedCells;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.CellMap;
+import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.FacesRow;
 import com.tiefaces.components.websheet.dataobjects.HeaderCell;
 import com.tiefaces.components.websheet.service.CellHelper;
@@ -94,7 +97,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 			new HashMap<String, Map<String, String>>(), 
 			new HashMap<String, String>(), 
 			new HashMap<String, List<CellFormAttributes>>(), 
-			new HashMap<String, Map<String,String>>());
+			new HashMap<String, Map<String,String>>(),
+			new HashMap<String, String>());
 
 	private ChartsData charsData = new ChartsData();
 
@@ -800,6 +804,25 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 
+	private Map<String, Map<String, String>> cellDefaultControl =
+			new HashMap<String, Map<String, String>>();
+	
+	public Map<String, Map<String, String>> getCellDefaultControl() {
+		return cellDefaultControl;
+	}
+	
+	
+	public void populateComponent(ComponentSystemEvent event) {
+		UIComponent component = event.getComponent();
+		int[] rowcol = cellHelper
+				.getRowColFromComponentAttributes(component);
+		int row = rowcol[0];
+		int col = rowcol[1];
+		FacesCell fcell =
+				cellHelper.getFacesCellFromBodyRow(row, col, bodyRows);
+		CellControlsHelper.populateAttributes(component, fcell, this.getCellDefaultControl());
+	}	
+	
 	
 	
 	

@@ -782,7 +782,7 @@ public class ConfigurationHandler {
 				changed = true;
 			} else if (isEmptyMethodString(line) || isMethodString(line)) {
 				if (isWidgetMethodString(line)) {
-					parseWidgetAttributes(cell,newComment,cellAttributesMap); 					
+					parseWidgetAttributes(cell,line,cellAttributesMap); 					
 				} else {
 					saveCellComment(cell, line,
 							cellAttributesMap.templateCommentMap, false);
@@ -847,7 +847,7 @@ public class ConfigurationHandler {
 
 		    String type = newComment.substring(newComment.indexOf(METHOD_WIDGET_PREFIX) + METHOD_WIDGET_PREFIX.length(), newComment.indexOf("{"));
 		    
-		    String values = newComment.substring(newComment.indexOf("{"), newComment.indexOf("}"));
+		    String values = newComment.substring(newComment.indexOf("{")+1, newComment.indexOf("}"));
 			// map's key is sheetName!$columnIndex$rowIndex
 			String key = cell.getSheet().getSheetName() + "!$"
 					+ cell.getColumnIndex() + "$" + cell.getRowIndex();
@@ -861,7 +861,7 @@ public class ConfigurationHandler {
 			CellControlsHelper.parseInputAttributes(inputs,
 					values);
 			
-			CellControlsHelper.parseSelectItemsAttributes(key, inputs, cellAttributesMap.cellSelectItemsAttributes);
+			CellControlsHelper.parseSelectItemsAttributes(key, type, inputs, cellAttributesMap);
 			
 	}
 	

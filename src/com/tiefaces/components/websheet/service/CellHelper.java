@@ -777,13 +777,14 @@ public class CellHelper {
 					ConfigurationHelper.createCellComment(poiCell, comment, sheetConfig.getFinalCommentMap());
 				}
 			}
-			String widgetType = cellAttributesMap.cellInputType.get(skey).toLowerCase();
+			String widgetType = cellAttributesMap.cellInputType.get(skey);
 			if (widgetType != null) {
-				fcell.setControl(widgetType);
+				fcell.setControl(widgetType.toLowerCase());
 				
 				fcell.setInputAttrs(cellAttributesMap.cellInputAttributes.get(skey));
 System.out.println(" control attributes = "+fcell.getInputAttrs());
 				fcell.setSelectItemAttrs(cellAttributesMap.cellSelectItemsAttributes.get(skey));
+				fcell.setDatePattern(cellAttributesMap.cellDatePattern.get(skey));
 			}
 				
 				
@@ -800,7 +801,7 @@ System.out.println(" control attributes = "+fcell.getInputAttrs());
 			Font font = wb.getFontAt(fontIdx);
 			float maxHeight = rowHeight;
 			if (!inputType.isEmpty()) {
-				maxHeight = Math.min(font.getFontHeightInPoints() + 6,
+				maxHeight = Math.min(font.getFontHeightInPoints() + 8,
 						rowHeight);
 			}
 			return "height:"
@@ -1020,7 +1021,12 @@ System.out.println(" control attributes = "+fcell.getInputAttrs());
 			if (fcell.getInputType().isEmpty()) {
 				fcell.setInputType(getInputTypeFromCellType(poiCell));
 			}
+			if (fcell.getControl().isEmpty()
+					&& (!fcell.getInputType().isEmpty())) {
+				fcell.setControl("text");
+			}			
 			setInputStyleBaseOnInputType(fcell, poiCell);
+			
 		}
 		String webStyle = getCellStyle(wb, poiCell, fcell.getInputType())
 				+ getCellFontStyle(wb, poiCell, fcell.getInputType(),

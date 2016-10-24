@@ -34,15 +34,26 @@ public class CellAttributesMap {
 	 *  value is the map of attributes.
 	 */
 	public Map<String, Map<String, String>> cellSelectItemsAttributes;
+	
+	
+	/** hold date pattern  for calendar control widget.
+	 *  key is sheetName!$rowindex$columnindex
+	 *  value is the date pattern.
+	 *  date pattern is necessary for covert date to string
+	 */
+	public Map<String, String> cellDatePattern;
+	
 
 	public CellAttributesMap(
 			Map<String, Map<String, String>> pTemplateCommentMap,
 			Map<String, String> pCellInputType,
 			Map<String, List<CellFormAttributes>> pCellInputAttributes,
-			Map<String, Map<String, String>> pCellSelectItemsAttributes) {
+			Map<String, Map<String, String>> pCellSelectItemsAttributes,
+			Map<String, String> pCellDatePattern) {
 		this.templateCommentMap = pTemplateCommentMap;
 		this.cellInputType = pCellInputType;
 		this.cellInputAttributes = pCellInputAttributes;
 		this.cellSelectItemsAttributes = pCellSelectItemsAttributes;
+		this.cellDatePattern = pCellDatePattern;
 	}
 }

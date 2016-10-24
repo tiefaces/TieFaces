@@ -6,6 +6,8 @@
 package com.tiefaces.components.websheet.dataobjects;
 
 import java.io.Serializable;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -202,10 +204,18 @@ public class CellMap implements Serializable, java.util.Map {
 			if (poiCell != null) {
 				String oldValue = parent.getCellHelper()
 						.getCellValueWithoutFormat(poiCell);
-				String newValue = (String) value;
 				FacesCell facesCell = parent.getCellHelper()
 						.getFacesCellWithRowColFromCurrentPage(
 								mkey.getRowIndex(), mkey.getColIndex());
+				String newValue = null;	
+				if (value instanceof java.util.Date) {
+					Format formatter = new SimpleDateFormat("dd-mm-yyyy");
+					newValue = formatter.format(value);
+			} else {
+				newValue = (String) value;
+			}
+				
+				
 				if (facesCell.getInputType().equalsIgnoreCase("textarea")
 						&& (newValue != null)) {
 					// remove "\r" because excel issue

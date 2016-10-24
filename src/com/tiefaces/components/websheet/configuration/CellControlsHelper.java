@@ -1,11 +1,14 @@
 package com.tiefaces.components.websheet.configuration;
 
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -15,6 +18,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 
+import com.tiefaces.components.websheet.CellAttributesMap;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.service.CellHelper;
@@ -197,7 +201,7 @@ public class CellControlsHelper {
 		}
 	}
 
-	public static void addAttributesToMap(
+/*	public static void addAttributesToMap(
 			Map<String, List<CellFormAttributes>> attrsMap,
 			Map<String, List<CellFormAttributes>> inputsMap,
 			Map<String, Map<String, String>> selectItemsMap, Row row,
@@ -246,19 +250,21 @@ public class CellControlsHelper {
 
 		}
 	}
-
+*/
 	private static final String SELECT_ITEM_LABELS = "itemlabels";
 	private static final String SELECT_ITEM_VALUES = "itemvalues";
 	private static final String DEFAULT_SELECT_ITEM_LABEL = "defaultlabel";
 	private static final String DEFAULT_SELECT_ITEM_VALUE = "defaultvalue";
 
 	public static void parseSelectItemsAttributes(String key,
+			String type,
 			List<CellFormAttributes> inputs,
-			Map<String, Map<String, String>> selectItemsMap) {
+			CellAttributesMap cellAttributesMap) {
 		String[] selectLabels = null;
 		String[] selectValues = null;
 		String defaultSelectLabel = "";
 		String defaultSelectValue = null;
+		String defaultDatePattern = "";
 		for (CellFormAttributes attr : inputs) {
 			System.out.println("attr key = " + attr.getType() + " value = "
 					+ attr.getValue());
@@ -275,16 +281,19 @@ public class CellControlsHelper {
 			if (attrKey.equalsIgnoreCase(DEFAULT_SELECT_ITEM_VALUE)) {
 				defaultSelectValue = attr.getValue();
 			}
+			if (type.equalsIgnoreCase("calendar") && attrKey.equalsIgnoreCase("pattern")) {
+				defaultDatePattern = attr.getValue();
+			}
 		}
 		System.out.println("select labels  = " + selectLabels + " value = "
-				+ selectValues);
+				+ selectValues + "default pattern = "+ defaultDatePattern);
 
 		if (selectLabels != null) {
 			if ((selectValues == null)
 					|| (selectValues.length != selectLabels.length)) {
 				selectValues = selectLabels;
 			}
-			Map<String, String> smap = selectItemsMap.get(key);
+			Map<String, String> smap = cellAttributesMap.cellSelectItemsAttributes.get(key);
 			if (smap == null) {
 				smap = new LinkedHashMap<String, String>();
 			}
@@ -293,10 +302,21 @@ public class CellControlsHelper {
 			for (int i = 0; i < selectLabels.length; i++) {
 				smap.put(selectLabels[i], selectValues[i]);
 			}
-			selectItemsMap.put(key, smap);
+			cellAttributesMap.cellSelectItemsAttributes.put(key, smap);
+		}
+		if (type.equalsIgnoreCase("calendar")) {
+			if (defaultDatePattern.isEmpty()) {
+				defaultDatePattern = getDefaultDatePattern();
+			}
+			cellAttributesMap.cellDatePattern.put(key, defaultDatePattern);
 		}
 	}
 
+	private static String getDefaultDatePattern() {
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+		return ((SimpleDateFormat)formatter).toLocalizedPattern();		
+	}
+	
 	private static String rowCell(Row row, int cn,
 			CellHelper cellHelper) {
 		return cellHelper.getCellValueWithFormat(

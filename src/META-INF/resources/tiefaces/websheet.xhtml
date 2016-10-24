@@ -136,28 +136,58 @@
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									style="#{dataRow.cells[loop.index].validStyle}"
 									styleClass="inputColumnWidth" autocomplete="off"
-									rendered="#{(!cc.attrs.readOnly) and (!empty dataRow.cells[loop.index].inputType) and (dataRow.cells[loop.index].inputType != 'textarea') }"
+									rendered="#{(!cc.attrs.readOnly) and ( dataRow.cells[loop.index].control == 'text') }"
 									converter="tieSheetNumberConverter"
 									onkeypress="if (event.keyCode == 13) { onchange(); return false; }">
-
 									<p:ajax event="change" process="@this" update="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
-										
 									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
 									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
 									<f:attribute name="symbol"	value="#{dataRow.cells[loop.index].symbol}" />
-									
-
 								</p:inputText>
-								<p:inputTextarea id="coarea#{loop.index}" rows="3"
+								<p:inputTextarea id="coarea#{loop.index}" 
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									style="#{dataRow.cells[loop.index].style}"
 									styleClass="inputTextarea inputColumnWidth" autocomplete="off"
-									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].inputType == 'textarea'}">
-
+									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'textarea'}">
+									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		                     
 									<p:ajax event="change" process="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
+									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
+									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="symbol"	value="#{dataRow.cells[loop.index].symbol}" />
 								</p:inputTextarea>
+
+								<p:calendar id="cocale#{loop.index}" 
+									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
+									style="#{dataRow.cells[loop.index].style}"
+		      						styleClass="inputColumnWidthCalendar" 
+		      						pattern="#{dataRow.cells[loop.index].datePattern}"
+									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'calendar'}">
+									<f:converter converterId="tieCalendaConverter" />									
+									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		
+									<p:ajax event="dateSelect" process="@this"
+										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
+									<p:ajax event="change" process="@this"
+										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
+									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
+									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="symbol"	value="#{dataRow.cells[loop.index].symbol}" />
+								</p:calendar>
+									 								
+								<p:selectOneMenu id="coselo#{loop.index}" 
+									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
+									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'dropdown'}">
+						            <f:selectItems value="#{dataRow.cells[loop.index].selectItemAttrs}" />
+									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		                     
+									<p:ajax event="change" process="@this"
+										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
+									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
+									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="symbol"	value="#{dataRow.cells[loop.index].symbol}" />
+						        </p:selectOneMenu>							   										    
+									 								
+									 								
 								<h:outputText id="msgcolumn#{loop.index}" style="color:red"
 									styleClass="inputColumnWidth"
 									rendered="#{dataRow.cells[loop.index].invalid}"
