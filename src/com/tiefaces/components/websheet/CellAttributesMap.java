@@ -56,4 +56,23 @@ public class CellAttributesMap {
 		this.cellSelectItemsAttributes = pCellSelectItemsAttributes;
 		this.cellDatePattern = pCellDatePattern;
 	}
+	
+	public void clear() {
+		if (this.templateCommentMap != null) {
+			this.templateCommentMap.clear();
+		}
+		if (this.cellDatePattern != null ) {
+			this.cellDatePattern.clear();
+		}
+		if (this.cellInputAttributes != null) {
+			this.cellInputAttributes.clear();
+		}
+		if (this.cellInputType != null) {
+			this.cellInputType.clear();
+		}
+		if ( this.cellSelectItemsAttributes != null) {
+			this.cellSelectItemsAttributes.clear();
+		}
+		
+	}
 }

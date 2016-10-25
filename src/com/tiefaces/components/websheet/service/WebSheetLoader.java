@@ -273,6 +273,7 @@ public class WebSheetLoader implements Serializable {
 		parent.getChartDataMap().clear();
 		parent.getChartAnchorsMap().clear();
 		parent.getChartPositionMap().clear();
+		parent.getCellAttributesMap().clear();
 	}
 
 	public int loadWorkbook(final InputStream fis,

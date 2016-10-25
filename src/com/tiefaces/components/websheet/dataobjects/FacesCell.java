@@ -242,13 +242,11 @@ public class FacesCell {
 	
 
 	public String getDatePattern() {
-System.out.println(" **************************** get datepattern = "+datePattern+" for control = "+this.control+" column = "+this.getColumnIndex());		
 		return datePattern;
 	}
 
 	public void setDatePattern(String datePattern) {
 		this.datePattern = datePattern;
-		System.out.println(" ******** set datepattern = "+datePattern+" for control = "+this.control+" column = "+this.getColumnIndex());		
 		
 	}
 

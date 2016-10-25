@@ -782,7 +782,6 @@ public class CellHelper {
 				fcell.setControl(widgetType.toLowerCase());
 				
 				fcell.setInputAttrs(cellAttributesMap.cellInputAttributes.get(skey));
-System.out.println(" control attributes = "+fcell.getInputAttrs());
 				fcell.setSelectItemAttrs(cellAttributesMap.cellSelectItemsAttributes.get(skey));
 				fcell.setDatePattern(cellAttributesMap.cellDatePattern.get(skey));
 			}
@@ -992,8 +991,6 @@ System.out.println(" control attributes = "+fcell.getInputAttrs());
 
 		int totalWidth = additionalWidth;
 		for (int i = firstCol; i <= lastCol; i++) {
-			System.out.println(" column " + i + " width = "
-					+ sheet1.getColumnWidth(i));
 			totalWidth += sheet1.getColumnWidth(i);
 		}
 		return totalWidth;
@@ -1005,8 +1002,6 @@ System.out.println(" control attributes = "+fcell.getInputAttrs());
 		int totalHeight = additionalHeight;
 		for (int i = firstRow; i <= lastRow; i++) {
 
-			System.out.println(" row " + i + " height = "
-					+ sheet1.getRow(i).getHeight());
 			totalHeight += sheet1.getRow(i).getHeight();
 		}
 		return totalHeight;

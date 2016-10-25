@@ -122,9 +122,6 @@ public class PicturesHelper {
 						XSSFDrawing drawing = (XSSFDrawing) dr;
 						List<XSSFShape> shapes = drawing.getShapes();
 						for (XSSFShape shape : shapes) {
-							System.out
-									.println(" *********************************** shape = "
-											+ shape);
 							if (shape instanceof XSSFPicture) {
 								XSSFPicture pic = (XSSFPicture) shape;
 								XSSFClientAnchor anchor = pic

@@ -38,7 +38,6 @@ public class CellControlsHelper {
 	private static String findComponentNameFromClass(UIComponent component) {
 
 		String cname = component.getClass().getSimpleName();
-		System.out.println(" uicomponent name = " + cname);
 		if (supportComponents.contains(cname)) {
 			return cname;
 		}
@@ -65,9 +64,6 @@ public class CellControlsHelper {
 			defaultControlMap.put(cname, defaultMap);
 		}
 		for (Map.Entry<String, String> entry : defaultMap.entrySet()) {
-			System.out.println("populate default value for component = "
-					+ cname + " property name = " + entry.getKey()
-					+ ", Value = " + entry.getValue());
 			setObjectProperty(component, entry.getKey(), entry.getValue(), true);
 		}
 		for (CellFormAttributes attr : inputAttrs) {
@@ -76,9 +72,6 @@ public class CellControlsHelper {
 			if (!defaultMap.containsKey(propertyName)) {
 				String defaultValue = getObjectPropertyValue(component,
 						propertyName, true);
-				System.out.println("found  default value for component = "
-						+ cname + " property name = " + propertyName
-						+ ", Value = " + defaultValue);
 				defaultMap.put(propertyName, defaultValue);
 			}
 			setObjectProperty(component, propertyName, propertyValue, true);
@@ -98,9 +91,6 @@ public class CellControlsHelper {
 			try {
 				Method method = obj.getClass().getMethod(methodName,
 						new Class[] { paraMatchArray[i] });
-				System.out.println("match paramether of method name = "
-						+ methodName + ", parameter type = "
-						+ paraMatchArray[i]);
 				return i;
 
 			} catch (Exception ex) {
@@ -145,8 +135,6 @@ public class CellControlsHelper {
 						obj,
 						convertToObject(paraMatchArray[parameterType],
 								propertyValue));
-				System.out.println("set obj property  property name = "
-						+ propertyName + ", Value = " + propertyValue);
 			}
 		} catch (Exception e) {
 			String msg = "failed to set property '" + propertyName
@@ -167,8 +155,6 @@ public class CellControlsHelper {
 					"get" + Character.toUpperCase(propertyName.charAt(0))
 							+ propertyName.substring(1));
 			String value = (String) method.invoke(obj);
-			System.out.println("get obj property  property name = "
-					+ propertyName + ", Value = " + value);
 			return value;
 		} catch (Exception e) {
 			String msg = "failed to get property '" + propertyName
@@ -266,8 +252,6 @@ public class CellControlsHelper {
 		String defaultSelectValue = null;
 		String defaultDatePattern = "";
 		for (CellFormAttributes attr : inputs) {
-			System.out.println("attr key = " + attr.getType() + " value = "
-					+ attr.getValue());
 			String attrKey = attr.getType();
 			if (attrKey.equalsIgnoreCase(SELECT_ITEM_LABELS)) {
 				selectLabels = attr.getValue().split(";");
@@ -285,8 +269,6 @@ public class CellControlsHelper {
 				defaultDatePattern = attr.getValue();
 			}
 		}
-		System.out.println("select labels  = " + selectLabels + " value = "
-				+ selectValues + "default pattern = "+ defaultDatePattern);
 
 		if (selectLabels != null) {
 			if ((selectValues == null)

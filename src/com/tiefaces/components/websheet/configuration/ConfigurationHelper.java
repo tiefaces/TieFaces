@@ -483,8 +483,6 @@ public class ConfigurationHelper {
 		if (!includeOriginNum) {
 			rowNum = cell.getStringCellValue();
 		}
-		System.out.println("set fullname hidden rownum = " + rowNum
-				+ " fullName = " + fullName);
 		cell.setCellValue(rowNum + fullName);
 	}
 
