@@ -33,4 +33,18 @@ public class ShiftFormulaRef {
 		this.currentRowsMappingList = currentRowsMappingList;
 	}
 
+	/**
+	 * Obtain a human readable representation.
+	 * 
+	 * @return String Human readable label
+	 */
+	public String toString() {
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("{ watchList = "+watchList);
+		sb.append(",");
+		sb.append("currentRowsMappingList = " + currentRowsMappingList);
+		sb.append("}");
+		return sb.toString();
+	}	
 }

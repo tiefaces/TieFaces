@@ -74,4 +74,25 @@ public class RowsMapping  {
 			}
 		}		
 	}
+	
+	/**
+	 * Obtain a human readable representation.
+	 * 
+	 * @return String Human readable label
+	 */
+	public String toString() {
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("{");
+		for (Map.Entry<Integer, List<Row>> entry : rowsMap.entrySet()) {
+			sb.append(entry.getKey()+"=[");
+			for (Row row: entry.getValue()) {
+				sb.append(row.getRowNum()+",");
+			}
+			sb.append("], ");
+		}		
+		sb.append("}");
+		return sb.toString();
+	}		
+	
 }
