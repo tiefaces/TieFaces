@@ -1,7 +1,15 @@
 package com.tiefaces.components.websheet.configuration;
 
 import java.util.List;
-
+/**
+ * Contain objects for shift formulas.
+ * The formula use those object for shifting.
+ * watchList: contain lines which involved in rows shift.
+ * currentRowsMappingList: rows mapping list of current rows.
+ *  * 
+ * @author Jason Jiang
+ *
+ */
 public class ShiftFormulaRef {
 	
 	List<Integer> watchList;
