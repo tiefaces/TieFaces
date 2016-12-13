@@ -6,6 +6,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import com.tiefaces.components.websheet.TieWebSheetConstants;
 
 
 @FacesConverter("tieSheetNumberConverter")
@@ -17,7 +18,7 @@ public class TieSheetNumberConverter implements Converter {
 		String symbol = "";
 		String strValue = (String) value;
 		try {
-			symbol = (String) component.getAttributes().get("symbol");
+			symbol = (String) component.getAttributes().get(TieWebSheetConstants.TIE_WEBSHEET_CELL_DATA_SYMBOL);
 			
 			if ( (symbol != null) && (symbol.equals("%") && strValue!=null) ) {
 				strValue = strValue.trim();
@@ -50,7 +51,7 @@ public class TieSheetNumberConverter implements Converter {
 		try {
 			
 			strValue = (String) value;
-			symbol = (String) component.getAttributes().get("symbol");
+			symbol = (String) component.getAttributes().get(TieWebSheetConstants.TIE_WEBSHEET_CELL_DATA_SYMBOL);
 			
 			if ( (symbol != null) && (symbol.equals("%")) && (value != null) ) {
 				

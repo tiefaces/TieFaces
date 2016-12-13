@@ -33,7 +33,7 @@ public class CellControlsHelper {
 	
 
 	private static List<String> supportComponents = Arrays.asList("Calendar",
-			"SelectOneMenu");
+			"SelectOneMenu", "InputNumber");
 
 	private static String findComponentNameFromClass(UIComponent component) {
 

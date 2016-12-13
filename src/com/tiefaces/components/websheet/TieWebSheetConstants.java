@@ -5,7 +5,6 @@
 
 package com.tiefaces.components.websheet;
 
-import static com.tiefaces.components.websheet.TieWebSheetConstants.TIE_WEBSHEET_CONFIGURATION_ATTR_CONTROL;
 
 import java.util.regex.Pattern;
 
@@ -74,5 +73,10 @@ public final class TieWebSheetConstants {
 	/** attribute's regex pattern. */
 	public static final Pattern ATTR_REGEX_PATTERN = Pattern
 			.compile(ATTR_REGEX);	
+	
+	
+	public static final String TIE_WEBSHEET_CELL_DATA_ROW = "data-row";
+	public static final String TIE_WEBSHEET_CELL_DATA_COLUMN = "data-column";
+	public static final String TIE_WEBSHEET_CELL_DATA_SYMBOL = "data-symbol";
 
 }

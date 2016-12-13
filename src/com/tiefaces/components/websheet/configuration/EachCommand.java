@@ -188,6 +188,7 @@ public class EachCommand extends ConfigCommand {
 			index++;
 			context.remove(var);
 		}
+/* remove this as it caused issues.		
 		// save the commandRowsMapping to the last one in currentRowsMapping
 		// which is also the parent of the each command
 		RowsMapping parentRowsMapping = new RowsMapping();
@@ -198,6 +199,7 @@ public class EachCommand extends ConfigCommand {
 			parentRowsMapping.mergeMap(rowsMapping);
 		}
 		currentRowsMappingList.set(parentIndex, parentRowsMapping);
+*/		
 		int finalLength = insertPosition - atRow;
 		return finalLength;
 	}

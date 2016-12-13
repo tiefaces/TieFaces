@@ -1087,16 +1087,16 @@ public class CellHelper {
 		String inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT;
 		if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 			inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE;
-			CellStyle style = cell.getCellStyle();
-			if (style != null) {
-				int formatIndex = style.getDataFormat();
-				String formatString = style.getDataFormatString();
-				if (DateUtil.isADateFormat(formatIndex, formatString)) {
-					inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DATE;
-				} else {
-					if (isAPercentageCell(formatString)) {
-						inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE;
-					}
+		}	
+		CellStyle style = cell.getCellStyle();
+		if (style != null) {
+			int formatIndex = style.getDataFormat();
+			String formatString = style.getDataFormatString();
+			if (DateUtil.isADateFormat(formatIndex, formatString)) {
+				inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DATE;
+			} else {
+				if (isAPercentageCell(formatString)) {
+					inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE;
 				}
 			}
 		}

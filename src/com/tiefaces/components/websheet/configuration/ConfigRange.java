@@ -294,15 +294,23 @@ public class ConfigRange {
 	private void buildCells(String fullName,
 			ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
-			final List<RowsMapping> currentRowsMappingList) {
+			final List<RowsMapping> rowsMappingList) {
 
 		if ((context == null) || (context.size() == 0)) {
 			// no need to evaluate as there's no data object.
 			return;
 		}
+		
+		// keep rowsMappingList as current as no change
+		// allRowsMappingList = child + current
+		
+		List<RowsMapping> allRowsMappingList = ConfigurationHelper.findChildRowsMappingFromShiftMap(
+				fullName, configBuildRef.getShiftMap());
+		allRowsMappingList.addAll(rowsMappingList);
+		
 		int lastRowPlus = this.getLastRowPlusRef().getRowIndex();
 		ShiftFormulaRef shiftFormulaRef = new ShiftFormulaRef(
-				configBuildRef.getWatchList(), currentRowsMappingList);
+				configBuildRef.getWatchList(), allRowsMappingList);
 		for (int i = atRow; i < lastRowPlus; i++) {
 			Row row = configBuildRef.getSheet().getRow(i);
 			if ((row != null)

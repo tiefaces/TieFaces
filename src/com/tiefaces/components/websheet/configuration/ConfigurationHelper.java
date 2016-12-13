@@ -255,7 +255,7 @@ public class ConfigurationHelper {
 			ConfigRange currentRange = buildCurrentRange(
 					eachCommand.getConfigRange(),
 					configBuildRef.getSheet(), insertPosition);
-			List<RowsMapping> currentRowsMappingList = findUpperRowsMappingFromShiftMap(
+			List<RowsMapping> currentRowsMappingList = findParentRowsMappingFromShiftMap(
 					parts, configBuildRef.getShiftMap());
 			currentRowsMappingList.add(unitRowsMapping);
 			currentRange.getAttrs().allowAdd = true;
@@ -505,11 +505,16 @@ public class ConfigurationHelper {
 		return -1;
 	}
 
-	public static List<RowsMapping> findUpperRowsMappingFromShiftMap(
+	public static List<RowsMapping> findParentRowsMappingFromShiftMap(
 			String[] parts, Map<String, ConfigRangeAttrs> shiftMap) {
 
 		String fullName = null;
 		List<RowsMapping> rowsMappingList = new ArrayList<RowsMapping>();
+		/**
+		 * skip first one and last one.
+		 * first one is line no.
+		 * last one is it's self. 
+		 */
 		for (int i = 1; i < parts.length - 1; i++) {
 			String part = parts[i];
 			if (fullName == null) {
@@ -519,12 +524,30 @@ public class ConfigurationHelper {
 			}
 			if (fullName != null) {
 				ConfigRangeAttrs rangeAttrs = shiftMap.get(fullName);
-				rowsMappingList.add(rangeAttrs.unitRowsMapping);
+				if (rangeAttrs!=null) {
+					rowsMappingList.add(rangeAttrs.unitRowsMapping);
+				}	
 			}
 		}
 		return rowsMappingList;
 	}
 
+	public static List<RowsMapping> findChildRowsMappingFromShiftMap(
+			String fullName, Map<String, ConfigRangeAttrs> shiftMap) {
+
+		int fullNameLength = fullName.length();
+		List<RowsMapping> rowsMappingList = new ArrayList<RowsMapping>();
+		for (Map.Entry<String, ConfigRangeAttrs> entry : shiftMap.entrySet())
+		{
+			String key = entry.getKey();
+			// check it's children
+			if ( key.startsWith(fullName) && (key.length()>fullNameLength) ) {
+				rowsMappingList.add(entry.getValue().unitRowsMapping);
+			}
+		}
+		return rowsMappingList;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public static Object findItemInCollection(Collection collection,
 			int index) {
