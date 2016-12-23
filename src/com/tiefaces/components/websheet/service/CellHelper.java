@@ -45,11 +45,14 @@ import com.tiefaces.common.FacesUtility;
 import com.tiefaces.components.websheet.CellAttributesMap;
 import com.tiefaces.components.websheet.TieWebSheetBean;
 import com.tiefaces.components.websheet.TieWebSheetConstants;
+import com.tiefaces.components.websheet.configuration.ConfigRangeAttrs;
 import com.tiefaces.components.websheet.configuration.ConfigurationHelper;
+import com.tiefaces.components.websheet.configuration.ExpressionEngine;
 import com.tiefaces.components.websheet.configuration.SheetConfiguration;
 import com.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.FacesRow;
+import com.tiefaces.components.websheet.dataobjects.MapObject;
 import com.tiefaces.components.websheet.utility.ColorUtility;
 import com.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
@@ -231,6 +234,44 @@ public class CellHelper {
 		return c;
 	}
 
+	
+	public final void saveDataInContext(Cell poiCell, String strValue) {
+		String saveAttrList = ConfigurationHelper.getSaveAttrListFromRow(poiCell.getRow());
+		if (saveAttrList!=null) {
+			String saveAttr = ConfigurationHelper.getSaveAttrFromList(poiCell.getColumnIndex(), saveAttrList);
+			if (saveAttr != null) {
+				String fullName = ConfigurationHelper.getFullNameFromRow(poiCell.getRow());
+				if (fullName != null) {
+					restoreDataContext(fullName);
+					ConfigurationHelper.saveDataToObjectInContext(parent.getDataContext(), 
+							saveAttr,
+							strValue,
+							parent.getExpEngine());
+				}
+			}	
+		}
+	}
+	
+	
+	private void restoreDataContext(String fullName) {
+		
+	if ((parent.getCurrentDataContextName()==null)||(!parent.getCurrentDataContextName().equalsIgnoreCase(fullName))) {
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
+				parent.getCurrentTabName());			
+		ConfigRangeAttrs  attrs = sheetConfig.getShiftMap().get(fullName);
+		if ((attrs!=null)&&(attrs.contextSnap!=null)) {
+			List<MapObject> mapList = attrs.contextSnap.getSnapList();
+			if (mapList!=null) {
+				for (MapObject mObj : mapList) {
+					parent.getDataContext().put((String) mObj.getKey(), mObj.getValue());
+				}
+			}
+		}
+		parent.setCurrentDataContextName(fullName);
+	}
+	}
+	
+	
 	/**
 	 * recalc whole workbook.
 	 */
@@ -714,7 +755,8 @@ public class CellHelper {
 			int bodyTopRow, boolean repeatZone,
 			Map<String, CellRangeAddress> cellRangeMap,
 			int originRowIndex,
-			CellAttributesMap cellAttributesMap) {
+			CellAttributesMap cellAttributesMap,
+			String saveAttrs) {
 		boolean bodyPopulated = sheetConfig.isBodyPopulated();
 		List<CellFormAttributes> cellAttributes = findCellAttributesWithOffset(
 				sheetConfig, poiCell, initRows, bodyTopRow, repeatZone);
@@ -761,10 +803,12 @@ public class CellHelper {
 		
 		setupControlAttributes(originRowIndex, fcell, poiCell, sheetConfig,
 				cellAttributesMap);		
-		
+		fcell.setHasSaveAttr(ConfigurationHelper.isHasSaveAttr(poiCell.getColumnIndex(), saveAttrs));
 		
 	}
 
+	
+	
 	private void setupControlAttributes(int originRowIndex, FacesCell fcell,
 			Cell poiCell, SheetConfiguration sheetConfig,
 			CellAttributesMap cellAttributesMap) {

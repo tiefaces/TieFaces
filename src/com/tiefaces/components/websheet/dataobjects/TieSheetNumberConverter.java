@@ -53,7 +53,7 @@ public class TieSheetNumberConverter implements Converter {
 			strValue = (String) value;
 			symbol = (String) component.getAttributes().get(TieWebSheetConstants.TIE_WEBSHEET_CELL_DATA_SYMBOL);
 			
-			if ( (symbol != null) && (symbol.equals("%")) && (value != null) ) {
+			if ( (symbol != null) && (symbol.equals("%")) && (value != null) && !((String) value).isEmpty() ) {
 				
 				Double doubleValue = Double.valueOf( (String) value) * 100;
 				strValue = fmtNumber(doubleValue)+"%";

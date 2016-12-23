@@ -253,6 +253,7 @@ public class FormCommand extends ConfigCommand {
 		this.getConfigRange().getAttrs().finalLength = length;
 		this.setFinalLength(length);
 		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenFullNameColumn, true);
+		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenSaveObjectsColumn, true);
 
 		return length;
 	}

@@ -18,16 +18,18 @@ import javax.faces.context.FacesContext;
 import org.apache.poi.ss.usermodel.Cell;
 
 import com.tiefaces.components.websheet.TieWebSheetBean;
+
 /**
- * Cell Map is actually a virtual map which don't hold any data.
- * Instead it refer to the data in the workbook through getter/setters.
- * The purpose is to create a bridge between JSF Web and workbooks data.
+ * Cell Map is actually a virtual map which don't hold any data. Instead it
+ * refer to the data in the workbook through getter/setters. The purpose is to
+ * create a bridge between JSF Web and workbooks data.
+ * 
  * @author Jason Jiang
  *
  */
 @SuppressWarnings("rawtypes")
 public class CellMap implements Serializable, java.util.Map {
-	
+
 	/** serial instance. */
 	private static final long serialVersionUID = 1L;
 	/** log instance. */
@@ -40,7 +42,9 @@ public class CellMap implements Serializable, java.util.Map {
 	/**
 	 * Construtor. Pass in websheet bean, So this helper can access related
 	 * instance class.
-	 * @param pParent  parent websheet bean
+	 * 
+	 * @param pParent
+	 *            parent websheet bean
 	 */
 
 	public CellMap(final TieWebSheetBean pParent) {
@@ -98,12 +102,16 @@ public class CellMap implements Serializable, java.util.Map {
 	public final Set entrySet() {
 		return null;
 	}
-/**
- * Put picture image to session map and return the key to web. 
- * @param rowIndex the row index of the cell which contains picture.
- * @param colIndex the column index of the cell which contains picture.
- * @return the key of the picture image in the session map.
- */
+
+	/**
+	 * Put picture image to session map and return the key to web.
+	 * 
+	 * @param rowIndex
+	 *            the row index of the cell which contains picture.
+	 * @param colIndex
+	 *            the column index of the cell which contains picture.
+	 * @return the key of the picture image in the session map.
+	 */
 	private String loadPicture(final int rowIndex, final int colIndex) {
 
 		FacesCell facesCell = parent.getCellHelper()
@@ -129,12 +137,15 @@ public class CellMap implements Serializable, java.util.Map {
 	}
 
 	/**
-	 * Put chart image to session map and return the key to web. 
-	 * @param rowIndex the row index of the cell which contains picture.
-	 * @param colIndex the column index of the cell which contains picture.
+	 * Put chart image to session map and return the key to web.
+	 * 
+	 * @param rowIndex
+	 *            the row index of the cell which contains picture.
+	 * @param colIndex
+	 *            the column index of the cell which contains picture.
 	 * @return the key of the picture image in the session map.
 	 */
-	
+
 	private String loadChart(final int rowIndex, final int colIndex) {
 
 		FacesCell facesCell = parent.getCellHelper()
@@ -148,8 +159,7 @@ public class CellMap implements Serializable, java.util.Map {
 					.getSessionMap();
 			if (sessionMap.get(chartViewId) == null) {
 				sessionMap.put(chartViewId, parent.getChartsMap().get(chartId));
-				log.fine("load chart put session map id = "
-						+ chartViewId);
+				log.fine("load chart put session map id = " + chartViewId);
 			}
 			return chartViewId;
 		} else {
@@ -208,14 +218,12 @@ public class CellMap implements Serializable, java.util.Map {
 						.getFacesCellWithRowColFromCurrentPage(
 								mkey.getRowIndex(), mkey.getColIndex());
 				String newValue = null;	
-				if (value instanceof java.util.Date) {
-					Format formatter = new SimpleDateFormat("dd-mm-yyyy");
+				if ((value instanceof java.util.Date)&&(facesCell.getDatePattern()!=null)&&(!facesCell.getDatePattern().isEmpty())) {
+					Format formatter = new SimpleDateFormat(facesCell.getDatePattern());
 					newValue = formatter.format(value);
-			} else {
-				newValue = (String) value;
-			}
-				
-				
+				} else {
+					newValue = (String) value;
+				}
 				if (facesCell.getInputType().equalsIgnoreCase("textarea")
 						&& (newValue != null)) {
 					// remove "\r" because excel issue
@@ -228,6 +236,9 @@ public class CellMap implements Serializable, java.util.Map {
 							+ mkey.getColIndex() + " inputtype = "
 							+ facesCell.getInputType());
 					parent.getCellHelper().setCellValue(poiCell, newValue);
+					if (facesCell.isHasSaveAttr()) {
+						parent.getCellHelper().saveDataInContext(poiCell, newValue);
+					}
 					parent.getCellHelper().reCalc();
 				}
 			}
@@ -235,5 +246,4 @@ public class CellMap implements Serializable, java.util.Map {
 
 		return value;
 	}
-
 }

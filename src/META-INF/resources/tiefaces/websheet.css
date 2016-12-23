@@ -37,6 +37,19 @@
  
 }
 
+#websheet .formFieldInputColumnWidthSelectOneMenu {
+	text-align:right !important;
+	width: 100% !important;
+	min-width: 0 !important;
+	display:block !important;
+	-moz-box-sizing: border-box !important;
+	box-sizing: border-box !important;
+	font-weight: normal !important;
+}
+
+#websheet .formFieldInputColumnWidthSelectOneMenu .ui-selectonemenu-label{
+	background: transparent !important;
+}
 
 #websheet .inputLabel {
 	display: block;

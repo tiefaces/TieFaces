@@ -206,7 +206,8 @@ public class WebSheetLoader implements Serializable {
 								fcell, cell, (currentRow - top), 1, top,
 								false, cellRangeMap,
 								originRowIndex,
-								parent.getCellAttributesMap());
+								parent.getCellAttributesMap(),
+								null);
 						parent.getPicHelper()
 								.setupFacesCellPictureCharts(
 										sheet1,
@@ -631,6 +632,7 @@ public class WebSheetLoader implements Serializable {
 		FacesRow facesRow = new FacesRow(rowIndex);
 		Row row = sheet1.getRow(rowIndex);
 		setupRowInfo(facesRow, sheet1, row, rowIndex, repeatZone, ConfigurationHelper.isRowAllowAdd(row, sheetConfig));
+		String saveAttrList = ConfigurationHelper.getSaveAttrListFromRow(row); 
 		List<FacesCell> bodycells = new ArrayList<FacesCell>();
 		log.fine(" loder row number = " + rowIndex + " row = " + row);
 		for (int cindex = left; cindex <= right; cindex++) {
@@ -649,7 +651,8 @@ public class WebSheetLoader implements Serializable {
 							fcell, cell, (rowIndex - top), initRows, top,
 							repeatZone, cellRangeMap,
 							facesRow.getOriginRowIndex(),
-							parent.getCellAttributesMap());
+							parent.getCellAttributesMap(),
+							saveAttrList);
 					parent.getPicHelper().setupFacesCellPictureCharts(
 							sheet1,
 							fcell,
@@ -681,14 +684,22 @@ public class WebSheetLoader implements Serializable {
 	}
 
 	public void refreshCachedCell(String tblName, int i, int index,
-			Sheet sheet1, Cell cell) {
+			Sheet sheet1, Cell cell, FacesCell fcell) {
 
 		if ((cell != null)
 				&& (cell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
-			if (parent.getCachedCells().isValueChanged(sheet1, cell)) {
+			String newValue = parent.getCellHelper().getCellValueWithFormat(cell);
+			if (parent.getCachedCells().isValueChanged(sheet1, cell, newValue)) {
+				
+				if (fcell.isHasSaveAttr()) {
+					parent.getCellHelper().saveDataInContext(cell, newValue);
+				}
+				
+				
 				log.fine("refresh obj name =" + tblName + ":" + i
 						+ ":cocalc" + index + " formula = "
-						+ cell.getCellFormula());
+						+ cell.getCellFormula() + "newValue = "+newValue);
+				
 				RequestContext.getCurrentInstance().update(
 						tblName + ":" + i + ":cocalc" + index);
 				parent.getCachedCells().put(cell,

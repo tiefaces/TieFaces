@@ -64,6 +64,7 @@ public class FacesCell {
 	
 	private String datePattern = "";
 	
+	private boolean hasSaveAttr= false;
 	
 
 	public final String getStyle() {
@@ -249,6 +250,17 @@ public class FacesCell {
 		this.datePattern = datePattern;
 		
 	}
+	
+	
+
+
+	public boolean isHasSaveAttr() {
+		return hasSaveAttr;
+	}
+
+	public void setHasSaveAttr(boolean hasSaveAttr) {
+		this.hasSaveAttr = hasSaveAttr;
+	}
 
 	/**
 	 * Obtain a human readable representation.
@@ -294,6 +306,8 @@ public class FacesCell {
 		sb.append("chartStyle = " + chartStyle);
 		sb.append(",");
 		sb.append("control = " + control);
+		sb.append(",");
+		sb.append("saveAttr = " + hasSaveAttr);
 		sb.append("}");
 		return sb.toString();
 	}

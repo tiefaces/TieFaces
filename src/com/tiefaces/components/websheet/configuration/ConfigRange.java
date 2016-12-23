@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
+import com.tiefaces.components.websheet.dataobjects.MapSnapShot;
 import com.tiefaces.components.websheet.service.ShiftFormula;
 
 /**
@@ -301,6 +302,9 @@ public class ConfigRange {
 			return;
 		}
 		
+		// copy snapshot of context into shiftmap.
+		snapShotContext(fullName, configBuildRef, context);
+		
 		// keep rowsMappingList as current as no change
 		// allRowsMappingList = child + current
 		
@@ -315,12 +319,13 @@ public class ConfigRange {
 			Row row = configBuildRef.getSheet().getRow(i);
 			if ((row != null)
 					&& ConfigurationHelper.isStaticRowRef(this, row)) {
+				new StringBuffer();
 				for (Cell cell : row) {
 					try {
 						ConfigurationHelper.evaluate(context, cell,
 								configBuildRef.getEngine(),
 								configBuildRef.getCellHelper());
-						if (cell.getCellTypeEnum() == CellType.FORMULA) {
+						if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
 							// rebuild formula if necessary for dynamic row
 							String originFormula = cell.getCellFormula();
 							shiftFormulaRef.setFormulaChanged(0);
@@ -347,6 +352,21 @@ public class ConfigRange {
 				ConfigurationHelper.setFullNameInHiddenColumn(row,
 						fullName, false);
 			}
+		}
+	}
+
+	/**
+	 * snap shot the current context objects.
+	 * those object will be used for save data.
+	 * @param fullName full name.
+	 * @param configBuildRef config build reference object.
+	 * @param context context.
+	 */
+	private void snapShotContext(String fullName,
+			ConfigBuildRef configBuildRef, final Map<String, Object> context) {
+		ConfigRangeAttrs  attrs = configBuildRef.getShiftMap().get(fullName);
+		if ((attrs!=null)&&(attrs.contextSnap == null)) {
+			attrs.contextSnap = new MapSnapShot(context);
 		}
 	}
 

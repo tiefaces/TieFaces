@@ -508,6 +508,7 @@ public class ConfigurationHandler {
 				sheetRightCol, commandList, formList);
 		// match parent command
 		matchParentCommand(commandList);
+		// setup save attrs in hidden column in the sheet.
 		// loop command list again to assemble other command list into sheet
 		// configuration
 		matchSheetConfigForm(sheet, sheetConfigMap, commandList, formList);
@@ -574,6 +575,8 @@ public class ConfigurationHandler {
 			final int SheetRightCol, final List<ConfigCommand> commandList,
 			final List<String> formList) {
 		boolean foundForm = false;
+		int minRowNum=sheet.getLastRowNum();
+		int maxRowNum=sheet.getFirstRowNum();
 		for (Command command : commandList) {
 			// check whether is form command
 			if (command.getCommandTypeName().equalsIgnoreCase(COMMAND_FORM)) {
@@ -584,6 +587,12 @@ public class ConfigurationHandler {
 								getSheetConfigurationFromConfigCommand(sheet,
 										fcommand));
 				formList.add(fcommand.getName());
+				if (fcommand.getTopRow()<minRowNum) {
+					minRowNum = fcommand.getTopRow();
+				}	
+				if (fcommand.getLastRow() > maxRowNum) {
+					maxRowNum = fcommand.getLastRow();
+				}	
 			}
 		}
 		// if no form found, then use the whole sheet as form
@@ -592,7 +601,12 @@ public class ConfigurationHandler {
 			sheetConfigMap
 					.put(formName, getSheetConfiguration(sheet, formName));
 			formList.add(formName);
+			minRowNum=sheet.getFirstRowNum();
+			maxRowNum=sheet.getLastRowNum();
 		}
+		
+		ConfigurationHelper.setSaveAttrsForSheet(sheet, minRowNum, maxRowNum);
+		
 	}
 
 	/**
@@ -657,7 +671,7 @@ public class ConfigurationHandler {
 			final Map<String, SheetConfiguration> sheetConfigMap,
 			final List<ConfigCommand> commandList, final List<String> formList) {
 		for (ConfigCommand command : commandList) {
-			// check is not form command
+			// check weather it's form command
 			if (!command.getCommandTypeName().equalsIgnoreCase(COMMAND_FORM)
 					&& (!command.isParentFound())) {
 				for (String formname : formList) {
@@ -691,6 +705,9 @@ public class ConfigurationHandler {
 			wb.setSheetName(wb.getSheetIndex(newSheet), copyName);
 		}
 	}
+	
+	
+
 
 	/**
 	 * check it's a command comment.

@@ -81,17 +81,21 @@ public class CachedCells {
 	}
 	
 	public boolean isValueChanged(Sheet sheet1, Cell cell) {
-			Map<Cell, FormulaMapping> map = cachedMap;
-			String oldValue = map.get(cell).getValue();
-			String newValue = parent.getCellHelper().getCellValueWithFormat(cell);
-			if (oldValue == null) oldValue="";
-			if (newValue == null) newValue="";
-			if ( !oldValue.equals(newValue)) {
-				return true;
-			} 
-			return false;
+		String newValue = parent.getCellHelper().getCellValueWithFormat(cell);
+		return isValueChanged(sheet1, cell, newValue);
 		}
 
+	public boolean isValueChanged(Sheet sheet1, Cell cell, String newValue) {
+		Map<Cell, FormulaMapping> map = cachedMap;
+		String oldValue = map.get(cell).getValue();
+		if (oldValue == null) oldValue="";
+		if (newValue == null) newValue="";
+		if ( !oldValue.equals(newValue)) {
+			return true;
+		} 
+		return false;
+	}	
+	
 	public Map<Cell, FormulaMapping> getCachedMap() {
 		return cachedMap;
 	}

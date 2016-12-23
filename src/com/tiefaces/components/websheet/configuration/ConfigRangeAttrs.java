@@ -1,7 +1,10 @@
 package com.tiefaces.components.websheet.configuration;
 
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellAddress;
+
+import com.tiefaces.components.websheet.dataobjects.MapSnapShot;
 
 public class ConfigRangeAttrs {
 	/** first cell. */
@@ -20,6 +23,8 @@ public class ConfigRangeAttrs {
 	public boolean allowAdd = false;
 	
 	public RowsMapping unitRowsMapping = null;
+	
+	public MapSnapShot contextSnap = null;
 
 	public ConfigRangeAttrs(boolean lastCellCreated) {
 		this.lastCellCreated = lastCellCreated;

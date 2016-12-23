@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -30,7 +31,7 @@ public class ConfigBuildRef {
 	 * Saved configRange attributes for each full name. String : full name.
 	 * ConfigRangeAttrs : include range (top, bottom) and rows mapping.
 	 */
-	Map<String, ConfigRangeAttrs> shiftMap;
+	TreeMap<String, ConfigRangeAttrs> shiftMap;
 
 	/**
 	 * Saved formula cells. include original formula and rows mapping for this
@@ -69,7 +70,7 @@ public class ConfigBuildRef {
 		this.cachedCells = pCachedCells;
 		this.cellAttributesMap = pCellAttributesMap;
 		this.finalCommentMap = pFinalCommentMap;
-		this.shiftMap = new HashMap<String, ConfigRangeAttrs>();
+		this.shiftMap = new TreeMap<String, ConfigRangeAttrs>();
 	}
 
 	public List<Integer> getWatchList() {
@@ -106,11 +107,11 @@ public class ConfigBuildRef {
 		this.shiftMap.put(fullName, attrs);
 	}
 
-	public Map<String, ConfigRangeAttrs> getShiftMap() {
+	public TreeMap<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
 
-	public void setShiftMap(Map<String, ConfigRangeAttrs> shiftMap) {
+	public void setShiftMap(TreeMap<String, ConfigRangeAttrs> shiftMap) {
 		this.shiftMap = shiftMap;
 	}
 

@@ -177,6 +177,8 @@
 									 								
 								<p:selectOneMenu id="coselo#{loop.index}" 
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
+									styleClass="formFieldInputColumnWidthSelectOneMenu"
+									style="width:90%;"
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'dropdown'}">
 						            <f:selectItems value="#{dataRow.cells[loop.index].selectItemAttrs}" />
 									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		                     
@@ -190,6 +192,8 @@
 						        
 				                <p:inputNumber id="coinnu#{loop.index}" 
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
+									inputStyle="#{dataRow.cells[loop.index].style}"
+									inputStyleClass="inputColumnWidth" 
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'inputnumber'}">
 									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		                     
 									<p:ajax event="change" process="@this"

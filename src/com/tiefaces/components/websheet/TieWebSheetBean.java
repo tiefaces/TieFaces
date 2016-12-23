@@ -115,6 +115,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	private ScriptEngine engine;
 	/** hold expressionEngine instance */
 	private ExpressionEngine expEngine;
+	private String currentDataContextName = null;
 	/** current tab name of display sheet. */
 	private String currentTabName;
 	/** current top row of display sheet. */
@@ -708,15 +709,17 @@ public class TieWebSheetBean extends TieWebSheetView implements
 				for (int i = first; i <= (first + rowsToRender); i++) {
 					if (i < rowCounts) {
 						FacesRow dataRow = bodyRows.get(i);
-						for (int index = 0; index < dataRow.getCells()
-								.size(); index++) {
-							Cell poiCell = this.getCellHelper()
+						int isize = dataRow.getCells()
+								.size();
+						for (int index = 0; index < isize; index++) {
+							FacesCell fcell = dataRow.getCells().get(index);
+							Cell poiCell = 	this.getCellHelper()
 									.getPoiCellWithRowColFromCurrentPage(
 											i + top, index + left);
 							if (poiCell != null) {
 								getWebSheetLoader().refreshCachedCell(
 										tblName, i, index, sheet1,
-										poiCell);
+										poiCell, fcell);
 							}
 						}
 					}
@@ -821,6 +824,14 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		FacesCell fcell =
 				cellHelper.getFacesCellFromBodyRow(row, col, bodyRows);
 		CellControlsHelper.populateAttributes(component, fcell, this.getCellDefaultControl());
+	}
+
+	public String getCurrentDataContextName() {
+		return currentDataContextName;
+	}
+
+	public void setCurrentDataContextName(String currentDataContextName) {
+		this.currentDataContextName = currentDataContextName;
 	}	
 	
 	

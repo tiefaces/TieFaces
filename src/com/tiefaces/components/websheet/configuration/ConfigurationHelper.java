@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +32,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 
 import com.tiefaces.components.websheet.dataobjects.CachedCells;
+import com.tiefaces.components.websheet.dataobjects.FacesCell;
 import com.tiefaces.components.websheet.dataobjects.FormulaMapping;
 import com.tiefaces.components.websheet.service.CellHelper;
 import com.tiefaces.components.websheet.service.ShiftFormula;
@@ -47,6 +49,7 @@ public class ConfigurationHelper {
 	public static final String USER_FORMULA_SUFFIX = "]";
 
 	public static final int hiddenFullNameColumn = 255;
+	public static final int hiddenSaveObjectsColumn = 256;
 
 	public static final String EACH_COMMAND_FULL_NAME_PREFIX = "E.";
 	public static final String FORM_COMMAND_FULL_NAME_PREFIX = "F.";
@@ -64,15 +67,101 @@ public class ConfigurationHelper {
 					cell.setCellFormula(formulaStr);
 				}
 			} else {
-				evaluationResult = evaluate(strValue, context, engine);
-				if (evaluationResult == null) {
-					evaluationResult = "";
-				}
-				cellHelper
-						.setCellValue(cell, evaluationResult.toString());
+				if (strValue.contains(expressionNotationBegin)){
+					
+					evaluationResult = evaluate(strValue, context, engine);
+					if (evaluationResult == null) {
+						evaluationResult = "";
+					}
+					cellHelper
+							.setCellValue(cell, evaluationResult.toString());
+				}	
 			}
 		}
 	}
+
+	public static void saveDataToObjectInContext(Map<String, Object> context, 
+			String saveAttr,
+			String strValue,
+			ExpressionEngine engine) {
+		
+		int index = saveAttr.lastIndexOf(".");
+		if (index >0 ) {
+			String strObject = saveAttr.substring(0, index);
+			String strMethod = saveAttr.substring(index+1);
+			Object object = evaluate(strObject, context, engine);
+			CellControlsHelper.setObjectProperty(object, strMethod,
+					strValue, true);
+		}	
+	}
+	
+	
+	
+	public static String parseSaveAttr(Cell cell) {
+		if ((cell.getCellType() == Cell.CELL_TYPE_STRING) && (cell != null) && !cell.getCellStyle().getLocked() ) {
+			String saveAttr = parseSaveAttrString(cell.getStringCellValue());
+			if (!saveAttr.isEmpty()) {
+				return "$"+cell.getColumnIndex()+"="+saveAttr+",";
+			}
+		}	
+		return "";
+	}
+	
+	public static String parseSaveAttrString(String strValue) {
+			if (strValue!=null) {
+				int first = strValue.indexOf("${");
+				int last = strValue.lastIndexOf("${");
+				int end = strValue.lastIndexOf("}");
+				if ((first>=0) && (first==last)&&(end>1)) {
+					return strValue.substring(first + 2, end);
+				}
+			}	
+			return "";
+	}
+	
+	public static String getSaveAttrListFromRow(Row row) {
+		if (row != null) {
+			Cell cell = row.getCell(hiddenSaveObjectsColumn);
+			if (cell != null) {
+				String str= cell.getStringCellValue();
+				if ((str!=null)&&(!str.isEmpty())) {
+					return str;
+				}	
+			}
+		}
+		return null;
+	}
+	
+	public static String getSaveAttrFromList(int columnIndex, String saveAttrs) {
+		if ((saveAttrs!=null)&&(!saveAttrs.isEmpty())) {
+			String str = "$"+columnIndex+"=";
+			int istart = saveAttrs.indexOf(str);
+			if (istart >= 0) {
+				int iend = saveAttrs.indexOf(",", istart);
+				if (iend > istart) {
+					String saveAttr = saveAttrs.substring(istart + str.length(), iend);
+					return saveAttr;
+				}	
+			}
+		}
+		return null;
+	}	
+
+	public static boolean isHasSaveAttr(Cell cell) {
+		Cell scell = cell.getRow().getCell(hiddenSaveObjectsColumn);
+		if (scell!=null) {
+			return isHasSaveAttr(cell.getColumnIndex(), scell.getStringCellValue());
+		}
+		return false;
+	}	
+
+	public static boolean isHasSaveAttr(int columnIndex, String saveAttrs) {
+			String str = "$"+columnIndex+"=";
+			if ((saveAttrs!=null) && (saveAttrs.indexOf(str)>=0)) {
+				return true;
+			}
+			return false;
+	}	
 
 	private static boolean isUserFormula(String str) {
 		return str.startsWith(USER_FORMULA_PREFIX)
@@ -486,6 +575,34 @@ public class ConfigurationHelper {
 		cell.setCellValue(rowNum + fullName);
 	}
 
+	public static void setSaveObjectsInHiddenColumn(Row row, String saveAttr) {
+		Cell cell = row.getCell( hiddenSaveObjectsColumn,
+				MissingCellPolicy.CREATE_NULL_AS_BLANK);
+		
+		cell.setCellValue( saveAttr);
+	}
+	
+	
+	public static void setSaveAttrsForSheet(final Sheet sheet, final int minRowNum, final int maxRowNum) {
+		
+        for (Row row : sheet) {
+        	int rowIndex = row.getRowNum();
+        	if ((rowIndex >= minRowNum)&&(rowIndex <=maxRowNum)) {
+				StringBuffer saveAttr = new StringBuffer();
+				for (Cell cell : row) {
+					String sAttr = ConfigurationHelper.parseSaveAttr(cell);
+					if (!sAttr.isEmpty()) {
+						saveAttr.append(sAttr);
+					}	
+				}
+				if (saveAttr.length()>0) {
+					ConfigurationHelper.setSaveObjectsInHiddenColumn(row, saveAttr.toString());
+				}
+        	}	
+        }	
+	}	
+	
+	
 	public static int getOriginalRowNumInHiddenColumn(Row row) {
 		Cell cell = row.getCell(hiddenFullNameColumn,
 				MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -533,16 +650,18 @@ public class ConfigurationHelper {
 	}
 
 	public static List<RowsMapping> findChildRowsMappingFromShiftMap(
-			String fullName, Map<String, ConfigRangeAttrs> shiftMap) {
+			String fullName, TreeMap<String, ConfigRangeAttrs> shiftMap) {
 
-		int fullNameLength = fullName.length();
 		List<RowsMapping> rowsMappingList = new ArrayList<RowsMapping>();
-		for (Map.Entry<String, ConfigRangeAttrs> entry : shiftMap.entrySet())
+		NavigableMap<String, ConfigRangeAttrs> tailmap = shiftMap.tailMap(fullName, false);
+		for (Map.Entry<String, ConfigRangeAttrs> entry : tailmap.entrySet())
 		{
 			String key = entry.getKey();
 			// check it's children
-			if ( key.startsWith(fullName) && (key.length()>fullNameLength) ) {
+			if ( key.startsWith(fullName)) {
 				rowsMappingList.add(entry.getValue().unitRowsMapping);
+			} else {
+				break;
 			}
 		}
 		return rowsMappingList;

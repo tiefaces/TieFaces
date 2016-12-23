@@ -8,6 +8,7 @@ package com.tiefaces.components.websheet.configuration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellAddress;
@@ -60,7 +61,7 @@ public class SheetConfiguration {
 	
 	private FormCommand formCommand;
 	
-	private Map<String, ConfigRangeAttrs> shiftMap;
+	private TreeMap<String, ConfigRangeAttrs> shiftMap;
 	
 	private Map<String, Command> commandIndexMap;
 	private Map<String, String> collectionObjNameMap;	
@@ -270,11 +271,11 @@ public class SheetConfiguration {
 		this.watchList = watchList;
 	}
 
-	public Map<String, ConfigRangeAttrs> getShiftMap() {
+	public TreeMap<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
 
-	public void setShiftMap(Map<String, ConfigRangeAttrs> shiftMap) {
+	public void setShiftMap(TreeMap<String, ConfigRangeAttrs> shiftMap) {
 		this.shiftMap = shiftMap;
 	}
 

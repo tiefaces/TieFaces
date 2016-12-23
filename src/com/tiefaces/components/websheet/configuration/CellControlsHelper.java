@@ -120,7 +120,7 @@ public class CellControlsHelper {
 		return value;
 	}
 
-	private static void setObjectProperty(Object obj, String propertyName,
+	public static void setObjectProperty(Object obj, String propertyName,
 			String propertyValue, boolean ignoreNonExisting) {
 		try {
 
@@ -174,7 +174,7 @@ public class CellControlsHelper {
 		// only one type control allowed for one cell.
 		clist.clear();
 		if (controlAttrs != null) {
-			String[] cattrs = controlAttrs.split("\" ");
+			String[] cattrs = controlAttrs.split("\" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 			for (String cattr : cattrs) {
 				String[] details = cattr.split("=");
 				if (details.length > 1) {
@@ -248,7 +248,7 @@ public class CellControlsHelper {
 			CellAttributesMap cellAttributesMap) {
 		String[] selectLabels = null;
 		String[] selectValues = null;
-		String defaultSelectLabel = "";
+		String defaultSelectLabel = null;
 		String defaultSelectValue = null;
 		String defaultDatePattern = "";
 		for (CellFormAttributes attr : inputs) {
@@ -280,7 +280,9 @@ public class CellControlsHelper {
 				smap = new LinkedHashMap<String, String>();
 			}
 			smap.clear();
-			smap.put(defaultSelectLabel, defaultSelectValue);
+			if (defaultSelectLabel!=null) {
+				smap.put(defaultSelectLabel, defaultSelectValue);
+			}
 			for (int i = 0; i < selectLabels.length; i++) {
 				smap.put(selectLabels[i], selectValues[i]);
 			}
