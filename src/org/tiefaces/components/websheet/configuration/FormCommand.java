@@ -1,0 +1,279 @@
+package org.tiefaces.components.websheet.configuration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
+import org.tiefaces.components.websheet.configuration.ConfigurationHelper;
+import org.tiefaces.components.websheet.service.CellHelper;
+import org.tiefaces.components.websheet.service.ShiftFormula;
+/**
+ * Form command. i.e. tie:form(name="departments" length="9" header="0"
+ * footer="0")
+ * 
+ * @author Jason Jiang
+ *
+ */
+
+public class FormCommand extends ConfigCommand {
+
+	/** name holder. */
+	private String name;
+	/** header holder. */
+	private String headerLength;
+	/** footer holder. */
+	private String footerLength;
+	/** hidden holder. */
+	private String hidden;
+	
+	
+
+	public FormCommand() {
+		super();
+	}
+
+	public FormCommand(FormCommand sourceCommand) {
+		super((ConfigCommand) sourceCommand);
+		this.name = sourceCommand.name;
+		this.headerLength = sourceCommand.headerLength;
+		this.footerLength = sourceCommand.footerLength;
+		this.hidden = sourceCommand.hidden;
+	}
+
+	public final String getName() {
+		return name;
+	}
+
+	public final void setName(final String pName) {
+		this.name = pName;
+	}
+
+	public String getHeaderLength() {
+		return headerLength;
+	}
+
+	public void setHeaderLength(String headerLength) {
+		this.headerLength = headerLength;
+	}
+
+	public String getFooterLength() {
+		return footerLength;
+	}
+
+	public void setFooterLength(String footerLength) {
+		this.footerLength = footerLength;
+	}
+
+	public final String getHidden() {
+		return hidden;
+	}
+
+	public final void setHidden(final String pHidden) {
+		this.hidden = pHidden;
+	}
+
+	/**
+	 * calc header length.
+	 * 
+	 * @return int header length.
+	 */
+	public final int calcHeaderLength() {
+		return calcLength(this.getHeaderLength());
+	}
+
+	/**
+	 * calc body length.
+	 * 
+	 * @return int body length.
+	 */
+	public final int calcBodyLength() {
+		return calcLength(this.getLength()) - calcHeaderLength()
+				- calcFooterLength();
+	}
+
+	/**
+	 * calc footer length.
+	 * 
+	 * @return int footer length.
+	 */
+	public final int calcFooterLength() {
+		return calcLength(this.getFooterLength());
+	}
+
+	/**
+	 * Obtain a human readable representation.
+	 * 
+	 * @return String Human readable label
+	 */
+	public final String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("{");
+		sb.append("commandName = " + this.getCommandTypeName());
+		sb.append(",");
+		sb.append("form Name = " + this.getName());
+		sb.append(",");
+		sb.append("length = " + this.getLength());
+		sb.append(",");
+		sb.append("header length = " + this.getHeaderLength());
+		sb.append(",");
+		sb.append("footer length = " + this.getFooterLength());
+		sb.append("}");
+		return sb.toString();
+
+	}
+
+	// Form is top level, Form cannot include another Form
+	/**
+	 * Watch list serve for formula changes. Basically all the rows appeared in
+	 * the formula in the current sheet will be watched. Note if the cell
+	 * reference is from other sheet or workbooks, it will be ignored.
+	 * 
+	 * @param wbWrapper
+	 *            XSSFEvaluationWorkbook used for formula parse.
+	 * @param sheet
+	 *            current sheet.
+	 * @return List row number for monitoring.
+	 */
+	private List<Integer> buildFormWatchList(
+			final XSSFEvaluationWorkbook wbWrapper, final Sheet sheet) {
+
+		List<Integer> watchList = new ArrayList<Integer>();
+
+		ConfigRange cRange = this.getConfigRange();
+		List<ConfigCommand> commandList = cRange.getCommandList();
+		if (commandList.size() <= 0) {
+			// if no command then no dynamic changes. then no need formula shifts.
+			return watchList;
+		}
+		int lastStaticRow = commandList.get(0).getTopRow() - 1;
+		if (lastStaticRow < 0) {
+			lastStaticRow = this.getTopRow();
+		}
+
+		Workbook wb = sheet.getWorkbook();
+
+		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
+			Row row = sheet.getRow(i);
+			for (Cell cell : row) {
+				if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+					
+					String formula = cell.getCellFormula();
+
+					Ptg[] ptgs = FormulaParser.parse(
+							formula, wbWrapper,
+							FormulaType.CELL, wb.getSheetIndex(sheet));
+
+					for (int k = 0; k < ptgs.length; k++) {
+						Object ptg = ptgs[k];
+						// For area formula, only first row is watched.
+						// Reason is the lastRow must shift same rows with
+						// firstRow.
+						// Otherwise it's difficult to calculate.
+						// In case some situation cannot fit, then should make
+						// change to the formula.
+						int areaInt = ShiftFormula
+								.getFirstSupportedRowNumFromPtg(ptg);
+						if (areaInt >= 0) {
+							addToWatchList(sheet, areaInt, lastStaticRow,
+									watchList);
+						}
+					}
+					
+					// when insert row, the formula may changed. so here is the workaround.
+					// change formula to user formula to preserve the row changes.
+					cell.setCellType(Cell.CELL_TYPE_STRING);
+					cell.setCellValue(ConfigurationHelper.USER_FORMULA_PREFIX + formula + ConfigurationHelper.USER_FORMULA_SUFFIX);
+					
+
+				}
+			}
+		}
+
+		return watchList;
+
+	}
+
+	/**
+	 * Only rows in dynamic area will be added to watch list.
+	 * 
+	 * @param sheet
+	 *            current sheet.
+	 * @param addRow
+	 *            row want to add.
+	 * @param lastStaticRow
+	 *            last static row.
+	 * @param watchList
+	 *            watch list.
+	 */
+	private void addToWatchList(final Sheet sheet, final int addRow,
+			final int lastStaticRow, final List<Integer> watchList) {
+		if ((addRow > lastStaticRow) && !(watchList.contains(addRow))) {
+			watchList.add(addRow);
+		}
+	}
+
+	@Override
+	/**
+	 * build the command area at the row.
+	 */
+	public final int buildAt(String fullName, final ConfigBuildRef configBuildRef,
+			final int atRow,
+			final Map<String, Object> context, 
+			List<RowsMapping> currentRowsMappingList) {
+		// TODO Auto-generated method stub
+
+		configBuildRef.setWatchList(buildFormWatchList(configBuildRef.getWbWrapper(), configBuildRef.getSheet()));
+		fullName = this.getCommandName();
+
+		RowsMapping unitRowsMapping = new RowsMapping();
+		for (Integer index : configBuildRef.getWatchList()) {
+			if (ConfigurationHelper.isStaticRow(this.getConfigRange(),index)) {
+				unitRowsMapping.addRow(index, configBuildRef.getSheet().getRow(index));
+			}
+		}
+		currentRowsMappingList = new ArrayList<RowsMapping>();
+		currentRowsMappingList.add(unitRowsMapping);
+		this.getConfigRange().getAttrs().allowAdd = false;
+		configBuildRef.putShiftAttrs(fullName, this.getConfigRange().getAttrs(), new RowsMapping(unitRowsMapping));
+		initFullNameInHiddenColumn(configBuildRef.getSheet());
+		configBuildRef.setOriginConfigRange(new ConfigRange(this.getConfigRange()));
+		configBuildRef.getOriginConfigRange().indexCommandRange(configBuildRef.getCommandIndexMap());
+		int length = this.getConfigRange().buildAt(fullName, configBuildRef,
+				atRow, context, currentRowsMappingList);
+		this.getConfigRange().getAttrs().finalLength = length;
+		this.setFinalLength(length);
+		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenFullNameColumn, true);
+		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenSaveObjectsColumn, true);
+
+		return length;
+	}
+
+	private void initFullNameInHiddenColumn(Sheet sheet) {
+		
+		for (int i= this.getTopRow(); i<= this.getLastRow(); i++) {
+			Row row = sheet.getRow(i);
+			if (row == null) {
+				row = sheet.createRow(i);
+			}
+			Cell cell = row.getCell(ConfigurationHelper.hiddenFullNameColumn, MissingCellPolicy.CREATE_NULL_AS_BLANK); 
+			cell.setCellValue(i+":");
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+		}
+		
+	}
+
+	@Override
+	public String getCommandName() {
+		return this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getName().trim();
+	}
+	
+}
