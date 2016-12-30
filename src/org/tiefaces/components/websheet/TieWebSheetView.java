@@ -7,185 +7,379 @@ package org.tiefaces.components.websheet;
 
 import java.io.Serializable;
 import java.util.List;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.component.tabview.TabView;
 
+import org.primefaces.component.tabview.TabView;
+import org.tiefaces.common.TieConstants;
+
+/**
+ * sheet view class.
+ * 
+ * @author Jason Jiang.
+ *
+ */
 public class TieWebSheetView {
 
+	/**
+	 * empty constructor.
+	 */
 	public TieWebSheetView() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	protected List<tabModel> tabs;
+	/**
+	 * tabs.
+	 */
+	private List<tabModel> tabs;
 
-	public List<tabModel> getTabs() {
+	/**
+	 * get tabs.
+	 * 
+	 * @return list of tabs.
+	 */
+	public final List<tabModel> getTabs() {
 		return tabs;
 	}
 
-	public void setTabs(List<tabModel> tabs) {
-		this.tabs = tabs;
+	/**
+	 * set tabs.
+	 * 
+	 * @param ptabs
+	 *            list of tabs.
+	 */
+	public final void setTabs(final List<tabModel> ptabs) {
+		this.tabs = ptabs;
 	}
 
-	static public class tabModel implements Serializable {
+	/**
+	 * tab model class.
+	 * 
+	 * @author Jason Jiang
+	 *
+	 */
+	public static class tabModel implements Serializable {
 
-		/**
-		 * 
-		 */
+		/** serialid. */
 		private static final long serialVersionUID = 1L;
-		/**
-		 * 
-		 */
+		/** tab id. */
 		private String id;
+		/** tab title. */
 		private String title;
+		/** tab type. */
 		private String type;
 
-		public tabModel(String id, String title, String type) {
-			this.id = id;
-			if (this.id != null)
+		/**
+		 * constructor.
+		 * 
+		 * @param pid
+		 *            id.
+		 * @param ptitle
+		 *            title.
+		 * @param ptype
+		 *            type.
+		 */
+		public tabModel(final String pid, final String ptitle,
+				final String ptype) {
+			this.id = pid;
+			if (this.id != null) {
 				this.id = this.id.replaceAll(" ", "_");
-			this.title = title;
-			this.type = type;
+			}
+			this.title = ptitle;
+			this.type = ptype;
 		}
 
-		public String getId() {
+		/**
+		 * get id.
+		 * 
+		 * @return id.
+		 */
+		public final String getId() {
 			return id;
 		}
 
-		public void setId(String id) {
-			this.id = id;
+		/**
+		 * set id.
+		 * 
+		 * @param pid id.
+		 */
+		public final void setId(final String pid) {
+			this.id = pid;
 		}
 
-		public String getTitle() {
+		/**
+		 * get title.
+		 * 
+		 * @return title.
+		 */
+		public final String getTitle() {
 			return title;
 		}
 
-		public String getType() {
+		/**
+		 * get type.
+		 * 
+		 * @return type.
+		 */
+		public final String getType() {
 			return type;
 		}
 	}
 
-	protected TabView webFormTabView = null;
+	/**
+	 * web form tab view.
+	 */
+	private TabView webFormTabView = null;
 
-	public TabView getWebFormTabView() {
+	/**
+	 * get web form tab view.
+	 * 
+	 * @return webformtabview.
+	 */
+	public final TabView getWebFormTabView() {
 		return webFormTabView;
 	}
 
-	public void setWebFormTabView(TabView webFormTabView) {
-		this.webFormTabView = webFormTabView;
+	/**
+	 * set pwebform tab view.
+	 * 
+	 * @param pwebFormTabView
+	 *            webformtabview.
+	 */
+	public final void setWebFormTabView(final TabView pwebFormTabView) {
+		this.webFormTabView = pwebFormTabView;
 	}
 
-	protected String tabType;
+	/**
+	 * tab type.
+	 */
+	private String tabType;
 
-	public String getTabType() {
+	/**
+	 * get tab type.
+	 * 
+	 * @return tab type.
+	 */
+	public final String getTabType() {
 
 		int sheetId = webFormTabView.getActiveIndex();
 		if ((sheetId >= 0) && (tabs != null)) {
-			if (sheetId >= tabs.size())
+			if (sheetId >= tabs.size()) {
 				sheetId = 0;
+			}
 			tabType = tabs.get(sheetId).type.toLowerCase();
-		} else
-			tabType = "none";
+		} else {
+			tabType = TieConstants.TAB_TYPE_NONE;
+		}
 		return tabType;
 	}
 
-	protected String tabStyle;
+	/**
+	 * tab style.
+	 */
+	private String tabStyle;
 
-	public String getTabStyle() {
+	/**
+	 * get tab style.
+	 * 
+	 * @return string.
+	 */
+	public final String getTabStyle() {
 
-		tabStyle = "height: 530px;";
+		tabStyle = TieConstants.TAB_STYLE_VISIBLE;
 		int sheetId = webFormTabView.getActiveIndex();
 		if (sheetId >= 0) {
-			if (sheetId < tabs.size())
-				tabStyle = "height: 30px;";
-			// if (tabs.get(sheetId).type.equalsIgnoreCase("form")) tabStyle =
-			// "height: 30px;";
+			if (sheetId < tabs.size()) {
+				tabStyle = TieConstants.TAB_STYLE_INVISIBLE;
+			}
 		}
 
 		return tabStyle;
 	}
 
-	public void setTabType(String tabType) {
-		this.tabType = tabType;
+	/**
+	 * set tab type.
+	 * 
+	 * @param ptabType
+	 *            tab type.
+	 */
+	public final void setTabType(final String ptabType) {
+		this.tabType = ptabType;
 	}
 
-	private Integer maxRowsPerPage = 80;
+	/** maxrowsperpage. */
+	private Integer maxRowsPerPage = TieConstants.defaultMaxRowsPerPage;
 
-	public Integer getMaxRowsPerPage() {
+	/**
+	 * get maxrowsperpage.
+	 * 
+	 * @return maxrowsperpage.
+	 */
+	public final Integer getMaxRowsPerPage() {
 		return maxRowsPerPage;
 	}
 
-	public void setMaxRowsPerPage(Integer maxRowsPerPage) {
-		this.maxRowsPerPage = maxRowsPerPage;
+	/**
+	 * set maxrowsperpage.
+	 * 
+	 * @param pmaxRowsPerPage
+	 *            maxrowsperpage.
+	 */
+	public final void setMaxRowsPerPage(final Integer pmaxRowsPerPage) {
+		this.maxRowsPerPage = pmaxRowsPerPage;
 	}
 
-	private String tableWidthStyle = "100%;";
+	/**
+	 * tabwidth style.
+	 */
+	private String tableWidthStyle = TieConstants.defaultTableWidthStyle;
 
-	public String getTableWidthStyle() {
+	/**
+	 * get table width style.
+	 * 
+	 * @return tablewidthstyle.
+	 */
+	public final String getTableWidthStyle() {
 		return tableWidthStyle;
 	}
 
-	public void setTableWidthStyle(String tableWidthStyle) {
-		this.tableWidthStyle = tableWidthStyle;
+	/**
+	 * set tablewidthstyle.
+	 * 
+	 * @param ptableWidthStyle
+	 *            tablewidth style.
+	 */
+	public final void setTableWidthStyle(final String ptableWidthStyle) {
+		this.tableWidthStyle = ptableWidthStyle;
 	}
 
-	// width use pixel 24 = 24px;
-	private int lineNumberColumnWidth = 26;
-	private int addRowColumnWidth = 38;
-
+	/** line number column width. */
+	private int lineNumberColumnWidth 
+	= TieConstants.defaultLineNumberColumnWidth;
+	/** add row column width. */
+	private int addRowColumnWidth = TieConstants.defaultAddRowColumnWidth;
+	/** line number column width style. */
 	private String lineNumberColumnWidthStyle = "";
+	/** add row column width style. */
 	private String addRowColumnWidthStyle = "";
 
-	public int getLineNumberColumnWidth() {
+	/**
+	 * get line number column width.
+	 * 
+	 * @return linenumbercolumnwidth.
+	 */
+	public final int getLineNumberColumnWidth() {
 		return lineNumberColumnWidth;
 	}
 
-	public void setLineNumberColumnWidth(int lineNumberColumnWidth) {
-		this.lineNumberColumnWidth = lineNumberColumnWidth;
+	/**
+	 * set line number column width .
+	 * 
+	 * @param plineNumberColumnWidth
+	 *            column width.
+	 */
+	public final void setLineNumberColumnWidth(
+			final int plineNumberColumnWidth) {
+		this.lineNumberColumnWidth = plineNumberColumnWidth;
 	}
 
-	public int getAddRowColumnWidth() {
+	/**
+	 * get add row column width.
+	 * 
+	 * @return add row column width.
+	 */
+	public final int getAddRowColumnWidth() {
 		return addRowColumnWidth;
 	}
 
-	public void setAddRowColumnWidth(int addWidth) {
+	/**
+	 * set add row column width.
+	 * 
+	 * @param addWidth
+	 *            add row column width.
+	 */
+	public final void setAddRowColumnWidth(final int addWidth) {
 		this.addRowColumnWidth = addWidth;
 	}
 
-	public String getLineNumberColumnWidthStyle() {
+	/**
+	 * get line number column width style.
+	 * 
+	 * @return column width style.
+	 */
+	public final String getLineNumberColumnWidthStyle() {
 		return lineNumberColumnWidthStyle;
 	}
 
-	public void setLineNumberColumnWidthStyle(String lineNumberCoumnWidthStyle) {
+	/**
+	 * set line number column width style.
+	 * 
+	 * @param lineNumberCoumnWidthStyle
+	 *            style.
+	 */
+	public final void setLineNumberColumnWidthStyle(
+			final String lineNumberCoumnWidthStyle) {
 		this.lineNumberColumnWidthStyle = lineNumberCoumnWidthStyle;
 	}
 
-	public String getAddRowColumnWidthStyle() {
+	/**
+	 * get add row column width style.
+	 * 
+	 * @return style.
+	 */
+	public final String getAddRowColumnWidthStyle() {
 		return addRowColumnWidthStyle;
 	}
 
-	public void setAddRowColumnWidthStyle(String addWidthStyle) {
+	/**
+	 * set add row column style.
+	 * 
+	 * @param addWidthStyle
+	 *            style.
+	 */
+	public final void setAddRowColumnWidthStyle(final String addWidthStyle) {
 		this.addRowColumnWidthStyle = addWidthStyle;
 	}
 
+	/** allow add row in body. */
 	private boolean bodyAllowAddRows;
 
-	public boolean isBodyAllowAddRows() {
+	/**
+	 * is allow add row.
+	 * 
+	 * @return true if allowed.
+	 */
+	public final boolean isBodyAllowAddRows() {
 		return bodyAllowAddRows;
 	}
 
-	public void setBodyAllowAddRows(boolean bodyAllowAddRows) {
-		this.bodyAllowAddRows = bodyAllowAddRows;
+	/**
+	 * set body allow add rows.
+	 * 
+	 * @param pbodyAllowAddRows
+	 *            true if allowed.
+	 */
+	public final void setBodyAllowAddRows(final boolean pbodyAllowAddRows) {
+		this.bodyAllowAddRows = pbodyAllowAddRows;
 	}
 
+	/** show line number in web gui. */
 	private boolean showLineNumber = false;
 
-	public boolean isShowLineNumber() {
+	/**
+	 * is show line number.
+	 * 
+	 * @return true if show.
+	 */
+	public final boolean isShowLineNumber() {
 		return showLineNumber;
 	}
 
-	public void setShowLineNumber(boolean showLineNumber) {
-		this.showLineNumber = showLineNumber;
+	/**
+	 * set show line number.
+	 * 
+	 * @param pshowLineNumber
+	 *            true if show.
+	 */
+	public final void setShowLineNumber(final boolean pshowLineNumber) {
+		this.showLineNumber = pshowLineNumber;
 	}
 
 }

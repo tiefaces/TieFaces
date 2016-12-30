@@ -41,9 +41,9 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.tiefaces.common.FacesUtility;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.CellAttributesMap;
 import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.TieWebSheetConstants;
 import org.tiefaces.components.websheet.configuration.ConfigRangeAttrs;
 import org.tiefaces.components.websheet.configuration.ConfigurationHelper;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
@@ -300,7 +300,7 @@ public class CellHelper {
 		script = script.toUpperCase().replace("AND", "&&");
 		script = script.toUpperCase().replace("OR", "||");
 		try {
-			result = parent.getEngine().eval(script);
+			result = parent.getExpEngine().evaluate(script);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe("WebForm WebFormHelper evalBoolExpression script = "
@@ -812,7 +812,7 @@ public class CellHelper {
 			Cell poiCell, SheetConfiguration sheetConfig,
 			CellAttributesMap cellAttributesMap) {
 		if (originRowIndex >= 0) {
-			Map<String, String> commentMap = cellAttributesMap.templateCommentMap.get("$$");
+			Map<String, String> commentMap = cellAttributesMap.getTemplateCommentMap().get("$$");
 			String skey =poiCell.getSheet().getSheetName()+"!$"+poiCell.getColumnIndex()+"$"+originRowIndex;
 			if (commentMap != null) {
 				String comment = commentMap.get(skey);
@@ -820,13 +820,13 @@ public class CellHelper {
 					ConfigurationHelper.createCellComment(poiCell, comment, sheetConfig.getFinalCommentMap());
 				}
 			}
-			String widgetType = cellAttributesMap.cellInputType.get(skey);
+			String widgetType = cellAttributesMap.getCellInputType().get(skey);
 			if (widgetType != null) {
 				fcell.setControl(widgetType.toLowerCase());
 				
-				fcell.setInputAttrs(cellAttributesMap.cellInputAttributes.get(skey));
-				fcell.setSelectItemAttrs(cellAttributesMap.cellSelectItemsAttributes.get(skey));
-				fcell.setDatePattern(cellAttributesMap.cellDatePattern.get(skey));
+				fcell.setInputAttrs(cellAttributesMap.getCellInputAttributes().get(skey));
+				fcell.setSelectItemAttrs(cellAttributesMap.getCellSelectItemsAttributes().get(skey));
+				fcell.setDatePattern(cellAttributesMap.getCellDatePattern().get(skey));
 			}
 				
 				
@@ -1092,18 +1092,18 @@ public class CellHelper {
 		}
 
 		switch (fcell.getInputType()) {
-		case TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE:
+		case TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE:
 			fcell.setSymbol("%");
 			fcell.setSymbolPosition("p");
 			fcell.setDecimalPlaces(this
 					.getDecimalPlacesFromFormat(poiCell));
 			break;
 
-		case TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_INTEGER:
+		case TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_INTEGER:
 			fcell.setDecimalPlaces((short) 0);
 			break;
 
-		case TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE:
+		case TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE:
 			fcell.setDecimalPlaces(getDecimalPlacesFromFormat(poiCell));
 			fcell.setSymbol(getSymbolFromFormat(poiCell));
 			fcell.setSymbolPosition(getSymbolPositionFromFormat(poiCell));
@@ -1127,19 +1127,19 @@ public class CellHelper {
 
 	private String getInputTypeFromCellType(final Cell cell) {
 
-		String inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT;
+		String inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT;
 		if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-			inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE;
+			inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE;
 		}	
 		CellStyle style = cell.getCellStyle();
 		if (style != null) {
 			int formatIndex = style.getDataFormat();
 			String formatString = style.getDataFormatString();
 			if (DateUtil.isADateFormat(formatIndex, formatString)) {
-				inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DATE;
+				inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DATE;
 			} else {
 				if (isAPercentageCell(formatString)) {
-					inputType = TieWebSheetConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE;
+					inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE;
 				}
 			}
 		}

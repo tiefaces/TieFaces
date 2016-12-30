@@ -20,7 +20,16 @@ import org.tiefaces.common.AppUtils;
  * @author Jason Jiang
  *
  */
-public class ChartUtility {
+public final class ChartUtility {
+	
+	
+	/**
+	 * hide constructor.
+	 */
+	private ChartUtility() {
+		// not called
+	}	
+	
 	/**
 	 * return chart type from CTChart object.
 	 * @param ctChart object.

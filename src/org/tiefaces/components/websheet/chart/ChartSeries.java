@@ -2,40 +2,79 @@ package org.tiefaces.components.websheet.chart;
 
 import java.util.List;
 
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 
+/**
+ * Chart series.
+ * @author Jason Jiang
+ *
+ */
 public class ChartSeries {
 	
+	/** seies label. */
 	private ParsedCell seriesLabel;
+	/** seriescolor. */
 	private XColor seriesColor = null;
+	/** list of cell value. */
 	private List<ParsedCell> valueList;
+	/** value color list. */
 	private List<XColor> valueColorList;
-	
-	public ParsedCell getSeriesLabel() {
+	/**
+	 * get series label.
+	 * @return parsed cell.
+	 */
+	public final ParsedCell getSeriesLabel() {
 		return seriesLabel;
 	}
-	public void setSeriesLabel(ParsedCell seriesLabel) {
-		this.seriesLabel = seriesLabel;
+	/**
+	 * set series label.
+	 * @param pseriesLabel serieslabel.
+	 */
+	public final void setSeriesLabel(final ParsedCell pseriesLabel) {
+		this.seriesLabel = pseriesLabel;
 	}
-	public List<ParsedCell> getValueList() {
+	/**
+	 * get value list.
+	 * @return list of value.
+	 */
+	public final List<ParsedCell> getValueList() {
 		return valueList;
 	}
-	public void setValueList(List<ParsedCell> valueList) {
-		this.valueList = valueList;
+	/**
+	 * set value list.
+	 * @param pvalueList list of value.
+	 */
+	public final void setValueList(final List<ParsedCell> pvalueList) {
+		this.valueList = pvalueList;
 	}
-	public XColor getSeriesColor() {
+	/**
+	 * get series color.
+	 * @return series color.
+	 */
+	public final XColor getSeriesColor() {
 		return seriesColor;
 	}
-	public void setSeriesColor(XColor seriesColor) {
-		this.seriesColor = seriesColor;
+	/**
+	 * set series color.
+	 * @param pseriesColor series color.
+	 */
+	public final void setSeriesColor(final XColor pseriesColor) {
+		this.seriesColor = pseriesColor;
 	}
-	public List<XColor> getValueColorList() {
+	/**
+	 * get value color list.
+	 * @return list of color.
+	 */
+	public final List<XColor> getValueColorList() {
 		return valueColorList;
 	}
-	public void setValueColorList(List<XColor> valueColorList) {
-		this.valueColorList = valueColorList;
+	/**
+	 * set value color list.
+	 * @param pvalueColorList value color list.
+	 */
+	public final void setValueColorList(final List<XColor> pvalueColorList) {
+		this.valueColorList = pvalueColorList;
 	}
 
 	

@@ -1,6 +1,6 @@
 package org.tiefaces.components.websheet.configuration;
 
-import static org.tiefaces.components.websheet.TieWebSheetConstants.*;
+import static org.tiefaces.common.TieConstants.*;
 
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -274,7 +274,7 @@ public class CellControlsHelper {
 					|| (selectValues.length != selectLabels.length)) {
 				selectValues = selectLabels;
 			}
-			Map<String, String> smap = cellAttributesMap.cellSelectItemsAttributes.get(key);
+			Map<String, String> smap = cellAttributesMap.getCellSelectItemsAttributes().get(key);
 			if (smap == null) {
 				smap = new LinkedHashMap<String, String>();
 			}
@@ -285,13 +285,13 @@ public class CellControlsHelper {
 			for (int i = 0; i < selectLabels.length; i++) {
 				smap.put(selectLabels[i], selectValues[i]);
 			}
-			cellAttributesMap.cellSelectItemsAttributes.put(key, smap);
+			cellAttributesMap.getCellSelectItemsAttributes().put(key, smap);
 		}
 		if (type.equalsIgnoreCase("calendar")) {
 			if (defaultDatePattern.isEmpty()) {
 				defaultDatePattern = getDefaultDatePattern();
 			}
-			cellAttributesMap.cellDatePattern.put(key, defaultDatePattern);
+			cellAttributesMap.getCellDatePattern().put(key, defaultDatePattern);
 		}
 	}
 

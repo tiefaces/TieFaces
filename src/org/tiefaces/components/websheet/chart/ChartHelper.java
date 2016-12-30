@@ -29,6 +29,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.tiefaces.common.AppUtils;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.chart.objects.AreaChart;
 import org.tiefaces.components.websheet.chart.objects.Bar3DChart;
@@ -134,7 +135,6 @@ public class ChartHelper {
 		}
 	}
 
-
 	// below code demo how to read theme
 	// ThemeDocument theme;
 	// try {
@@ -147,18 +147,21 @@ public class ChartHelper {
 	// // TODO Auto-generated catch block
 	// e.printStackTrace();
 	// }
-	
+
 	/**
 	 * build chartData for line chart. chartData include categoryList and
 	 * seriesList which used for generate jfreechart.
 	 * 
-	 * @param chartData chart data.
-	 * @param ctChart ct chart.
+	 * @param chartData
+	 *            chart data.
+	 * @param ctChart
+	 *            ct chart.
 	 * @param themeTable
 	 *            themeTable used for get color with theme name.
-	 * @param ctObj ct object.
+	 * @param ctObj
+	 *            ct object.
 	 */
-	
+
 	public final void setUpChartData(final ChartData chartData,
 			final CTChart ctChart, final ThemesTable themeTable,
 			final ChartObject ctObj) {
@@ -244,7 +247,8 @@ public class ChartHelper {
 		try {
 			Cell poiCell = parent.getWb().getSheet(pCell.getSheetName())
 					.getRow(pCell.getRow()).getCell(pCell.getCol());
-			result = parent.getCellHelper().getCellValueWithoutFormat(poiCell);
+			result = parent.getCellHelper().getCellValueWithoutFormat(
+					poiCell);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -270,10 +274,11 @@ public class ChartHelper {
 			List<ParsedCell> valueList = chartSeries.getValueList();
 			for (int i = 0; i < categoryList.size(); i++) {
 				try {
-					String sCategory = getParsedCellValue(categoryList.get(i));
+					String sCategory = getParsedCellValue(categoryList
+							.get(i));
 					String sValue = getParsedCellValue(valueList.get(i));
-					dataset.addValue(Double.parseDouble(sValue), seriesLabel,
-							sCategory);
+					dataset.addValue(Double.parseDouble(sValue),
+							seriesLabel, sCategory);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -298,7 +303,8 @@ public class ChartHelper {
 			List<ParsedCell> valueList = chartSeries.getValueList();
 			for (int i = 0; i < categoryList.size(); i++) {
 				try {
-					String sCategory = getParsedCellValue(categoryList.get(i));
+					String sCategory = getParsedCellValue(categoryList
+							.get(i));
 					String sValue = getParsedCellValue(valueList.get(i));
 					dataset.setValue(sCategory, Double.parseDouble(sValue));
 				} catch (Exception ex) {
@@ -407,8 +413,7 @@ public class ChartHelper {
 	 *            chart orientation.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createAreaChart(final ChartData chartData) 
-	{
+	private JFreeChart createAreaChart(final ChartData chartData) {
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createAreaChart(
@@ -426,9 +431,15 @@ public class ChartHelper {
 		return chart;
 
 	}
-	
-	private JFreeChart createStackedAreaChart(final ChartData chartData) 
-	{
+
+	/**
+	 * create stacked area chart.
+	 * 
+	 * @param chartData
+	 *            chart data.
+	 * @return jfree chart.
+	 */
+	private JFreeChart createStackedAreaChart(final ChartData chartData) {
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createStackedAreaChart(
@@ -446,7 +457,7 @@ public class ChartHelper {
 		return chart;
 
 	}
-	
+
 	/**
 	 * Create jfree bar chart.
 	 * 
@@ -518,8 +529,6 @@ public class ChartHelper {
 	 * 
 	 * @param chartData
 	 *            contain information gathered from excel chart object.
-	 * @param vertical
-	 *            chart orientation.
 	 * @return jfree line chart.
 	 */
 	private JFreeChart createPieChart(final ChartData chartData) {
@@ -538,6 +547,14 @@ public class ChartHelper {
 		return chart;
 
 	}
+
+	/**
+	 * create pie 3d chart.
+	 * 
+	 * @param chartData
+	 *            chart data.
+	 * @return jfreechart.
+	 */
 	private JFreeChart createPie3DChart(final ChartData chartData) {
 
 		// create the chart...
@@ -631,7 +648,8 @@ public class ChartHelper {
 	 *            contain information gathered from excel chart object.
 	 */
 
-	private void setupStyle(final JFreeChart chart, final ChartData chartData) {
+	private void setupStyle(final JFreeChart chart,
+			final ChartData chartData) {
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		List<ChartSeries> seriesList = chartData.getSeriesList();
 		BasicStroke bLine = new BasicStroke(2.0f);
@@ -649,7 +667,8 @@ public class ChartHelper {
 		plot.setOutlineVisible(false);
 		plot.setRangeGridlinesVisible(true);
 		plot.setRangeGridlinePaint(Color.BLACK);
-		plot.setRangeGridlineStroke(new BasicStroke(0.1f));
+		plot.setRangeGridlineStroke(new BasicStroke(
+				TieConstants.defaultBasicStroke));
 		plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 		chart.setBackgroundPaint(Color.WHITE);
 		LegendTitle legend = chart.getLegend();
@@ -668,7 +687,8 @@ public class ChartHelper {
 	 *            contain information gathered from excel chart object.
 	 */
 
-	private void setupPieStyle(final JFreeChart chart, final ChartData chartData) {
+	private void setupPieStyle(final JFreeChart chart,
+			final ChartData chartData) {
 		PiePlot plot = (PiePlot) chart.getPlot();
 		List<ChartSeries> seriesList = chartData.getSeriesList();
 		List<ParsedCell> categoryList = chartData.getCategoryList();
@@ -697,7 +717,9 @@ public class ChartHelper {
 		// to-do: need read setting from xml in future
 
 		plot.setOutlineVisible(false);
-		plot.setLegendItemShape(new Rectangle(8, 8));
+		plot.setLegendItemShape(new Rectangle(
+				TieConstants.defaultLegentItemShapeWidth,
+				TieConstants.defaultLegentItemShapeHeight));
 		chart.setBackgroundPaint(Color.WHITE);
 		LegendTitle legend = chart.getLegend();
 		legend.setPosition(RectangleEdge.RIGHT);
@@ -714,16 +736,17 @@ public class ChartHelper {
 	 *            contain information gathered from excel chart object.
 	 */
 
-	private void setupBarStyle(final JFreeChart chart, final ChartData chartData) {
+	private void setupBarStyle(final JFreeChart chart,
+			final ChartData chartData) {
 		setupStyle(chart, chartData);
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		// ((BarRenderer) plot.getRenderer()).setBarPainter(new
 		// StandardBarPainter());
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setBarPainter(new StandardBarPainter());
-		renderer.setItemMargin(.02);
+		renderer.setItemMargin(TieConstants.defaultBarStyleItemMargin);
 
-		plot.setForegroundAlpha(1);
+		plot.setForegroundAlpha(TieConstants.defaultBarStyleForegroundAlpha);
 	}
 
 	/**
@@ -768,7 +791,7 @@ public class ChartHelper {
 		ChartObject ctObj = null;
 
 		switch (chartType) {
-		case Area: 
+		case Area:
 		case AreaStacked:
 			ctObj = new AreaChart();
 			break;
@@ -824,7 +847,8 @@ public class ChartHelper {
 			XSSFDrawing drawing = sheet.createDrawingPatriarch();
 			CTDrawing ctDrawing = drawing.getCTDrawing();
 			if (ctDrawing.sizeOfTwoCellAnchorArray() > 0) {
-				List<CTTwoCellAnchor> alist = ctDrawing.getTwoCellAnchorList();
+				List<CTTwoCellAnchor> alist = ctDrawing
+						.getTwoCellAnchorList();
 				for (int j = 0; j < alist.size(); j++) {
 					CTTwoCellAnchor ctanchor = alist.get(j);
 					String chartId = sheet.getSheetName()
@@ -841,8 +865,8 @@ public class ChartHelper {
 						int row1 = ctanchor.getFrom().getRow();
 						int col2 = ctanchor.getTo().getCol();
 						int row2 = ctanchor.getTo().getRow();
-						anchortMap.put(chartId, new XSSFClientAnchor(dx1, dy1,
-								dx2, dy2, col1, row1, col2, row2));
+						anchortMap.put(chartId, new XSSFClientAnchor(dx1,
+								dy1, dx2, dy2, col1, row1, col2, row2));
 						positionMap.put(
 								TieWebSheetUtility.getFullCellRefName(
 										sheet.getSheetName(), row1, col1),
@@ -923,7 +947,8 @@ public class ChartHelper {
 	 * @param style
 	 *            One of STYLE_xxx.
 	 */
-	public void setSeriesStyle(JFreeChart chart, int seriesIndex, String style) {
+	public final void setSeriesStyle(final JFreeChart chart,
+			final int seriesIndex, final String style) {
 		if (chart != null && style != null) {
 			BasicStroke stroke = ChartUtility.toStroke(style);
 
@@ -936,8 +961,8 @@ public class ChartHelper {
 																// style
 				} catch (Exception e) {
 					log.severe("Error setting style '" + style
-							+ "' for series '" + seriesIndex + "' of chart '"
-							+ chart + "': " + e);
+							+ "' for series '" + seriesIndex
+							+ "' of chart '" + chart + "': " + e);
 				}
 			} else if (plot instanceof XYPlot) {
 				XYPlot xyPlot = chart.getXYPlot();
@@ -947,15 +972,13 @@ public class ChartHelper {
 																// style
 				} catch (Exception e) {
 					log.severe("Error setting style '" + style
-							+ "' for series '" + seriesIndex + "' of chart '"
-							+ chart + "': " + e);
+							+ "' for series '" + seriesIndex
+							+ "' of chart '" + chart + "': " + e);
 				}
 			} else {
 				log.fine("setSeriesColor() unsupported plot: " + plot);
 			}
-		}// else: input unavailable
-	}// setSeriesStyle()
-
-
+		}
+	}
 
 }

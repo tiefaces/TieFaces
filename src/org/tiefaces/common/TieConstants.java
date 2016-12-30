@@ -3,12 +3,13 @@
  * Licensed under MIT
  */
 
-package org.tiefaces.components.websheet;
+package org.tiefaces.common;
 
-
+import java.awt.BasicStroke;
+import java.awt.Rectangle;
 import java.util.regex.Pattern;
 
-public final class TieWebSheetConstants {
+public final class TieConstants {
 
 	public static final String TIE_WEBSHEET_COMPONENT_ID = "websheettable";
 	public static final String TIE_WEBSHEET_CONFIGURATION_SHEET = "Configuration";
@@ -40,14 +41,14 @@ public final class TieWebSheetConstants {
 
 	public static final String TIE_WEBSHEET_FORM_TYPE_FREE = "Free";
 	public static final String TIE_WEBSHEET_FORM_TYPE_REPEAT = "Repeat";
-	
+
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE = "double";
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_INTEGER = "integer";
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE = "percentage";
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_DATE = "date";
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT = "text";
 	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXTAREA = "textarea";
-	
+
 	public static final String COPY_SHEET_PREFIX = "cptieTemp_";
 	public static final short EXCEL_SHEET_NAME_LIMIT = 31;
 	/** method prefix. */
@@ -72,14 +73,38 @@ public final class TieWebSheetConstants {
 	public static final String ATTR_REGEX = "\\s*\\w+\\s*=\\s*([\"|'])(?:(?!\\1).)*\\1";
 	/** attribute's regex pattern. */
 	public static final Pattern ATTR_REGEX_PATTERN = Pattern
-			.compile(ATTR_REGEX);	
-	
-	
+			.compile(ATTR_REGEX);
+
 	public static final String TIE_WEBSHEET_CELL_DATA_ROW = "data-row";
 	public static final String TIE_WEBSHEET_CELL_DATA_COLUMN = "data-column";
 	public static final String TIE_WEBSHEET_CELL_DATA_SYMBOL = "data-symbol";
+
+	public static final int TIE_WEB_SHEET_MAX_ROWS = 99999;
+
+	public static final String EL_START = "#{";
+	public static final String EL_END = "}";
 	
-	   public static final int TIE_WEB_SHEET_MAX_ROWS = 99999;
+	public static final String TAB_TYPE_NONE = "none";
+	
+	public static final String TAB_STYLE_VISIBLE = "height: 530px;";
+	public static final String TAB_STYLE_INVISIBLE = "height: 30px;";
+	
+	public static final int defaultMaxRowsPerPage = 80;
+	
+	public static final String defaultTableWidthStyle = "100%;";
+	
+	public static final int defaultLineNumberColumnWidth = 26;
+	public static final int defaultAddRowColumnWidth = 38;
+	
+	/** default basic stroke width. */
+	public static final float defaultBasicStroke = 0.1f;
+	
+	public static final int defaultLegentItemShapeWidth = 8;
+	public static final int defaultLegentItemShapeHeight = 8;
+	
+	public static final float defaultBarStyleItemMargin= 0.02f;
 
+	public static final int defaultBarStyleForegroundAlpha = 1;
 
+	
 }

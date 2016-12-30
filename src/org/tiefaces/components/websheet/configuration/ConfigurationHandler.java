@@ -5,7 +5,7 @@
 
 package org.tiefaces.components.websheet.configuration;
 
-import static org.tiefaces.components.websheet.TieWebSheetConstants.*;
+import static org.tiefaces.common.TieConstants.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,50 +66,6 @@ public class ConfigurationHandler {
 		this.parent = parent;
 	}
 
-	@SuppressWarnings("serial")
-	private Map<String, Integer> buildSchemaMap(final int version) {
-
-		Map<String, Integer> schemaMap = new HashMap<String, Integer>() {
-			{
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_TAB_NAME, 0);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_SHEET_NAME, 1);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_HEADER_RANGE, 2);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_RANGE, 3);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE, 4);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_TYPE, 5);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_ALLOW_ADD_ROW, 6);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_INIT_ROWS, 7);
-				put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_PAGE_TYPE, 8);
-			}
-		};
-
-		int attributeStartColumn = 9;
-
-		if (version >= 1) {
-			schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_WIDTH, 9);
-			schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE,
-					10);
-			attributeStartColumn = 11;
-		}
-		if (version >= 2) {
-			schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE,
-					11);
-			schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER,
-					12);
-			attributeStartColumn = 13;
-		}
-		schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL,
-				attributeStartColumn);
-		schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE,
-				attributeStartColumn + 1);
-		schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE,
-				attributeStartColumn + 2);
-		schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG,
-				attributeStartColumn + 3);
-		schemaMap.put(TIE_WEBSHEET_CONFIGURATION_SCHEMA_VERSION, version);
-
-		return schemaMap;
-	}
 
 	public Map<String, SheetConfiguration> buildConfiguration() {
 
@@ -142,189 +98,7 @@ public class ConfigurationHandler {
 		 */
 	}
 
-	private Map<String, SheetConfiguration> buildConfigurationWithTab(
-			Sheet sheet1, Map<String, SheetConfiguration> sheetConfigMap) {
 
-		// Iterate through each rows from configuration sheet
-		Iterator<Row> rowIterator = sheet1.iterator();
-		String newTabName = null;
-		String oldTabName = null;
-		int version = 0;
-		SheetConfiguration sheetConfig = null;
-		Map<String, Integer> schemaMap = null;
-
-		int startRow = 1;
-		while (rowIterator.hasNext()) {
-			Row row = rowIterator.next();
-			if (row.getRowNum() == 0) {
-				if (rowCell(row, 0).equalsIgnoreCase(
-						TIE_WEBSHEET_CONFIGURATION_SCHEMA_VERSION)) {
-					version = Integer.parseInt(rowCell(row, 1));
-					startRow = 2; // start from row 2 if has version control.
-				}
-				schemaMap = buildSchemaMap(version);
-				log.fine("startrow = " + startRow + " schemaMap = " + schemaMap);
-			} else if (row.getRowNum() >= startRow) { // skip header rows
-				// For each row, iterate through each columns
-				newTabName = rowCell(
-						row,
-						schemaMap
-								.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_TAB_NAME));
-				if (oldTabName == null)
-					oldTabName = newTabName;
-				if (newTabName.isEmpty()) {
-					addAttributesToMap(sheetConfig.getCellFormAttributes(),
-							row, schemaMap);
-				} else {
-					if (!newTabName.equalsIgnoreCase(oldTabName)) {
-						sheetConfigMap.put(oldTabName, sheetConfig);
-						oldTabName = newTabName;
-					}
-					sheetConfig = new SheetConfiguration();
-					sheetConfig.setFormName(newTabName);
-					sheetConfig
-							.setSheetName(rowCell(
-									row,
-									schemaMap
-											.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_SHEET_NAME)));
-					String tempStr = rowCell(
-							row,
-							schemaMap
-									.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_HEADER_RANGE));
-					sheetConfig.setFormHeaderRange(tempStr);
-					sheetConfig.setHeaderCellRange(new CellRange(tempStr));
-					tempStr = rowCell(
-							row,
-							schemaMap
-									.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_RANGE));
-					sheetConfig.setFormBodyRange(tempStr);
-					sheetConfig.setBodyCellRange(new CellRange(tempStr));
-					tempStr = rowCell(
-							row,
-							schemaMap
-									.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE));
-					sheetConfig.setFormFooterRange(tempStr);
-					sheetConfig.setFooterCellRange(new CellRange(tempStr));
-					// only 2 type allowed: free or repeat
-					if (rowCell(
-							row,
-							schemaMap
-									.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_TYPE))
-							.equalsIgnoreCase("Repeat"))
-						sheetConfig
-								.setFormBodyType(TIE_WEBSHEET_FORM_TYPE_REPEAT);
-					else
-						sheetConfig
-								.setFormBodyType(TIE_WEBSHEET_FORM_TYPE_FREE);
-					tempStr = rowCell(
-							row,
-							schemaMap
-									.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_ALLOW_ADD_ROW));
-					if (tempStr.equalsIgnoreCase("TRUE"))
-						sheetConfig.setBodyAllowAddRows(true);
-					else
-						sheetConfig.setBodyAllowAddRows(false);
-
-					tempStr = rowCell(
-							row,
-							schemaMap
-									.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_INIT_ROWS));
-					if (tempStr.startsWith("#{")) {
-						tempStr = FacesUtility.evaluateExpression(tempStr,
-								String.class);
-					}
-					if (!tempStr.isEmpty())
-						sheetConfig.setBodyInitialRows(Integer
-								.parseInt(tempStr));
-					else
-						sheetConfig.setBodyInitialRows(1);
-					sheetConfig
-							.setFormPageTypeId(rowCell(
-									row,
-									schemaMap
-											.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_PAGE_TYPE)));
-
-					sheetConfig.setMaxRowPerPage(80);
-					sheetConfig.setSavedRowsBefore(0);
-					sheetConfig.setSavedRowsAfter(0);
-
-					if (version < 1) {
-						// version 0
-						// sheetConfig.setFormWidth("100%;");
-					} else {
-						sheetConfig
-								.setFormWidth(rowCell(
-										row,
-										schemaMap
-												.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_WIDTH)));
-						tempStr = rowCell(
-								row,
-								schemaMap
-										.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE))
-								.trim();
-						if (!tempStr.isEmpty())
-							if (Integer.parseInt(tempStr) > 0)
-								sheetConfig.setMaxRowPerPage(Integer
-										.parseInt(tempStr));
-
-						if (version >= 2) {
-							tempStr = rowCell(
-									row,
-									schemaMap
-											.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE))
-									.trim();
-							if (!tempStr.isEmpty())
-								if (Integer.parseInt(tempStr) > 0)
-									sheetConfig.setSavedRowsBefore(Integer
-											.parseInt(tempStr));
-							tempStr = rowCell(
-									row,
-									schemaMap
-											.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER))
-									.trim();
-							if (!tempStr.isEmpty())
-								if (Integer.parseInt(tempStr) > 0)
-									sheetConfig.setSavedRowsAfter(Integer
-											.parseInt(tempStr));
-						}
-					}
-
-					sheetConfig
-							.setCellFormAttributes(new HashMap<String, List<CellFormAttributes>>());
-					sheetConfig
-							.getCellFormAttributes()
-							.put(rowCell(
-									row,
-									schemaMap
-											.get(TIE_WEBSHEET_CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL)),
-									new ArrayList<CellFormAttributes>());
-					addAttributesToMap(sheetConfig.getCellFormAttributes(),
-							row, schemaMap);
-				}
-			}
-		}
-		sheetConfigMap.put(oldTabName, sheetConfig);
-		log.fine("Web Form ConfigurationHandler after iteration sheetConfigmap = "
-				+ sheetConfigMap);
-		return sheetConfigMap;
-	}
-
-	// build configuration without configuration tab
-	// use max rows and max columns (256) for body
-	// header/footer set to none
-	private Map<String, SheetConfiguration> buildConfigurationWithoutTab(
-			Map<String, SheetConfiguration> sheetConfigMap) {
-
-		for (int i = 0; i < parent.getWb().getNumberOfSheets(); i++) {
-
-			Sheet sheet = parent.getWb().getSheetAt(i);
-			String tabName = sheet.getSheetName();
-			sheetConfigMap.put(tabName, getSheetConfiguration(sheet, tabName));
-		}
-		log.fine("without config tab = " + sheetConfigMap);
-
-		return sheetConfigMap;
-	}
 
 	private SheetConfiguration getSheetConfiguration(Sheet sheet,
 			String formName) {
@@ -799,7 +573,7 @@ public class ConfigurationHandler {
 					parseWidgetAttributes(cell,line,cellAttributesMap); 					
 				} else {
 					saveCellComment(cell, line,
-							cellAttributesMap.templateCommentMap, false);
+							cellAttributesMap.getTemplateCommentMap(), false);
 				}
 				changed = true;
 			} else {
@@ -812,7 +586,7 @@ public class ConfigurationHandler {
 		if (!changed) {
 			newComment = text;
 		}
-		saveCellComment(cell, newComment, cellAttributesMap.templateCommentMap,
+		saveCellComment(cell, newComment, cellAttributesMap.getTemplateCommentMap(),
 				true);
 		return cList;
 	}
@@ -866,11 +640,11 @@ public class ConfigurationHandler {
 			String key = cell.getSheet().getSheetName() + "!$"
 					+ cell.getColumnIndex() + "$" + cell.getRowIndex();
 			// one cell only has one control widget
-			cellAttributesMap.cellInputType.put(key, type);
-			List<CellFormAttributes> inputs = cellAttributesMap.cellInputAttributes.get(key); 
+			cellAttributesMap.getCellInputType().put(key, type);
+			List<CellFormAttributes> inputs = cellAttributesMap.getCellInputAttributes().get(key); 
 			if (inputs == null) {
 				inputs = new ArrayList<CellFormAttributes>();
-				cellAttributesMap.cellInputAttributes.put(key, inputs);
+				cellAttributesMap.getCellInputAttributes().put(key, inputs);
 			} 
 			CellControlsHelper.parseInputAttributes(inputs,
 					values);

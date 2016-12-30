@@ -29,8 +29,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.context.RequestContext;
 import org.tiefaces.common.FacesUtility;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.TieWebSheetConstants;
 import org.tiefaces.components.websheet.TieWebSheetView.tabModel;
 import org.tiefaces.components.websheet.configuration.ConfigBuildRef;
 import org.tiefaces.components.websheet.configuration.ConfigRangeAttrs;
@@ -305,9 +305,6 @@ public class WebSheetLoader implements Serializable {
 			}
 			parent.setWb(wb);
 			parent.setDataContext(dataContext);
-			// only support xssf workbook now since 2016 July
-			parent.setExcelType(TieWebSheetConstants.EXCEL_2007_TYPE);
-			log.fine(" load excel type = " + parent.getExcelType());
 			parent.setFormulaEvaluator(parent.getWb().getCreationHelper()
 					.createFormulaEvaluator());
 			parent.setDataFormatter(new DataFormatter());
@@ -321,11 +318,7 @@ public class WebSheetLoader implements Serializable {
 			if (parent.getTabs().size() > 0) {
 				loadWorkSheet(parent.getTabs().get(0).getTitle());
 			}
-			// remove configuration sheet
-			if (parent.getWb().getSheet(parent.getConfigurationTab()) != null)
-				parent.getWb().removeSheetAt(
-						parent.getWb().getSheetIndex(
-								parent.getConfigurationTab()));
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.fine("Web Form loadWorkbook Error Exception = "

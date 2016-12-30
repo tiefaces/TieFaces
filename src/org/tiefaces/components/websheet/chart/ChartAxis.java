@@ -23,26 +23,50 @@ public class ChartAxis {
 	/** title. */
 	private String title;
 
+	/**
+	 * get position.
+	 * @return position.
+	 */
 	public final String getPosition() {
 		return position;
 	}
 
+	/**
+	 * set position.
+	 * @param pPosition position.
+	 */
 	public final void setPosition(final String pPosition) {
 		this.position = pPosition;
 	}
 
+	/**
+	 * get orientation.
+	 * @return orientation.
+	 */
 	public final String getOrientation() {
 		return orientation;
 	}
 
+	/**
+	 * set orientation.
+	 * @param pOrientation orientation.
+	 */
 	public final void setOrientation(final String pOrientation) {
 		this.orientation = pOrientation;
 	}
 
+	/**
+	 * get title.
+	 * @return title.
+	 */
 	public final String getTitle() {
 		return title;
 	}
 
+	/**
+	 * set title.
+	 * @param pTitle title.
+	 */
 	public final void setTitle(final String pTitle) {
 		this.title = pTitle;
 	}

@@ -31,23 +31,25 @@ import org.primefaces.model.StreamedContent;
 @SessionScoped
 public class TieWebSheetChartsService {
 
-	
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
-	
-/**
- * Constructor.
- */
+	private static final Logger log = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
+
+	/**
+	 * Constructor.
+	 */
 	public TieWebSheetChartsService() {
 		log.fine("TieWebSheetBean Constructor");
 	}
-/**
- * Return real chart picture when browser requesting the image.
- * @return empty chart ( phase == render) or real chart ( browser request).
- * @throws IOException
- */
-	public StreamedContent getChart() throws IOException {
+
+	/**
+	 * Return real chart picture when browser requesting the image.
+	 * 
+	 * @return empty chart ( phase == render) or real chart ( browser request).
+	 * @throws IOException
+	 *             exception.
+	 */
+	public final StreamedContent getChart() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
@@ -62,14 +64,16 @@ public class TieWebSheetChartsService {
 					.getRequestParameterMap().get("chartViewId");
 
 			BufferedImage bufferedImg = (BufferedImage) FacesContext
-					.getCurrentInstance().getExternalContext().getSessionMap()
-					.get(chartId);
+					.getCurrentInstance().getExternalContext()
+					.getSessionMap().get(chartId);
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImg, "png", os);
+			ImageIO.write(bufferedImg, "png", os);
 			FacesContext.getCurrentInstance().getExternalContext()
 					.getSessionMap().remove(chartId);
-			log.fine(" return real chart picture and remove session chartId = "+chartId);
-			return new DefaultStreamedContent(new ByteArrayInputStream(os.toByteArray()), "image/png");
+			log.fine(" return real chart picture and remove session chartId = "
+					+ chartId);
+			return new DefaultStreamedContent(new ByteArrayInputStream(
+					os.toByteArray()), "image/png");
 		}
 	}
 

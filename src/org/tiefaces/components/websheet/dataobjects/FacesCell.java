@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.CellAttributesMap;
-import org.tiefaces.components.websheet.TieWebSheetConstants;
 
 /**
  * Cell object used for JSF datatable. This object hold an reference to POI cell

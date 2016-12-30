@@ -6,192 +6,328 @@ import java.util.logging.Logger;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.model.ThemesTable;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.tiefaces.common.AppUtils;
 import org.tiefaces.components.websheet.chart.objects.ChartObject;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 import org.tiefaces.components.websheet.utility.ColorUtility;
 import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
+/**
+ * Chart Data class.
+ * 
+ * @author Jason Jiang.
+ *
+ */
 public class ChartData {
-	
-	private String Id;
-	
-	private String Title;
-	
+
+	/** id. */
+	private String id;
+
+	/** title. */
+	private String title;
+
+	/** bgcolor. */
 	private XColor bgColor;
-	
-	private ChartType Type;
-	
+
+	/** type. */
+	private ChartType type;
+
+	/** catAx. */
 	private ChartAxis catAx;
-	
+
+	/** valAx. */
 	private ChartAxis valAx;
-	
+
+	/** categoryList. */
 	private List<ParsedCell> categoryList;
-	
+
+	/** seriesList. */
 	private List<ChartSeries> seriesList;
 
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
-	
-	public List<ParsedCell> getCategoryList() {
+	private static final Logger log = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
+
+	/**
+	 * get category list.
+	 * 
+	 * @return category list.
+	 */
+	public final List<ParsedCell> getCategoryList() {
 		return categoryList;
 	}
 
-	public void setCategoryList(List<ParsedCell> categoryList) {
-		this.categoryList = categoryList;
+	/**
+	 * set categorylist.
+	 * 
+	 * @param pcategoryList
+	 *            category list.
+	 */
+	public final void setCategoryList(final List<ParsedCell> pcategoryList) {
+		this.categoryList = pcategoryList;
 	}
 
-	public List<ChartSeries> getSeriesList() {
+	/**
+	 * get serieslist.
+	 * 
+	 * @return serieslist.
+	 */
+	public final List<ChartSeries> getSeriesList() {
 		return seriesList;
 	}
 
-	public void setSeriesList(List<ChartSeries> seriesList) {
-		this.seriesList = seriesList;
-	} 
-	
-	
-	public XColor getBgColor() {
+	/**
+	 * set series list.
+	 * 
+	 * @param pseriesList
+	 *            series list.
+	 */
+	public final void setSeriesList(final List<ChartSeries> pseriesList) {
+		this.seriesList = pseriesList;
+	}
+
+	/**
+	 * get bg color.
+	 * 
+	 * @return bg color.
+	 */
+	public final XColor getBgColor() {
 		return bgColor;
 	}
 
-	public void setBgColor(XColor bgColor) {
-		this.bgColor = bgColor;
+	/**
+	 * set bg color.
+	 * 
+	 * @param pbgColor
+	 *            bgcolor.
+	 */
+	public final void setBgColor(final XColor pbgColor) {
+		this.bgColor = pbgColor;
 	}
 
-	public void buildCategoryList(CTAxDataSource  ctAxDs) {
-		
+	/**
+	 * build categotry list.
+	 * 
+	 * @param ctAxDs
+	 *            ctaxdatasource.
+	 */
+	public final void buildCategoryList(final CTAxDataSource ctAxDs) {
+
 		List<ParsedCell> cells = new ArrayList<ParsedCell>();
 		try {
 			String fullRangeName = ctAxDs.getStrRef().getF();
-			String sheetName = TieWebSheetUtility.getSheetNameFromFullCellRefName(fullRangeName);
-			CellRangeAddress region = CellRangeAddress.valueOf(TieWebSheetUtility.removeSheetNameFromFullCellRefName(fullRangeName));
-			for ( int row = region.getFirstRow(); row<= region.getLastRow(); row++) {
-				for ( int col = region.getFirstColumn(); col<= region.getLastColumn(); col++) {					
-					cells.add( new ParsedCell(sheetName, row, col));
-					log.fine(" add category sheetName = "+sheetName+ " row = "+row+" col = "+col);					
+			String sheetName = TieWebSheetUtility
+					.getSheetNameFromFullCellRefName(fullRangeName);
+			CellRangeAddress region = CellRangeAddress
+					.valueOf(TieWebSheetUtility
+							.removeSheetNameFromFullCellRefName(fullRangeName));
+			for (int row = region.getFirstRow(); 
+					row <= region.getLastRow(); row++) {
+				for (int col = region.getFirstColumn(); col <= region
+						.getLastColumn(); col++) {
+					cells.add(new ParsedCell(sheetName, row, col));
+					log.fine(" add category sheetName = " + sheetName
+							+ " row = " + row + " col = " + col);
 				}
 			}
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		this.setCategoryList(cells);
 	}
 
-	
+	/**
+	 * build series list.
+	 * 
+	 * @param bsers
+	 *            bsers.
+	 * @param themeTable
+	 *            themetable.
+	 * @param ctObj
+	 *            ctobj.
+	 */
+	public final void buildSeriesList(final List bsers,
+			final ThemesTable themeTable, final ChartObject ctObj) {
 
-	public void buildSeriesList(List bsers, ThemesTable themeTable, final ChartObject ctObj) {
-
-		List<ChartSeries> seriesList = new ArrayList<ChartSeries>();
+		List<ChartSeries> lseriesList = new ArrayList<ChartSeries>();
 		try {
-       	 for (int index=0; index< bsers.size(); index++) {
-       		Object ctObjSer = bsers.get(index); 
-       		ChartSeries ctSer = new ChartSeries();
-       		ctSer.setSeriesLabel(new ParsedCell(ctObj.getSeriesLabelFromCTSer(ctObjSer)));
-			ctSer.setSeriesColor(ColorUtility.geColorFromSpPr(index, ctObj.getShapePropertiesFromCTSer(ctObjSer), themeTable, ctObj.isLineColor()));
-    		List<ParsedCell> cells = new ArrayList<ParsedCell>();
-       		String fullRangeName = (ctObj.getCTNumDataSourceFromCTSer(ctObjSer)).getNumRef().getF();
-       		String sheetName = TieWebSheetUtility.getSheetNameFromFullCellRefName(fullRangeName);
-			CellRangeAddress region = CellRangeAddress.valueOf(TieWebSheetUtility.removeSheetNameFromFullCellRefName(fullRangeName));
-			for ( int row = region.getFirstRow(); row<= region.getLastRow(); row++) {
-				for ( int col = region.getFirstColumn(); col<= region.getLastColumn(); col++) {
-					cells.add( new ParsedCell(sheetName, row, col));
-					log.fine(" add serial value sheetName = "+sheetName+ " row = "+row+" col = "+col);					
+			for (int index = 0; index < bsers.size(); index++) {
+				Object ctObjSer = bsers.get(index);
+				ChartSeries ctSer = new ChartSeries();
+				ctSer.setSeriesLabel(new ParsedCell(ctObj
+						.getSeriesLabelFromCTSer(ctObjSer)));
+				ctSer.setSeriesColor(ColorUtility.geColorFromSpPr(index,
+						ctObj.getShapePropertiesFromCTSer(ctObjSer),
+						themeTable, ctObj.isLineColor()));
+				List<ParsedCell> cells = new ArrayList<ParsedCell>();
+				String fullRangeName = (ctObj
+						.getCTNumDataSourceFromCTSer(ctObjSer)).getNumRef()
+						.getF();
+				String sheetName = TieWebSheetUtility
+						.getSheetNameFromFullCellRefName(fullRangeName);
+				CellRangeAddress region = CellRangeAddress
+						.valueOf(TieWebSheetUtility
+						.removeSheetNameFromFullCellRefName(fullRangeName));
+				for (int row = region.getFirstRow(); row <= region
+						.getLastRow(); row++) {
+					for (int col = region.getFirstColumn(); col <= region
+							.getLastColumn(); col++) {
+						cells.add(new ParsedCell(sheetName, row, col));
+						log.fine(" add serial value sheetName = "
+								+ sheetName + " row = " + row + " col = "
+								+ col);
+					}
 				}
+				ctSer.setValueList(cells);
+				ctSer.setValueColorList(getColorListFromDPTWithValueList(
+						ctObj.getDPtListFromCTSer(ctObjSer), cells,
+						themeTable, ctObj));
+				lseriesList.add(ctSer);
 			}
-			ctSer.setValueList(cells);
-			ctSer.setValueColorList(  getColorListFromDPTWithValueList( ctObj.getDPtListFromCTSer(ctObjSer), cells, themeTable, ctObj  )  );
-			seriesList.add(ctSer);
-       	 }
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		this.setSeriesList(seriesList);
-	}	
-	
-	
-	private List<XColor> getColorListFromDPTWithValueList( List<CTDPt> dptList, List<ParsedCell> cells, final ThemesTable themeTable, final ChartObject ctObj) {
-		
-		if (( dptList != null) && ( cells != null)) {
-    		List<XColor> colors = new ArrayList<XColor>();
-			for (int index=0; index< cells.size(); index++) {
-				 CTDPt dpt = getDPtFromListWithIndex(dptList, index);
-				 CTShapeProperties ctSpPr = null;
-				 if ( dpt != null ) {
-					 ctSpPr = dpt.getSpPr();
-				 }
-				 colors.add(ColorUtility.geColorFromSpPr(index, ctSpPr, themeTable, ctObj.isLineColor()));
+		this.setSeriesList(lseriesList);
+	}
+
+	/**
+	 * get color list from dpt.
+	 * 
+	 * @param dptList
+	 *            dpt.
+	 * @param cells
+	 *            cells.
+	 * @param themeTable
+	 *            themetable.
+	 * @param ctObj
+	 *            ctobj.
+	 * @return list of xcolor.
+	 */
+	private List<XColor> getColorListFromDPTWithValueList(
+			final List<CTDPt> dptList, final List<ParsedCell> cells,
+			final ThemesTable themeTable, final ChartObject ctObj) {
+
+		if ((dptList != null) && (cells != null)) {
+			List<XColor> colors = new ArrayList<XColor>();
+			for (int index = 0; index < cells.size(); index++) {
+				CTDPt dpt = getDPtFromListWithIndex(dptList, index);
+				CTShapeProperties ctSpPr = null;
+				if (dpt != null) {
+					ctSpPr = dpt.getSpPr();
+				}
+				colors.add(ColorUtility.geColorFromSpPr(index, ctSpPr,
+						themeTable, ctObj.isLineColor()));
 			}
 			return colors;
 		}
 		return null;
-		
+
 	}
-	
-	private CTDPt getDPtFromListWithIndex(List<CTDPt> dptList, int index) {
-		
+
+	/**
+	 * get dpt from list.
+	 * 
+	 * @param dptList
+	 *            dptlist.
+	 * @param index
+	 *            index.
+	 * @return ctdpt.
+	 */
+	private CTDPt getDPtFromListWithIndex(final List<CTDPt> dptList,
+			final int index) {
+
 		if (dptList != null) {
-			for (CTDPt dpt: dptList) {
-				if (dpt.getIdx().getVal() == index ) {
+			for (CTDPt dpt : dptList) {
+				if (dpt.getIdx().getVal() == index) {
 					return dpt;
 				}
 			}
 		}
 		return null;
 	}
-	
-	public String getId() {
-		return Id;
+
+	/**
+	 * get id.
+	 * @return id.
+	 */
+	public final String getId() {
+		return id;
 	}
 
-	public void setId(String id) {
-		Id = id;
+	/**
+	 * set id.
+	 * @param pid id.
+	 */
+	public final void setId(final String pid) {
+		id = pid;
 	}
 
-	public String getTitle() {
-		return Title;
+	/**
+	 * get title.
+	 * @return title.
+	 */
+	public final String getTitle() {
+		return title;
 	}
 
-	public void setTitle(String title) {
-		Title = title;
+	/**
+	 * set title.
+	 * @param ptitle title.
+	 */
+	public final void setTitle(final String ptitle) {
+		title = ptitle;
 	}
 
-	public ChartType getType() {
-		return Type;
+	/**
+	 * get type.
+	 * @return type.
+	 */
+	public final ChartType getType() {
+		return type;
 	}
 
-	public void setType(ChartType type) {
-		Type = type;
+	/**
+	 * set chart type.
+	 * @param ptype type.
+	 */
+	public final void setType(final ChartType ptype) {
+		type = ptype;
 	}
 
-	public ChartAxis getCatAx() {
+	/**
+	 * get cat ax.
+	 * @return chartaxis.
+	 */
+	public final ChartAxis getCatAx() {
 		return catAx;
 	}
 
-	public void setCatAx(ChartAxis catAx) {
-		this.catAx = catAx;
+	/**
+	 * set catax.
+	 * @param pcatAx catax.
+	 */
+	public final void setCatAx(final ChartAxis pcatAx) {
+		this.catAx = pcatAx;
 	}
 
-	public ChartAxis getValAx() {
+	/**
+	 * get valax.
+	 * @return chartaxis.
+	 */
+	public final ChartAxis getValAx() {
 		return valAx;
 	}
 
-	public void setValAx(ChartAxis valAx) {
-		this.valAx = valAx;
+	/**
+	 * set valax.
+	 * @param pvalAx valax.
+	 */
+	public final void setValAx(final ChartAxis pvalAx) {
+		this.valAx = pvalAx;
 	}
 
-	
-	
-	
 }

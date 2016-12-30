@@ -19,22 +19,32 @@ import org.tiefaces.exception.EvaluationException;
 public class ExpressionEngine {
 	/** expression. */
 	private Expression jExpression;
-	/** context. */
-	private JexlContext jContext;
+
+	/**
+	 * context. private JexlContext jContext;
+	 */
 	/** jexlEngine local map. */
-	private static final ThreadLocal<JexlEngine> jexlLocal = new ThreadLocal<JexlEngine>() {
+	private static final ThreadLocal<JexlEngine> 
+	jexlLocal = new ThreadLocal<JexlEngine>() {
 		@Override
 		protected JexlEngine initialValue() {
 			return new JexlEngine();
 		}
 	};
 	/** jexpmap local map. */
-	private static final ThreadLocal<Map<String, Expression>> jexpMapLocal = new ThreadLocal<Map<String, Expression>>() {
+	private static final ThreadLocal<Map<String, Expression>> 
+	jexpMapLocal = new ThreadLocal<Map<String, Expression>>() {
 		@Override
 		protected Map<String, Expression> initialValue() {
 			return new HashMap<>();
 		}
 	};
+
+	/**
+	 * empty context used for evaluate single script.
+	 */
+	private static final Map<String, Object> 
+	emptyContext = new HashMap<String, Object>();
 
 	/**
 	 * constructor.
@@ -51,20 +61,35 @@ public class ExpressionEngine {
 	 * constructor.
 	 * 
 	 * @param context
-	 *            context map.
+	 *            context map. public ExpressionEngine(final Map<String, Object>
+	 *            context) { jContext = new MapContext(context); }
 	 */
-	public ExpressionEngine(final Map<String, Object> context) {
-		jContext = new MapContext(context);
-	}
 
 	/**
 	 * constructor.
 	 * 
 	 * @param jexlContext
-	 *            jcontext.
+	 *            jcontext. public ExpressionEngine(final JexlContext
+	 *            jexlContext) { jContext = jexlContext; }
 	 */
-	public ExpressionEngine(final JexlContext jexlContext) {
-		jContext = jexlContext;
+
+	/**
+	 * constructor
+	 */
+	public ExpressionEngine() {
+	}
+
+	/**
+	 * Evaluate the expression.
+	 * 
+	 * @param expression
+	 *            string input expression.
+	 * @param context
+	 *            context map.
+	 * @return evaluated object.
+	 */
+	public final Object evaluate(final String expression) {
+		return evaluate(expression, emptyContext);
 	}
 
 	/**
@@ -97,13 +122,15 @@ public class ExpressionEngine {
 
 	/**
 	 * evaluate from giving context.
-	 * @param context context.
+	 * 
+	 * @param context
+	 *            context.
 	 * @return object evaluated.
 	 */
 	public final Object evaluate(final Map<String, Object> context) {
-		jContext = new MapContext(context);
+		JexlContext jexlContext = new MapContext(context);
 		try {
-			return jExpression.evaluate(jContext);
+			return jExpression.evaluate(jexlContext);
 		} catch (Exception e) {
 			throw new EvaluationException(
 					"An error occurred when evaluating expression "
@@ -111,10 +138,21 @@ public class ExpressionEngine {
 		}
 	}
 
+	/**
+	 * get jexpression.
+	 * 
+	 * @return jexlexpression.
+	 */
+
 	public final Expression getJexlExpression() {
 		return jExpression;
 	}
 
+	/**
+	 * get local exl engine.
+	 * 
+	 * @return jexlengine.
+	 */
 	public final JexlEngine getJexlEngine() {
 		return jexlLocal.get();
 	}

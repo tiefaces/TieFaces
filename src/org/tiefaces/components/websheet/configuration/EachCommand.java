@@ -1,7 +1,7 @@
 package org.tiefaces.components.websheet.configuration;
 
-import static org.tiefaces.components.websheet.TieWebSheetConstants.COPY_SHEET_PREFIX;
-import static org.tiefaces.components.websheet.TieWebSheetConstants.EXCEL_SHEET_NAME_LIMIT;
+import static org.tiefaces.common.TieConstants.COPY_SHEET_PREFIX;
+import static org.tiefaces.common.TieConstants.EXCEL_SHEET_NAME_LIMIT;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

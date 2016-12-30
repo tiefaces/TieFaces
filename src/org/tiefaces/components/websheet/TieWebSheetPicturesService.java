@@ -30,8 +30,8 @@ import org.primefaces.model.StreamedContent;
 public class TieWebSheetPicturesService {
 
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
+	private static final Logger log = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
 
 	/**
 	 * Constructor.
@@ -42,10 +42,12 @@ public class TieWebSheetPicturesService {
 
 	/**
 	 * Return picture to web front end.
-	 * @return empty (phase is render_response) or real picture ( browser request).
-	 * @throws IOException
+	 * 
+	 * @return empty (phase is render_response) or real picture ( browser
+	 *         request).
+	 * @throws IOException exception.
 	 */
-	public StreamedContent getPicture() throws IOException {
+	public final StreamedContent getPicture() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
@@ -60,8 +62,8 @@ public class TieWebSheetPicturesService {
 					.getRequestParameterMap().get("pictureViewId");
 
 			PictureData picData = (PictureData) FacesContext
-					.getCurrentInstance().getExternalContext().getSessionMap()
-					.get(pictureId);
+					.getCurrentInstance().getExternalContext()
+					.getSessionMap().get(pictureId);
 			FacesContext.getCurrentInstance().getExternalContext()
 					.getSessionMap().remove(pictureId);
 			log.fine(" return real picture and remove session");
