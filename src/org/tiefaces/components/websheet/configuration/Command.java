@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.configuration;
 
 import java.util.List;
@@ -17,13 +21,16 @@ public interface Command {
 
 	/**
 	 * Return command type.
+	 * 
 	 * @return command type name.
 	 */
 	String getCommandTypeName();
 
 	/**
 	 * Set command type.
-	 * @param pCommandTypeName command type name.
+	 * 
+	 * @param pCommandTypeName
+	 *            command type name.
 	 */
 	void setCommandTypeName(String pCommandTypeName);
 
@@ -37,28 +44,39 @@ public interface Command {
 
 	/**
 	 * Set config range.
-	 * @param pConfigRange config range.
+	 * 
+	 * @param pConfigRange
+	 *            config range.
 	 */
 	void setConfigRange(ConfigRange pConfigRange);
 
 	/**
 	 * Return parent command.
+	 * 
 	 * @return parent command.
 	 */
 	Boolean isParentFound();
-	
-	void setParentFound(Boolean parentFound);
 
+	/**
+	 * set parent found.
+	 * 
+	 * @param parentFound
+	 *            true if parent found.
+	 */
+	void setParentFound(Boolean parentFound);
 
 	/**
 	 * command area length.
+	 * 
 	 * @return length.
 	 */
 	String getLength();
 
 	/**
 	 * Set command area length.
-	 * @param pLength length.
+	 * 
+	 * @param pLength
+	 *            length.
 	 */
 	void setLength(String pLength);
 
@@ -93,33 +111,41 @@ public interface Command {
 
 	/**
 	 * the final length of command area.
+	 * 
 	 * @return final length.
 	 */
 	int getFinalLength();
 
 	/**
 	 * Set the final length.
-	 * @param populatedLength final length.
+	 * 
+	 * @param populatedLength
+	 *            final length.
 	 */
 	void setFinalLength(int populatedLength);
 
 	/**
-	 * build the command area.
-	 * @param wbWrapper workbook wrapper.
-	 * @param sheet sheet.
-	 * @param atRow populate at the row.
-	 * @param context context map.
-	 * @param watchList watch list for formula.
-	 * @param currentRowsMappingList rowsMapping for formula.
-	 * @param allRowsMappingList all rowsMapping for formula.
-	 * @param engine evaluation engine.
-	 * @param cellHelper cell helper.
-	 * @return
+	 * Builds the at.
+	 *
+	 * @param fullName
+	 *            full name.
+	 * @param configBuildRef
+	 *            configbuild reference.
+	 * @param atRow
+	 *            populate at the row.
+	 * @param context
+	 *            context map.
+	 * @param currentRowsMappingList
+	 *            rowsMapping for formula.
+	 * @return build area length.
 	 */
-	int buildAt(String fullName, ConfigBuildRef configBuildRef, int atRow, Map<String, Object> context,
+	int buildAt(String fullName, ConfigBuildRef configBuildRef, int atRow,
+			Map<String, Object> context,
 			List<RowsMapping> currentRowsMappingList);
-	
-	
+	/**
+	 * get command name.
+	 * @return command name.
+	 */
 	String getCommandName();
 
 }

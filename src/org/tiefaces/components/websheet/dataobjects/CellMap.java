@@ -17,6 +17,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.tiefaces.components.websheet.TieWebSheetBean;
+import org.tiefaces.components.websheet.service.CellUtility;
 
 /**
  * Cell Map is actually a virtual map which don't hold any data. Instead it
@@ -32,8 +33,8 @@ public class CellMap implements Serializable, java.util.Map {
 	/** serial instance. */
 	private static final long serialVersionUID = 1L;
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
+	private static final Logger log = Logger.getLogger(
+			Thread.currentThread().getStackTrace()[0].getClassName());
 
 	/** instance to parent websheet bean. */
 	private TieWebSheetBean parent = null;
@@ -51,52 +52,102 @@ public class CellMap implements Serializable, java.util.Map {
 		this.parent = pParent;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#size()
+	 */
 	@Override
 	public final int size() {
 		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#isEmpty()
+	 */
 	@Override
 	public final boolean isEmpty() {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#containsKey(java.lang.Object)
+	 */
 	@Override
 	public final boolean containsKey(final Object key) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#containsValue(java.lang.Object)
+	 */
 	@Override
 	public final boolean containsValue(final Object value) {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#remove(java.lang.Object)
+	 */
 	@Override
 	public final Object remove(final Object key) {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#putAll(java.util.Map)
+	 */
 	@Override
 	public void putAll(final Map m) {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#clear()
+	 */
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#keySet()
+	 */
 	@Override
 	public final Set keySet() {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#values()
+	 */
 	@Override
 	public final Collection values() {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#entrySet()
+	 */
 	@Override
 	public final Set entrySet() {
 		return null;
@@ -118,16 +169,15 @@ public class CellMap implements Serializable, java.util.Map {
 		if (facesCell != null && facesCell.isContainPic()) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			String pictureId = facesCell.getPictureId();
-			String pictureViewId = Integer.toHexString(System
-					.identityHashCode(parent.getWb())) + pictureId;
+			String pictureViewId = Integer.toHexString(
+					System.identityHashCode(parent.getWb())) + pictureId;
 			Map<String, Object> sessionMap = context.getExternalContext()
 					.getSessionMap();
 			if (sessionMap.get(pictureViewId) == null) {
-				sessionMap
-						.put(pictureViewId,
-								parent.getPicturesMap().get(pictureId)
-										.getPictureData());
-				log.info("load picture put session map id = " + pictureViewId);
+				sessionMap.put(pictureViewId, parent.getPicturesMap()
+						.get(pictureId).getPictureData());
+				log.info("load picture put session map id = "
+						+ pictureViewId);
 			}
 			return pictureViewId;
 		} else {
@@ -152,12 +202,13 @@ public class CellMap implements Serializable, java.util.Map {
 		if (facesCell != null && facesCell.isContainChart()) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			String chartId = facesCell.getChartId();
-			String chartViewId = Integer.toHexString(System
-					.identityHashCode(parent.getWb())) + chartId;
+			String chartViewId = Integer.toHexString(
+					System.identityHashCode(parent.getWb())) + chartId;
 			Map<String, Object> sessionMap = context.getExternalContext()
 					.getSessionMap();
 			if (sessionMap.get(chartViewId) == null) {
-				sessionMap.put(chartViewId, parent.getChartsMap().get(chartId));
+				sessionMap.put(chartViewId,
+						parent.getChartsMap().get(chartId));
 				log.fine("load chart put session map id = " + chartViewId);
 			}
 			return chartViewId;
@@ -166,6 +217,11 @@ public class CellMap implements Serializable, java.util.Map {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#get(java.lang.Object)
+	 */
 	@Override
 	public final Object get(final Object key) {
 		Object result = "";
@@ -183,10 +239,11 @@ public class CellMap implements Serializable, java.util.Map {
 						result = loadPicture(mkey.getRowIndex(),
 								mkey.getColIndex());
 					} else if (mkey.isFormatted()) {
-						result = parent.getCellHelper().getCellValueWithFormat(
-								poiCell);
+						result = CellUtility.getCellValueWithFormat(poiCell,
+								parent.getFormulaEvaluator(),
+								parent.getDataFormatter());
 					} else {
-						result = parent.getCellHelper()
+						result = CellUtility
 								.getCellValueWithoutFormat(poiCell);
 					}
 					log.fine("Web Form CellMap getCellValue row = "
@@ -203,6 +260,11 @@ public class CellMap implements Serializable, java.util.Map {
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public final Object put(final Object key, final Object value) {
 		CellMapKey mkey = new CellMapKey((String) key);
@@ -211,14 +273,17 @@ public class CellMap implements Serializable, java.util.Map {
 					.getPoiCellWithRowColFromCurrentPage(mkey.getRowIndex(),
 							mkey.getColIndex());
 			if (poiCell != null) {
-				String oldValue = parent.getCellHelper()
+				String oldValue = CellUtility
 						.getCellValueWithoutFormat(poiCell);
 				FacesCell facesCell = parent.getCellHelper()
 						.getFacesCellWithRowColFromCurrentPage(
 								mkey.getRowIndex(), mkey.getColIndex());
-				String newValue = null;	
-				if ((value instanceof java.util.Date)&&(facesCell.getDatePattern()!=null)&&(!facesCell.getDatePattern().isEmpty())) {
-					Format formatter = new SimpleDateFormat(facesCell.getDatePattern());
+				String newValue = null;
+				if ((value instanceof java.util.Date)
+						&& (facesCell.getDatePattern() != null)
+						&& (!facesCell.getDatePattern().isEmpty())) {
+					Format formatter = new SimpleDateFormat(
+							facesCell.getDatePattern());
 					newValue = formatter.format(value);
 				} else {
 					newValue = (String) value;
@@ -229,14 +294,15 @@ public class CellMap implements Serializable, java.util.Map {
 					newValue = newValue.replace("\r\n", "\n");
 				}
 				if (newValue != null && !newValue.equals(oldValue)) {
-					log.fine("Web Form CellMap setCellValue Old: " + oldValue
-							+ ", New: " + newValue + ", row ="
+					log.fine("Web Form CellMap setCellValue Old: "
+							+ oldValue + ", New: " + newValue + ", row ="
 							+ mkey.getRowIndex() + " col ="
 							+ mkey.getColIndex() + " inputtype = "
 							+ facesCell.getInputType());
-					parent.getCellHelper().setCellValue(poiCell, newValue);
+					CellUtility.setCellValue(poiCell, newValue);
 					if (facesCell.isHasSaveAttr()) {
-						parent.getCellHelper().saveDataInContext(poiCell, newValue);
+						parent.getCellHelper().saveDataInContext(poiCell,
+								newValue);
 					}
 					parent.getCellHelper().reCalc();
 				}

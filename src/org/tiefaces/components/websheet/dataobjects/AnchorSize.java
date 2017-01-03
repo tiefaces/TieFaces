@@ -1,6 +1,12 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.dataobjects;
+
 /**
  * Class object hold anchor.
+ * 
  * @author Jason Jiang
  *
  */
@@ -13,47 +19,108 @@ public class AnchorSize {
 	private int width;
 	/** anchor's height. */
 	private int height;
-	
+
+	/**
+	 * Gets the top.
+	 *
+	 * @return the top
+	 */
 	public final int getTop() {
 		return top;
 	}
-	public final void setTop(final int top) {
-		this.top = top;
+
+	/**
+	 * Sets the top.
+	 *
+	 * @param ptop
+	 *            the new top
+	 */
+	public final void setTop(final int ptop) {
+		this.top = ptop;
 	}
+
+	/**
+	 * Gets the left.
+	 *
+	 * @return the left
+	 */
 	public final int getLeft() {
 		return left;
 	}
-	public final void setLeft(final int left) {
-		this.left = left;
+
+	/**
+	 * Sets the left.
+	 *
+	 * @param pleft
+	 *            the new left
+	 */
+	public final void setLeft(final int pleft) {
+		this.left = pleft;
 	}
+
+	/**
+	 * Gets the width.
+	 *
+	 * @return the width
+	 */
 	public final int getWidth() {
 		return width;
 	}
-	public final void setWidth(final int width) {
-		this.width = width;
+
+	/**
+	 * Sets the width.
+	 *
+	 * @param pwidth
+	 *            the new width
+	 */
+	public final void setWidth(final int pwidth) {
+		this.width = pwidth;
 	}
+
+	/**
+	 * Gets the height.
+	 *
+	 * @return the height
+	 */
 	public final int getHeight() {
 		return height;
 	}
-	public final void setHeight(final int height) {
-		this.height = height;
+
+	/**
+	 * Sets the height.
+	 *
+	 * @param pheight
+	 *            the new height
+	 */
+	public final void setHeight(final int pheight) {
+		this.height = pheight;
 	}
+
 	/**
 	 * Constructor.
-	 * @param left anchor's left.
-	 * @param top anchor's top.
-	 * @param width anchor's width.
-	 * @param height anchor's height.
+	 *
+	 * @param pleft
+	 *            the pleft
+	 * @param ptop
+	 *            the ptop
+	 * @param pwidth
+	 *            the pwidth
+	 * @param pheight
+	 *            the pheight
 	 */
-	public AnchorSize(final int left, final int top, final int width, final int height) {
+	public AnchorSize(final int pleft, final int ptop, final int pwidth,
+			final int pheight) {
 		super();
-		this.left = left;
-		this.top = top;
-		this.width = width;
-		this.height = height;
+		this.left = pleft;
+		this.top = ptop;
+		this.width = pwidth;
+		this.height = pheight;
 	}
+
 	/**
 	 * show human readable message.
+	 *
+	 * @return the string
 	 */
 	public String toString() {
 
@@ -68,7 +135,6 @@ public class AnchorSize {
 		sb.append("height = " + height);
 		sb.append("}");
 		return sb.toString();
-	}	
-	
+	}
 
 }

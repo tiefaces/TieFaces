@@ -1,14 +1,16 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.chart;
 
 import java.awt.BasicStroke;
 import java.util.List;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTArea3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBar3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTGrouping;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STBarDir;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STBarGrouping;
@@ -16,9 +18,9 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STGrouping;
 import org.tiefaces.common.AppUtils;
 
 /**
- * Utility Class for Chart
- * @author Jason Jiang
+ * Utility Class for Chart.
  *
+ * @author Jason Jiang
  */
 public final class ChartUtility {
 	

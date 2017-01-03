@@ -12,50 +12,107 @@ import org.apache.poi.ss.util.CellReference;
  * configuration.
  * 
  * @author Jason Jiang
- * @note This object corresponds to header/body/footer range columns in
+ * This object corresponds to header/body/footer range columns in
  *       configuration tab.
  */
 
 public class CellRange {
 
+	/** The top row. */
 	private int topRow;
+	
+	/** The bottom row. */
 	private int bottomRow;
+	
+	/** The left col. */
 	private int leftCol;
+	
+	/** The right col. */
 	private int rightCol;
 
+	/**
+	 * Gets the top row.
+	 *
+	 * @return the top row
+	 */
 	public int getTopRow() {
 		return topRow;
 	}
 
-	public void setTopRow(int topRow) {
-		this.topRow = topRow;
+	/**
+	 * Sets the top row.
+	 *
+	 * @param ptopRow
+	 *            the new top row
+	 */
+	public void setTopRow(final int ptopRow) {
+		this.topRow = ptopRow;
 	}
 
+	/**
+	 * Gets the bottom row.
+	 *
+	 * @return the bottom row
+	 */
 	public int getBottomRow() {
 		return bottomRow;
 	}
 
-	public void setBottomRow(int bottomRow) {
-		this.bottomRow = bottomRow;
+	/**
+	 * Sets the bottom row.
+	 *
+	 * @param pbottomRow
+	 *            the new bottom row
+	 */
+	public void setBottomRow(final int pbottomRow) {
+		this.bottomRow = pbottomRow;
 	}
 
+	/**
+	 * Gets the left col.
+	 *
+	 * @return the left col
+	 */
 	public int getLeftCol() {
 		return leftCol;
 	}
 
-	public void setLeftCol(int leftCol) {
-		this.leftCol = leftCol;
+	/**
+	 * Sets the left col.
+	 *
+	 * @param pleftCol
+	 *            the new left col
+	 */
+	public void setLeftCol(final int pleftCol) {
+		this.leftCol = pleftCol;
 	}
 
+	/**
+	 * Gets the right col.
+	 *
+	 * @return the right col
+	 */
 	public int getRightCol() {
 		return rightCol;
 	}
 
-	public void setRightCol(int rightCol) {
-		this.rightCol = rightCol;
+	/**
+	 * Sets the right col.
+	 *
+	 * @param prightCol
+	 *            the new right col
+	 */
+	public void setRightCol(final int prightCol) {
+		this.rightCol = prightCol;
 	}
 
-	public CellRange(String range) {
+	/**
+	 * Instantiates a new cell range.
+	 *
+	 * @param range
+	 *            the range
+	 */
+	public CellRange(final String range) {
 
 		if ((range != null) && range.contains(":")) {
 

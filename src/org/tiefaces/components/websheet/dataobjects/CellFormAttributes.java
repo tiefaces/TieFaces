@@ -15,32 +15,70 @@ package org.tiefaces.components.websheet.dataobjects;
 
 public class CellFormAttributes {
 
+	/** The type. */
 	private String type;
+	
+	/** The value. */
 	private String value;
+	
+	/** The message. */
 	private String message;
 
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	/**
+	 * Sets the type.
+	 *
+	 * @param ptype
+	 *            the new type
+	 */
+	public void setType(final String ptype) {
+		this.type = ptype;
 	}
 
+	/**
+	 * Gets the value.
+	 *
+	 * @return the value
+	 */
 	public String getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	/**
+	 * Sets the value.
+	 *
+	 * @param pvalue
+	 *            the new value
+	 */
+	public void setValue(final String pvalue) {
+		this.value = pvalue;
 	}
 
+	/**
+	 * Gets the message.
+	 *
+	 * @return the message
+	 */
 	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	/**
+	 * Sets the message.
+	 *
+	 * @param pmessage
+	 *            the new message
+	 */
+	public void setMessage(final String pmessage) {
+		this.message = pmessage;
 	}
 
 	/**

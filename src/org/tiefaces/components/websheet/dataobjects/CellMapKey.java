@@ -5,26 +5,46 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import org.tiefaces.common.TieConstants;
+
 /**
  * Form attributes object defined in configuration tab.
  * 
- * @author Jason Jiang
- * @note This object corresponds to attributes columns ( type, value, message)
- *       in configuration tab.
+ * @author Jason Jiang This object corresponds to attributes columns ( type,
+ *         value, message) in configuration tab.
  */
 
 public class CellMapKey {
 
+	/** The row index. */
 	private int rowIndex = -1;
+
+	/** The col index. */
 	private int colIndex = -1;
+
+	/** The formatted. */
 	private boolean formatted = false;
+
+	/** The percented. */
 	private boolean percented = false;
+
+	/** The pictured. */
 	private boolean pictured = false;
+
+	/** The charted. */
 	private boolean charted = false;
+
+	/** The parse success. */
 	private boolean parseSuccess = false;
 
-	public CellMapKey(String skey) {
-		// TODO Auto-generated constructor stub
+	/**
+	 * Instantiates a new cell map key.
+	 *
+	 * @param skey
+	 *            the skey
+	 */
+	public CellMapKey(final String skey) {
+
 		try {
 			String[] keyList = skey.split(":");
 			int keylength = keyList.length;
@@ -34,19 +54,21 @@ public class CellMapKey {
 				this.colIndex = Integer.parseInt(keyList[1]);
 
 				if (keylength > 2) {
-					switch (keyList[2].toLowerCase()) {
-					case "chart":
+					String key = keyList[2].toLowerCase();
+					if (key.equalsIgnoreCase(
+							TieConstants.cellMapKeyChart)) {
 						this.charted = true;
-						break;
-					case "picture":
+					} else if (key.equalsIgnoreCase(
+							TieConstants.cellMapKeyPicture)) {
+
 						this.pictured = true;
-						break;
-					case "format":
+					} else if (key.equalsIgnoreCase(
+							TieConstants.cellMapKeyFormat)) {
+
 						this.formatted = true;
-						break;
-					case "percent":
+					} else if (key.equalsIgnoreCase(
+							TieConstants.cellMapKeyPercent)) {
 						this.percented = true;
-						break;
 					}
 				}
 				this.parseSuccess = true;
@@ -57,29 +79,65 @@ public class CellMapKey {
 
 	}
 
+	/**
+	 * Gets the row index.
+	 *
+	 * @return the row index
+	 */
 	public int getRowIndex() {
 		return rowIndex;
 	}
 
+	/**
+	 * Gets the col index.
+	 *
+	 * @return the col index
+	 */
 	public int getColIndex() {
 		return colIndex;
 	}
 
+	/**
+	 * Checks if is formatted.
+	 *
+	 * @return true, if is formatted
+	 */
 	public boolean isFormatted() {
 		return formatted;
 	}
 
+	/**
+	 * Checks if is percented.
+	 *
+	 * @return true, if is percented
+	 */
 	public boolean isPercented() {
 		return percented;
 	}
 
+	/**
+	 * Checks if is pictured.
+	 *
+	 * @return true, if is pictured
+	 */
 	public boolean isPictured() {
 		return pictured;
 	}
 
+	/**
+	 * Checks if is parses the success.
+	 *
+	 * @return true, if is parses the success
+	 */
 	public boolean isParseSuccess() {
 		return parseSuccess;
 	}
+
+	/**
+	 * Checks if is charted.
+	 *
+	 * @return true, if is charted
+	 */
 	public boolean isCharted() {
 		return charted;
 	}

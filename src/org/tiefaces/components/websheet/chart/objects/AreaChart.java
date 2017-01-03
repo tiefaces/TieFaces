@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.chart.objects;
 
 import java.util.List;
@@ -10,65 +14,99 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
+/**
+ * area chart class.
+ * 
+ * @author JASON JIANG
+ *
+ */
 public class AreaChart implements ChartObject {
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getChartListFromCtChart(org.openxmlformats.schemas.drawingml.x2006.chart.CTChart)
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List getChartListFromCtChart(final CTChart ctChart) {
+	public final List getChartListFromCtChart(final CTChart ctChart) {
 		return ctChart.getPlotArea().getAreaChartList();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getSerListFromCtObjChart(java.lang.Object)
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List getSerListFromCtObjChart(Object ctObjChart) {
-		
+	public final List getSerListFromCtObjChart(final Object ctObjChart) {
+
 		if (ctObjChart instanceof CTAreaChart) {
 			return ((CTAreaChart) ctObjChart).getSerList();
 		}
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getCtAxDataSourceFromSerList(java.util.List)
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public final CTAxDataSource getCtAxDataSourceFromSerList(List serList) {
-		
-		if ((serList != null) && ( serList.size() > 0) && ( serList.get(0) instanceof CTAreaSer) ) {
+	public final CTAxDataSource getCtAxDataSourceFromSerList(
+			final List serList) {
+
+		if ((serList != null) && (serList.size() > 0)
+				&& (serList.get(0) instanceof CTAreaSer)) {
 			return ((CTAreaSer) serList.get(0)).getCat();
 		}
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getSeriesLabelFromCTSer(java.lang.Object)
+	 */
 	@Override
-	public final String getSeriesLabelFromCTSer(Object ctObjSer) {
-		if ( ctObjSer instanceof CTAreaSer)  {
+	public final String getSeriesLabelFromCTSer(final Object ctObjSer) {
+		if (ctObjSer instanceof CTAreaSer) {
 			return ((CTAreaSer) ctObjSer).getTx().getStrRef().getF();
 		}
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getShapePropertiesFromCTSer(java.lang.Object)
+	 */
 	@Override
-	public CTShapeProperties getShapePropertiesFromCTSer(Object ctObjSer) {
-		if ( ctObjSer instanceof CTAreaSer)  {
+	public final CTShapeProperties getShapePropertiesFromCTSer(
+			final Object ctObjSer) {
+		if (ctObjSer instanceof CTAreaSer) {
 			return ((CTAreaSer) ctObjSer).getSpPr();
 		}
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getCTNumDataSourceFromCTSer(java.lang.Object)
+	 */
 	@Override
-	public CTNumDataSource getCTNumDataSourceFromCTSer(Object ctObjSer) {
-		if ( ctObjSer instanceof CTAreaSer)  {
+	public final CTNumDataSource getCTNumDataSourceFromCTSer(
+			final Object ctObjSer) {
+		if (ctObjSer instanceof CTAreaSer) {
 			return ((CTAreaSer) ctObjSer).getVal();
 		}
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getDPtListFromCTSer(java.lang.Object)
+	 */
 	@Override
-	public List<CTDPt> getDPtListFromCTSer(Object ctObjSer) {
+	public final List<CTDPt> getDPtListFromCTSer(final Object ctObjSer) {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#isLineColor()
+	 */
 	@Override
-	public boolean isLineColor() {
+	public final boolean isLineColor() {
 		return false;
 	}
 

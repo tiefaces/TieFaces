@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.dataobjects;
 
 
@@ -11,20 +15,42 @@ package org.tiefaces.components.websheet.dataobjects;
 public class MapObject {
 	
 	
+	/** The key. */
 	private Object key = null;
+	
+	/** The value. */
 	private Object value = null;
 	
+	/**
+	 * Gets the key.
+	 *
+	 * @return the key
+	 */
 	public Object getKey() {
 		return key;
 	}
+	
+	/**
+	 * Gets the value.
+	 *
+	 * @return the value
+	 */
 	public Object getValue() {
 		return value;
 	}
 	
-	public MapObject(Object key, Object value) {
+	/**
+	 * Instantiates a new map object.
+	 *
+	 * @param pkey
+	 *            the key
+	 * @param pvalue
+	 *            the value
+	 */
+	public MapObject(final Object pkey, final Object pvalue) {
 		super();
-		this.key = key;
-		this.value = value;
+		this.key = pkey;
+		this.value = pvalue;
 	}
 
 	

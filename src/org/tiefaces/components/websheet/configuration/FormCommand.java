@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.configuration;
 
 import java.util.ArrayList;
@@ -13,9 +17,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
-import org.tiefaces.components.websheet.configuration.ConfigurationHelper;
-import org.tiefaces.components.websheet.service.CellHelper;
-import org.tiefaces.components.websheet.service.ShiftFormula;
+import org.tiefaces.common.TieConstants;
+import org.tiefaces.components.websheet.service.ShiftFormulaUtility;
+
 /**
  * Form command. i.e. tie:form(name="departments" length="9" header="0"
  * footer="0")
@@ -34,14 +38,21 @@ public class FormCommand extends ConfigCommand {
 	private String footerLength;
 	/** hidden holder. */
 	private String hidden;
-	
-	
 
+	/**
+	 * Instantiates a new form command.
+	 */
 	public FormCommand() {
 		super();
 	}
 
-	public FormCommand(FormCommand sourceCommand) {
+	/**
+	 * Instantiates a new form command.
+	 *
+	 * @param sourceCommand
+	 *            the source command
+	 */
+	public FormCommand(final FormCommand sourceCommand) {
 		super((ConfigCommand) sourceCommand);
 		this.name = sourceCommand.name;
 		this.headerLength = sourceCommand.headerLength;
@@ -49,34 +60,78 @@ public class FormCommand extends ConfigCommand {
 		this.hidden = sourceCommand.hidden;
 	}
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	public final String getName() {
 		return name;
 	}
 
+	/**
+	 * Sets the name.
+	 *
+	 * @param pName
+	 *            the new name
+	 */
 	public final void setName(final String pName) {
 		this.name = pName;
 	}
 
+	/**
+	 * Gets the header length.
+	 *
+	 * @return the header length
+	 */
 	public String getHeaderLength() {
 		return headerLength;
 	}
 
-	public void setHeaderLength(String headerLength) {
-		this.headerLength = headerLength;
+	/**
+	 * Sets the header length.
+	 *
+	 * @param pheaderLength
+	 *            the new header length
+	 */
+	public void setHeaderLength(final String pheaderLength) {
+		this.headerLength = pheaderLength;
 	}
 
+	/**
+	 * Gets the footer length.
+	 *
+	 * @return the footer length
+	 */
 	public String getFooterLength() {
 		return footerLength;
 	}
 
-	public void setFooterLength(String footerLength) {
-		this.footerLength = footerLength;
+	/**
+	 * Sets the footer length.
+	 *
+	 * @param pfooterLength
+	 *            the new footer length
+	 */
+	public void setFooterLength(final String pfooterLength) {
+		this.footerLength = pfooterLength;
 	}
 
+	/**
+	 * Gets the hidden.
+	 *
+	 * @return the hidden
+	 */
 	public final String getHidden() {
 		return hidden;
 	}
 
+	/**
+	 * Sets the hidden.
+	 *
+	 * @param pHidden
+	 *            the new hidden
+	 */
 	public final void setHidden(final String pHidden) {
 		this.hidden = pHidden;
 	}
@@ -151,7 +206,8 @@ public class FormCommand extends ConfigCommand {
 		ConfigRange cRange = this.getConfigRange();
 		List<ConfigCommand> commandList = cRange.getCommandList();
 		if (commandList.size() <= 0) {
-			// if no command then no dynamic changes. then no need formula shifts.
+			// if no command then no dynamic changes. then no need formula
+			// shifts.
 			return watchList;
 		}
 		int lastStaticRow = commandList.get(0).getTopRow() - 1;
@@ -165,11 +221,10 @@ public class FormCommand extends ConfigCommand {
 			Row row = sheet.getRow(i);
 			for (Cell cell : row) {
 				if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-					
+
 					String formula = cell.getCellFormula();
 
-					Ptg[] ptgs = FormulaParser.parse(
-							formula, wbWrapper,
+					Ptg[] ptgs = FormulaParser.parse(formula, wbWrapper,
 							FormulaType.CELL, wb.getSheetIndex(sheet));
 
 					for (int k = 0; k < ptgs.length; k++) {
@@ -180,19 +235,23 @@ public class FormCommand extends ConfigCommand {
 						// Otherwise it's difficult to calculate.
 						// In case some situation cannot fit, then should make
 						// change to the formula.
-						int areaInt = ShiftFormula
+						int areaInt = ShiftFormulaUtility
 								.getFirstSupportedRowNumFromPtg(ptg);
 						if (areaInt >= 0) {
 							addToWatchList(sheet, areaInt, lastStaticRow,
 									watchList);
 						}
 					}
-					
-					// when insert row, the formula may changed. so here is the workaround.
-					// change formula to user formula to preserve the row changes.
+
+					// when insert row, the formula may changed. so here is the
+					// workaround.
+					// change formula to user formula to preserve the row
+					// changes.
 					cell.setCellType(Cell.CELL_TYPE_STRING);
-					cell.setCellValue(ConfigurationHelper.USER_FORMULA_PREFIX + formula + ConfigurationHelper.USER_FORMULA_SUFFIX);
-					
+					cell.setCellValue(
+							TieConstants.USER_FORMULA_PREFIX
+									+ formula
+									+ TieConstants.USER_FORMULA_SUFFIX);
 
 				}
 			}
@@ -221,59 +280,92 @@ public class FormCommand extends ConfigCommand {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#buildAt(java.lang.
+	 * String, org.tiefaces.components.websheet.configuration.ConfigBuildRef,
+	 * int, java.util.Map, java.util.List)
+	 */
 	@Override
 	/**
 	 * build the command area at the row.
 	 */
-	public final int buildAt(String fullName, final ConfigBuildRef configBuildRef,
-			final int atRow,
-			final Map<String, Object> context, 
+	public final int buildAt(String fullName,
+			final ConfigBuildRef configBuildRef, final int atRow,
+			final Map<String, Object> context,
 			List<RowsMapping> currentRowsMappingList) {
-		// TODO Auto-generated method stub
 
-		configBuildRef.setWatchList(buildFormWatchList(configBuildRef.getWbWrapper(), configBuildRef.getSheet()));
+		configBuildRef.setWatchList(buildFormWatchList(
+				configBuildRef.getWbWrapper(), configBuildRef.getSheet()));
 		fullName = this.getCommandName();
 
 		RowsMapping unitRowsMapping = new RowsMapping();
 		for (Integer index : configBuildRef.getWatchList()) {
-			if (ConfigurationHelper.isStaticRow(this.getConfigRange(),index)) {
-				unitRowsMapping.addRow(index, configBuildRef.getSheet().getRow(index));
+			if (ConfigurationHelper.isStaticRow(this.getConfigRange(),
+					index)) {
+				unitRowsMapping.addRow(index,
+						configBuildRef.getSheet().getRow(index));
 			}
 		}
 		currentRowsMappingList = new ArrayList<RowsMapping>();
 		currentRowsMappingList.add(unitRowsMapping);
-		this.getConfigRange().getAttrs().allowAdd = false;
-		configBuildRef.putShiftAttrs(fullName, this.getConfigRange().getAttrs(), new RowsMapping(unitRowsMapping));
+		this.getConfigRange().getAttrs().setAllowAdd(false);
+		configBuildRef.putShiftAttrs(fullName,
+				this.getConfigRange().getAttrs(),
+				new RowsMapping(unitRowsMapping));
 		initFullNameInHiddenColumn(configBuildRef.getSheet());
-		configBuildRef.setOriginConfigRange(new ConfigRange(this.getConfigRange()));
-		configBuildRef.getOriginConfigRange().indexCommandRange(configBuildRef.getCommandIndexMap());
+		configBuildRef.setOriginConfigRange(
+				new ConfigRange(this.getConfigRange()));
+		configBuildRef.getOriginConfigRange()
+				.indexCommandRange(configBuildRef.getCommandIndexMap());
 		int length = this.getConfigRange().buildAt(fullName, configBuildRef,
 				atRow, context, currentRowsMappingList);
-		this.getConfigRange().getAttrs().finalLength = length;
+		this.getConfigRange().getAttrs().setFinalLength(length);
 		this.setFinalLength(length);
-		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenFullNameColumn, true);
-		configBuildRef.getSheet().setColumnHidden(ConfigurationHelper.hiddenSaveObjectsColumn, true);
+		configBuildRef.getSheet().setColumnHidden(
+				TieConstants.hiddenFullNameColumn, true);
+		configBuildRef.getSheet().setColumnHidden(
+				TieConstants.hiddenSaveObjectsColumn, true);
 
 		return length;
 	}
 
-	private void initFullNameInHiddenColumn(Sheet sheet) {
-		
-		for (int i= this.getTopRow(); i<= this.getLastRow(); i++) {
+	/**
+	 * Inits the full name in hidden column.
+	 *
+	 * @param sheet
+	 *            the sheet
+	 */
+	private void initFullNameInHiddenColumn(final Sheet sheet) {
+
+		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
 			Row row = sheet.getRow(i);
 			if (row == null) {
 				row = sheet.createRow(i);
 			}
-			Cell cell = row.getCell(ConfigurationHelper.hiddenFullNameColumn, MissingCellPolicy.CREATE_NULL_AS_BLANK); 
-			cell.setCellValue(i+":");
+			Cell cell = row.getCell(
+					TieConstants.hiddenFullNameColumn,
+					MissingCellPolicy.CREATE_NULL_AS_BLANK);
+			cell.setCellValue(i + ":");
 			cell.setCellType(Cell.CELL_TYPE_STRING);
 		}
-		
+
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.configuration.Command#getCommandName()
+	 */
+	/*
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#getCommandName()
+	 */
 	@Override
 	public String getCommandName() {
-		return this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getName().trim();
+		return this.getCommandTypeName().substring(0, 1).toUpperCase() + "."
+				+ this.getName().trim();
 	}
-	
+
 }

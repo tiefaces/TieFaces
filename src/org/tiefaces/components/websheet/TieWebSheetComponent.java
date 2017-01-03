@@ -43,6 +43,9 @@ public class TieWebSheetComponent extends UINamingContainer {
 		return webSheetBean;
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponentBase#encodeBegin(javax.faces.context.FacesContext)
+	 */
 	@Override
 	public final void encodeBegin(final FacesContext context)
 			throws IOException {

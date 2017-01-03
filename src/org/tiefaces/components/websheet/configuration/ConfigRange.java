@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.configuration;
 
 import java.util.ArrayList;
@@ -5,19 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaRenderer;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
-import org.tiefaces.components.websheet.service.ShiftFormula;
 
 /**
  * Simple class for area range. Also include nested command list. Note: command
@@ -36,28 +33,35 @@ import org.tiefaces.components.websheet.service.ShiftFormula;
 public class ConfigRange {
 
 	/** logger. */
-	private final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
+	private final Logger log = Logger.getLogger(
+			Thread.currentThread().getStackTrace()[0].getClassName());
 
+	/** The attrs. */
 	private ConfigRangeAttrs attrs = new ConfigRangeAttrs(false);
 
 	/** command list. */
 	private List<ConfigCommand> commandList;
 
+	/**
+	 * Instantiates a new config range.
+	 */
 	public ConfigRange() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * Copy constructor
+	 * Copy constructor.
+	 *
+	 * @param source
+	 *            the source
 	 */
-	public ConfigRange(ConfigRange source) {
-		this.attrs.firstRowRef = source.attrs.firstRowRef;
-		this.attrs.firstRowAddr = source.attrs.firstRowAddr;
-		this.attrs.lastRowPlusRef = source.attrs.lastRowPlusRef;
-		this.attrs.lastRowPlusAddr = source.attrs.lastRowPlusAddr;
-		this.attrs.lastCellCreated = source.attrs.lastCellCreated;
+	public ConfigRange(final ConfigRange source) {
+		this.attrs.setFirstRowRef(source.attrs.getFirstRowRef());
+		this.attrs.setFirstRowAddr(source.attrs.getFirstRowAddr());
+		this.attrs.setLastRowPlusRef(source.attrs.getLastRowPlusRef());
+		this.attrs.setLastRowPlusAddr(source.attrs.getLastRowPlusAddr());
+		this.attrs.setLastCellCreated(source.attrs.isLastCellCreated());
 
 		if (source.commandList != null) {
 			this.commandList = this.getCommandList();
@@ -76,21 +80,32 @@ public class ConfigRange {
 
 	}
 
+	/**
+	 * Gets the attrs.
+	 *
+	 * @return the attrs
+	 */
 	public ConfigRangeAttrs getAttrs() {
 		return attrs;
 	}
 
-	public void shiftRowRef(Sheet sheet, int shiftnum) {
+	/**
+	 * Shift row ref.
+	 *
+	 * @param sheet
+	 *            the sheet
+	 * @param shiftnum
+	 *            the shiftnum
+	 */
+	public void shiftRowRef(final Sheet sheet, final int shiftnum) {
 		try {
 			this.setFirstRowRef(
-					sheet.getRow(attrs.firstRowAddr.getRow() + shiftnum)
-							.getCell(
-									attrs.firstRowAddr.getColumn(),
+					sheet.getRow(attrs.getFirstRowAddr().getRow() + shiftnum)
+							.getCell(attrs.getFirstRowAddr().getColumn(),
 									MissingCellPolicy.CREATE_NULL_AS_BLANK),
 					false);
-			this.setLastRowPlusRef(sheet,
-					attrs.lastRowPlusAddr.getColumn(),
-					attrs.lastRowPlusAddr.getRow() + shiftnum - 1, false);
+			this.setLastRowPlusRef(sheet, attrs.getLastRowPlusAddr().getColumn(),
+					attrs.getLastRowPlusAddr().getRow() + shiftnum - 1, false);
 
 			if (commandList != null) {
 				for (ConfigCommand command : commandList) {
@@ -104,8 +119,13 @@ public class ConfigRange {
 		}
 	}
 
+	/**
+	 * Gets the first row ref.
+	 *
+	 * @return the first row ref
+	 */
 	public final Cell getFirstRowRef() {
-		return attrs.firstRowRef;
+		return attrs.getFirstRowRef();
 	}
 
 	/**
@@ -118,14 +138,19 @@ public class ConfigRange {
 	 */
 	public final void setFirstRowRef(final Cell pFirstRowRef,
 			final boolean alsoCreateAddr) {
-		this.attrs.firstRowRef = pFirstRowRef;
+		this.attrs.setFirstRowRef(pFirstRowRef);
 		if (alsoCreateAddr) {
 			this.setFirstRowAddr(new CellAddress(pFirstRowRef));
 		}
 	}
 
+	/**
+	 * Gets the last row plus ref.
+	 *
+	 * @return the last row plus ref
+	 */
 	public final Cell getLastRowPlusRef() {
-		return attrs.lastRowPlusRef;
+		return attrs.getLastRowPlusRef();
 	}
 
 	/**
@@ -153,37 +178,59 @@ public class ConfigRange {
 			if (cell == null) {
 				cell = row.getCell(rightCol,
 						MissingCellPolicy.CREATE_NULL_AS_BLANK);
-				this.attrs.lastCellCreated = true;
+				this.attrs.setLastCellCreated(true);
 			} else {
-				this.attrs.lastCellCreated = false;
+				this.attrs.setLastCellCreated(false);
 			}
-			this.attrs.lastRowPlusRef = cell;
+			this.attrs.setLastRowPlusRef(cell);
 			if (alsoSetAddr) {
 				this.setLastRowPlusAddr(new CellAddress(cell));
 			}
 		} else {
-			this.attrs.lastRowPlusRef = null;
+			this.attrs.setLastRowPlusRef(null);
 			if (alsoSetAddr) {
-				this.attrs.lastRowPlusAddr = null;
+				this.attrs.setLastRowPlusAddr(null);
 			}
 		}
 	}
 
+	/**
+	 * Gets the first row addr.
+	 *
+	 * @return the first row addr
+	 */
 	public final CellAddress getFirstRowAddr() {
-		return attrs.firstRowAddr;
+		return attrs.getFirstRowAddr();
 	}
 
+	/**
+	 * Sets the first row addr.
+	 *
+	 * @param pFirstRowAddr
+	 *            the new first row addr
+	 */
 	public final void setFirstRowAddr(final CellAddress pFirstRowAddr) {
-		this.attrs.firstRowAddr = pFirstRowAddr;
+		this.attrs.setFirstRowAddr(pFirstRowAddr);
 	}
 
+	/**
+	 * Gets the last row plus addr.
+	 *
+	 * @return the last row plus addr
+	 */
 	public final CellAddress getLastRowPlusAddr() {
-		return attrs.lastRowPlusAddr;
+		return attrs.getLastRowPlusAddr();
 	}
 
+	/**
+	 * Sets the last row plus addr.
+	 *
+	 * @param pLastRowPlusAddr
+	 *            the new last row plus addr
+	 */
 	public final void setLastRowPlusAddr(
 			final CellAddress pLastRowPlusAddr) {
-		this.attrs.lastRowPlusAddr = pLastRowPlusAddr;
+		this.attrs.setLastRowPlusAddr(pLastRowPlusAddr);
 	}
 
 	/**
@@ -198,13 +245,24 @@ public class ConfigRange {
 		return this.commandList;
 	}
 
+	/**
+	 * Sets the command list.
+	 *
+	 * @param pCommandList
+	 *            the new command list
+	 */
 	public final void setCommandList(
 			final List<ConfigCommand> pCommandList) {
 		this.commandList = pCommandList;
 	}
 
+	/**
+	 * Checks if is last cell created.
+	 *
+	 * @return true, if is last cell created
+	 */
 	public final boolean isLastCellCreated() {
-		return attrs.lastCellCreated;
+		return attrs.isLastCellCreated();
 	}
 
 	/**
@@ -226,16 +284,20 @@ public class ConfigRange {
 	 * build all the command area the range included. each command will hold the
 	 * final length after data populated. then buildCells build all cells in the
 	 * range except those commands. and update the formulas.
-	 * 
-	 * @param sheet
-	 *            sheet.
-	 * @param startRow
-	 *            start row.
+	 *
+	 * @param fullName
+	 *            the full name
+	 * @param configBuildRef
+	 *            the config build ref
+	 * @param atRow
+	 *            the at row
 	 * @param context
 	 *            context map.
+	 * @param currentRowsMappingList
+	 *            the current rows mapping list
 	 * @return final length.
 	 */
-	public final int buildAt(String fullName,
+	public final int buildAt(final String fullName,
 			final ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
 			final List<RowsMapping> currentRowsMappingList) {
@@ -250,9 +312,10 @@ public class ConfigRange {
 				Command command = commandList.get(i);
 				command.setFinalLength(0);
 				int populatedLength = command.buildAt(fullName,
-						configBuildRef, command.getConfigRange()
-								.getFirstRowRef().getRowIndex(), context,
-						currentRowsMappingList);
+						configBuildRef,
+						command.getConfigRange().getFirstRowRef()
+								.getRowIndex(),
+						context, currentRowsMappingList);
 				command.setFinalLength(populatedLength);
 			}
 		}
@@ -267,32 +330,32 @@ public class ConfigRange {
 
 	}
 
-	public void indexCommandRange(Map<String, Command> indexMap) {
+	/**
+	 * Index command range.
+	 *
+	 * @param indexMap
+	 *            the index map
+	 */
+	public void indexCommandRange(final Map<String, Command> indexMap) {
 		ConfigurationHelper.indexCommandRange(this, indexMap);
 	}
 
 	/**
 	 * Build all the static cells in the range (exclude command areas).
-	 * 
-	 * @param sheet
-	 *            sheet.
+	 *
+	 * @param fullName
+	 *            the full name
+	 * @param configBuildRef
+	 *            the config build ref
 	 * @param atRow
 	 *            start row.
 	 * @param context
 	 *            context.
-	 * @param wbWrapper
-	 *            workbook wrapper.
-	 * @param watchList
-	 *            watch list.
-	 * @param currentRowsMappingList
-	 *            current rows mapping.
-	 * @param engine
-	 *            engine.
-	 * @param cellHelper
-	 *            cell helper.
+	 * @param rowsMappingList
+	 *            the rows mapping list
 	 */
-	private void buildCells(String fullName,
-			ConfigBuildRef configBuildRef, final int atRow,
+	private void buildCells(final String fullName,
+			final ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
 			final List<RowsMapping> rowsMappingList) {
 
@@ -300,17 +363,18 @@ public class ConfigRange {
 			// no need to evaluate as there's no data object.
 			return;
 		}
-		
+
 		// copy snapshot of context into shiftmap.
 		snapShotContext(fullName, configBuildRef, context);
-		
+
 		// keep rowsMappingList as current as no change
 		// allRowsMappingList = child + current
-		
-		List<RowsMapping> allRowsMappingList = ConfigurationHelper.findChildRowsMappingFromShiftMap(
-				fullName, configBuildRef.getShiftMap());
+
+		List<RowsMapping> allRowsMappingList = ConfigurationHelper
+				.findChildRowsMappingFromShiftMap(fullName,
+						configBuildRef.getShiftMap());
 		allRowsMappingList.addAll(rowsMappingList);
-		
+
 		int lastRowPlus = this.getLastRowPlusRef().getRowIndex();
 		ShiftFormulaRef shiftFormulaRef = new ShiftFormulaRef(
 				configBuildRef.getWatchList(), allRowsMappingList);
@@ -348,24 +412,29 @@ public class ConfigRange {
 								+ ex.getLocalizedMessage());
 					}
 				}
-				ConfigurationHelper.setFullNameInHiddenColumn(row,
-						fullName, false);
+				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName,
+						false);
 			}
 		}
 	}
 
 	/**
-	 * snap shot the current context objects.
-	 * those object will be used for save data.
-	 * @param fullName full name.
-	 * @param configBuildRef config build reference object.
-	 * @param context context.
+	 * snap shot the current context objects. those object will be used for save
+	 * data.
+	 * 
+	 * @param fullName
+	 *            full name.
+	 * @param configBuildRef
+	 *            config build reference object.
+	 * @param context
+	 *            context.
 	 */
-	private void snapShotContext(String fullName,
-			ConfigBuildRef configBuildRef, final Map<String, Object> context) {
-		ConfigRangeAttrs  attrs = configBuildRef.getShiftMap().get(fullName);
-		if ((attrs!=null)&&(attrs.contextSnap == null)) {
-			attrs.contextSnap = new MapSnapShot(context);
+	private void snapShotContext(final String fullName,
+			final ConfigBuildRef configBuildRef,
+			final Map<String, Object> context) {
+		ConfigRangeAttrs lattrs = configBuildRef.getShiftMap().get(fullName);
+		if ((lattrs != null) && (lattrs.getContextSnap() == null)) {
+			lattrs.setContextSnap(new MapSnapShot(context));
 		}
 	}
 

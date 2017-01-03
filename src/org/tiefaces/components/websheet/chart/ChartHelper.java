@@ -41,6 +41,8 @@ import org.tiefaces.components.websheet.chart.objects.PieChart;
 import org.tiefaces.components.websheet.dataobjects.AnchorSize;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
+import org.tiefaces.components.websheet.service.CellUtility;
+import org.tiefaces.components.websheet.service.PicturesUtility;
 import org.tiefaces.components.websheet.utility.ColorUtility;
 import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
 import org.w3c.dom.NodeList;
@@ -66,9 +68,9 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
 
 /**
- * 
- * @author Jason Jiang
+ * The Class ChartHelper.
  *
+ * @author Jason Jiang
  */
 public class ChartHelper {
 
@@ -219,7 +221,7 @@ public class ChartHelper {
 									chartId, chart);
 							chartDataMap.put(chartId, chartData);
 							JFreeChart jchart = createChart(chartData);
-							AnchorSize anchorSize = parent.getPicHelper()
+							AnchorSize anchorSize = PicturesUtility
 									.getAnchorSize(sheet, anchor);
 							BufferedImage img = jchart.createBufferedImage(
 									anchorSize.getWidth(),
@@ -247,7 +249,7 @@ public class ChartHelper {
 		try {
 			Cell poiCell = parent.getWb().getSheet(pCell.getSheetName())
 					.getRow(pCell.getRow()).getCell(pCell.getCol());
-			result = parent.getCellHelper().getCellValueWithoutFormat(
+			result = CellUtility.getCellValueWithoutFormat(
 					poiCell);
 
 		} catch (Exception ex) {
@@ -317,8 +319,8 @@ public class ChartHelper {
 	}
 
 	/**
-	 * return pie chart title from chartData
-	 * 
+	 * return pie chart title from chartData.
+	 *
 	 * @param chartData
 	 *            ChartData object.
 	 * @return title (String).
@@ -406,11 +408,9 @@ public class ChartHelper {
 
 	/**
 	 * Create jfree bar chart.
-	 * 
+	 *
 	 * @param chartData
 	 *            contain information gathered from excel chart object.
-	 * @param vertical
-	 *            chart orientation.
 	 * @return jfree line chart.
 	 */
 	private JFreeChart createAreaChart(final ChartData chartData) {
@@ -879,8 +879,9 @@ public class ChartHelper {
 
 	/**
 	 * get anchor information from draw.xml.
-	 * 
-	 * @param ctDrawing
+	 *
+	 * @param parentNode
+	 *            the parent node
 	 * @return clientAnchor which include row/col and dx information.
 	 */
 	// private XSSFClientAnchor getClientAnchorFromCTDrawing(final CTDrawing

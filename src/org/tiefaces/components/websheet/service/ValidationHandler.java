@@ -7,6 +7,7 @@ package org.tiefaces.components.websheet.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -22,19 +23,25 @@ import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 
+/**
+ * The Class ValidationHandler.
+ */
 public class ValidationHandler {
 
+	/** The parent. */
 	private TieWebSheetBean parent = null;
 
-	private static boolean debug = false;
+	/** logger. */
+	private static final Logger log = Logger.getLogger(
+			Thread.currentThread().getStackTrace()[0].getClassName());
 
-	private static void debug(String msg) {
-		if (debug) {
-			System.out.println("debug: " + msg);
-		}
-	}
-
-	public ValidationHandler(TieWebSheetBean parent) {
+	/**
+	 * Instantiates a new validation handler.
+	 *
+	 * @param parent
+	 *            the parent
+	 */
+	public ValidationHandler(final TieWebSheetBean parent) {
 		super();
 		this.parent = parent;
 		// TODO Auto-generated constructor stub
@@ -54,65 +61,113 @@ public class ValidationHandler {
 	// / <param name="useExistingValue"> if true, use cell value to replace the
 	// value. </param>
 	// / <param name="passEmptyCheck"> if true and value is empty, then pass the
+	/**
+	 * Validate.
+	 *
+	 * @param component
+	 *            the component
+	 * @param value
+	 *            the value
+	 * @param useExistingValue
+	 *            the use existing value
+	 * @param passEmptyCheck
+	 *            the pass empty check
+	 * @throws ValidatorException
+	 *             the validator exception
+	 */
 	// validation</param>
-	public void validate(UIComponent component, String value,
-			boolean useExistingValue, boolean passEmptyCheck)
+	public void validate(final UIComponent component, final String value,
+			final boolean useExistingValue, final boolean passEmptyCheck)
 			throws ValidatorException {
 		// UIComponent client id = frmSubmissionWebform:webformtables:0:column2
 		// frmSubmissionWebform:webformtables:0:j_idt107:2:column
-		int[] rowcol = parent.getCellHelper().getRowColFromComponentAttributes(
-				component);
+		int[] rowcol = CellUtility
+				.getRowColFromComponentAttributes(component);
 		int row = rowcol[0];
 		int col = rowcol[1];
 		validateWithRowColInCurrentPage(row, col, value, useExistingValue,
 				passEmptyCheck);
 	}
 
-	private void refreshAfterStatusChanged(boolean oldStatus,
-			boolean newStatus, int irow, int topRow, int icol, int leftCol,
-			FacesCell cell) {
+	/**
+	 * Refresh after status changed.
+	 *
+	 * @param oldStatus
+	 *            the old status
+	 * @param newStatus
+	 *            the new status
+	 * @param irow
+	 *            the irow
+	 * @param topRow
+	 *            the top row
+	 * @param icol
+	 *            the icol
+	 * @param leftCol
+	 *            the left col
+	 * @param cell
+	 *            the cell
+	 */
+	private void refreshAfterStatusChanged(final boolean oldStatus,
+			final boolean newStatus, final int irow, final int topRow,
+			final int icol, final int leftCol, final FacesCell cell) {
 
-		if (!newStatus)
+		if (!newStatus) {
 			cell.setErrormsg("");
+		}
 		cell.setInvalid(newStatus);
 		if (oldStatus != newStatus) {
-			RequestContext.getCurrentInstance().update(
-					parent.getWebFormClientId() + ":" + (irow - topRow)
-							+ ":group" + (icol - leftCol));
-			// RequestContext.getCurrentInstance().update(parent.getWebFormClientId()+":"+(irow
-			// - topRow)+":column"+ (icol - leftCol));
-			// RequestContext.getCurrentInstance().update(parent.getWebFormClientId()+":"+(irow
-			// - topRow)+":msgcolumn"+ (icol - leftCol));
+			RequestContext.getCurrentInstance()
+					.update(parent.getWebFormClientId() + ":"
+							+ (irow - topRow) + ":group"
+							+ (icol - leftCol));
 		}
 
 	}
 
-	public void validateWithRowColInCurrentPage(int row, int col, String value,
-			boolean useExistingValue, boolean passEmptyCheck)
+	/**
+	 * Validate with row col in current page.
+	 *
+	 * @param row
+	 *            the row
+	 * @param col
+	 *            the col
+	 * @param value
+	 *            the value
+	 * @param useExistingValue
+	 *            the use existing value
+	 * @param passEmptyCheck
+	 *            the pass empty check
+	 * @throws ValidatorException
+	 *             the validator exception
+	 */
+	public void validateWithRowColInCurrentPage(int row, int col,
+			String value, boolean useExistingValue, boolean passEmptyCheck)
 			throws ValidatorException {
 
-		debug("validationwithrowcolincurrentpage row = " + row + " col = "
-				+ col + " value = " + value);
+		log.fine("validationwithrowcolincurrentpage row = " + row
+				+ " col = " + col + " value = " + value);
 
 		int topRow = parent.getCurrentTopRow();
 		int leftCol = parent.getCurrentLeftColumn();
 
-		FacesCell cell = parent.getCellHelper().getFacesCellFromBodyRow(
-				row - topRow, col - leftCol, parent.getBodyRows());
-		if (cell == null)
+		FacesCell cell = CellUtility.getFacesCellFromBodyRow(row - topRow,
+				col - leftCol, parent.getBodyRows());
+		if (cell == null) {
 			return;
+		}
 
 		Cell poiCell = parent.getCellHelper()
 				.getPoiCellWithRowColFromCurrentPage(row, col);
 		boolean oldStatus = cell.isInvalid();
 		if (useExistingValue) {
-			value = parent.getCellHelper().getCellValueWithoutFormat(poiCell);
+			value = CellUtility.getCellValueWithoutFormat(poiCell);
 		}
 
-		if (value == null)
+		if (value == null) {
 			value = "";
-		else
+		} else {
 			value = value.trim();
+		}
 
 		if (passEmptyCheck && value.isEmpty()) {
 			refreshAfterStatusChanged(oldStatus, false, row, topRow, col,
@@ -120,48 +175,68 @@ public class ValidationHandler {
 			return;
 		}
 
-		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
-				parent.getCurrentTabName());
-		List<CellFormAttributes> cellAttributes = parent.getCellHelper()
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
+				.get(parent.getCurrentTabName());
+		List<CellFormAttributes> cellAttributes = CellUtility
 				.findCellAttributes(sheetConfig, poiCell, row, topRow);
 		if (cellAttributes != null) {
-			Sheet sheet1 = parent.getWb().getSheet(sheetConfig.getSheetName());
+			Sheet sheet1 = parent.getWb()
+					.getSheet(sheetConfig.getSheetName());
 			for (CellFormAttributes attr : cellAttributes) {
-				boolean pass = doValidation(value, attr, poiCell.getRowIndex(),
-						sheet1);
+				boolean pass = doValidation(value, attr,
+						poiCell.getRowIndex(), sheet1);
 				if (!pass) {
 					String errmsg = attr.getMessage();
-					if (errmsg == null)
+					if (errmsg == null) {
 						errmsg = "Invalid input";
+					}
 					cell.setErrormsg(errmsg);
 					refreshAfterStatusChanged(false, true, row, topRow, col,
 							leftCol, cell);
 					FacesMessage msg = new FacesMessage(
-							FacesMessage.SEVERITY_ERROR, "Valication", errmsg);
-					debug("Web Form ValidationHandler validate failed = "
-							+ errmsg + "; row =" + row + " col= " + col);
+							FacesMessage.SEVERITY_ERROR, "Valication",
+							errmsg);
+					log.severe(
+							"Web Form ValidationHandler validate failed = "
+									+ errmsg + "; row =" + row + " col= "
+									+ col);
 					throw new ValidatorException(msg);
 				}
 
 			}
 		}
-		refreshAfterStatusChanged(oldStatus, false, row, topRow, col, leftCol,
-				cell);
+		refreshAfterStatusChanged(oldStatus, false, row, topRow, col,
+				leftCol, cell);
 
 	}
 
+	/**
+	 * Do validation.
+	 *
+	 * @param value
+	 *            the value
+	 * @param attr
+	 *            the attr
+	 * @param rowIndex
+	 *            the row index
+	 * @param sheet
+	 *            the sheet
+	 * @return true, if successful
+	 * @throws ValidatorException
+	 *             the validator exception
+	 */
 	private boolean doValidation(Object value, CellFormAttributes attr,
 			int rowIndex, Sheet sheet) throws ValidatorException {
 		String attrType = attr.getType().trim();
 		boolean pass = true;
 		if (attrType.equalsIgnoreCase("input")) {
-			pass = FacesUtility
-					.evalInputType(value.toString(), attr.getValue());
+			pass = FacesUtility.evalInputType(value.toString(),
+					attr.getValue());
 
 		} else if (attrType.equalsIgnoreCase("check")) {
 			String attrValue = attr.getValue();
 			attrValue = attrValue.replace("$value", value.toString() + "");
-			attrValue = parent.getCellHelper().replaceExpressionWithCellValue(
+			attrValue = CellUtility.replaceExpressionWithCellValue(
 					attrValue, rowIndex, sheet);
 			pass = parent.getCellHelper().evalBoolExpression(attrValue);
 		}
@@ -169,72 +244,32 @@ public class ValidationHandler {
 
 	}
 
+	/**
+	 * Validate cell.
+	 *
+	 * @param target
+	 *            the target
+	 * @return true, if successful
+	 */
 	public boolean validateCell(final UIComponent target) {
 
 		try {
 			validate(target, null, true, true);
 		} catch (ValidatorException ex) {
 			// use log.debug because mostly they are expected
-			debug("Web Form ValidationHandler validateCell failed error = "
-					+ ex.getLocalizedMessage());
+			log.severe(
+					"Web Form ValidationHandler validateCell failed error = "
+							+ ex.getLocalizedMessage());
 			return false;
 		}
 		return true;
 	}
 
-	// public static boolean validateTab(final String tabName, final Workbook
-	// wb, final Map<String, SheetConfiguration> sheetConfigMap, final
-	// FormulaEvaluator formulaEvaluator,final List<List<FacesCell>> bodyRows,
-	// final ScriptEngine engine) {
-	//
-	//
-	//
-	// FacesContext facesContext = FacesContext.getCurrentInstance();
-	// facesContext.getViewRoot().getViewMap().put("validateTabStatus", "PASS");
-	// UIData table = (UIData)
-	// facesContext.getViewRoot().findComponent(WebFormHelper.getWebFormClientId());
-	// table.visitTree(VisitContext.createVisitContext(FacesContext.getCurrentInstance()),
-	// new VisitCallback() {
-	// @Override
-	// public VisitResult visit(VisitContext context, UIComponent target) {
-	// String id = target.getId();
-	// if (id.startsWith("column")) {
-	//
-	// try {
-	// ValidationHandler.validate(target, null, wb, formulaEvaluator,
-	// sheetConfigMap, bodyRows, engine, tabName, true, true);
-	// }
-	// catch (ValidatorException ex) {
-	// if (target instanceof UIInput) {
-	// //((UIInput)target).setValid(false);
-	// FacesContext.getCurrentInstance().addMessage(target.getClientId(),
-	// ex.getFacesMessage());
-	// RequestContext.getCurrentInstance().update(target.getClientId());
-	// int[] rowcol = WebFormHelper.getRowColFromComponentName(target);
-	// System.out.println(" update msg component = "+WebFormHelper.getWebFormClientId()+":"+rowcol[0]+":msgcolumn"+rowcol[1]);
-	// RequestContext.getCurrentInstance().update(WebFormHelper.getWebFormClientId()+":"+rowcol[0]+":msgcolumn"+rowcol[1]);
-	// Map<String, Object> viewMap =
-	// FacesContext.getCurrentInstance().getViewRoot().getViewMap();
-	// String validateStatus = (String) viewMap.get("validateTabStatus");
-	// if (!validateStatus.equalsIgnoreCase("FAILED"))
-	// viewMap.put("validateTabStatus", "FAILED");
-	// }
-	//
-	// }
-	//
-	// }
-	// return VisitResult.ACCEPT;
-	// }
-	// });
-	// String status = (String)
-	// facesContext.getViewRoot().getViewMap().get("validateTabStatus");
-	// System.out.println(" validation tab "+tabName+" status = "+status);
-	// if (status.equalsIgnoreCase("PASS"))
-	// return true;
-	// else
-	// return false;
-	// }
-
+	/**
+	 * Validate current page.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean validateCurrentPage() {
 		boolean allpass = true;
 		boolean passEmptyCheck = true;
@@ -242,21 +277,33 @@ public class ValidationHandler {
 		Map<String, Object> viewMap = FacesContext.getCurrentInstance()
 				.getViewRoot().getViewMap();
 		Boolean fullvalidation = (Boolean) viewMap.get("fullValidation");
-		if ((fullvalidation != null) && (fullvalidation))
+		if ((fullvalidation != null) && (fullvalidation)) {
 			passEmptyCheck = false;
+		}
 
 		int top = parent.getCurrentTopRow();
 		for (int irow = 0; irow < parent.getBodyRows().size(); irow++) {
-			if (!validateRowInCurrentPage(irow + top, passEmptyCheck))
+			if (!validateRowInCurrentPage(irow + top, passEmptyCheck)) {
 				allpass = false;
+			}
 		}
 		return allpass;
 	}
 
-	public boolean validateRowInCurrentPage(int irow, boolean passEmptyCheck) {
+	/**
+	 * Validate row in current page.
+	 *
+	 * @param irow
+	 *            the irow
+	 * @param passEmptyCheck
+	 *            the pass empty check
+	 * @return true, if successful
+	 */
+	public boolean validateRowInCurrentPage(final int irow,
+			final boolean passEmptyCheck) {
 		boolean pass = true;
-		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
-				parent.getCurrentTabName());
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
+				.get(parent.getCurrentTabName());
 		if (sheetConfig != null) {
 			int top = sheetConfig.getBodyCellRange().getTopRow();
 			int left = sheetConfig.getBodyCellRange().getLeftCol();
@@ -268,33 +315,58 @@ public class ValidationHandler {
 							true, passEmptyCheck);
 				} catch (ValidatorException ex) {
 					pass = false;
-					// RequestContext.getCurrentInstance().update(WebFormHelper.getWebFormClientId()+":"+irow+":column"+icol);
-					// RequestContext.getCurrentInstance().update(WebFormHelper.getWebFormClientId()+":"+irow+":msgcolumn"+icol);
 				}
 			}
 		}
 		return pass;
 	}
 
-	public String findFirstInvalidSheet(boolean passEmptyCheck) {
+	/**
+	 * Find first invalid sheet.
+	 *
+	 * @param passEmptyCheck
+	 *            the pass empty check
+	 * @return the string
+	 */
+	public String findFirstInvalidSheet(final boolean passEmptyCheck) {
 		for (Map.Entry<String, SheetConfiguration> entry : parent
 				.getSheetConfigMap().entrySet()) {
 			SheetConfiguration sheetConfig = entry.getValue();
 			String tabName = entry.getKey();
-			Sheet sheet = parent.getWb().getSheet(sheetConfig.getSheetName());
+			Sheet sheet = parent.getWb()
+					.getSheet(sheetConfig.getSheetName());
 			int initialRows = sheetConfig.getBodyInitialRows();
 			int topRow = sheetConfig.getBodyCellRange().getTopRow();
 			for (int datarow = 0; datarow < initialRows; datarow++) {
 				if (!validateDataRow(datarow, initialRows, topRow, sheet,
-						sheetConfig, passEmptyCheck))
+						sheetConfig, passEmptyCheck)) {
 					return tabName;
+				}
 			}
 		}
 		return null;
 	}
 
-	private boolean validateDataRow(int datarow, int initialRows, int topRow,
-			Sheet sheet, SheetConfiguration sheetConfig, boolean passEmptyCheck) {
+	/**
+	 * Validate data row.
+	 *
+	 * @param datarow
+	 *            the datarow
+	 * @param initialRows
+	 *            the initial rows
+	 * @param topRow
+	 *            the top row
+	 * @param sheet
+	 *            the sheet
+	 * @param sheetConfig
+	 *            the sheet config
+	 * @param passEmptyCheck
+	 *            the pass empty check
+	 * @return true, if successful
+	 */
+	private boolean validateDataRow(int datarow, int initialRows,
+			int topRow, Sheet sheet, SheetConfiguration sheetConfig,
+			boolean passEmptyCheck) {
 
 		boolean rowpass = true;
 		for (Map.Entry<String, List<CellFormAttributes>> entry : sheetConfig
@@ -303,23 +375,24 @@ public class ValidationHandler {
 			List<CellFormAttributes> attributeList = entry.getValue();
 			Cell cell = null;
 			for (CellFormAttributes attr : attributeList) {
-				if ((attr.getType().equalsIgnoreCase("input") || attr.getType()
-						.equalsIgnoreCase("check"))) {
-					if (cell == null)
-						cell = parent.getCellHelper()
-								.getCellReferenceWithConfig(targetCell,
-										datarow, initialRows, sheetConfig,
-										sheet);
+				if ((attr.getType().equalsIgnoreCase("input")
+						|| attr.getType().equalsIgnoreCase("check"))) {
+					if (cell == null) {
+						cell = CellUtility.getCellReferenceWithConfig(
+								targetCell, datarow, initialRows,
+								sheetConfig, sheet);
+					}
 					if (cell != null) {
-						String cellValue = parent.getCellHelper()
+						String cellValue = CellUtility
 								.getCellValueWithoutFormat(cell);
 						if (!(passEmptyCheck && cellValue.isEmpty())) {
 							if (!doValidation(cellValue, attr,
 									topRow + datarow, sheet)) {
-								debug("Web Form ValidationHandler validateDatarow targetCell = "
-										+ targetCell
-										+ " validation failed; datarow="
-										+ datarow);
+								log.fine(
+										"Web Form ValidationHandler validateDatarow targetCell = "
+												+ targetCell
+												+ " validation failed; datarow="
+												+ datarow);
 								rowpass = false;
 								break;
 							}

@@ -51,6 +51,7 @@ import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
 import org.tiefaces.components.websheet.dataobjects.HeaderCell;
 import org.tiefaces.components.websheet.service.CellHelper;
+import org.tiefaces.components.websheet.service.CellUtility;
 import org.tiefaces.components.websheet.service.DataHandler;
 import org.tiefaces.components.websheet.service.PicturesHelper;
 import org.tiefaces.components.websheet.service.ValidationHandler;
@@ -65,9 +66,7 @@ import org.tiefaces.components.websheet.service.WebSheetLoader;
 public class TieWebSheetBean extends TieWebSheetView implements
 		Serializable {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3495468356246589276L;
 
 	/** hold instance for columns in current display sheet. */
@@ -180,6 +179,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
+	 * Gets the web form client id.
+	 *
 	 * @return web form client Id.
 	 */
 	public final String getWebFormClientId() {
@@ -187,6 +188,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
+	 * Gets the client id.
+	 *
 	 * @return client id.
 	 */
 	public final String getClientId() {
@@ -194,7 +197,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * 
+	 * Sets the client id.
+	 *
 	 * @param pClientId
 	 *            client Id.
 	 */
@@ -222,7 +226,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * 
+	 * Gets the header rows.
+	 *
 	 * @return return header row list.
 	 */
 	public final List<List<HeaderCell>> getHeaderRows() {
@@ -496,7 +501,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * 
+	 * Gets the charts map.
+	 *
 	 * @return charts map.
 	 */
 	public final Map<String, BufferedImage> getChartsMap() {
@@ -518,7 +524,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * 
+	 * Gets the chart data map.
+	 *
 	 * @return chart data map.
 	 */
 	public final Map<String, ChartData> getChartDataMap() {
@@ -540,7 +547,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * 
+	 * Gets the chart anchors map.
+	 *
 	 * @return chart anchors map.
 	 */
 	public final Map<String, ClientAnchor> getChartAnchorsMap() {
@@ -576,8 +584,9 @@ public class TieWebSheetBean extends TieWebSheetView implements
 
 	/**
 	 * set chart position map.
-	 * 
+	 *
 	 * @param pChartPositionMap
+	 *            the chart position map
 	 */
 	public final void setChartPositionMap(
 			final Map<String, String> pChartPositionMap) {
@@ -585,7 +594,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * 
+	 * Gets the cached cells.
+	 *
 	 * @return cached cells.
 	 */
 	public final CachedCells getCachedCells() {
@@ -626,7 +636,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * 
+	 * Gets the max col counts.
+	 *
 	 * @return max column counts.
 	 */
 	public final int getMaxColCounts() {
@@ -848,7 +859,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 			// to improve performance, re-validate current row only
 			// page validation take times. will happen when change tab(page) or
 			// reload page.
-			int[] rowcol = cellHelper
+			int[] rowcol = CellUtility
 					.getRowColFromComponentAttributes(target);
 			validationHandler.validateRowInCurrentPage(rowcol[0], true);
 			// refresh current page calculation fields
@@ -940,6 +951,11 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	@SuppressWarnings("rawtypes")
 	private Map cellsMap = new CellMap(this);
 
+	/**
+	 * Gets the cells map.
+	 *
+	 * @return the cells map
+	 */
 	@SuppressWarnings("rawtypes")
 	public final Map getCellsMap() {
 		return cellsMap;
@@ -1003,11 +1019,11 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 */
 	public final void populateComponent(final ComponentSystemEvent event) {
 		UIComponent component = event.getComponent();
-		int[] rowcol = cellHelper
+		int[] rowcol = CellUtility
 				.getRowColFromComponentAttributes(component);
 		int row = rowcol[0];
 		int col = rowcol[1];
-		FacesCell fcell = cellHelper.getFacesCellFromBodyRow(row, col,
+		FacesCell fcell = CellUtility.getFacesCellFromBodyRow(row, col,
 				bodyRows);
 		CellControlsHelper.populateAttributes(component, fcell,
 				this.getCellDefaultControl());

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.chart;
 
 /**
@@ -65,6 +69,9 @@ public enum ChartType {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Enum#toString()
+	 */
 	@Override
 	public String toString() {
 		return string;

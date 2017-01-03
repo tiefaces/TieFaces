@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
@@ -26,6 +25,7 @@ import org.tiefaces.components.websheet.dataobjects.XColor;
  */
 public final class ColorUtility {
 
+	
 	/**
 	 * prevent initialize.
 	 */
@@ -241,18 +241,20 @@ public final class ColorUtility {
 
 	/**
 	 * get line color of line chart from CTLineSer.
-	 * 
+	 *
 	 * @param index
 	 *            line index.
+	 * @param ctSpPr
+	 *            the ct sp pr
 	 * @param themeTable
 	 *            themeTable.
-	 * @param isLineColor TODO
-	 * @param ctLineSer
-	 *            ctLineSer.
+	 * @param isLineColor
+	 *            TODO
 	 * @return xcolor.
 	 */
 	public static XColor geColorFromSpPr(final int index,
-			final CTShapeProperties ctSpPr, final ThemesTable themeTable, boolean isLineColor) {
+			final CTShapeProperties ctSpPr, final ThemesTable themeTable,
+			final boolean isLineColor) {
 
 		CTSolidColorFillProperties colorFill = null;
 

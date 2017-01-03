@@ -5,6 +5,8 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.util.logging.Logger;
+
 /**
  * Header cell object used for Primefaces datatable header.
  * 
@@ -12,105 +14,199 @@ package org.tiefaces.components.websheet.dataobjects;
  */
 public class HeaderCell {
 
-	private boolean debug = true;
+	/** log instance. */
+	private static final Logger log = Logger.getLogger(
+			Thread.currentThread().getStackTrace()[0].getClassName());
 
-	private void debug(String msg) {
-		if (debug) {
-			System.out.println("debug: " + msg);
-		}
-	}
-
+	/** The rowspan. */
 	private String rowspan; // cell row span attribute
+
+	/** The colspan. */
 	private String colspan; // cell column span attribute
+
+	/** The cell value. */
 	private String cellValue; // header text label
+
+	/** The style. */
 	private String style; // cell web css style attriubte
+
+	/** The column style. */
 	private String columnStyle; // cell web css style attriubte
+
+	/** The rendered. */
 	private boolean rendered = true;
+
+	/** The column rendered. */
 	private boolean columnRendered = true;
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param rowspan
+	 *
+	 * @param prowspan
 	 *            cell row span attribute
-	 * @param colspan
+	 * @param pcolspan
 	 *            cell column span attribute
-	 * @param style
+	 * @param pstyle
 	 *            cell web css style attriubte
-	 * @param headertext
-	 *            header text label
+	 * @param pcolumnStyle
+	 *            the column style
+	 * @param pcellValue
+	 *            the cell value
+	 * @param prendered
+	 *            the rendered
+	 * @param pcolumnRendered
+	 *            the column rendered
 	 */
-	public HeaderCell(String rowspan, String colspan, String style,
-			String columnStyle, String cellValue, boolean rendered, boolean columnRendered) {
+	public HeaderCell(final String prowspan, final String pcolspan,
+			final String pstyle, final String pcolumnStyle,
+			final String pcellValue, final boolean prendered,
+			final boolean pcolumnRendered) {
 		super();
-		this.rowspan = rowspan;
-		this.colspan = colspan;
-		this.style = style;
-		this.columnStyle = columnStyle;
-		this.cellValue = cellValue;
-		this.rendered = rendered;
-		this.columnRendered = columnRendered;
-		debug("header cell construction: rowspan = " + rowspan + " colspan="
-				+ colspan + " style=" + style + " columnStyle=" + columnStyle
-				+ " cellValue=" + cellValue+" rendered = "+rendered+" columnRendered = "+ columnRendered);
+		this.rowspan = prowspan;
+		this.colspan = pcolspan;
+		this.style = pstyle;
+		this.columnStyle = pcolumnStyle;
+		this.cellValue = pcellValue;
+		this.rendered = prendered;
+		this.columnRendered = pcolumnRendered;
+		log.fine("header cell construction: rowspan = " + prowspan
+				+ " colspan=" + pcolspan + " style=" + pstyle
+				+ " columnStyle=" + pcolumnStyle + " cellValue="
+				+ pcellValue + " rendered = " + prendered
+				+ " columnRendered = " + pcolumnRendered);
 	}
 
+	/**
+	 * Gets the rowspan.
+	 *
+	 * @return the rowspan
+	 */
 	public String getRowspan() {
 		return rowspan;
 	}
 
-	public void setRowspan(String rowspan) {
-		this.rowspan = rowspan;
+	/**
+	 * Sets the rowspan.
+	 *
+	 * @param prowspan
+	 *            the new rowspan
+	 */
+	public void setRowspan(final String prowspan) {
+		this.rowspan = prowspan;
 	}
 
+	/**
+	 * Gets the colspan.
+	 *
+	 * @return the colspan
+	 */
 	public String getColspan() {
 		return colspan;
 	}
 
-	public void setColspan(String colspan) {
-		this.colspan = colspan;
+	/**
+	 * Sets the colspan.
+	 *
+	 * @param pcolspan
+	 *            the new colspan
+	 */
+	public void setColspan(final String pcolspan) {
+		this.colspan = pcolspan;
 	}
 
+	/**
+	 * Gets the cell value.
+	 *
+	 * @return the cell value
+	 */
 	public String getCellValue() {
 		return cellValue;
 	}
 
-	public void setCellValue(String cellValue) {
-		this.cellValue = cellValue;
+	/**
+	 * Sets the cell value.
+	 *
+	 * @param pcellValue
+	 *            the new cell value
+	 */
+	public void setCellValue(final String pcellValue) {
+		this.cellValue = pcellValue;
 	}
 
+	/**
+	 * Gets the column style.
+	 *
+	 * @return the column style
+	 */
 	public String getColumnStyle() {
 		return columnStyle;
 	}
 
-	public void setColumnStyle(String columnStyle) {
-		this.columnStyle = columnStyle;
+	/**
+	 * Sets the column style.
+	 *
+	 * @param pcolumnStyle
+	 *            the new column style
+	 */
+	public void setColumnStyle(final String pcolumnStyle) {
+		this.columnStyle = pcolumnStyle;
 	}
 
+	/**
+	 * Gets the style.
+	 *
+	 * @return the style
+	 */
 	public String getStyle() {
 		return style;
 	}
 
-	public void setStyle(String style) {
-		this.style = style;
+	/**
+	 * Sets the style.
+	 *
+	 * @param pstyle
+	 *            the new style
+	 */
+	public void setStyle(final String pstyle) {
+		this.style = pstyle;
 	}
 
+	/**
+	 * Checks if is rendered.
+	 *
+	 * @return true, if is rendered
+	 */
 	public boolean isRendered() {
 		return rendered;
 	}
 
-	public void setRendered(boolean rendered) {
-		this.rendered = rendered;
+	/**
+	 * Sets the rendered.
+	 *
+	 * @param prendered
+	 *            the new rendered
+	 */
+	public void setRendered(final boolean prendered) {
+		this.rendered = prendered;
 	}
-	
-	
 
+	/**
+	 * Checks if is column rendered.
+	 *
+	 * @return true, if is column rendered
+	 */
 	public boolean isColumnRendered() {
 		return columnRendered;
 	}
 
-	public void setColumnRendered(boolean columnRendered) {
-		this.columnRendered = columnRendered;
+	/**
+	 * Sets the column rendered.
+	 *
+	 * @param pcolumnRendered
+	 *            the new column rendered
+	 */
+	public void setColumnRendered(boolean pcolumnRendered) {
+		this.columnRendered = pcolumnRendered;
 	}
 
 	/**

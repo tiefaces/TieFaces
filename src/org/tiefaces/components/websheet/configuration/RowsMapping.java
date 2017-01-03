@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.configuration;
 
 import java.util.ArrayList;
@@ -7,29 +11,50 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
 
-public class RowsMapping  {
-//implements Cloneable
+/**
+ * The Class RowsMapping.
+ */
+public class RowsMapping {
+
+	/** The rows map. */
 	private Map<Integer, List<Row>> rowsMap = new HashMap<Integer, List<Row>>();
 
-	
-	
-   public RowsMapping() {
+	/**
+	 * Instantiates a new rows mapping.
+	 */
+	public RowsMapping() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-   /**
-     * Copy constructor
-     */
-    public  RowsMapping( RowsMapping source) {
-    	this.rowsMap.putAll(source.getRowsMap());
-    }		
-	
+	/**
+	 * Copy constructor.
+	 *
+	 * @param source
+	 *            the source
+	 */
+	public RowsMapping(final RowsMapping source) {
+		this.rowsMap.putAll(source.getRowsMap());
+	}
+
+	/**
+	 * Gets the rows map.
+	 *
+	 * @return the rows map
+	 */
 	public Map<Integer, List<Row>> getRowsMap() {
 		return rowsMap;
 	}
 
-	public void addRow(Integer sourceRowNum, Row targetRow) {
+	/**
+	 * Adds the row.
+	 *
+	 * @param sourceRowNum
+	 *            the source row num
+	 * @param targetRow
+	 *            the target row
+	 */
+	public void addRow(final Integer sourceRowNum, final Row targetRow) {
 		List<Row> mapRowList = rowsMap.get(sourceRowNum);
 		if (mapRowList == null) {
 			mapRowList = new ArrayList<Row>();
@@ -37,44 +62,59 @@ public class RowsMapping  {
 		if (!mapRowList.contains(targetRow)) {
 			mapRowList.add(targetRow);
 			rowsMap.put(sourceRowNum, mapRowList);
-		}	
+		}
 	}
-	
-	public void removeRow(Integer sourceRowNum, Row targetRow) {
+
+	/**
+	 * Removes the row.
+	 *
+	 * @param sourceRowNum
+	 *            the source row num
+	 * @param targetRow
+	 *            the target row
+	 */
+	public void removeRow(final Integer sourceRowNum, final Row targetRow) {
 		List<Row> mapRowList = rowsMap.get(sourceRowNum);
 		if (mapRowList != null) {
 			mapRowList.remove(targetRow);
 			rowsMap.put(sourceRowNum, mapRowList);
 		}
 	}
-	
-	public List<Row> get(Integer sourceRowNum) {
+
+	/**
+	 * Gets the.
+	 *
+	 * @param sourceRowNum
+	 *            the source row num
+	 * @return the list
+	 */
+	public List<Row> get(final Integer sourceRowNum) {
 		List<Row> mapRowList = rowsMap.get(sourceRowNum);
 		return mapRowList;
 	}
-	
-	
+
+	/**
+	 * Merge map.
+	 *
+	 * @param addMap
+	 *            the add map
+	 */
 	/*
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	*/
-	public void mergeMap(RowsMapping addMap) {
-		Map<Integer, List<Row>>  map = addMap.getRowsMap();
+	 * public Object clone() { try { return super.clone(); } catch (Exception e)
+	 * { return null; } }
+	 */
+	public void mergeMap(final RowsMapping addMap) {
+		Map<Integer, List<Row>> map = addMap.getRowsMap();
 		for (Map.Entry<Integer, List<Row>> entry : map.entrySet()) {
 			List<Row> entryRowList = entry.getValue();
-			if ((entryRowList != null) && (entryRowList.size()>0)) {
-				for (Row row: entryRowList) {
+			if ((entryRowList != null) && (entryRowList.size() > 0)) {
+				for (Row row : entryRowList) {
 					this.addRow(entry.getKey(), row);
 				}
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Obtain a human readable representation.
 	 * 
@@ -85,14 +125,14 @@ public class RowsMapping  {
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
 		for (Map.Entry<Integer, List<Row>> entry : rowsMap.entrySet()) {
-			sb.append(entry.getKey()+"=[");
-			for (Row row: entry.getValue()) {
-				sb.append(row.getRowNum()+",");
+			sb.append(entry.getKey() + "=[");
+			for (Row row : entry.getValue()) {
+				sb.append(row.getRowNum() + ",");
 			}
 			sb.append("], ");
-		}		
+		}
 		sb.append("}");
 		return sb.toString();
-	}		
-	
+	}
+
 }

@@ -21,18 +21,35 @@ import org.primefaces.context.RequestContext;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 
+/**
+ * The Class DataHandler.
+ */
 public class DataHandler {
 
+	/** The parent. */
 	private TieWebSheetBean parent = null;
 
+	/** The debug. */
 	private static boolean debug = false;
 
+	/**
+	 * Debug.
+	 *
+	 * @param msg
+	 *            the msg
+	 */
 	private static void debug(String msg) {
 		if (debug) {
 			System.out.println("debug: " + msg);
 		}
 	}
 
+	/**
+	 * Instantiates a new data handler.
+	 *
+	 * @param parent
+	 *            the parent
+	 */
 	public DataHandler(TieWebSheetBean parent) {
 		super();
 		this.parent = parent;
@@ -44,6 +61,15 @@ public class DataHandler {
 	//
 	// }
 
+	/**
+	 * Gets the sheet config by page type id.
+	 *
+	 * @param sheetConfigMap
+	 *            the sheet config map
+	 * @param pageTypeId
+	 *            the page type id
+	 * @return the sheet config by page type id
+	 */
 	private SheetConfiguration getsheetConfigByPageTypeId(
 			Map<String, SheetConfiguration> sheetConfigMap,
 			BigDecimal pageTypeId) {
@@ -150,11 +176,24 @@ public class DataHandler {
 	// }
 	// }
 
+	/**
+	 * Sets the unsaved status.
+	 *
+	 * @param requestContext
+	 *            the request context
+	 * @param statusFlag
+	 *            the status flag
+	 */
 	public void setUnsavedStatus(RequestContext requestContext,
 			Boolean statusFlag) {
 		// requestContext.execute("setUnsavedState("+statusFlag+")");
 	}
 
+	/**
+	 * Checks if is unsaved status.
+	 *
+	 * @return the boolean
+	 */
 	public Boolean isUnsavedStatus() {
 		Map<String, Object> viewMap = FacesContext.getCurrentInstance()
 				.getViewRoot().getViewMap();

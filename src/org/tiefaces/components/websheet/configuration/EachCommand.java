@@ -1,18 +1,13 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.configuration;
 
-import static org.tiefaces.common.TieConstants.COPY_SHEET_PREFIX;
-import static org.tiefaces.common.TieConstants.EXCEL_SHEET_NAME_LIMIT;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
-import org.tiefaces.components.websheet.service.CellHelper;
 
 /**
  * Each command represent the repeat area which typically using a group of data.
@@ -36,12 +31,20 @@ public class EachCommand extends ConfigCommand {
 	/** class name holder. */
 	private String className;
 
-
+	/**
+	 * Instantiates a new each command.
+	 */
 	public EachCommand() {
 		super();
 	}
 
-	public EachCommand(EachCommand sourceCommand) {
+	/**
+	 * Instantiates a new each command.
+	 *
+	 * @param sourceCommand
+	 *            the source command
+	 */
+	public EachCommand(final EachCommand sourceCommand) {
 		super((ConfigCommand) sourceCommand);
 		this.items = sourceCommand.items;
 		this.var = sourceCommand.var;
@@ -49,42 +52,98 @@ public class EachCommand extends ConfigCommand {
 		this.select = sourceCommand.select;
 	}
 
+	/**
+	 * Gets the items.
+	 *
+	 * @return the items
+	 */
 	public final String getItems() {
 		return items;
 	}
 
+	/**
+	 * Sets the items.
+	 *
+	 * @param pItems
+	 *            the new items
+	 */
 	public final void setItems(final String pItems) {
 		this.items = pItems;
 	}
 
+	/**
+	 * Gets the var.
+	 *
+	 * @return the var
+	 */
 	public final String getVar() {
 		return var;
 	}
 
+	/**
+	 * Sets the var.
+	 *
+	 * @param pVar
+	 *            the new var
+	 */
 	public final void setVar(final String pVar) {
 		this.var = pVar;
 	}
 
+	/**
+	 * Gets the allow add.
+	 *
+	 * @return the allow add
+	 */
 	public final String getAllowAdd() {
 		return allowAdd;
 	}
 
+	/**
+	 * Sets the allow add.
+	 *
+	 * @param pAllowAdd
+	 *            the new allow add
+	 */
 	public final void setAllowAdd(final String pAllowAdd) {
 		this.allowAdd = pAllowAdd;
 	}
 
+	/**
+	 * Gets the select.
+	 *
+	 * @return the select
+	 */
 	public String getSelect() {
 		return select;
 	}
 
-	public void setSelect(String select) {
+	/**
+	 * Sets the select.
+	 *
+	 * @param select
+	 *            the new select
+	 */
+	public void setSelect(final String select) {
 		this.select = select;
 	}
+
+	/**
+	 * Gets the class name.
+	 *
+	 * @return the class name
+	 */
 	public String getClassName() {
 		return className;
 	}
 
-	public void setClassName(String className) {
+	/**
+	 * Sets the class name.
+	 *
+	 * @param className
+	 *            the new class name
+	 */
+	public void setClassName(final String className) {
 		this.className = className;
 	}
 
@@ -114,16 +173,25 @@ public class EachCommand extends ConfigCommand {
 
 	}
 
-	@SuppressWarnings("rawtypes")
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#buildAt(java.lang.
+	 * String, org.tiefaces.components.websheet.configuration.ConfigBuildRef,
+	 * int, java.util.Map, java.util.List)
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public int buildAt(String fullName, ConfigBuildRef configBuildRef,
-			int atRow, Map<String, Object> context,
-			List<RowsMapping> currentRowsMappingList
-			) {
+	public int buildAt(String fullName, 
+			final ConfigBuildRef configBuildRef,
+			final int atRow, final Map<String, Object> context,
+			final List<RowsMapping> currentRowsMappingList) {
 
-		fullName = fullName + ":"+ this.getCommandName();
+		fullName = fullName + ":" + this.getCommandName();
 		Collection itemsCollection = ConfigurationHelper
-				.transformToCollectionObject(configBuildRef.getEngine(), items, context);
+				.transformToCollectionObject(configBuildRef.getEngine(),
+						items, context);
 
 		int index = 0;
 		ExpressionEngine selectEngine = null;
@@ -133,95 +201,82 @@ public class EachCommand extends ConfigCommand {
 
 		int insertPosition = atRow;
 		List<RowsMapping> commandRowsMappingList = new ArrayList<RowsMapping>();
-		
-		String objClassName = this.getClassName(); 
-		
+
+		String objClassName = this.getClassName();
+
 		if (objClassName == null) {
-			objClassName = configBuildRef.getCollectionObjNameMap().get(this.var);
-		}		
+			objClassName = configBuildRef.getCollectionObjNameMap()
+					.get(this.var);
+		}
 		if (configBuildRef.isAddMode() && itemsCollection.isEmpty()) {
 			// do something here to insert one empty object
 			try {
-				itemsCollection.add(Class.forName(objClassName).newInstance());
+				itemsCollection
+						.add(Class.forName(objClassName).newInstance());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}
-		
+
 		// loop through each object in the collection
 		for (Object obj : itemsCollection) {
 			// gather and cache object class name which used for add row
 			if (objClassName == null) {
 				objClassName = obj.getClass().getName();
-				configBuildRef.getCollectionObjNameMap().put(this.var, objClassName);
+				configBuildRef.getCollectionObjNameMap().put(this.var,
+						objClassName);
 			}
 			RowsMapping unitRowsMapping = new RowsMapping();
 			context.put(var, obj);
-			if (selectEngine != null
-					&& !ConfigurationHelper.isConditionTrue(selectEngine,
-							context)) {
+			if (selectEngine != null && !ConfigurationHelper
+					.isConditionTrue(selectEngine, context)) {
 				context.remove(var);
 				continue;
 			}
-			ConfigurationHelper.insertEachTemplate(this.getConfigRange(), configBuildRef, index, insertPosition,
-					unitRowsMapping);
-			ConfigRange currentRange = ConfigurationHelper.buildCurrentRange(this.getConfigRange(), configBuildRef.getSheet(), insertPosition);
+			ConfigurationHelper.insertEachTemplate(this.getConfigRange(),
+					configBuildRef, index, insertPosition, unitRowsMapping);
+			ConfigRange currentRange = ConfigurationHelper
+					.buildCurrentRange(this.getConfigRange(),
+							configBuildRef.getSheet(), insertPosition);
 			currentRowsMappingList.add(unitRowsMapping);
 			commandRowsMappingList.add(unitRowsMapping);
-			
+
 			String unitFullName = fullName + "." + index;
-			currentRange.getAttrs().allowAdd = false;
+			currentRange.getAttrs().setAllowAdd(false);
 			if ((this.allowAdd != null)
-					&& (this.allowAdd.trim().equalsIgnoreCase("true"))) {			
-				currentRange.getAttrs().allowAdd = true;
+					&& (this.allowAdd.trim().equalsIgnoreCase("true"))) {
+				currentRange.getAttrs().setAllowAdd(true);
 				configBuildRef.setBodyAllowAdd(true);
-			} 
-			configBuildRef.putShiftAttrs(unitFullName, currentRange.getAttrs(), new RowsMapping(unitRowsMapping));
-			
-			int length = currentRange.buildAt( unitFullName, configBuildRef,
-					insertPosition, context, 
-					currentRowsMappingList );
-			currentRange.getAttrs().finalLength = length;
+			}
+			configBuildRef.putShiftAttrs(unitFullName,
+					currentRange.getAttrs(),
+					new RowsMapping(unitRowsMapping));
+
+			int length = currentRange.buildAt(unitFullName, configBuildRef,
+					insertPosition, context, currentRowsMappingList);
+			currentRange.getAttrs().setFinalLength(length);
 			insertPosition += length;
 			currentRowsMappingList.remove(unitRowsMapping);
 			index++;
 			context.remove(var);
 		}
-/* remove this as it caused issues.		
-		// save the commandRowsMapping to the last one in currentRowsMapping
-		// which is also the parent of the each command
-		RowsMapping parentRowsMapping = new RowsMapping();
-		int  parentIndex = currentRowsMappingList.size() - 1; 
-		parentRowsMapping.mergeMap(currentRowsMappingList
-				.get(parentIndex));
-		for (RowsMapping rowsMapping : commandRowsMappingList) {
-			parentRowsMapping.mergeMap(rowsMapping);
-		}
-		currentRowsMappingList.set(parentIndex, parentRowsMapping);
-*/		
+
 		int finalLength = insertPosition - atRow;
 		return finalLength;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.tiefaces.components.websheet.configuration.Command#getCommandName()
+	 */
+	/*
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#getCommandName()
+	 */
 	@Override
 	public String getCommandName() {
-		return this.getCommandTypeName().substring(0,1).toUpperCase()+"."+this.getVar().trim();
+		return this.getCommandTypeName().substring(0, 1).toUpperCase() + "."
+				+ this.getVar().trim();
 	}
-
-	// public Object deepClone(Object object) {
-	// try {
-	// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	// ObjectOutputStream oos = new ObjectOutputStream(baos);
-	// oos.writeObject(object);
-	// ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-	// ObjectInputStream ois = new ObjectInputStream(bais);
-	// return ois.readObject();
-	// }
-	// catch (Exception e) {
-	// e.printStackTrace();
-	// return null;
-	// }
-	// }
-
 
 }

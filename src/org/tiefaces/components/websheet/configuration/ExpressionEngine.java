@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.configuration;
 
 import java.util.HashMap;
@@ -59,10 +63,6 @@ public class ExpressionEngine {
 
 	/**
 	 * constructor.
-	 * 
-	 * @param context
-	 *            context map. public ExpressionEngine(final Map<String, Object>
-	 *            context) { jContext = new MapContext(context); }
 	 */
 
 	/**
@@ -74,18 +74,16 @@ public class ExpressionEngine {
 	 */
 
 	/**
-	 * constructor
+	 * constructor.
 	 */
 	public ExpressionEngine() {
 	}
 
 	/**
 	 * Evaluate the expression.
-	 * 
+	 *
 	 * @param expression
 	 *            string input expression.
-	 * @param context
-	 *            context map.
 	 * @return evaluated object.
 	 */
 	public final Object evaluate(final String expression) {

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet.service;
 
 
@@ -13,8 +17,15 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.DateTimeConverter;
 import javax.faces.convert.FacesConverter;
 
+/**
+ * The Class DateTimeCustomConverter.
+ */
 @FacesConverter("tieCalendaConverter")
 public class DateTimeCustomConverter implements Converter{
+ 
+ /* (non-Javadoc)
+  * @see javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext, javax.faces.component.UIComponent, java.lang.String)
+  */
  @Override
  public Object getAsObject(FacesContext context, UIComponent component, String value) {
   if(value == null){
@@ -29,6 +40,9 @@ public class DateTimeCustomConverter implements Converter{
   }
  }
  
+ /* (non-Javadoc)
+  * @see javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext, javax.faces.component.UIComponent, java.lang.Object)
+  */
  public String getAsString(FacesContext context, UIComponent component, Object value) {
   if(value == null){
    return "";
@@ -50,6 +64,15 @@ public class DateTimeCustomConverter implements Converter{
   }
  }
  
+ /**
+	 * Gets the locale.
+	 *
+	 * @param context
+	 *            the context
+	 * @param component
+	 *            the component
+	 * @return the locale
+	 */
  private Locale getLocale(FacesContext context, UIComponent component) {
 
 	 String locale = (String) component.getAttributes().get("locale");
@@ -61,6 +84,13 @@ public class DateTimeCustomConverter implements Converter{
 
  }
  
+ /**
+	 * String to locale.
+	 *
+	 * @param s
+	 *            the s
+	 * @return the locale
+	 */
  private Locale stringToLocale(String s) {
 	    StringTokenizer tempStringTokenizer = new StringTokenizer(s,",");
 	    if(tempStringTokenizer.hasMoreTokens());

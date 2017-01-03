@@ -25,9 +25,11 @@ public class FacesRow {
 	private boolean repeatZone;
 	/** cells in the row. */
 	private List<FacesCell> cells;
-	/** whether the row allow add/delete */
+	
+	/** whether the row allow add/delete. */
 	private boolean allowAdd;
 	
+	/** The origin row index. */
 	private int originRowIndex = -1;
 	/**
 	 * constructor.
@@ -38,52 +40,137 @@ public class FacesRow {
 		this.rowIndex = pRowIndex;
 	}
 	
+	/**
+	 * Gets the row index.
+	 *
+	 * @return the row index
+	 */
 	public final int getRowIndex() {
 		return rowIndex;
 	}
+	
+	/**
+	 * Sets the row index.
+	 *
+	 * @param pRowIndex
+	 *            the new row index
+	 */
 	public final void setRowIndex(final int pRowIndex) {
 		this.rowIndex = pRowIndex;
 	}
+	
+	/**
+	 * Checks if is rendered.
+	 *
+	 * @return true, if is rendered
+	 */
 	public final boolean isRendered() {
 		return rendered;
 	}
+	
+	/**
+	 * Sets the rendered.
+	 *
+	 * @param pRendered
+	 *            the new rendered
+	 */
 	public final void setRendered(final boolean pRendered) {
 		this.rendered = pRendered;
 	}
+	
+	/**
+	 * Gets the rowheight.
+	 *
+	 * @return the rowheight
+	 */
 	public final float getRowheight() {
 		return rowheight;
 	}
+	
+	/**
+	 * Sets the rowheight.
+	 *
+	 * @param pRowheight
+	 *            the new rowheight
+	 */
 	public final void setRowheight(final float pRowheight) {
 		this.rowheight = pRowheight;
 	}
+	
+	/**
+	 * Checks if is repeat zone.
+	 *
+	 * @return true, if is repeat zone
+	 */
 	public final boolean isRepeatZone() {
 		return repeatZone;
 	}
+	
+	/**
+	 * Sets the repeat zone.
+	 *
+	 * @param pRepeatZone
+	 *            the new repeat zone
+	 */
 	public final void setRepeatZone(final boolean pRepeatZone) {
 		this.repeatZone = pRepeatZone;
 	}
+	
+	/**
+	 * Checks if is allow add.
+	 *
+	 * @return true, if is allow add
+	 */
 	public boolean isAllowAdd() {
 		return allowAdd;
 	}
 
+	/**
+	 * Sets the allow add.
+	 *
+	 * @param allowAdd
+	 *            the new allow add
+	 */
 	public void setAllowAdd(boolean allowAdd) {
 		this.allowAdd = allowAdd;
 	}
 
+	/**
+	 * Gets the cells.
+	 *
+	 * @return the cells
+	 */
 	public final List<FacesCell> getCells() {
 		return cells;
 	}
 
+	/**
+	 * Sets the cells.
+	 *
+	 * @param pCells
+	 *            the new cells
+	 */
 	public final void setCells(final List<FacesCell> pCells) {
 		this.cells = pCells;
 	}
 
+	/**
+	 * Gets the origin row index.
+	 *
+	 * @return the origin row index
+	 */
 	public int getOriginRowIndex() {
 		return originRowIndex;
 	}
 
-	public void setOriginRowIndex(int originRowIndex) {
-		this.originRowIndex = originRowIndex;
+	/**
+	 * Sets the origin row index.
+	 *
+	 * @param poriginRowIndex
+	 *            the new origin row index
+	 */
+	public void setOriginRowIndex(final int poriginRowIndex) {
+		this.originRowIndex = poriginRowIndex;
 	}
 	
 }
