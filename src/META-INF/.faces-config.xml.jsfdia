@@ -1,14 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PROCESS model-entity="JSFProcess">
- <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
-   <PROCESS-ITEM-OUTPUT
-    ID="tieDialogTableLookup::#dialog#tieDialogTableLookup.xhtml"
-    NAME="output" PATH="/dialog/tieDialogTableLookup.xhtml"
-    TARGET="rules:#dialog#tieDialogTableLookup.xhtml"
-    TITLE="tieDialogTableLookup" model-entity="JSFProcessItemOutput"/>
-  </PROCESS-ITEM>
- </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules:#dialog#tieDialogTableLookup.xhtml"
-  PATH="/dialog/tieDialogTableLookup.xhtml" SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
-</PROCESS>
+<PROCESS model-entity="JSFProcess"/>

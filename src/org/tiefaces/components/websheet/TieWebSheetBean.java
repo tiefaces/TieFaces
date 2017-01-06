@@ -155,10 +155,6 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	@PostConstruct
 	public final void init() {
 		columns = new ArrayList<String>();
-		/*
-		 * remove script engine. engine = (ScriptEngine) FacesUtility
-		 * .evaluateExpressionGet("#{tieWebSheetApp.engine}");
-		 */
 		webSheetLoader = new WebSheetLoader(this);
 		cellHelper = new CellHelper(this);
 		dataHandler = new DataHandler(this);
@@ -728,13 +724,28 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 */
 	public final void onTabChange(final TabChangeEvent event) {
 		String tabName = event.getTab().getTitle();
+		loadWorkSheetByTabName(tabName);
+	}
+	/**
+	 * load worksheet by tab name.
+	 * @param tabName tab name.
+	 * @return 1 success. -1 failed.
+	 */
 
-		int sheetId = webSheetLoader.findTabIndexWithName(tabName);
+	public final int loadWorkSheetByTabName(final String tabName) {
 
-		if ((getSheetConfigMap() != null)
-				&& (sheetId < getSheetConfigMap().size())) {
-			webSheetLoader.loadWorkSheet(tabName);
+		try {
+			int sheetId = webSheetLoader.findTabIndexWithName(tabName);
+			if ((getSheetConfigMap() != null)
+					&& (sheetId < getSheetConfigMap().size())) {
+				webSheetLoader.loadWorkSheet(tabName);
+			}
+			return 1;
+		} catch (Exception ex) {
+			log.fine("loadWorkSheetByTabName failed. error = "
+					+ ex.getMessage());
 		}
+		return -1;
 	}
 
 	/** for download file. */
@@ -999,8 +1010,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	/**
 	 * cell default control.
 	 */
-	private Map<String, Map<String, String>> 
-	cellDefaultControl = new HashMap<String, Map<String, String>>();
+	private Map<String, Map<String, String>> cellDefaultControl = new HashMap<String, Map<String, String>>();
 
 	/**
 	 * get cell default control.

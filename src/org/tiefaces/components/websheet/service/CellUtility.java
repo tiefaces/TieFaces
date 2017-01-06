@@ -210,8 +210,8 @@ public final class CellUtility {
 	/**
 	 * evaluate boolean express.
 	 *
-	 * @param pscript
-	 *            express.
+     * @param expEngine expression engine.
+     * @param pscript script.
 	 * @return true (express is true) false ( express is false or invalid).
 	 */
 	public static boolean evalBoolExpression(
@@ -1604,6 +1604,7 @@ public final class CellUtility {
 	 *            the row index
 	 * @param colIndex
 	 *            the col index
+     * @param wb  workbook.
 	 * @return the poi cell with row col from current page
 	 */
 	public static Cell getPoiCellWithRowColFromCurrentPage(

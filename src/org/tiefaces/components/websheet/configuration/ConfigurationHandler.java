@@ -126,7 +126,7 @@ public class ConfigurationHandler {
 		sheetConfig.setSheetName(sheet.getSheetName());
 		int leftCol = sheet.getLeftCol();
 		int lastRow = sheet.getLastRowNum();
-		int firstRow = 0;
+		int firstRow = sheet.getFirstRowNum();
 		int rightCol = 0;
 		int maxRow = 0;
 		for (Row row : sheet) {
@@ -320,6 +320,10 @@ public class ConfigurationHandler {
 			final Map<String, SheetConfiguration> sheetConfigMap,
 			final CellAttributesMap cellAttributesMap) {
 
+	    if ((sheet.getLastRowNum() <=0 )&& (sheet.getRow(0)==null)) {
+	        // this is a empty sheet. skip it.
+	        return;
+	    }
 		int sheetRightCol = TieWebSheetUtility.getSheetRightCol(sheet);
 		List<ConfigCommand> commandList = buildCommandListFromSheetComment(
 				(XSSFSheet) sheet, sheetRightCol, cellAttributesMap);
@@ -427,11 +431,11 @@ public class ConfigurationHandler {
 		// if no form found, then use the whole sheet as form
 		if (!foundForm) {
 			String formName = sheet.getSheetName();
-			sheetConfigMap.put(formName,
-					getSheetConfiguration(sheet, formName));
-			formList.add(formName);
-			minRowNum = sheet.getFirstRowNum();
-			maxRowNum = sheet.getLastRowNum();
+   			sheetConfigMap.put(formName,
+    					getSheetConfiguration(sheet, formName));
+   			formList.add(formName);
+   			minRowNum = sheet.getFirstRowNum();
+   			maxRowNum = sheet.getLastRowNum();
 		}
 
 		ConfigurationHelper.setSaveAttrsForSheet(sheet, minRowNum,

@@ -274,11 +274,15 @@ public class ValidationHandler {
 		boolean allpass = true;
 		boolean passEmptyCheck = true;
 
-		Map<String, Object> viewMap = FacesContext.getCurrentInstance()
-				.getViewRoot().getViewMap();
-		Boolean fullvalidation = (Boolean) viewMap.get("fullValidation");
-		if ((fullvalidation != null) && (fullvalidation)) {
-			passEmptyCheck = false;
+		try {
+			Map<String, Object> viewMap = FacesContext.getCurrentInstance()
+					.getViewRoot().getViewMap();
+			Boolean fullvalidation = (Boolean) viewMap.get("fullValidation");
+			if ((fullvalidation != null) && (fullvalidation)) {
+				passEmptyCheck = false;
+			}
+		} catch (Exception ex) {
+			log.fine("cannot get fullValidation from view map. error = "+ex.getMessage());
 		}
 
 		int top = parent.getCurrentTopRow();

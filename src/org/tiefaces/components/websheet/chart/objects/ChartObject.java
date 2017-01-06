@@ -25,7 +25,7 @@ public interface ChartObject {
 	 * 
 	 * @param ctChart
 	 *            ctchart.
-	 * @return List. Could be List<CtLineChart>, List<CtBarChart>, ...
+	 * @return List.
 	 */
 	@SuppressWarnings("rawtypes")
 	List getChartListFromCtChart(CTChart ctChart);

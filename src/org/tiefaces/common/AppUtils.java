@@ -64,4 +64,11 @@ public final class AppUtils {
 
         return true;
     }
+    /**
+     * return current build version of tiefaces.
+     * @return tiefaces build version.
+     */
+    public static String getBuildVersion() {
+        return AppUtils.class.getPackage().getImplementationVersion();
+    }
 }

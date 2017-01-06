@@ -23,11 +23,8 @@ public class PostConstructApplicationEventListener
 			throws AbortProcessingException {
 
 		log.log(Level.INFO, "Running on TieFaces {0}",
-				getBuildVersion());
+				AppUtils.getBuildVersion());
 	}
 	
-	private String getBuildVersion() {
-		//return "1.0.8";
-		return getClass().getPackage().getImplementationVersion();
-	}
+
 }

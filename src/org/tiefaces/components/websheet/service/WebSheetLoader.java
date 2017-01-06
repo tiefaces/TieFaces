@@ -54,8 +54,8 @@ public class WebSheetLoader implements Serializable {
 	private TieWebSheetBean parent = null;
 
 	/** logger. */
-	private static final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger log = Logger.getLogger(Thread
+			.currentThread().getStackTrace()[0].getClassName());
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -93,31 +93,25 @@ public class WebSheetLoader implements Serializable {
 		String sheetName = sheetConfig.getSheetName();
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
 
-		int totalWidth = CellUtility.calcTotalWidth(sheet1, left,
-				right,
-				TieWebSheetUtility
-						.pixel2WidthUnits(parent.getLineNumberColumnWidth()
-								+ parent.getAddRowColumnWidth()));
+		int totalWidth = CellUtility.calcTotalWidth(sheet1, left, right,
+				TieWebSheetUtility.pixel2WidthUnits(parent
+						.getLineNumberColumnWidth()
+						+ parent.getAddRowColumnWidth()));
 		log.fine("totalwidth = " + totalWidth);
 		String formWidthStyle = sheetConfig.getFormWidth();
 		if ((formWidthStyle == null) || (formWidthStyle.isEmpty())) {
-			parent.setTableWidthStyle(
-					TieWebSheetUtility.widthUnits2Pixel(totalWidth)
-							+ "px;");
+			parent.setTableWidthStyle(TieWebSheetUtility
+					.widthUnits2Pixel(totalWidth) + "px;");
 		} else {
 			parent.setTableWidthStyle(formWidthStyle);
 		}
 
-		parent.setLineNumberColumnWidthStyle(
-				getWidthStyle(
-						TieWebSheetUtility.pixel2WidthUnits(
-								parent.getLineNumberColumnWidth()),
-						totalWidth));
-		parent.setAddRowColumnWidthStyle(
-				getWidthStyle(
-						TieWebSheetUtility.pixel2WidthUnits(
-								parent.getAddRowColumnWidth()),
-						totalWidth));
+		parent.setLineNumberColumnWidthStyle(getWidthStyle(
+				TieWebSheetUtility.pixel2WidthUnits(parent
+						.getLineNumberColumnWidth()), totalWidth));
+		parent.setAddRowColumnWidthStyle(getWidthStyle(TieWebSheetUtility
+				.pixel2WidthUnits(parent.getAddRowColumnWidth()),
+				totalWidth));
 
 		log.fine("tableWidthStyle = " + parent.getTableWidthStyle()
 				+ " lineNumberColumnWidthStyle= "
@@ -129,16 +123,18 @@ public class WebSheetLoader implements Serializable {
 
 		if (top < 0) {
 			// this is blank configuration. set column letter as header
-			parent.getHeaderRows().add(loadHeaderRowWithoutConfigurationTab(
-					sheet1, left, right, totalWidth, true));
+			parent.getHeaderRows().add(
+					loadHeaderRowWithoutConfigurationTab(sheet1, left,
+							right, totalWidth, true));
 			// set showlinenumber to true as default
 			parent.setShowLineNumber(true);
 		} else {
-			parent.getHeaderRows().add(loadHeaderRowWithoutConfigurationTab(
-					sheet1, left, right, totalWidth, false));
+			parent.getHeaderRows().add(
+					loadHeaderRowWithoutConfigurationTab(sheet1, left,
+							right, totalWidth, false));
 			for (int i = top; i <= bottom; i++) {
-				parent.getHeaderRows()
-						.add(loadHeaderRowWithConfigurationTab(sheetConfig,
+				parent.getHeaderRows().add(
+						loadHeaderRowWithConfigurationTab(sheetConfig,
 								sheet1, sheetName, i, top, left, right,
 								totalWidth, cellRangeMap,
 								skippedRegionCells));
@@ -195,8 +191,8 @@ public class WebSheetLoader implements Serializable {
 		if (headercells.size() < parent.getMaxColCounts()) {
 			int fills = parent.getMaxColCounts() - headercells.size();
 			for (int s = 0; s < fills; s++) {
-				headercells.add(
-						new HeaderCell("1", "1", "", "", "", false, false));
+				headercells.add(new HeaderCell("1", "1", "", "", "", false,
+						false));
 			}
 		}
 	}
@@ -223,8 +219,7 @@ public class WebSheetLoader implements Serializable {
 		String columnstyle = "";
 		if (cell != null) {
 			columnstyle += CellUtility.getCellStyle(wb, cell, "")
-					+ CellUtility.getCellFontStyle(wb, cell, "",
-							rowHeight); // +
+					+ CellUtility.getCellFontStyle(wb, cell, "", rowHeight); // +
 		}
 		// "background-image: none ;color: #000000;";
 		columnstyle = columnstyle + getWidthStyle(colWidth, totalWidth);
@@ -274,8 +269,8 @@ public class WebSheetLoader implements Serializable {
 	 */
 	private List<HeaderCell> loadHeaderRowWithConfigurationTab(
 			SheetConfiguration sheetConfig, Sheet sheet1, String sheetName,
-			int currentRow, int top, int left, int right, double totalWidth,
-			Map<String, CellRangeAddress> cellRangeMap,
+			int currentRow, int top, int left, int right,
+			double totalWidth, Map<String, CellRangeAddress> cellRangeMap,
 			List<String> skippedRegionCells) {
 
 		Row row = sheet1.getRow(currentRow);
@@ -293,28 +288,29 @@ public class WebSheetLoader implements Serializable {
 							.getOriginalRowNumInHiddenColumn(row);
 					if (cell != null) {
 						FacesCell fcell = new FacesCell();
-						CellUtility.convertCell(sheetConfig,
-								fcell, cell, (currentRow - top), 1, top,
-								false, cellRangeMap, originRowIndex,
+						CellUtility.convertCell(sheetConfig, fcell, cell,
+								(currentRow - top), 1, top, false,
+								cellRangeMap, originRowIndex,
 								parent.getCellAttributesMap(), null);
 						parent.getPicHelper().setupFacesCellPictureCharts(
-								sheet1, fcell, TieWebSheetUtility
-										.getFullCellRefName(sheet1, cell));
-						CellUtility.setupCellStyle(
-								parent.getWb(), sheet1, fcell, cell,
-								row.getHeightInPoints());
+								sheet1,
+								fcell,
+								TieWebSheetUtility.getFullCellRefName(
+										sheet1, cell));
+						CellUtility.setupCellStyle(parent.getWb(), sheet1,
+								fcell, cell, row.getHeightInPoints());
 						fcell.setColumnStyle(fcell.getColumnStyle()
 								+ getColumnWidthStyle(sheet1, cellRangeMap,
 										cellindex, cindex, totalWidth));
 						fcell.setColumnIndex(cindex);
 
-						headercells.add(new HeaderCell(
-								fcell.getRowspan() + "",
-								fcell.getColspan() + "", fcell.getStyle(),
-								fcell.getColumnStyle(),
-								CellUtility
-										.getCellValueWithFormat(cell, parent.getFormulaEvaluator(), parent.getDataFormatter()),
-								true, true));
+						headercells.add(new HeaderCell(fcell.getRowspan()
+								+ "", fcell.getColspan() + "", fcell
+								.getStyle(), fcell.getColumnStyle(),
+								CellUtility.getCellValueWithFormat(cell,
+										parent.getFormulaEvaluator(),
+										parent.getDataFormatter()), true,
+								true));
 					}
 				}
 
@@ -423,8 +419,7 @@ public class WebSheetLoader implements Serializable {
 			clearWorkbook();
 			// only support xssf workbook now since 2016 July
 			if (!(wb instanceof XSSFWorkbook)) {
-				log.fine(
-						"Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
+				log.fine("Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
 				return -1;
 			}
 			parent.setWb(wb);
@@ -432,11 +427,11 @@ public class WebSheetLoader implements Serializable {
 			parent.setFormulaEvaluator(parent.getWb().getCreationHelper()
 					.createFormulaEvaluator());
 			parent.setDataFormatter(new DataFormatter());
-			parent.setSheetConfigMap(
-					new ConfigurationHandler(parent).buildConfiguration());
+			parent.setSheetConfigMap(new ConfigurationHandler(parent)
+					.buildConfiguration());
 			parent.reCalcMaxColCounts();
-			parent.setPicturesMap(
-					parent.getPicHelper().getPictruesMap(parent.getWb()));
+			parent.setPicturesMap(parent.getPicHelper().getPictruesMap(
+					parent.getWb()));
 			parent.getChartHelper().loadChartsMap();
 			initSheet();
 			initTabs();
@@ -461,8 +456,8 @@ public class WebSheetLoader implements Serializable {
 		parent.setTabs(new ArrayList<tabModel>());
 		if (parent.getSheetConfigMap() != null) {
 			for (String key : parent.getSheetConfigMap().keySet()) {
-				parent.getTabs()
-						.add(new tabModel("form_" + key, key, "form"));
+				parent.getTabs().add(
+						new tabModel("form_" + key, key, "form"));
 			}
 		}
 	}
@@ -494,8 +489,8 @@ public class WebSheetLoader implements Serializable {
 				.values()) {
 			List<RowsMapping> currentRowsMappingList = null;
 			ConfigBuildRef configBuildRef = new ConfigBuildRef(
-					parent.getWbWrapper(),
-					parent.getWb().getSheet(sheetConfig.getSheetName()),
+					parent.getWbWrapper(), parent.getWb().getSheet(
+							sheetConfig.getSheetName()),
 					parent.getExpEngine(), parent.getCellHelper(),
 					sheetConfig.getCachedOriginFormulas(),
 					parent.getCellAttributesMap(),
@@ -505,10 +500,10 @@ public class WebSheetLoader implements Serializable {
 					sheetConfig.getFormCommand().getTopRow(),
 					parent.getDataContext(), currentRowsMappingList);
 			sheetConfig.setShiftMap(configBuildRef.getShiftMap());
-			sheetConfig.setCollectionObjNameMap(
-					configBuildRef.getCollectionObjNameMap());
-			sheetConfig.setCommandIndexMap(
-					configBuildRef.getCommandIndexMap());
+			sheetConfig.setCollectionObjNameMap(configBuildRef
+					.getCollectionObjNameMap());
+			sheetConfig.setCommandIndexMap(configBuildRef
+					.getCommandIndexMap());
 			sheetConfig.setWatchList(configBuildRef.getWatchList());
 			sheetConfig
 					.setBodyAllowAddRows(configBuildRef.isBodyAllowAdd());
@@ -557,11 +552,11 @@ public class WebSheetLoader implements Serializable {
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
 		parent.getWb().setActiveSheet(parent.getWb().getSheetIndex(sheet1));
 
-		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
-				.get(tabName);
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
+				tabName);
 
-		parent.setMaxRowsPerPage(
-				parent.getSheetConfigMap().get(tabName).getMaxRowPerPage());
+		parent.setMaxRowsPerPage(parent.getSheetConfigMap().get(tabName)
+				.getMaxRowPerPage());
 		parent.setBodyAllowAddRows(parent.getSheetConfigMap().get(tabName)
 				.isBodyAllowAddRows());
 
@@ -578,8 +573,10 @@ public class WebSheetLoader implements Serializable {
 		// reset datatable current page to 1
 		setDataTablePage(0);
 		saveObjs();
-		RequestContext.getCurrentInstance()
-				.update(parent.getClientId() + ":websheettab");
+		if (RequestContext.getCurrentInstance() != null) {
+			RequestContext.getCurrentInstance().update(
+					parent.getClientId() + ":websheettab");
+		}
 	}
 
 	/**
@@ -604,21 +601,25 @@ public class WebSheetLoader implements Serializable {
 	 */
 	private void saveObjs() {
 
-		Map<String, Object> viewMap = FacesContext.getCurrentInstance()
-				.getViewRoot().getViewMap();
-		// viewMap.put("wb", wb);
-		// viewMap.put("formulaEvaluator", formulaEvaluator);
-		// viewMap.put("dataFormatter", dataFormatter);
-		// viewMap.put("headerRows", headerRows);
-		// viewMap.put("bodyRows", bodyRows);
-		// viewMap.put("sheetConfigMap", sheetConfigMap);
-		// viewMap.put("engine",engine);
-		// viewMap.put("tabs", tabs);
-		viewMap.put("currentTabName", parent.getCurrentTabName());
-		// viewMap.put("templateName", templateName);
-		viewMap.put("fullValidation", parent.getFullValidation());
+		try {
+			Map<String, Object> viewMap = FacesContext.getCurrentInstance()
+					.getViewRoot().getViewMap();
+			// viewMap.put("wb", wb);
+			// viewMap.put("formulaEvaluator", formulaEvaluator);
+			// viewMap.put("dataFormatter", dataFormatter);
+			// viewMap.put("headerRows", headerRows);
+			// viewMap.put("bodyRows", bodyRows);
+			// viewMap.put("sheetConfigMap", sheetConfigMap);
+			// viewMap.put("engine",engine);
+			// viewMap.put("tabs", tabs);
+			viewMap.put("currentTabName", parent.getCurrentTabName());
+			// viewMap.put("templateName", templateName);
+			viewMap.put("fullValidation", parent.getFullValidation());
+			log.fine("saveobjs in viewMap = " + viewMap);
+		} catch (Exception ex) {
+			log.fine("saveobjs in viewMap error = " + ex.getMessage());
 
-		log.fine("************ saveobjs viewMap = " + viewMap);
+		}
 
 	}
 
@@ -672,12 +673,11 @@ public class WebSheetLoader implements Serializable {
 			final Map<String, CellRangeAddress> cellRangeMap,
 			final List<String> skippedRegionCells) {
 
-		int initRows = CellUtility
-				.getInitRowsFromConfig(sheetConfig);
+		int initRows = CellUtility.getInitRowsFromConfig(sheetConfig);
 
 		int top = sheetConfig.getBodyCellRange().getTopRow();
-		int bottom = CellUtility
-				.getBodyBottomFromConfig(sheetConfig, initRows);
+		int bottom = CellUtility.getBodyBottomFromConfig(sheetConfig,
+				initRows);
 		int left = sheetConfig.getBodyCellRange().getLeftCol();
 		int right = sheetConfig.getBodyCellRange().getRightCol();
 
@@ -689,8 +689,8 @@ public class WebSheetLoader implements Serializable {
 
 		for (int i = top; i <= bottom; i++) {
 
-			parent.getBodyRows()
-					.add(assembleFacesBodyRow(i, sheet1, false, top, left,
+			parent.getBodyRows().add(
+					assembleFacesBodyRow(i, sheet1, false, top, left,
 							right, initRows, sheetConfig, cellRangeMap,
 							skippedRegionCells));
 		}
@@ -752,16 +752,17 @@ public class WebSheetLoader implements Serializable {
 				}
 				if (cell != null) {
 					FacesCell fcell = new FacesCell();
-					CellUtility.convertCell(sheetConfig, fcell,
-							cell, (rowIndex - top), initRows, top,
-							repeatZone, cellRangeMap,
-							facesRow.getOriginRowIndex(),
+					CellUtility.convertCell(sheetConfig, fcell, cell,
+							(rowIndex - top), initRows, top, repeatZone,
+							cellRangeMap, facesRow.getOriginRowIndex(),
 							parent.getCellAttributesMap(), saveAttrList);
 					parent.getPicHelper().setupFacesCellPictureCharts(
-							sheet1, fcell, TieWebSheetUtility
-									.getFullCellRefName(sheet1, cell));
-					CellUtility.setupCellStyle(parent.getWb(),
-							sheet1, fcell, cell, row.getHeightInPoints());
+							sheet1,
+							fcell,
+							TieWebSheetUtility.getFullCellRefName(sheet1,
+									cell));
+					CellUtility.setupCellStyle(parent.getWb(), sheet1,
+							fcell, cell, row.getHeightInPoints());
 					fcell.setColumnIndex(cindex);
 					bodycells.add(fcell);
 					addCache(sheet1, cell);
@@ -819,21 +820,23 @@ public class WebSheetLoader implements Serializable {
 		if ((cell != null)
 				&& (cell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
 			String newValue = CellUtility
-					.getCellValueWithFormat(cell, parent.getFormulaEvaluator(), parent.getDataFormatter());
+					.getCellValueWithFormat(cell,
+							parent.getFormulaEvaluator(),
+							parent.getDataFormatter());
 			if (parent.getCachedCells().isValueChanged(sheet1, cell,
 					newValue)) {
 
 				if (fcell.isHasSaveAttr()) {
-					parent.getCellHelper().saveDataInContext(cell,
-							newValue);
+					parent.getCellHelper()
+							.saveDataInContext(cell, newValue);
 				}
 
 				log.fine("refresh obj name =" + tblName + ":" + i
 						+ ":cocalc" + index + " formula = "
 						+ cell.getCellFormula() + "newValue = " + newValue);
 
-				RequestContext.getCurrentInstance()
-						.update(tblName + ":" + i + ":cocalc" + index);
+				RequestContext.getCurrentInstance().update(
+						tblName + ":" + i + ":cocalc" + index);
 				parent.getCachedCells().put(cell, Cell.CELL_TYPE_FORMULA);
 			}
 		}
@@ -847,8 +850,8 @@ public class WebSheetLoader implements Serializable {
 	 */
 	private void createDynamicColumns(final String tabName) {
 
-		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
-				.get(tabName);
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
+				tabName);
 
 		int left = sheetConfig.getBodyCellRange().getLeftCol();
 		int right = sheetConfig.getBodyCellRange().getRightCol();
@@ -866,10 +869,10 @@ public class WebSheetLoader implements Serializable {
 	 */
 	public void loadAllFields() {
 		if (parent.getSheetConfigMap() != null) {
-			for (SheetConfiguration sheetConfig : parent.getSheetConfigMap()
-					.values()) {
-				Sheet sheet = parent.getWb()
-						.getSheet(sheetConfig.getSheetName());
+			for (SheetConfiguration sheetConfig : parent
+					.getSheetConfigMap().values()) {
+				Sheet sheet = parent.getWb().getSheet(
+						sheetConfig.getSheetName());
 				for (Map.Entry<String, List<CellFormAttributes>> entry : sheetConfig
 						.getCellFormAttributes().entrySet()) {
 					String targetCell = entry.getKey();
@@ -878,20 +881,21 @@ public class WebSheetLoader implements Serializable {
 									sheetConfig);
 					Cell cell = null;
 					if (cellAddr != null) {
-						cell = TieWebSheetUtility
-								.getCellByReference(cellAddr, sheet);
+						cell = TieWebSheetUtility.getCellByReference(
+								cellAddr, sheet);
 					}
 					if (cell != null) {
 						List<CellFormAttributes> attributeList = entry
 								.getValue();
 						for (CellFormAttributes cellAttribute : attributeList) {
-							if (cellAttribute.getType()
-									.equalsIgnoreCase("load")) {
+							if (cellAttribute.getType().equalsIgnoreCase(
+									"load")) {
 								String attrValue = cellAttribute.getValue();
-								attrValue = FacesUtility.evaluateExpression(
-										attrValue, String.class);
-								CellUtility.setCellValue(cell,
-										FacesUtility.evaluateExpression(
+								attrValue = FacesUtility
+										.evaluateExpression(attrValue,
+												String.class);
+								CellUtility.setCellValue(cell, FacesUtility
+										.evaluateExpression(
 												cellAttribute.getValue(),
 												String.class));
 							}
@@ -911,8 +915,8 @@ public class WebSheetLoader implements Serializable {
 	 */
 	public void addRepeatRow(final int rowIndex) {
 
-		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
-				.get(parent.getCurrentTabName());
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
+				parent.getCurrentTabName());
 		Sheet sheet = parent.getWb().getSheet(sheetConfig.getSheetName());
 		ConfigBuildRef configBuildRef = new ConfigBuildRef(
 				parent.getWbWrapper(), sheet, parent.getExpEngine(),
@@ -922,15 +926,16 @@ public class WebSheetLoader implements Serializable {
 				sheetConfig.getFinalCommentMap());
 		// set add mode
 		configBuildRef.setAddMode(true);
-		configBuildRef.setCollectionObjNameMap(
-				sheetConfig.getCollectionObjNameMap());
+		configBuildRef.setCollectionObjNameMap(sheetConfig
+				.getCollectionObjNameMap());
 		configBuildRef.setCommandIndexMap(sheetConfig.getCommandIndexMap());
 		configBuildRef.setShiftMap(sheetConfig.getShiftMap());
 		configBuildRef.setWatchList(sheetConfig.getWatchList());
 		int length = ConfigurationHelper.addRow(configBuildRef, rowIndex,
 				sheetConfig, parent.getDataContext());
 		if (length <= 0) {
-			FacesContext.getCurrentInstance().addMessage(null,
+			FacesContext.getCurrentInstance().addMessage(
+					null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"System Error", "Cannot add row"));
 		}
@@ -940,8 +945,8 @@ public class WebSheetLoader implements Serializable {
 		parent.getCellHelper().reCalc();
 
 		/*
-		 * CellUtility.copyRow(parent.getWb(), parent.getWbWrapper(),
-		 * sheet1, sheet1, rowIndex, rowIndex + 1); int initRows =
+		 * CellUtility.copyRow(parent.getWb(), parent.getWbWrapper(), sheet1,
+		 * sheet1, rowIndex, rowIndex + 1); int initRows =
 		 * CellUtility.getInitRowsFromConfig( sheetConfig) + 1;
 		 * sheetConfig.setBodyInitialRows(initRows); int top =
 		 * sheetConfig.getBodyCellRange().getTopRow(); int left =
@@ -949,8 +954,7 @@ public class WebSheetLoader implements Serializable {
 		 * sheetConfig.getBodyCellRange().getRightCol(); Map<String,
 		 * CellRangeAddress> cellRangeMap = parent
 		 * .getCellHelper().indexMergedRegion(sheet1); List<String>
-		 * skippedRegionCells = CellUtility
-		 * .skippedRegionCells(sheet1);
+		 * skippedRegionCells = CellUtility .skippedRegionCells(sheet1);
 		 * 
 		 * parent.getBodyRows().add( rowIndex + 1 - top,
 		 * assembleFacesBodyRow(rowIndex + 1, sheet1, true, top, left, right,
@@ -986,9 +990,9 @@ public class WebSheetLoader implements Serializable {
 		int left = sheetConfig.getBodyCellRange().getLeftCol();
 		int right = sheetConfig.getBodyCellRange().getRightCol();
 		int initRows = 0;
-		for (int irow = insertPosition; irow < insertPosition
-				+ length; irow++) {
-			parent.getBodyRows().add(irow - top,
+		for (int irow = insertPosition; irow < insertPosition + length; irow++) {
+			parent.getBodyRows().add(
+					irow - top,
 					assembleFacesBodyRow(irow, sheet, true, top, left,
 							right, initRows, sheetConfig, cellRangeMap,
 							skippedRegionCells));
@@ -1010,23 +1014,22 @@ public class WebSheetLoader implements Serializable {
 		String tabName = parent.getCurrentTabName();
 		String sheetName = parent.getSheetConfigMap().get(tabName)
 				.getSheetName();
-		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
-				.get(tabName);
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
+				tabName);
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
 
-		int initRows = CellUtility
-				.getInitRowsFromConfig(sheetConfig) - 1;
+		int initRows = CellUtility.getInitRowsFromConfig(sheetConfig) - 1;
 		int top = sheetConfig.getBodyCellRange().getTopRow();
 		if (initRows < 1) {
-			FacesContext.getCurrentInstance().addMessage(null,
+			FacesContext.getCurrentInstance().addMessage(
+					null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"System Error", "Cannot delete the last row"));
 			return;
 		}
 		CellUtility.removeRow(sheet1, rowIndex);
 		parent.getBodyRows().remove(rowIndex - top);
-		for (int irow = rowIndex - top; irow < parent.getBodyRows()
-				.size(); irow++) {
+		for (int irow = rowIndex - top; irow < parent.getBodyRows().size(); irow++) {
 			FacesRow facesrow = parent.getBodyRows().get(irow);
 			facesrow.setRowIndex(facesrow.getRowIndex() - 1);
 		}
