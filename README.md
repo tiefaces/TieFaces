@@ -61,4 +61,4 @@ Please refer to the demo page of [tiefaces.org](http://tiefaces.org/) in order t
 
 ### License
 ***
-Code released under the [MIT License](https://github.com/twbs/bootstrap/blob/master/LICENSE).
+Code released under the [MIT License](LICENSE).
