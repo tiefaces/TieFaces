@@ -5,9 +5,12 @@ package org.tiefaces.components.websheet;
 
 import java.io.InputStream;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.tiefaces.common.TieConstants;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -69,6 +72,16 @@ public class TieWebSheetBeanTest {
 		bean.init();
 		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("resources/sheet/datacommentdemo.xlsx");
 		assertEquals(bean.loadWebSheet(stream),1);
+		Workbook wb = bean.getWb();
+		for (int i = 0; i < wb.getNumberOfSheets(); i++)
+		{
+			String sheetName = wb.getSheetName(i);
+			if (sheetName.startsWith(TieConstants.COPY_SHEET_PREFIX)) {
+				assertTrue(wb.isSheetVeryHidden(i));
+			}
+		}
+		
+		
 	}
 
 

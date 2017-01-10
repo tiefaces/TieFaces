@@ -125,6 +125,8 @@ public final class TieConstants {
 	public static final String COMMAND_PREFIX = "tie:";
 	/** form command. */
 	public static final String COMMAND_FORM = "form";
+	/** each command. */
+	public static final String COMMAND_EACH = "each";
 	/** true string. */
 	public static final String TRUE_STRING = "true";
 	/** false string. */
