@@ -32,14 +32,14 @@ import org.primefaces.model.StreamedContent;
 public class TieWebSheetChartsService {
 
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread
-			.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG = Logger
+			.getLogger(TieWebSheetChartsService.class.getName());
 
 	/**
 	 * Constructor.
 	 */
 	public TieWebSheetChartsService() {
-		log.fine("TieWebSheetBean Constructor");
+		LOG.fine("TieWebSheetBean Constructor");
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class TieWebSheetChartsService {
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
 			// So, we're rendering the HTML. Return a stub StreamedContent so
 			// that it will generate right URL.
-			log.fine(" return empty chart picture");
+			LOG.fine(" return empty chart picture");
 			return new DefaultStreamedContent();
 		} else {
 			// So, browser is requesting the image. Return a real
@@ -70,7 +70,7 @@ public class TieWebSheetChartsService {
 			ImageIO.write(bufferedImg, "png", os);
 			FacesContext.getCurrentInstance().getExternalContext()
 					.getSessionMap().remove(chartId);
-			log.fine(" return real chart picture and remove session chartId = "
+			LOG.fine(" return real chart picture and remove session chartId = "
 					+ chartId);
 			return new DefaultStreamedContent(new ByteArrayInputStream(
 					os.toByteArray()), "image/png");

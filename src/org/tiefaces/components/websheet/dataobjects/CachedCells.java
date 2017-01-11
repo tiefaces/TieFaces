@@ -24,8 +24,8 @@ import org.tiefaces.components.websheet.service.CellUtility;
 public class CachedCells {
 
 	/** logger. */
-	private final static Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG = Logger.getLogger(
+			CachedCells.class.getName());
 
 	/** The cached map. */
 	private Map<Cell, FormulaMapping> cachedMap = new HashMap<Cell, FormulaMapping>();
@@ -41,7 +41,7 @@ public class CachedCells {
 	 */
 	public CachedCells(final TieWebSheetBean pparent) {
 		this.parent = pparent;
-		log.fine("CachedCells Constructor");
+		LOG.fine("CachedCells Constructor");
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class CachedCells {
 			}
 			f.setValue(value);
 			map.put(cell, f);
-			log.fine("put cache key= " + cell.getAddress() + " value = "
+			LOG.fine("put cache key= " + cell.getAddress() + " value = "
 					+ value);
 		}
 	}
@@ -99,7 +99,7 @@ public class CachedCells {
 					parent.getDataFormatter());
 			f.setValue(value);
 			map.put(cell, f);
-			log.fine("put cache key= " + cell.getAddress()
+			LOG.fine("put cache key= " + cell.getAddress()
 					+ " origin formula = " + originFormula + " value = "
 					+ value);
 		}
@@ -121,7 +121,7 @@ public class CachedCells {
 	 */
 	public void clear() {
 		cachedMap.clear();
-		log.fine("cache cleared");
+		LOG.fine("cache cleared");
 	}
 
 	/**

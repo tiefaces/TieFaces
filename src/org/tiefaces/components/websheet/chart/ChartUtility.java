@@ -23,18 +23,19 @@ import org.tiefaces.common.AppUtils;
  * @author Jason Jiang
  */
 public final class ChartUtility {
-	
-	
+
 	/**
 	 * hide constructor.
 	 */
 	private ChartUtility() {
 		// not called
-	}	
-	
+	}
+
 	/**
 	 * return chart type from CTChart object.
-	 * @param ctChart object.
+	 * 
+	 * @param ctChart
+	 *            object.
 	 * @return ChartType.
 	 */
 	@SuppressWarnings("rawtypes")
@@ -46,11 +47,11 @@ public final class ChartUtility {
 		if (!AppUtils.emptyList((List) areas)) {
 			int grouping = areas.get(0).getGrouping().getVal().intValue();
 			switch (grouping) {
-			case STGrouping.INT_STACKED: 
+			case STGrouping.INT_STACKED:
 				return ChartType.AreaStacked;
 			default:
 				return ChartType.Area;
-		}
+			}
 		}
 
 		// Bar3D or Column3D
@@ -60,15 +61,15 @@ public final class ChartUtility {
 			switch (bar3ds.get(0).getBarDir().getVal().intValue()) {
 			case STBarDir.INT_BAR:
 				switch (grouping) {
-					case STBarGrouping.INT_STACKED: 
-						return ChartType.Bar3DStacked;
-					default:
-						return ChartType.Bar3D;
+				case STBarGrouping.INT_STACKED:
+					return ChartType.Bar3DStacked;
+				default:
+					return ChartType.Bar3D;
 				}
 			default:
 			case STBarDir.INT_COL:
 				switch (grouping) {
-				case STBarGrouping.INT_STACKED: 
+				case STBarGrouping.INT_STACKED:
 					return ChartType.Column3DStacked;
 				default:
 					return ChartType.Column3D;
@@ -83,7 +84,7 @@ public final class ChartUtility {
 			switch (bars.get(0).getBarDir().getVal().intValue()) {
 			case STBarDir.INT_BAR:
 				switch (grouping) {
-				case STBarGrouping.INT_STACKED: 
+				case STBarGrouping.INT_STACKED:
 					return ChartType.BarStacked;
 				default:
 					return ChartType.Bar;
@@ -91,7 +92,7 @@ public final class ChartUtility {
 			default:
 			case STBarDir.INT_COL:
 				switch (grouping) {
-				case STBarGrouping.INT_STACKED: 
+				case STBarGrouping.INT_STACKED:
 					return ChartType.ColumnStacked;
 				default:
 					return ChartType.Column;
@@ -161,13 +162,23 @@ public final class ChartUtility {
 
 		return null;
 	}
-	
+
 	/** Line style: line. */
 	public static final String STYLE_LINE = "line";
 	/** Line style: dashed. */
 	public static final String STYLE_DASH = "dash";
 	/** Line style: dotted. */
 	public static final String STYLE_DOT = "dot";
+	/** STROKE_DEFAULT_LINE_WIDTH. */
+	public static final float STROKE_DEFAULT_LINE_WIDTH = 0.2f;
+	/** STROKE_DEFAULT_DASH_WIDTH. */
+	public static final float STROKE_DEFAULT_DASH_WIDTH = 5.0f;
+	/** STROKE_MITER_LIMIT_STYLE_DOT. */
+	public static final float STROKE_MITER_LIMIT_STYLE_DOT = 2.0f;
+	/** STROKE_MITER_LIMIT_STYLE_DASH. */
+	public static final float STROKE_MITER_LIMIT_STYLE_DASH = 10.0f;
+	/** STROKE_DEFAULT_DASHPHASE. */
+	public static final float STROKE_DEFAULT_DASHPHASE = 0.0f;
 
 	/**
 	 * Convert style string to stroke object.
@@ -180,22 +191,26 @@ public final class ChartUtility {
 		BasicStroke result = null;
 
 		if (style != null) {
-			float lineWidth = 0.2f;
-			float dash[] = { 5.0f };
-			float dot[] = { lineWidth };
+			float lineWidth = STROKE_DEFAULT_LINE_WIDTH;
+			float[] dash = { STROKE_DEFAULT_DASH_WIDTH };
+			float[] dot = { lineWidth };
 
 			if (style.equalsIgnoreCase(STYLE_LINE)) {
 				result = new BasicStroke(lineWidth);
 			} else if (style.equalsIgnoreCase(STYLE_DASH)) {
 				result = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT,
-						BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+						BasicStroke.JOIN_MITER,
+						STROKE_MITER_LIMIT_STYLE_DASH, dash,
+						STROKE_DEFAULT_DASHPHASE);
 			} else if (style.equalsIgnoreCase(STYLE_DOT)) {
 				result = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT,
-						BasicStroke.JOIN_MITER, 2.0f, dot, 0.0f);
+						BasicStroke.JOIN_MITER,
+						STROKE_MITER_LIMIT_STYLE_DOT, dot,
+						STROKE_DEFAULT_DASHPHASE);
 			}
 		}
 
 		return result;
 	}
-	
+
 }

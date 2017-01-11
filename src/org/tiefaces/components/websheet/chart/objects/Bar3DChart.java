@@ -16,8 +16,12 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 public class Bar3DChart extends BarChart {
 
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.BarChart#getChartListFromCtChart(org.openxmlformats.schemas.drawingml.x2006.chart.CTChart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.BarChart#
+	 * getChartListFromCtChart
+	 * (org.openxmlformats.schemas.drawingml.x2006.chart.CTChart)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override

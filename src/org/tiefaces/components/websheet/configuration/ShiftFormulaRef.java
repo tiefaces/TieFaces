@@ -37,11 +37,11 @@ public class ShiftFormulaRef {
 	/**
 	 * Sets the watch list.
 	 *
-	 * @param watchList
+	 * @param pwatchList
 	 *            the new watch list
 	 */
-	public void setWatchList(final List<Integer> watchList) {
-		this.watchList = watchList;
+	public void setWatchList(final List<Integer> pwatchList) {
+		this.watchList = pwatchList;
 	}
 
 	/**

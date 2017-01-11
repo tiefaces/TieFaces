@@ -30,14 +30,14 @@ import org.primefaces.model.StreamedContent;
 public class TieWebSheetPicturesService {
 
 	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread
-			.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG = Logger
+			.getLogger(TieWebSheetPicturesService.class.getName());
 
 	/**
 	 * Constructor.
 	 */
 	public TieWebSheetPicturesService() {
-		log.fine("TieWebSheetPictureService Constructor");
+		LOG.fine("TieWebSheetPictureService Constructor");
 	}
 
 	/**
@@ -45,7 +45,8 @@ public class TieWebSheetPicturesService {
 	 * 
 	 * @return empty (phase is render_response) or real picture ( browser
 	 *         request).
-	 * @throws IOException exception.
+	 * @throws IOException
+	 *             exception.
 	 */
 	public final StreamedContent getPicture() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -53,7 +54,7 @@ public class TieWebSheetPicturesService {
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
 			// So, we're rendering the HTML. Return a stub StreamedContent so
 			// that it will generate right URL.
-			log.fine(" return empty picture");
+			LOG.fine(" return empty picture");
 			return new DefaultStreamedContent();
 		} else {
 			// So, browser is requesting the image. Return a real
@@ -66,7 +67,7 @@ public class TieWebSheetPicturesService {
 					.getSessionMap().get(pictureId);
 			FacesContext.getCurrentInstance().getExternalContext()
 					.getSessionMap().remove(pictureId);
-			log.fine(" return real picture and remove session");
+			LOG.fine(" return real picture and remove session");
 			return new DefaultStreamedContent(new ByteArrayInputStream(
 					picData.getData()));
 		}

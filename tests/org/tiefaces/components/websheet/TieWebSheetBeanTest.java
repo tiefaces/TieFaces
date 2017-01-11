@@ -71,7 +71,7 @@ public class TieWebSheetBeanTest {
 		TieWebSheetBean bean = new TieWebSheetBean();
 		bean.init();
 		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("resources/sheet/datacommentdemo.xlsx");
-		assertEquals(bean.loadWebSheet(stream),1);
+		assertEquals(bean.loadWebSheet(stream), 1);
 		Workbook wb = bean.getWb();
 		for (int i = 0; i < wb.getNumberOfSheets(); i++)
 		{

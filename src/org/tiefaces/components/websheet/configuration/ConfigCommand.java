@@ -6,7 +6,6 @@ package org.tiefaces.components.websheet.configuration;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
-
 /**
  * Base class for all configuration command.
  * 
@@ -29,18 +28,16 @@ public abstract class ConfigCommand implements Command {
 	 * command actual length after populate data.
 	 */
 	private int finalLength = 0;
-	
+
 	/** The parent found. */
 	private Boolean parentFound = false;
 
-	
 	/**
 	 * Instantiates a new config command.
 	 */
 	public ConfigCommand() {
 		super();
 	}
-
 
 	/**
 	 * Instantiates a new config command.
@@ -54,7 +51,7 @@ public abstract class ConfigCommand implements Command {
 		this.finalLength = source.finalLength;
 		this.configRange = new ConfigRange(source.configRange);
 	}
-	
+
 	/**
 	 * Shift row ref.
 	 *
@@ -66,25 +63,36 @@ public abstract class ConfigCommand implements Command {
 	public void shiftRowRef(Sheet sheet, int shiftnum) {
 		this.getConfigRange().shiftRowRef(sheet, shiftnum);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#getCommandTypeName()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#getCommandTypeName
+	 * ()
 	 */
 	@Override
 	public final String getCommandTypeName() {
 		return commandTypeName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#setCommandTypeName(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#setCommandTypeName
+	 * (java.lang.String)
 	 */
 	@Override
 	public final void setCommandTypeName(final String pCommandTypeName) {
 		this.commandTypeName = pCommandTypeName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#getConfigRange()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#getConfigRange()
 	 */
 	@Override
 	public final ConfigRange getConfigRange() {
@@ -94,33 +102,44 @@ public abstract class ConfigCommand implements Command {
 		return configRange;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#setConfigRange(org.tiefaces.components.websheet.configuration.ConfigRange)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#setConfigRange
+	 * (org.tiefaces.components.websheet.configuration.ConfigRange)
 	 */
 	@Override
 	public final void setConfigRange(final ConfigRange pConfigRange) {
 		this.configRange = pConfigRange;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#isParentFound()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#isParentFound()
 	 */
 	@Override
-	public	Boolean isParentFound() {
+	public Boolean isParentFound() {
 		return parentFound;
 	}
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#setParentFound(java.lang.Boolean)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#setParentFound
+	 * (java.lang.Boolean)
 	 */
 	@Override
-	public void setParentFound(Boolean parentFound) {
-		this.parentFound = parentFound;
+	public void setParentFound(final Boolean pparentFound) {
+		this.parentFound = pparentFound;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.tiefaces.components.websheet.configuration.Command#getLength()
 	 */
 	@Override
@@ -128,8 +147,12 @@ public abstract class ConfigCommand implements Command {
 		return length;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#setLength(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#setLength(java
+	 * .lang.String)
 	 */
 	@Override
 	public final void setLength(final String pLength) {
@@ -152,8 +175,9 @@ public abstract class ConfigCommand implements Command {
 		return 0;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.tiefaces.components.websheet.configuration.Command#getTopRow()
 	 */
 	@Override
@@ -164,7 +188,9 @@ public abstract class ConfigCommand implements Command {
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.tiefaces.components.websheet.configuration.Command#getLastRow()
 	 */
 	@Override
@@ -175,7 +201,9 @@ public abstract class ConfigCommand implements Command {
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.tiefaces.components.websheet.configuration.Command#getLeftCol()
 	 */
 	@Override
@@ -186,36 +214,44 @@ public abstract class ConfigCommand implements Command {
 		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.tiefaces.components.websheet.configuration.Command#getRightCol()
 	 */
 	@Override
 	public final int getRightCol() {
 		if (this.getConfigRange().getLastRowPlusRef() != null) {
-			return this.getConfigRange().getLastRowPlusRef().getColumnIndex();
+			return this.getConfigRange().getLastRowPlusRef()
+					.getColumnIndex();
 		}
 		return -1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#getFinalLength()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#getFinalLength()
 	 */
 	@Override
 	public final int getFinalLength() {
 		if (finalLength <= 0) {
-			finalLength =  calcLength(this.getLength());
+			finalLength = calcLength(this.getLength());
 		}
 		return finalLength;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#setFinalLength(int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#setFinalLength
+	 * (int)
 	 */
 	@Override
 	public final void setFinalLength(final int populatedLength) {
 		this.finalLength = populatedLength;
 	}
-	
-	
 
 }

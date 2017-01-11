@@ -17,8 +17,12 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPie3DChart;
  */
 public class Pie3DChart extends PieChart {
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.PieChart#getChartListFromCtChart(org.openxmlformats.schemas.drawingml.x2006.chart.CTChart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.PieChart#
+	 * getChartListFromCtChart
+	 * (org.openxmlformats.schemas.drawingml.x2006.chart.CTChart)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override

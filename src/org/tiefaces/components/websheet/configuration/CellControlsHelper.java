@@ -20,6 +20,7 @@ import javax.faces.component.UIComponent;
 import org.tiefaces.components.websheet.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
+import org.tiefaces.components.websheet.service.ParserUtility;
 
 /**
  * Cell controls helper.
@@ -37,8 +38,8 @@ public final class CellControlsHelper {
 	}
 
 	/** logger. */
-	private final static Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG = Logger.getLogger(
+			CellControlsHelper.class.getName());
 
 	/** list of supported components. */
 	private static List<String> supportComponents = Arrays
@@ -134,7 +135,7 @@ public final class CellControlsHelper {
 				return i;
 
 			} catch (Exception ex) {
-				log.fine(ex.getLocalizedMessage());
+				LOG.fine(ex.getLocalizedMessage());
 			}
 		}
 		return -1;
@@ -212,9 +213,9 @@ public final class CellControlsHelper {
 					+ "' to value '" + propertyValue + "' for object "
 					+ obj;
 			if (ignoreNonExisting) {
-				log.fine(msg);
+				LOG.fine(msg);
 			} else {
-				log.warning(msg);
+				LOG.warning(msg);
 				throw new IllegalArgumentException(e);
 			}
 		}
@@ -244,129 +245,17 @@ public final class CellControlsHelper {
 			String msg = "failed to get property '" + propertyName
 					+ "' for object " + obj;
 			if (ignoreNonExisting) {
-				log.fine(msg);
+				LOG.fine(msg);
 			} else {
-				log.warning(msg);
+				LOG.warning(msg);
 				throw new IllegalArgumentException(e);
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * parse input attributes.
-	 * 
-	 * @param clist
-	 *            list of cellformattributes.
-	 * @param controlAttrs
-	 *            control attrs.
-	 */
-	public static void parseInputAttributes(
-			final List<CellFormAttributes> clist,
-			final String controlAttrs) {
-		// only one type control allowed for one cell.
-		clist.clear();
-		if (controlAttrs != null) {
-			String[] cattrs = controlAttrs
-					.split("\" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-			for (String cattr : cattrs) {
-				String[] details = cattr.split("=");
-				if (details.length > 1) {
-					CellFormAttributes attr = new CellFormAttributes();
-					attr.setType(details[0].trim());
-					attr.setValue(details[1].replaceAll("\"", ""));
-					clist.add(attr);
-				}
-			}
-		}
-	}
 
-	/** select item labels. */
-	private static final String SELECT_ITEM_LABELS = "itemlabels";
-	/** select item values. */
-	private static final String SELECT_ITEM_VALUES = "itemvalues";
-	/** default select item label. */
-	private static final String DEFAULT_SELECT_ITEM_LABEL = "defaultlabel";
-	/** default select item value. */
-	private static final String DEFAULT_SELECT_ITEM_VALUE = "defaultvalue";
 
-	/**
-	 * parse select item attributes.
-	 * 
-	 * @param key
-	 *            key.
-	 * @param type
-	 *            type.
-	 * @param inputs
-	 *            inputs.
-	 * @param cellAttributesMap
-	 *            cellattributesmap.
-	 */
-	public static void parseSelectItemsAttributes(final String key,
-			final String type, final List<CellFormAttributes> inputs,
-			final CellAttributesMap cellAttributesMap) {
-		String[] selectLabels = null;
-		String[] selectValues = null;
-		String defaultSelectLabel = null;
-		String defaultSelectValue = null;
-		String defaultDatePattern = "";
-		for (CellFormAttributes attr : inputs) {
-			String attrKey = attr.getType();
-			if (attrKey.equalsIgnoreCase(SELECT_ITEM_LABELS)) {
-				selectLabels = attr.getValue().split(";");
-			}
-			if (attrKey.equalsIgnoreCase(SELECT_ITEM_VALUES)) {
-				selectValues = attr.getValue().split(";");
-			}
-			if (attrKey.equalsIgnoreCase(DEFAULT_SELECT_ITEM_LABEL)) {
-				defaultSelectLabel = attr.getValue();
-			}
-			if (attrKey.equalsIgnoreCase(DEFAULT_SELECT_ITEM_VALUE)) {
-				defaultSelectValue = attr.getValue();
-			}
-			if (type.equalsIgnoreCase("calendar")
-					&& attrKey.equalsIgnoreCase("pattern")) {
-				defaultDatePattern = attr.getValue();
-			}
-		}
 
-		if (selectLabels != null) {
-			if ((selectValues == null)
-					|| (selectValues.length != selectLabels.length)) {
-				selectValues = selectLabels;
-			}
-			Map<String, String> smap = cellAttributesMap
-					.getCellSelectItemsAttributes().get(key);
-			if (smap == null) {
-				smap = new LinkedHashMap<String, String>();
-			}
-			smap.clear();
-			if (defaultSelectLabel != null) {
-				smap.put(defaultSelectLabel, defaultSelectValue);
-			}
-			for (int i = 0; i < selectLabels.length; i++) {
-				smap.put(selectLabels[i], selectValues[i]);
-			}
-			cellAttributesMap.getCellSelectItemsAttributes().put(key, smap);
-		}
-		if (type.equalsIgnoreCase("calendar")) {
-			if (defaultDatePattern.isEmpty()) {
-				defaultDatePattern = getDefaultDatePattern();
-			}
-			cellAttributesMap.getCellDatePattern().put(key,
-					defaultDatePattern);
-		}
-	}
-
-	/**
-	 * get default date pattern.
-	 * 
-	 * @return default date pattern.
-	 */
-	private static String getDefaultDatePattern() {
-		DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT,
-				Locale.getDefault());
-		return ((SimpleDateFormat) formatter).toLocalizedPattern();
-	}
 
 }

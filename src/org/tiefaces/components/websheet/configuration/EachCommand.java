@@ -121,11 +121,11 @@ public class EachCommand extends ConfigCommand {
 	/**
 	 * Sets the select.
 	 *
-	 * @param select
+	 * @param pselect
 	 *            the new select
 	 */
-	public void setSelect(final String select) {
-		this.select = select;
+	public void setSelect(final String pselect) {
+		this.select = pselect;
 	}
 
 	/**
@@ -140,11 +140,11 @@ public class EachCommand extends ConfigCommand {
 	/**
 	 * Sets the class name.
 	 *
-	 * @param className
+	 * @param pclassName
 	 *            the new class name
 	 */
-	public void setClassName(final String className) {
-		this.className = className;
+	public void setClassName(final String pclassName) {
+		this.className = pclassName;
 	}
 
 	/**

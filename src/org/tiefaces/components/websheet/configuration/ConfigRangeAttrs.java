@@ -4,7 +4,6 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellAddress;
 import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
@@ -23,27 +22,27 @@ public class ConfigRangeAttrs {
 	private CellAddress lastRowPlusAddr;
 	/** if true then the lastCell is created instead of exist cell. */
 	private boolean lastCellCreated;
-	
+
 	/** The final length. */
 	private int finalLength = 0;
-	
+
 	/** The allow add. */
 	private boolean allowAdd = false;
-	
+
 	/** The unit rows mapping. */
 	private RowsMapping unitRowsMapping = null;
-	
+
 	/** The context snap. */
 	private MapSnapShot contextSnap = null;
 
 	/**
 	 * Instantiates a new config range attrs.
 	 *
-	 * @param lastCellCreated
+	 * @param plastCellCreated
 	 *            the last cell created
 	 */
-	public ConfigRangeAttrs(boolean lastCellCreated) {
-		this.lastCellCreated = lastCellCreated;
+	public ConfigRangeAttrs(final boolean plastCellCreated) {
+		this.lastCellCreated = plastCellCreated;
 	}
 
 	/**
@@ -58,11 +57,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the first row ref.
 	 *
-	 * @param firstRowRef
+	 * @param pfirstRowRef
 	 *            the new first row ref
 	 */
-	public void setFirstRowRef(Cell firstRowRef) {
-		this.firstRowRef = firstRowRef;
+	public void setFirstRowRef(Cell pfirstRowRef) {
+		this.firstRowRef = pfirstRowRef;
 	}
 
 	/**
@@ -77,11 +76,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the last row plus ref.
 	 *
-	 * @param lastRowPlusRef
+	 * @param plastRowPlusRef
 	 *            the new last row plus ref
 	 */
-	public void setLastRowPlusRef(Cell lastRowPlusRef) {
-		this.lastRowPlusRef = lastRowPlusRef;
+	public final void setLastRowPlusRef(final Cell plastRowPlusRef) {
+		this.lastRowPlusRef = plastRowPlusRef;
 	}
 
 	/**
@@ -96,11 +95,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the first row addr.
 	 *
-	 * @param firstRowAddr
+	 * @param pfirstRowAddr
 	 *            the new first row addr
 	 */
-	public void setFirstRowAddr(CellAddress firstRowAddr) {
-		this.firstRowAddr = firstRowAddr;
+	public void setFirstRowAddr(CellAddress pfirstRowAddr) {
+		this.firstRowAddr = pfirstRowAddr;
 	}
 
 	/**
@@ -115,11 +114,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the last row plus addr.
 	 *
-	 * @param lastRowPlusAddr
+	 * @param plastRowPlusAddr
 	 *            the new last row plus addr
 	 */
-	public void setLastRowPlusAddr(CellAddress lastRowPlusAddr) {
-		this.lastRowPlusAddr = lastRowPlusAddr;
+	public void setLastRowPlusAddr(CellAddress plastRowPlusAddr) {
+		this.lastRowPlusAddr = plastRowPlusAddr;
 	}
 
 	/**
@@ -134,11 +133,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the last cell created.
 	 *
-	 * @param lastCellCreated
+	 * @param plastCellCreated
 	 *            the new last cell created
 	 */
-	public void setLastCellCreated(boolean lastCellCreated) {
-		this.lastCellCreated = lastCellCreated;
+	public final void setLastCellCreated(final boolean plastCellCreated) {
+		this.lastCellCreated = plastCellCreated;
 	}
 
 	/**
@@ -153,11 +152,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the final length.
 	 *
-	 * @param finalLength
+	 * @param pfinalLength
 	 *            the new final length
 	 */
-	public void setFinalLength(int finalLength) {
-		this.finalLength = finalLength;
+	public void setFinalLength(int pfinalLength) {
+		this.finalLength = pfinalLength;
 	}
 
 	/**
@@ -172,11 +171,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the allow add.
 	 *
-	 * @param allowAdd
+	 * @param pallowAdd
 	 *            the new allow add
 	 */
-	public void setAllowAdd(boolean allowAdd) {
-		this.allowAdd = allowAdd;
+	public void setAllowAdd(boolean pallowAdd) {
+		this.allowAdd = pallowAdd;
 	}
 
 	/**
@@ -191,11 +190,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the unit rows mapping.
 	 *
-	 * @param unitRowsMapping
+	 * @param punitRowsMapping
 	 *            the new unit rows mapping
 	 */
-	public void setUnitRowsMapping(RowsMapping unitRowsMapping) {
-		this.unitRowsMapping = unitRowsMapping;
+	public void setUnitRowsMapping(RowsMapping punitRowsMapping) {
+		this.unitRowsMapping = punitRowsMapping;
 	}
 
 	/**
@@ -210,12 +209,11 @@ public class ConfigRangeAttrs {
 	/**
 	 * Sets the context snap.
 	 *
-	 * @param contextSnap
+	 * @param pcontextSnap
 	 *            the new context snap
 	 */
-	public void setContextSnap(MapSnapShot contextSnap) {
-		this.contextSnap = contextSnap;
+	public void setContextSnap(MapSnapShot pcontextSnap) {
+		this.contextSnap = pcontextSnap;
 	}
-	
-	
+
 }

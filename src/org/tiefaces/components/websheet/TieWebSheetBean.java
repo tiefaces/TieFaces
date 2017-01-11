@@ -52,7 +52,6 @@ import org.tiefaces.components.websheet.dataobjects.FacesRow;
 import org.tiefaces.components.websheet.dataobjects.HeaderCell;
 import org.tiefaces.components.websheet.service.CellHelper;
 import org.tiefaces.components.websheet.service.CellUtility;
-import org.tiefaces.components.websheet.service.DataHandler;
 import org.tiefaces.components.websheet.service.PicturesHelper;
 import org.tiefaces.components.websheet.service.ValidationHandler;
 import org.tiefaces.components.websheet.service.WebSheetLoader;
@@ -129,8 +128,6 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	private CellHelper cellHelper = null;
 	/** hold instance for picture helper class. */
 	private PicturesHelper picHelper = null;
-	/** hold instance for data helper class. */
-	private DataHandler dataHandler = null;
 	/** hold instance for validation handler class. */
 	private ValidationHandler validationHandler = null;
 	/** hold instance for chart helper class. */
@@ -143,12 +140,12 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	/** Client id for web forms. */
 	private String webFormClientId = null;
 	/** logger. */
-	private static final Logger log = Logger.getLogger(Thread
-			.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG 
+	= Logger.getLogger(TieWebSheetBean.class.getName());
 
 	/** constructor. Allow for extension. */
 	public TieWebSheetBean() {
-		log.fine("TieWebSheetBean Constructor");
+		LOG.fine("TieWebSheetBean Constructor");
 	}
 
 	/** initialize. */
@@ -157,7 +154,6 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		columns = new ArrayList<String>();
 		webSheetLoader = new WebSheetLoader(this);
 		cellHelper = new CellHelper(this);
-		dataHandler = new DataHandler(this);
 		validationHandler = new ValidationHandler(this);
 		picHelper = new PicturesHelper(this);
 		chartHelper = new ChartHelper(this);
@@ -403,14 +399,6 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		return webSheetLoader;
 	}
 
-	/**
-	 * get data handler.
-	 * 
-	 * @return data handler.
-	 */
-	public final DataHandler getDataHandler() {
-		return dataHandler;
-	}
 
 	/**
 	 * get validationhandler.
@@ -742,7 +730,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 			}
 			return 1;
 		} catch (Exception ex) {
-			log.fine("loadWorkSheetByTabName failed. error = "
+			LOG.fine("loadWorkSheetByTabName failed. error = "
 					+ ex.getMessage());
 		}
 		return -1;
@@ -776,7 +764,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 					"application/force-download", fileName);
 
 		} catch (Exception e) {
-			log.severe("Error in export file : " + e.getLocalizedMessage());
+			LOG.severe("Error in export file : " + e.getLocalizedMessage());
 		}
 		return;
 	}
@@ -824,7 +812,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		fullValidation = false;
 		setFullValidationInView(fullValidation);
 		if (!preValidation(true)) {
-			log.info("Validation failded before saving");
+			LOG.info("Validation failded before saving");
 			return;
 		}
 		processSave();
@@ -849,7 +837,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 *            ajax event.
 	 */
 	public final void noteChangeEvent(final AjaxBehaviorEvent event) {
-		dataHandler.setUnsavedStatus(RequestContext.getCurrentInstance(),
+		webSheetLoader.setUnsavedStatus(RequestContext.getCurrentInstance(),
 				true);
 	}
 
@@ -907,7 +895,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 				}
 			}
 		}
-		dataHandler.setUnsavedStatus(RequestContext.getCurrentInstance(),
+		webSheetLoader.setUnsavedStatus(RequestContext.getCurrentInstance(),
 				true);
 	}
 
@@ -929,9 +917,9 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 */
 	@PreDestroy
 	public final void finish() {
-		log.fine("finishing view webformbean");
+		LOG.fine("finishing view webformbean");
 		if (FacesContext.getCurrentInstance() == null) {
-			log.info("session has gone");
+			LOG.info("session has gone");
 		}
 
 	}
@@ -1010,7 +998,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	/**
 	 * cell default control.
 	 */
-	private Map<String, Map<String, String>> cellDefaultControl = new HashMap<String, Map<String, String>>();
+	private Map<String, Map<String, String>> 
+	cellDefaultControl = new HashMap<String, Map<String, String>>();
 
 	/**
 	 * get cell default control.

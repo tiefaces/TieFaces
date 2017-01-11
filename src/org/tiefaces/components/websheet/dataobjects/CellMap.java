@@ -17,6 +17,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.tiefaces.components.websheet.TieWebSheetBean;
+import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.service.CellUtility;
 
 /**
@@ -32,10 +33,12 @@ public class CellMap implements Serializable, java.util.Map {
 
 	/** serial instance. */
 	private static final long serialVersionUID = 1L;
-	/** log instance. */
-	private static final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
+	
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(
+			CellMap.class.getName());
 
+	
 	/** instance to parent websheet bean. */
 	private TieWebSheetBean parent = null;
 
@@ -176,7 +179,7 @@ public class CellMap implements Serializable, java.util.Map {
 			if (sessionMap.get(pictureViewId) == null) {
 				sessionMap.put(pictureViewId, parent.getPicturesMap()
 						.get(pictureId).getPictureData());
-				log.info("load picture put session map id = "
+				LOG.info("load picture put session map id = "
 						+ pictureViewId);
 			}
 			return pictureViewId;
@@ -209,7 +212,7 @@ public class CellMap implements Serializable, java.util.Map {
 			if (sessionMap.get(chartViewId) == null) {
 				sessionMap.put(chartViewId,
 						parent.getChartsMap().get(chartId));
-				log.fine("load chart put session map id = " + chartViewId);
+				LOG.fine("load chart put session map id = " + chartViewId);
 			}
 			return chartViewId;
 		} else {
@@ -246,14 +249,14 @@ public class CellMap implements Serializable, java.util.Map {
 						result = CellUtility
 								.getCellValueWithoutFormat(poiCell);
 					}
-					log.fine("Web Form CellMap getCellValue row = "
+					LOG.fine("Web Form CellMap getCellValue row = "
 							+ mkey.getRowIndex() + " col = "
 							+ mkey.getColIndex() + " format = "
 							+ mkey.isFormatted() + " result = " + result);
 				}
 			}
 		} catch (Exception ex) {
-			log.severe("Web Form CellMap get value error="
+			LOG.severe("Web Form CellMap get value error="
 					+ ex.getLocalizedMessage());
 		}
 		// return blank if null
@@ -294,7 +297,7 @@ public class CellMap implements Serializable, java.util.Map {
 					newValue = newValue.replace("\r\n", "\n");
 				}
 				if (newValue != null && !newValue.equals(oldValue)) {
-					log.fine("Web Form CellMap setCellValue Old: "
+					LOG.fine("Web Form CellMap setCellValue Old: "
 							+ oldValue + ", New: " + newValue + ", row ="
 							+ mkey.getRowIndex() + " col ="
 							+ mkey.getColIndex() + " inputtype = "

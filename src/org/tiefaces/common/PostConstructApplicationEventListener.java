@@ -9,11 +9,14 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.SystemEvent;
 import javax.faces.event.SystemEventListener;
 
+import org.tiefaces.components.websheet.configuration.CellControlsHelper;
+
 public class PostConstructApplicationEventListener
 		implements SystemEventListener {
 
-	private static final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
+	/** logger. */
+	private static final Logger LOGGER = Logger.getLogger(
+			PostConstructApplicationEventListener.class.getName());
 
 	public boolean isListenerForSource(Object source) {
 		return true;
@@ -22,7 +25,7 @@ public class PostConstructApplicationEventListener
 	public void processEvent(SystemEvent event)
 			throws AbortProcessingException {
 
-		log.log(Level.INFO, "Running on TieFaces {0}",
+		LOGGER.log(Level.INFO, "Running on TieFaces {0}",
 				AppUtils.getBuildVersion());
 	}
 	

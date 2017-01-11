@@ -14,10 +14,10 @@ import java.util.logging.Logger;
  */
 public class HeaderCell {
 
-	/** log instance. */
-	private static final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
-
+	/** logger. */
+	private static final Logger LOG  = Logger.getLogger(
+			HeaderCell.class.getName());
+	
 	/** The rowspan. */
 	private String rowspan; // cell row span attribute
 
@@ -69,7 +69,7 @@ public class HeaderCell {
 		this.cellValue = pcellValue;
 		this.rendered = prendered;
 		this.columnRendered = pcolumnRendered;
-		log.fine("header cell construction: rowspan = " + prowspan
+		LOG.fine("header cell construction: rowspan = " + prowspan
 				+ " colspan=" + pcolspan + " style=" + pstyle
 				+ " columnStyle=" + pcolumnStyle + " cellValue="
 				+ pcellValue + " rendered = " + prendered

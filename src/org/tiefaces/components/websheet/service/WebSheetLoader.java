@@ -32,6 +32,7 @@ import org.tiefaces.common.FacesUtility;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.TieWebSheetView.tabModel;
+import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.configuration.ConfigBuildRef;
 import org.tiefaces.components.websheet.configuration.ConfigRangeAttrs;
 import org.tiefaces.components.websheet.configuration.ConfigurationHandler;
@@ -54,8 +55,8 @@ public class WebSheetLoader implements Serializable {
 	private TieWebSheetBean parent = null;
 
 	/** logger. */
-	private static final Logger log = Logger.getLogger(Thread
-			.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG = Logger.getLogger(WebSheetLoader.class
+			.getName());
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -68,7 +69,7 @@ public class WebSheetLoader implements Serializable {
 	 */
 	public WebSheetLoader(final TieWebSheetBean pParent) {
 		this.parent = pParent;
-		log.fine("TieWebSheetLoader Constructor");
+		LOG.fine("TieWebSheetLoader Constructor");
 	}
 
 	/**
@@ -97,7 +98,7 @@ public class WebSheetLoader implements Serializable {
 				TieWebSheetUtility.pixel2WidthUnits(parent
 						.getLineNumberColumnWidth()
 						+ parent.getAddRowColumnWidth()));
-		log.fine("totalwidth = " + totalWidth);
+		LOG.fine("totalwidth = " + totalWidth);
 		String formWidthStyle = sheetConfig.getFormWidth();
 		if ((formWidthStyle == null) || (formWidthStyle.isEmpty())) {
 			parent.setTableWidthStyle(TieWebSheetUtility
@@ -113,7 +114,7 @@ public class WebSheetLoader implements Serializable {
 				.pixel2WidthUnits(parent.getAddRowColumnWidth()),
 				totalWidth));
 
-		log.fine("tableWidthStyle = " + parent.getTableWidthStyle()
+		LOG.fine("tableWidthStyle = " + parent.getTableWidthStyle()
 				+ " lineNumberColumnWidthStyle= "
 				+ parent.getLineNumberColumnWidthStyle()
 				+ " addRowColumnWidthStyle= "
@@ -170,9 +171,10 @@ public class WebSheetLoader implements Serializable {
 		for (int i = firstCol; i <= lastCol; i++) {
 			if (!sheet1.isColumnHidden(i)) {
 				String style = getHeaderColumnStyle(parent.getWb(), null,
-						sheet1.getColumnWidth(i), totalWidth, 12);
+						sheet1.getColumnWidth(i), totalWidth,
+						TieConstants.DEFAULT_HEADER_ROW_HEIGHT);
 				headercells.add(new HeaderCell("1", "1", style, style,
-						TieWebSheetUtility.GetExcelColumnName(i), rendered,
+						TieWebSheetUtility.getExcelColumnName(i), rendered,
 						true));
 			}
 		}
@@ -237,9 +239,11 @@ public class WebSheetLoader implements Serializable {
 	 */
 	private String getWidthStyle(final double colWidth,
 			final double totalWidth) {
-		double percentage = FacesUtility.round(100 * colWidth / totalWidth,
-				2);
-		return "width:" + percentage + "%;";
+		double percentage = FacesUtility.round(
+				TieConstants.cellFormatPercentageValue * colWidth
+						/ totalWidth, 2);
+		return "width:" + percentage
+				+ TieConstants.cellFormatPercentageSymbol + ";";
 	}
 
 	/**
@@ -281,9 +285,10 @@ public class WebSheetLoader implements Serializable {
 				if (!skippedRegionCells.contains(cellindex)
 						&& !sheet1.isColumnHidden(cindex)) {
 					Cell cell = null;
-					if (row != null)
+					if (row != null) {
 						cell = row.getCell(cindex,
 								MissingCellPolicy.CREATE_NULL_AS_BLANK);
+					}
 					int originRowIndex = ConfigurationHelper
 							.getOriginalRowNumInHiddenColumn(row);
 					if (cell != null) {
@@ -396,7 +401,7 @@ public class WebSheetLoader implements Serializable {
 			return ireturn;
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.fine("Web Form loadWorkbook Error Exception = "
+			LOG.fine("Web Form loadWorkbook Error Exception = "
 					+ e.getLocalizedMessage());
 			return -1;
 		}
@@ -419,7 +424,7 @@ public class WebSheetLoader implements Serializable {
 			clearWorkbook();
 			// only support xssf workbook now since 2016 July
 			if (!(wb instanceof XSSFWorkbook)) {
-				log.fine("Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
+				LOG.fine("Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
 				return -1;
 			}
 			parent.setWb(wb);
@@ -441,7 +446,7 @@ public class WebSheetLoader implements Serializable {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.fine("Web Form loadWorkbook Error Exception = "
+			LOG.fine("Web Form loadWorkbook Error Exception = "
 					+ e.getLocalizedMessage());
 			return -1;
 		}
@@ -615,9 +620,9 @@ public class WebSheetLoader implements Serializable {
 			viewMap.put("currentTabName", parent.getCurrentTabName());
 			// viewMap.put("templateName", templateName);
 			viewMap.put("fullValidation", parent.getFullValidation());
-			log.fine("saveobjs in viewMap = " + viewMap);
+			LOG.fine("saveobjs in viewMap = " + viewMap);
 		} catch (Exception ex) {
-			log.fine("saveobjs in viewMap error = " + ex.getMessage());
+			LOG.fine("saveobjs in viewMap error = " + ex.getMessage());
 
 		}
 
@@ -697,7 +702,7 @@ public class WebSheetLoader implements Serializable {
 		sheetConfig.setBodyPopulated(true);
 		parent.setCurrentTopRow(top);
 		parent.setCurrentLeftColumn(left);
-		log.fine("Web Form loading bodyRows = " + parent.getBodyRows());
+		LOG.fine("Web Form loading bodyRows = " + parent.getBodyRows());
 	}
 
 	/**
@@ -738,7 +743,7 @@ public class WebSheetLoader implements Serializable {
 		String saveAttrList = ConfigurationHelper
 				.getSaveAttrListFromRow(row);
 		List<FacesCell> bodycells = new ArrayList<FacesCell>();
-		log.fine(" loder row number = " + rowIndex + " row = " + row);
+		LOG.fine(" loder row number = " + rowIndex + " row = " + row);
 		for (int cindex = left; cindex <= right; cindex++) {
 			String cellindex = "$" + cindex + "$" + rowIndex;
 			if (!skippedRegionCells.contains(cellindex)
@@ -831,7 +836,7 @@ public class WebSheetLoader implements Serializable {
 							.saveDataInContext(cell, newValue);
 				}
 
-				log.fine("refresh obj name =" + tblName + ":" + i
+				LOG.fine("refresh obj name =" + tblName + ":" + i
 						+ ":cocalc" + index + " formula = "
 						+ cell.getCellFormula() + "newValue = " + newValue);
 
@@ -1037,6 +1042,34 @@ public class WebSheetLoader implements Serializable {
 		sheetConfig.setBodyInitialRows(initRows);
 		parent.getCellHelper().reCalc();
 
+	}
+
+	/**
+	 * Sets the unsaved status.
+	 *
+	 * @param requestContext
+	 *            the request context
+	 * @param statusFlag
+	 *            the status flag
+	 */
+	public void setUnsavedStatus(RequestContext requestContext,
+			Boolean statusFlag) {
+		// requestContext.execute("setUnsavedState("+statusFlag+")");
+	}
+
+	/**
+	 * Checks if is unsaved status.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isUnsavedStatus() {
+		Map<String, Object> viewMap = FacesContext.getCurrentInstance()
+				.getViewRoot().getViewMap();
+		Boolean flag = (Boolean) viewMap.get("unSaved");
+		if (flag == null) {
+			return false;
+		}
+		return flag;
 	}
 
 }

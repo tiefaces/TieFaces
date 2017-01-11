@@ -34,13 +34,13 @@ public class XColor {
 	 *
 	 * @param seriesColor
 	 *            the series color
-	 * @param alpha
+	 * @param palpha
 	 *            the alpha
 	 */
-	public XColor(final XSSFColor seriesColor, final double alpha) {
+	public XColor(final XSSFColor seriesColor, final double palpha) {
 		super();
 		this.xssfColor = seriesColor;
-		this.alpha = alpha;
+		this.alpha = palpha;
 	}
 
 
@@ -56,11 +56,11 @@ public class XColor {
 	/**
 	 * Sets the series color.
 	 *
-	 * @param xssfColor
+	 * @param pxssfColor
 	 *            the new series color
 	 */
-	public void setSeriesColor(final XSSFColor xssfColor) {
-		this.xssfColor = xssfColor;
+	public void setSeriesColor(final XSSFColor pxssfColor) {
+		this.xssfColor = pxssfColor;
 	}
 	
 	/**

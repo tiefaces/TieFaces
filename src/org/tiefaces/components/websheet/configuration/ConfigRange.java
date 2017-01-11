@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
+import org.tiefaces.components.websheet.service.ParserUtility;
 
 /**
  * Simple class for area range. Also include nested command list. Note: command
@@ -33,9 +34,9 @@ import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
 public class ConfigRange {
 
 	/** logger. */
-	private final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
-
+	private static final Logger LOG = Logger.getLogger(
+			ConfigRange.class.getName());
+	
 	/** The attrs. */
 	private ConfigRangeAttrs attrs = new ConfigRangeAttrs(false);
 
@@ -115,7 +116,7 @@ public class ConfigRange {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			log.severe("shiftRowRef error =" + ex.getLocalizedMessage());
+			LOG.severe("shiftRowRef error =" + ex.getLocalizedMessage());
 		}
 	}
 
@@ -301,7 +302,7 @@ public class ConfigRange {
 			final ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
 			final List<RowsMapping> currentRowsMappingList) {
-		log.fine("build xls sheet at row : " + atRow);
+		LOG.fine("build xls sheet at row : " + atRow);
 
 		// List<Row> staticRows = setUpBuildRows(sheet,
 		// this.getFirstRowRef().getRowIndex(),
@@ -406,7 +407,7 @@ public class ConfigRange {
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
-						log.severe("build cell ( row = "
+						LOG.severe("build cell ( row = "
 								+ cell.getRowIndex() + " column = "
 								+ cell.getColumnIndex() + " error = "
 								+ ex.getLocalizedMessage());

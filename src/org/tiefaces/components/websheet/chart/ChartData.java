@@ -14,6 +14,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.tiefaces.components.websheet.chart.objects.ChartObject;
+import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 import org.tiefaces.components.websheet.utility.ColorUtility;
@@ -51,10 +52,9 @@ public class ChartData {
 	/** seriesList. */
 	private List<ChartSeries> seriesList;
 
-	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread
-			.currentThread().getStackTrace()[0].getClassName());
-
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(
+			ChartData.class.getName());
 	/**
 	 * get category list.
 	 * 
@@ -133,7 +133,7 @@ public class ChartData {
 				for (int col = region.getFirstColumn(); col <= region
 						.getLastColumn(); col++) {
 					cells.add(new ParsedCell(sheetName, row, col));
-					log.fine(" add category sheetName = " + sheetName
+					LOG.fine(" add category sheetName = " + sheetName
 							+ " row = " + row + " col = " + col);
 				}
 			}
@@ -181,7 +181,7 @@ public class ChartData {
 					for (int col = region.getFirstColumn(); col <= region
 							.getLastColumn(); col++) {
 						cells.add(new ParsedCell(sheetName, row, col));
-						log.fine(" add serial value sheetName = "
+						LOG.fine(" add serial value sheetName = "
 								+ sheetName + " row = " + row + " col = "
 								+ col);
 					}

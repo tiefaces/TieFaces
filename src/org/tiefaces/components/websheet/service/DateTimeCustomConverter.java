@@ -4,7 +4,6 @@
  */
 package org.tiefaces.components.websheet.service;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -17,54 +16,69 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.DateTimeConverter;
 import javax.faces.convert.FacesConverter;
 
+import org.tiefaces.common.TieConstants;
+
 /**
  * The Class DateTimeCustomConverter.
  */
 @FacesConverter("tieCalendaConverter")
-public class DateTimeCustomConverter implements Converter{
- 
- /* (non-Javadoc)
-  * @see javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext, javax.faces.component.UIComponent, java.lang.String)
-  */
- @Override
- public Object getAsObject(FacesContext context, UIComponent component, String value) {
-  if(value == null){
-   return null;
-  }
-  String pattern = (String) component.getAttributes().get("pattern");
-  SimpleDateFormat formatter = new SimpleDateFormat(pattern, getLocale(context, component));
-  try{
-	  return formatter.parse(value);
-  }catch(Exception e){
-	  throw new ConverterException(e.getLocalizedMessage());	  
-  }
- }
- 
- /* (non-Javadoc)
-  * @see javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext, javax.faces.component.UIComponent, java.lang.Object)
-  */
- public String getAsString(FacesContext context, UIComponent component, Object value) {
-  if(value == null){
-   return "";
-  }
-  if (value instanceof String) {
-	  return (String) value;
-  }
-  if (context == null || component == null) {
-   throw new NullPointerException();
-  }
-  
-  try {
-	   String pattern = (String) component.getAttributes().get("pattern");
-	   SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, getLocale(context, component));
-	   return dateFormat.format(value);
+public class DateTimeCustomConverter implements Converter {
 
-	  } catch  (Exception e) {
-	   throw new ConverterException(e.getLocalizedMessage());
-  }
- }
- 
- /**
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext
+	 * , javax.faces.component.UIComponent, java.lang.String)
+	 */
+	@Override
+	public Object getAsObject(FacesContext context, UIComponent component,
+			String value) {
+		if (value == null) {
+			return null;
+		}
+		String pattern = (String) component.getAttributes().get("pattern");
+		SimpleDateFormat formatter = new SimpleDateFormat(pattern,
+				getLocale(context, component));
+		try {
+			return formatter.parse(value);
+		} catch (Exception e) {
+			throw new ConverterException(e.getLocalizedMessage());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext
+	 * , javax.faces.component.UIComponent, java.lang.Object)
+	 */
+	public String getAsString(final FacesContext context,
+			final UIComponent component, final Object value) {
+		if (value == null) {
+			return "";
+		}
+		if (value instanceof String) {
+			return (String) value;
+		}
+		if (context == null || component == null) {
+			throw new NullPointerException();
+		}
+
+		try {
+			String pattern = (String) component.getAttributes().get(
+					TieConstants.WIDGET_ATTR_PATTERN);
+			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern,
+					getLocale(context, component));
+			return dateFormat.format(value);
+
+		} catch (Exception e) {
+			throw new ConverterException(e.getLocalizedMessage());
+		}
+	}
+
+	/**
 	 * Gets the locale.
 	 *
 	 * @param context
@@ -73,30 +87,18 @@ public class DateTimeCustomConverter implements Converter{
 	 *            the component
 	 * @return the locale
 	 */
- private Locale getLocale(FacesContext context, UIComponent component) {
+	private Locale getLocale(final FacesContext context,
+			final UIComponent component) {
 
-	 String locale = (String) component.getAttributes().get("locale");
-	 
-     if (locale == null) {
-    	 return context.getViewRoot().getLocale();
-     }
-     return stringToLocale(locale);
+		String localeStr = (String) component.getAttributes().get(
+				TieConstants.COMPONENT_ATTR_LOCALE);
 
- }
- 
- /**
-	 * String to locale.
-	 *
-	 * @param s
-	 *            the s
-	 * @return the locale
-	 */
- private Locale stringToLocale(String s) {
-	    StringTokenizer tempStringTokenizer = new StringTokenizer(s,",");
-	    if(tempStringTokenizer.hasMoreTokens());
-	    String l = (String) tempStringTokenizer.nextElement();
-	    if(tempStringTokenizer.hasMoreTokens());
-	    String c = (String) tempStringTokenizer.nextElement();
-	    return new Locale(l,c);
+		if (localeStr == null) {
+			return context.getViewRoot().getLocale();
+		}
+
+		return Locale.forLanguageTag(localeStr);
+
 	}
+
 }

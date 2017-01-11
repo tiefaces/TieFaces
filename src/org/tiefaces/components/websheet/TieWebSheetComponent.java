@@ -16,6 +16,7 @@ import org.tiefaces.common.TieConstants;
 
 /**
  * component class.
+ * 
  * @author Jason Jiang
  *
  */
@@ -26,12 +27,12 @@ public class TieWebSheetComponent extends UINamingContainer {
 	private TieWebSheetBean webSheetBean = null;
 
 	/** logger. */
-	private static final Logger log = Logger.getLogger(Thread
-			.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG = Logger
+			.getLogger(TieWebSheetComponent.class.getName());
 
 	/** constructor. */
 	public TieWebSheetComponent() {
-		log.fine("TieWebSheetBean Constructor");
+		LOG.fine("TieWebSheetBean Constructor");
 	}
 
 	/**
@@ -43,8 +44,12 @@ public class TieWebSheetComponent extends UINamingContainer {
 		return webSheetBean;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.faces.component.UIComponentBase#encodeBegin(javax.faces.context.FacesContext)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.faces.component.UIComponentBase#encodeBegin(javax.faces.context
+	 * .FacesContext)
 	 */
 	@Override
 	public final void encodeBegin(final FacesContext context)
@@ -62,9 +67,9 @@ public class TieWebSheetComponent extends UINamingContainer {
 			if ((maxrows != null) && (!maxrows.isEmpty())) {
 				webSheetBean.setMaxRowsPerPage(Integer.valueOf(maxrows));
 			}
-			log.fine("websheetbean max rows = "
+			LOG.fine("websheetbean max rows = "
 					+ webSheetBean.getMaxRowsPerPage());
-			log.fine("webclientid = " + webSheetBean.getWebFormClientId());
+			LOG.fine("webclientid = " + webSheetBean.getWebFormClientId());
 		}
 		super.encodeBegin(context);
 	}

@@ -25,7 +25,6 @@ import org.tiefaces.components.websheet.dataobjects.XColor;
  */
 public final class ColorUtility {
 
-	
 	/**
 	 * prevent initialize.
 	 */
@@ -33,9 +32,9 @@ public final class ColorUtility {
 		// not called
 	}
 
-	/** log instance. */
-	private static final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(ColorUtility.class
+			.getName());
 
 	/** one million. */
 	private static final double MILLION_NUMBERS = 100000.00;
@@ -63,18 +62,18 @@ public final class ColorUtility {
 		try {
 			colorFill = ctPlot.getSpPr().getSolidFill();
 		} catch (Exception ex) {
-			log.finest("No entry in bgcolor for solidFill");
+			LOG.finest("No entry in bgcolor for solidFill");
 		}
 		// if there's no solidFill, then use white color
 		if (colorFill != null) {
 			CTSchemeColor ctsColor = colorFill.getSchemeClr();
 			if (ctsColor != null) {
-				log.fine("get background color from scheme");
+				LOG.fine("get background color from scheme");
 				return getXColorFromSchemeClr(ctsColor, themeTable);
 			} else {
 				CTSRgbColor ctrColor = colorFill.getSrgbClr();
 				if (ctrColor != null) {
-					log.fine("get background color from rgb");
+					LOG.fine("get background color from rgb");
 					return getXColorFromRgbClr(ctrColor, themeTable);
 				}
 			}
@@ -125,9 +124,9 @@ public final class ColorUtility {
 			alpha = alphaInt / MILLION_NUMBERS;
 		}
 
-		log.fine("assmebleXcolor lumOff = " + lumOff + " lumMod = " + lumMod
-				+ " tint = " + tint + " alpha = " + alpha + " xssfcolor = "
-				+ bcolor.getRGBWithTint());
+		LOG.fine("assmebleXcolor lumOff = " + lumOff + " lumMod = "
+				+ lumMod + " tint = " + tint + " alpha = " + alpha
+				+ " xssfcolor = " + bcolor.getRGBWithTint());
 
 		return new XColor(bcolor, alpha);
 
@@ -142,8 +141,8 @@ public final class ColorUtility {
 	 *            theme table
 	 * @return xcolor
 	 */
-	private static XColor getXColorFromSchemeClr(final CTSchemeColor ctsColor,
-			final ThemesTable themeTable) {
+	private static XColor getXColorFromSchemeClr(
+			final CTSchemeColor ctsColor, final ThemesTable themeTable) {
 		if (ctsColor.getVal() != null) {
 			return getXColorWithSchema(ctsColor.getVal().toString(), 0,
 					ctsColor, themeTable);
@@ -179,20 +178,21 @@ public final class ColorUtility {
 					try {
 						lumOff = ctsColor.getLumOffArray(0).getVal();
 					} catch (Exception ex) {
-						log.finest("No lumOff entry");
+						LOG.finest("No lumOff entry");
 					}
 					try {
 						lumMod = ctsColor.getLumModArray(0).getVal();
 					} catch (Exception ex) {
-						log.finest("No lumMod entry");
+						LOG.finest("No lumMod entry");
 					}
 					try {
 						alphaInt = ctsColor.getAlphaArray(0).getVal();
 					} catch (Exception ex) {
-						log.finest("No alpha entry");
+						LOG.finest("No alpha entry");
 					}
 				}
-				return assembleXcolor(bcolor, preTint, lumOff, lumMod, alphaInt);
+				return assembleXcolor(bcolor, preTint, lumOff, lumMod,
+						alphaInt);
 			}
 		}
 		return null;
@@ -214,7 +214,7 @@ public final class ColorUtility {
 			byte[] rgb = ctrColor.getVal();
 			bcolor = new XSSFColor(rgb);
 		} catch (Exception ex) {
-			log.severe("Cannot get rgb color error = "
+			LOG.severe("Cannot get rgb color error = "
 					+ ex.getLocalizedMessage());
 			return null;
 		}
@@ -224,17 +224,17 @@ public final class ColorUtility {
 		try {
 			lumOff = ctrColor.getLumOffArray(0).getVal();
 		} catch (Exception ex) {
-			log.finest("No lumOff entry");
+			LOG.finest("No lumOff entry");
 		}
 		try {
 			lumMod = ctrColor.getLumModArray(0).getVal();
 		} catch (Exception ex) {
-			log.finest("No lumMod entry");
+			LOG.finest("No lumMod entry");
 		}
 		try {
 			alphaStr = ctrColor.getAlphaArray(0).getVal();
 		} catch (Exception ex) {
-			log.finest("No alpha entry");
+			LOG.finest("No alpha entry");
 		}
 		return assembleXcolor(bcolor, 0, lumOff, lumMod, alphaStr);
 	}
@@ -249,7 +249,7 @@ public final class ColorUtility {
 	 * @param themeTable
 	 *            themeTable.
 	 * @param isLineColor
-	 *            TODO
+	 *            is line color.
 	 * @return xcolor.
 	 */
 	public static XColor geColorFromSpPr(final int index,
@@ -265,7 +265,7 @@ public final class ColorUtility {
 				colorFill = ctSpPr.getSolidFill();
 			}
 		} catch (Exception ex) {
-			log.finest("No entry for solidFill");
+			LOG.finest("No entry for solidFill");
 		}
 		// if there's no solidFill, then use automaticFill color
 		if (colorFill != null) {
@@ -302,8 +302,8 @@ public final class ColorUtility {
 		}
 		String schema = AUTOCOLORNAME + reminder;
 		double tint = getAutomaticTint(index);
-		log.fine(" getXColor automaic index = " + index + " schema = " + schema
-				+ " tint = " + tint);
+		LOG.fine(" getXColor automaic index = " + index + " schema = "
+				+ schema + " tint = " + tint);
 		return getXColorWithSchema(schema, tint, null, themeTable);
 	}
 
@@ -318,8 +318,8 @@ public final class ColorUtility {
 	 */
 	private static double getAutomaticTint(final int index) {
 
-		final double[] idxArray = { 0, 0.25, 0.5, -0.25, -0.5, 0.1, 0.3, -0.1,
-				-0.3 };
+		final double[] idxArray = { 0, 0.25, 0.5, -0.25, -0.5, 0.1, 0.3,
+				-0.1, -0.3 };
 		int i = index / AUTOCOLORSIZE;
 		if (i >= idxArray.length) {
 			return 0;
@@ -351,8 +351,8 @@ public final class ColorUtility {
 	private static int getThemeIndexFromName(final String idxName) {
 
 		final String[] idxArray = { "bg1", "tx1", "bg2", "tx2", "accent1",
-				"accent2", "accent3", "accent4", "accent5", "accent6", "hlink",
-				"folHlink" };
+				"accent2", "accent3", "accent4", "accent5", "accent6",
+				"hlink", "folHlink" };
 		try {
 			for (int i = 0; i < idxArray.length; i++) {
 				if (idxArray[i].equalsIgnoreCase(idxName)) {
@@ -383,9 +383,12 @@ public final class ColorUtility {
 			}
 			// Bytes are signed, so values of 128+ are negative!
 			// 0: red, 1: green, 2: blue
-			rgbfix[0] = (short) ((rgb[0] < 0) ? (rgb[0] + RGB8BITS) : rgb[0]);
-			rgbfix[1] = (short) ((rgb[1] < 0) ? (rgb[1] + RGB8BITS) : rgb[1]);
-			rgbfix[2] = (short) ((rgb[2] < 0) ? (rgb[2] + RGB8BITS) : rgb[2]);
+			rgbfix[0] = (short) ((rgb[0] < 0) ? (rgb[0] + RGB8BITS)
+					: rgb[0]);
+			rgbfix[1] = (short) ((rgb[1] < 0) ? (rgb[1] + RGB8BITS)
+					: rgb[1]);
+			rgbfix[2] = (short) ((rgb[2] < 0) ? (rgb[2] + RGB8BITS)
+					: rgb[2]);
 		}
 		return rgbfix;
 	}

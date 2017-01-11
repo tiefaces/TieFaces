@@ -7,27 +7,21 @@ package org.tiefaces.components.websheet.utility;
 
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
-import org.tiefaces.components.websheet.configuration.ConfigCommand;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.configuration.ConfigRange;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,25 +38,26 @@ public final class TieWebSheetUtility {
 		// not called
 	}
 
-	/** The Constant log. */
-	private static final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
-
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(
+			TieWebSheetUtility.class.getName());
+	
 	/**
 	 * Gets the excel column name.
 	 *
-	 * @param number
+	 * @param pnumber
 	 *            the number
 	 * @return the string
 	 */
-	public static String GetExcelColumnName(int number) {
+	public static String getExcelColumnName(final int pnumber) {
 		String converted = "";
 		// Repeatedly divide the number by 26 and convert the
 		// remainder into the appropriate letter.
+		int number = pnumber;
 		while (number >= 0) {
-			int remainder = number % 26;
+			int remainder = number % TieConstants.EXCEL_LETTER_NUMBERS;
 			converted = (char) (remainder + 'A') + converted;
-			number = (number / 26) - 1;
+			number = (number / TieConstants.EXCEL_LETTER_NUMBERS) - 1;
 		}
 
 		return converted;
@@ -82,7 +77,7 @@ public final class TieWebSheetUtility {
 			final Cell cell) {
 		if ((sheet1 != null) && (cell != null)) {
 			return sheet1.getSheetName() + "!$"
-					+ GetExcelColumnName(cell.getColumnIndex()) + "$"
+					+ getExcelColumnName(cell.getColumnIndex()) + "$"
 					+ (cell.getRowIndex() + 1);
 		}
 		return null;
@@ -103,7 +98,7 @@ public final class TieWebSheetUtility {
 	public static String getFullCellRefName(final String sheetName,
 			final int rowIndex, final int colIndex) {
 		if (sheetName != null) {
-			return sheetName + "!$" + GetExcelColumnName(colIndex) + "$"
+			return sheetName + "!$" + getExcelColumnName(colIndex) + "$"
 					+ (rowIndex + 1);
 		}
 		return null;
@@ -154,7 +149,7 @@ public final class TieWebSheetUtility {
 		int pow = 1;
 		for (int i = name.length() - 1; i >= 0; i--) {
 			number += (name.charAt(i) - 'A' + 1) * pow;
-			pow *= 26;
+			pow *= TieConstants.EXCEL_LETTER_NUMBERS;
 		}
 
 		return number - 1;
@@ -184,7 +179,7 @@ public final class TieWebSheetUtility {
 			}
 		} catch (Exception ex) {
 			// use log.debug because mostly it's expected
-			log.severe("WebForm WebFormHelper getCellByReference cellRef = "
+			LOG.severe("WebForm WebFormHelper getCellByReference cellRef = "
 					+ cellRef + "; error = " + ex.getLocalizedMessage());
 		}
 		return c;
@@ -203,6 +198,10 @@ public final class TieWebSheetUtility {
 	/** The Constant PIXELS_PER_INCH. */
 	// inch is an acceptable standard to beging with.
 	public static final int PIXELS_PER_INCH = 96; // MB
+	/** The Constant MILLIMETERS_PER_INCH. */
+	public static final double MILLIMETERS_PER_INCH = 25.4;
+	/** The Constant POINTS_PER_INCH. */
+	public static final double POINTS_PER_INCH = 72D;
 	// Cnstants that defines how many pixels and points there are in a
 	/** The Constant PIXELS_PER_MILLIMETRES. */
 	// millimetre. These values are required for the conversion algorithm.
@@ -268,6 +267,10 @@ public final class TieWebSheetUtility {
 	}
 
 	/**
+	 * PIXEL_HEIGHT_ASPC_ADJUST.
+	 */
+	private static final double PIXEL_HEIGHT_ASPC_ADJUST = 14;
+	/**
 	 * Height units 2 pixel.
 	 *
 	 * @param heightUnits
@@ -280,7 +283,7 @@ public final class TieWebSheetUtility {
 		pixels += Math.round((float) offsetHeightUnits
 				/ ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH
 						/ 2));
-		pixels += (Math.floor(pixels / 14) + 1) * 4;
+		pixels += (Math.floor(pixels / PIXEL_HEIGHT_ASPC_ADJUST) + 1) * 4;
 
 		return pixels;
 	}
@@ -320,7 +323,7 @@ public final class TieWebSheetUtility {
 	 * @return the int
 	 */
 	public static int pointsToPixels(final double points) {
-		return (int) Math.round(points / 72D * PIXELS_PER_INCH);
+		return (int) Math.round(points / POINTS_PER_INCH * PIXELS_PER_INCH);
 	}
 
 	/**
@@ -331,7 +334,7 @@ public final class TieWebSheetUtility {
 	 * @return the double
 	 */
 	public static double pointsToMillimeters(final double points) {
-		return points / 72D * 25.4;
+		return points / POINTS_PER_INCH * MILLIMETERS_PER_INCH;
 	}
 
 	/*
@@ -401,12 +404,12 @@ public final class TieWebSheetUtility {
 	 * @return the last weekday
 	 */
 	private static Calendar getLastWeekday(final Calendar date) {
-		Calendar _date = Calendar.getInstance();
-		_date.setTime(date.getTime());
-		while (isWeekend(_date)) {
-			_date.add(Calendar.DATE, -1);
+		Calendar lDate = Calendar.getInstance();
+		lDate.setTime(date.getTime());
+		while (isWeekend(lDate)) {
+			lDate.add(Calendar.DATE, -1);
 		}
-		return _date;
+		return lDate;
 	}
 
 	/**
@@ -478,9 +481,9 @@ public final class TieWebSheetUtility {
 			s = s.substring(1);
 		}
 		char c;
-		int i, L = s.length(), sinceLastComma = 0;
+		int i, sLen = s.length(), sinceLastComma = 0;
 		boolean decimalHit = false, commaHit = false;
-		for (i = 0; i < L; i++) {
+		for (i = 0; i < sLen; i++) {
 			c = s.charAt(i);
 			if (c < '0' || c > '9') {
 				if (c == '.' && !decimalHit) {
@@ -535,9 +538,9 @@ public final class TieWebSheetUtility {
 					+ "' to value '" + propertyValue + "' for object "
 					+ obj;
 			if (ignoreNonExisting) {
-				log.info(msg);
+				LOG.info(msg);
 			} else {
-				log.warning(msg);
+				LOG.warning(msg);
 				throw new IllegalArgumentException(e);
 			}
 		}

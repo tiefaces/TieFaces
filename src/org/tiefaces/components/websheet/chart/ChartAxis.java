@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
+import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 
 /**
  * Get chart Axis infomation from Excel xml.
@@ -17,9 +18,10 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
  */
 public class ChartAxis {
 
-	/** log instance. */
-	private final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(
+			CellControlsHelper.class.getName());
+	
 	/** position. */
 	private String position;
 	/** orientation. */
@@ -86,19 +88,19 @@ public class ChartAxis {
 		try {
 			this.position = ctCatAx.getAxPos().getVal().toString();
 		} catch (Exception ex) {
-			log.fine("cannot get axpos from CtCatAx");
+			LOG.fine("cannot get axpos from CtCatAx");
 		}
 		try {
 			this.orientation = ctCatAx.getScaling().getOrientation().getVal()
 					.toString();
 		} catch (Exception ex) {
-			log.fine("cannot get scaling.orientation from CtCatAx");
+			LOG.fine("cannot get scaling.orientation from CtCatAx");
 		}
 		try {
 			this.title = ctCatAx.getTitle().getTx().getRich().getPList().get(0)
 					.getRList().get(0).getT();
 		} catch (Exception ex) {
-			log.fine("cannot get title from CtCatAx");
+			LOG.fine("cannot get title from CtCatAx");
 		}
 	}
 /**
@@ -110,19 +112,19 @@ public class ChartAxis {
 		try {
 			this.position = ctValAx.getAxPos().getVal().toString();
 		} catch (Exception ex) {
-			log.fine("cannot get AxPos from CtValAx");
+			LOG.fine("cannot get AxPos from CtValAx");
 		}
 		try {
 			this.orientation = ctValAx.getScaling().getOrientation().getVal()
 					.toString();
 		} catch (Exception ex) {
-			log.fine("cannot get scaling.orientation from CtValAx");
+			LOG.fine("cannot get scaling.orientation from CtValAx");
 		}
 		try {
 			this.title = ctValAx.getTitle().getTx().getRich().getPList().get(0)
 					.getRList().get(0).getT();
 		} catch (Exception ex) {
-			log.fine("cannot get title from CtValAx");
+			LOG.fine("cannot get title from CtValAx");
 		}
 	}
 

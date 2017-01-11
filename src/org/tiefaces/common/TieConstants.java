@@ -116,11 +116,6 @@ public final class TieConstants {
 	/** The Constant EXCEL_SHEET_NAME_LIMIT. */
 	public static final short EXCEL_SHEET_NAME_LIMIT = 31;
 	/** method prefix. */
-	public static final String METHOD_PREFIX = "${";
-	/** method prefix. */
-	public static final String METHOD_WIDGET_PREFIX = "$widget.";
-	/** method regex. */
-	public static final String METHOD_REGEX = "\\$+[^{$]+\\{+[^{}$]+\\}";
 	/** command's prefix. */
 	public static final String COMMAND_PREFIX = "tie:";
 	/** form command. */
@@ -156,6 +151,9 @@ public final class TieConstants {
 	/** The Constant EL_START. */
 	public static final String EL_START = "#{";
 
+	/** The Constant EL_START_BRACKET. */
+	public static final String EL_START_BRACKET = "{";
+
 	/** The Constant EL_END. */
 	public static final String EL_END = "}";
 
@@ -177,6 +175,9 @@ public final class TieConstants {
 	/** The Constant defaultLineNumberColumnWidth. */
 	public static final int defaultLineNumberColumnWidth = 26;
 
+	/** The Constant excel letter total numbers. */
+	public static final int EXCEL_LETTER_NUMBERS = 26;
+	
 	/** The Constant defaultAddRowColumnWidth. */
 	public static final int defaultAddRowColumnWidth = 38;
 
@@ -227,13 +228,40 @@ public final class TieConstants {
 
 	/** The Constant cellFormatPercentageSymbol. */
 	public static final String cellFormatPercentageSymbol = "%";
-	
+
 	/** The Constant cellFormatPercentageValue. */
 	public static final int cellFormatPercentageValue = 100;
+	/** The Constant cellAddrPrefix. */
+	public static final String cellAddrPrefix = "$";
+	/** The Constant rgb max. */
+	public static final short RGB_MAX = 256;
+	/** select item labels. */
+	public static final String SELECT_ITEM_LABELS = "itemlabels";
+	/** select item values. */
+	public static final String SELECT_ITEM_VALUES = "itemvalues";
+	/** default select item label. */
+	public static final String DEFAULT_SELECT_ITEM_LABEL = "defaultlabel";
+	/** default select item value. */
+	public static final String DEFAULT_SELECT_ITEM_VALUE = "defaultvalue";
+	/** widget calendar. */
+	public static final String WIDGET_CALENDAR = "calendar";
+	/** widget attribute pattern. */
+	public static final String WIDGET_ATTR_PATTERN = "pattern";
+	/** component attributes locale. */
+	public static final String COMPONENT_ATTR_LOCALE = "locale";
+	/** method regex. */
+	public static final String METHOD_REGEX = "\\$+[^{$]+\\{+[^{}$]+\\}";
+	/** method prefix. */
+	public static final String METHOD_PREFIX = "${";
+	/** The expression notation end. */
+	public static final String METHOD_END = "}";
+	/** method widget prefix. */
+	public static final String METHOD_WIDGET_PREFIX = "$widget.";
 	
-	public static final String cellAddrPrefix="$";
+	/** The expression notation pattern. */
+	public static final Pattern expressionNotationPattern = Pattern
+			.compile("\\$\\{[^}]*}");
 	
-	public static final short RGB_MAX=256;
+	public static final float DEFAULT_HEADER_ROW_HEIGHT = 12;
 	
-
 }

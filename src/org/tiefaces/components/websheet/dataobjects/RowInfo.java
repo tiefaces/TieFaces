@@ -5,8 +5,6 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
-import java.util.logging.Logger;
-
 /**
  * hold row control information for the entire row. Add as the first object of
  * the row for control object.
@@ -15,9 +13,6 @@ import java.util.logging.Logger;
  */
 public class RowInfo {
 
-	/** log instance. */
-	private static final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
 
 	/** The row index. */
 	private int rowIndex;
@@ -47,7 +42,7 @@ public class RowInfo {
 	 *
 	 * @return the row index
 	 */
-	public int getRowIndex() {
+	public final int getRowIndex() {
 		return rowIndex;
 	}
 
@@ -57,7 +52,7 @@ public class RowInfo {
 	 * @param prowIndex
 	 *            the new row index
 	 */
-	public void setRowIndex(final int prowIndex) {
+	public final void setRowIndex(final int prowIndex) {
 		this.rowIndex = prowIndex;
 	}
 
@@ -66,7 +61,7 @@ public class RowInfo {
 	 *
 	 * @return true, if is rendered
 	 */
-	public boolean isRendered() {
+	public final boolean isRendered() {
 		return rendered;
 	}
 
@@ -76,7 +71,7 @@ public class RowInfo {
 	 * @param prendered
 	 *            the new rendered
 	 */
-	public void setRendered(final boolean prendered) {
+	public final void setRendered(final boolean prendered) {
 		this.rendered = prendered;
 	}
 
@@ -85,7 +80,7 @@ public class RowInfo {
 	 *
 	 * @return the rowheight
 	 */
-	public float getRowheight() {
+	public final float getRowheight() {
 		return rowheight;
 	}
 
@@ -95,7 +90,7 @@ public class RowInfo {
 	 * @param prowheight
 	 *            the new rowheight
 	 */
-	public void setRowheight(final float prowheight) {
+	public final void setRowheight(final float prowheight) {
 		this.rowheight = prowheight;
 	}
 
@@ -104,7 +99,7 @@ public class RowInfo {
 	 *
 	 * @return true, if is repeat zone
 	 */
-	public boolean isRepeatZone() {
+	public final boolean isRepeatZone() {
 		return repeatZone;
 	}
 
@@ -114,7 +109,7 @@ public class RowInfo {
 	 * @param prepeatZone
 	 *            the new repeat zone
 	 */
-	public void setRepeatZone(final boolean prepeatZone) {
+	public final void setRepeatZone(final boolean prepeatZone) {
 		this.repeatZone = prepeatZone;
 	}
 

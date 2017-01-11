@@ -38,6 +38,7 @@ import org.tiefaces.components.websheet.chart.objects.ChartObject;
 import org.tiefaces.components.websheet.chart.objects.LineChart;
 import org.tiefaces.components.websheet.chart.objects.Pie3DChart;
 import org.tiefaces.components.websheet.chart.objects.PieChart;
+import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.dataobjects.AnchorSize;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
@@ -76,10 +77,10 @@ public class ChartHelper {
 
 	/** instance to parent websheet bean. */
 	private TieWebSheetBean parent = null;
-	/** log instance. */
-	private final Logger log = Logger.getLogger(Thread.currentThread()
-			.getStackTrace()[0].getClassName());
 
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(
+			ChartHelper.class.getName());
 	/**
 	 * Constructor. Pass in websheet bean, So this helper can access related
 	 * instance class.
@@ -89,7 +90,7 @@ public class ChartHelper {
 	 */
 	public ChartHelper(final TieWebSheetBean pParent) {
 		this.parent = pParent;
-		log.fine("ChartHelper Constructor");
+		LOG.fine("ChartHelper Constructor");
 	}
 
 	/**
@@ -114,7 +115,7 @@ public class ChartHelper {
 				initXSSFAnchorsMap((XSSFWorkbook) wb);
 			}
 		} catch (Exception e) {
-			log.severe("Web Form getAnchorsMap Error Exception = "
+			LOG.severe("Web Form getAnchorsMap Error Exception = "
 					+ e.getLocalizedMessage());
 		}
 	}
@@ -132,7 +133,7 @@ public class ChartHelper {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.severe("Web Form getChartsMap Error Exception = "
+			LOG.severe("Web Form getChartsMap Error Exception = "
 					+ e.getLocalizedMessage());
 		}
 	}
@@ -770,7 +771,7 @@ public class ChartHelper {
 		ChartType chartType = ChartUtility.getChartType(ctChart);
 		chartData.setBgColor(ColorUtility.getBgColor(ctChart.getPlotArea(),
 				themeTable));
-		log.fine("initChartDataFromXSSFChart chart id = " + chartId
+		LOG.fine("initChartDataFromXSSFChart chart id = " + chartId
 				+ " title = " + chartTitle + " chart type = " + chartType);
 
 		chartData.setId(chartId);
@@ -961,7 +962,7 @@ public class ChartHelper {
 					cir.setSeriesStroke(seriesIndex, stroke); // series line
 																// style
 				} catch (Exception e) {
-					log.severe("Error setting style '" + style
+					LOG.severe("Error setting style '" + style
 							+ "' for series '" + seriesIndex
 							+ "' of chart '" + chart + "': " + e);
 				}
@@ -972,12 +973,12 @@ public class ChartHelper {
 					xyir.setSeriesStroke(seriesIndex, stroke); // series line
 																// style
 				} catch (Exception e) {
-					log.severe("Error setting style '" + style
+					LOG.severe("Error setting style '" + style
 							+ "' for series '" + seriesIndex
 							+ "' of chart '" + chart + "': " + e);
 				}
 			} else {
-				log.fine("setSeriesColor() unsupported plot: " + plot);
+				LOG.fine("setSeriesColor() unsupported plot: " + plot);
 			}
 		}
 	}

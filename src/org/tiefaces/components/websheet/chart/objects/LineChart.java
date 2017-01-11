@@ -22,8 +22,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
  */
 public class LineChart implements ChartObject {
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getChartListFromCtChart(org.openxmlformats.schemas.drawingml.x2006.chart.CTChart)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
+	 * getChartListFromCtChart
+	 * (org.openxmlformats.schemas.drawingml.x2006.chart.CTChart)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override

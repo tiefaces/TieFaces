@@ -64,8 +64,8 @@ public final class ShiftFormulaUtility {
 		Object ptg = null;
 		for (int k = 0; k < ptgs.length; ++k) {
 			ptg = ptgs[k];
-			newPtgList.addAll(Arrays
-					.asList(convertPtg(ptgs, k, shiftFormulaRef, ptg)));
+			newPtgList.addAll(Arrays.asList(convertPtg(ptgs, k,
+					shiftFormulaRef, ptg)));
 		}
 
 		// String [] stockArr = stockList.toArray(new String[stockList.size()]);
@@ -141,14 +141,13 @@ public final class ShiftFormulaUtility {
 			} else {
 				shiftFormulaRef.setFormulaChanged(1);
 				// one to one or has no round brackets
-				if ((rowlist.size() == 1) || ((position + 1) >= ptgs.length)
-						|| !(ptgs[position
-								+ 1] instanceof ParenthesisPtg)) {
+				if ((rowlist.size() == 1)
+						|| ((position + 1) >= ptgs.length)
+						|| !(ptgs[position + 1] instanceof ParenthesisPtg)) {
 					// change ptg one to one
 					// return changed ptg
 					return singlePtg(
-							fixupRefRelativeRowOneToOne(ptg,
-									rowlist.get(0)),
+							fixupRefRelativeRowOneToOne(ptg, rowlist.get(0)),
 							originalOperandClass, -1);
 				} else {
 					shiftFormulaRef.setFormulaChanged(rowlist.size());
@@ -259,11 +258,10 @@ public final class ShiftFormulaUtility {
 				Ref3DPxg ref3dPxg = (Ref3DPxg) ptg;
 				Ref3DPxg new3dpxg = new Ref3DPxg(
 						ref3dPxg.getExternalWorkbookNumber(),
-						new SheetIdentifier(null,
-								new NameIdentifier(ref3dPxg.getSheetName(),
-										false)),
-						new CellReference(newRow.getRowNum(),
-								ref3dPxg.getColumn()));
+						new SheetIdentifier(null, new NameIdentifier(
+								ref3dPxg.getSheetName(), false)),
+						new CellReference(newRow.getRowNum(), ref3dPxg
+								.getColumn()));
 				new3dpxg.setClass(ref3dPxg.getPtgClass());
 				new3dpxg.setColRelative(ref3dPxg.isColRelative());
 				new3dpxg.setRowRelative(ref3dPxg.isRowRelative());
@@ -281,19 +279,16 @@ public final class ShiftFormulaUtility {
 				Area3DPxg area3dPxg = (Area3DPxg) ptg;
 				Area3DPxg new3dpxg = new Area3DPxg(
 						area3dPxg.getExternalWorkbookNumber(),
-						new SheetIdentifier(null,
-								new NameIdentifier(area3dPxg.getSheetName(),
-										false)),
+						new SheetIdentifier(null, new NameIdentifier(
+								area3dPxg.getSheetName(), false)),
 						area3dPxg.format2DRefAsString());
 				new3dpxg.setClass(area3dPxg.getPtgClass());
-				new3dpxg.setFirstColRelative(
-						area3dPxg.isFirstColRelative());
+				new3dpxg.setFirstColRelative(area3dPxg.isFirstColRelative());
 				new3dpxg.setLastColRelative(area3dPxg.isLastColRelative());
 				int shiftRow = newRow.getRowNum() - area3dPxg.getFirstRow();
 				new3dpxg.setFirstRow(area3dPxg.getFirstRow() + shiftRow);
 				new3dpxg.setLastRow(area3dPxg.getLastRow() + shiftRow);
-				new3dpxg.setFirstRowRelative(
-						area3dPxg.isFirstRowRelative());
+				new3dpxg.setFirstRowRelative(area3dPxg.isFirstRowRelative());
 				new3dpxg.setLastRowRelative(area3dPxg.isLastRowRelative());
 				new3dpxg.setLastSheetName(area3dPxg.getLastSheetName());
 				return new3dpxg;
@@ -350,11 +345,10 @@ public final class ShiftFormulaUtility {
 						rowList, newPtg, false);
 				newPtg[rowList.size()] = AddPtg.instance;
 			}
-		} else
-		// otherwise change to mutiple ptg plus parenth
-		// e.g. SUM((A1)) --> SUM((A1),(A2))
-		// SUM((A1:B1)) --> SUM((A1:B1),(A2:B2))
-		{
+		} else {
+			// otherwise change to mutiple ptg plus parenth
+			// e.g. SUM((A1)) --> SUM((A1),(A2))
+			// SUM((A1:B1)) --> SUM((A1:B1),(A2:B2))
 			newPtg = new Ptg[(size * 2) - 1];
 			if (ptg instanceof RefPtgBase) {
 				buildDynamicRowForRefPtgBase(ptg, originalOperandClass,
@@ -395,11 +389,10 @@ public final class ShiftFormulaUtility {
 				Ref3DPxg ref3dPxg = (Ref3DPxg) refPtg;
 				Ref3DPxg new3dpxg = new Ref3DPxg(
 						ref3dPxg.getExternalWorkbookNumber(),
-						new SheetIdentifier(null,
-								new NameIdentifier(ref3dPxg.getSheetName(),
-										false)),
-						new CellReference(row.getRowNum(),
-								ref3dPxg.getColumn()));
+						new SheetIdentifier(null, new NameIdentifier(
+								ref3dPxg.getSheetName(), false)),
+						new CellReference(row.getRowNum(), ref3dPxg
+								.getColumn()));
 				new3dpxg.setClass(originalOperandClass);
 				new3dpxg.setColRelative(ref3dPxg.isColRelative());
 				new3dpxg.setRowRelative(ref3dPxg.isRowRelative());
@@ -443,25 +436,22 @@ public final class ShiftFormulaUtility {
 				Area3DPxg area3dPxg = (Area3DPxg) ptg;
 				Area3DPxg new3dpxg = new Area3DPxg(
 						area3dPxg.getExternalWorkbookNumber(),
-						new SheetIdentifier(null,
-								new NameIdentifier(area3dPxg.getSheetName(),
-										false)),
+						new SheetIdentifier(null, new NameIdentifier(
+								area3dPxg.getSheetName(), false)),
 						area3dPxg.format2DRefAsString());
 				new3dpxg.setClass(originalOperandClass);
-				new3dpxg.setFirstColRelative(
-						area3dPxg.isFirstColRelative());
+				new3dpxg.setFirstColRelative(area3dPxg.isFirstColRelative());
 				new3dpxg.setLastColRelative(area3dPxg.isLastColRelative());
 				new3dpxg.setFirstRow(originFirstRow + shiftRow);
 				new3dpxg.setLastRow(originLastRow + shiftRow);
-				new3dpxg.setFirstRowRelative(
-						area3dPxg.isFirstRowRelative());
+				new3dpxg.setFirstRowRelative(area3dPxg.isFirstRowRelative());
 				new3dpxg.setLastRowRelative(area3dPxg.isLastRowRelative());
 				new3dpxg.setLastSheetName(area3dPxg.getLastSheetName());
 				newPtg[i * unitSize] = new3dpxg;
 			} else {
 				AreaPtgBase areaPtgBase = (AreaPtgBase) ptg;
-				newPtg[i * unitSize] = new AreaPtg(
-						originFirstRow + shiftRow, originLastRow + shiftRow,
+				newPtg[i * unitSize] = new AreaPtg(originFirstRow
+						+ shiftRow, originLastRow + shiftRow,
 						areaPtgBase.getFirstColumn(),
 						areaPtgBase.getLastColumn(),
 						areaPtgBase.isFirstRowRelative(),
@@ -512,16 +502,15 @@ public final class ShiftFormulaUtility {
 	 *            the relative
 	 * @return the int
 	 */
-	
+
 	protected static int fixupRelativeRow(final int shift, final int row,
 			final boolean relative) {
-		if (relative)
+		if (relative) {
 			return row + shift & _rowWrappingMask;
-		else
+		} else {
 			return row;
+		}
 
 	}
-
-
 
 }

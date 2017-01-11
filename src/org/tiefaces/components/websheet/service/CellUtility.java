@@ -37,6 +37,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.tiefaces.common.FacesUtility;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.CellAttributesMap;
+import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.configuration.ConfigurationHelper;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
@@ -55,8 +56,8 @@ import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
 public final class CellUtility {
 
 	/** logger. */
-	private static final Logger log = Logger.getLogger(
-			Thread.currentThread().getStackTrace()[0].getClassName());
+	private static final Logger LOG = Logger.getLogger(CellUtility.class
+			.getName());
 
 	/**
 	 * Instantiates a new cell helper.
@@ -67,8 +68,7 @@ public final class CellUtility {
 	}
 
 	public static String getCellValueWithFormat(Cell poiCell,
-			FormulaEvaluator formulaEvaluator,
-			DataFormatter dataFormatter) {
+			FormulaEvaluator formulaEvaluator, DataFormatter dataFormatter) {
 
 		if (poiCell == null) {
 			return null;
@@ -87,14 +87,14 @@ public final class CellUtility {
 						formulaEvaluator);
 			}
 		} catch (Exception e) {
-			log.severe("Web Form WebFormHelper getCellValue Error row = "
+			LOG.severe("Web Form WebFormHelper getCellValue Error row = "
 					+ poiCell.getRowIndex() + " col = "
 					+ poiCell.getColumnIndex() + " error = "
 					+ e.getLocalizedMessage()
 					+ "; Change return result to blank");
 			result = "";
 		}
-		log.fine("getCellValueWithFormat result = " + result + " row = "
+		LOG.fine("getCellValueWithFormat result = " + result + " row = "
 				+ poiCell.getRowIndex() + " col = "
 				+ poiCell.getColumnIndex());
 		return result;
@@ -201,7 +201,7 @@ public final class CellUtility {
 			c.setCellType(Cell.CELL_TYPE_STRING);
 			c.setCellValue(value);
 		}
-		log.fine(" set cell value row = " + c.getRowIndex() + " col = "
+		LOG.fine(" set cell value row = " + c.getRowIndex() + " col = "
 				+ c.getColumnIndex() + " value = " + value + " cellType = "
 				+ c.getCellType());
 		return c;
@@ -210,8 +210,10 @@ public final class CellUtility {
 	/**
 	 * evaluate boolean express.
 	 *
-     * @param expEngine expression engine.
-     * @param pscript script.
+	 * @param expEngine
+	 *            expression engine.
+	 * @param pscript
+	 *            script.
 	 * @return true (express is true) false ( express is false or invalid).
 	 */
 	public static boolean evalBoolExpression(
@@ -224,7 +226,7 @@ public final class CellUtility {
 			result = expEngine.evaluate(script);
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.severe("WebForm WebFormHelper evalBoolExpression script = "
+			LOG.severe("WebForm WebFormHelper evalBoolExpression script = "
 					+ script + "; error = " + e.getLocalizedMessage());
 		}
 		if (result != null) {
@@ -286,8 +288,8 @@ public final class CellUtility {
 	public static final void copyRows(final Workbook wb,
 			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int srcRowStart,
-			final int srcRowEnd, final int destRow, final boolean checkLock,
-			final boolean setHiddenColumn) {
+			final int srcRowEnd, final int destRow,
+			final boolean checkLock, final boolean setHiddenColumn) {
 
 		int length = srcRowEnd - srcRowStart + 1;
 		if (length <= 0) {
@@ -296,9 +298,8 @@ public final class CellUtility {
 		destSheet.shiftRows(destRow, destSheet.getLastRowNum(), length,
 				true, false);
 		for (int i = 0; i < length; i++) {
-			copySingleRow(wb, wbWrapper, srcSheet, destSheet,
-					srcRowStart + i, destRow + i, checkLock,
-					setHiddenColumn);
+			copySingleRow(wb, wbWrapper, srcSheet, destSheet, srcRowStart
+					+ i, destRow + i, checkLock, setHiddenColumn);
 		}
 		// If there are are any merged regions in the source row, copy to new
 		// row
@@ -500,8 +501,9 @@ public final class CellUtility {
 				repeatZone);
 		List<CellFormAttributes> result = map.get(key);
 		if ((result == null) && repeatZone) {
-			key = TieConstants.cellAddrPrefix + TieWebSheetUtility
-					.GetExcelColumnName(cell.getColumnIndex());
+			key = TieConstants.cellAddrPrefix
+					+ TieWebSheetUtility.getExcelColumnName(cell
+							.getColumnIndex());
 			result = map.get(key);
 		}
 		return result;
@@ -526,8 +528,8 @@ public final class CellUtility {
 			final boolean repeatZone) {
 
 		String key;
-		String columnLetter = TieWebSheetUtility
-				.GetExcelColumnName(cell.getColumnIndex());
+		String columnLetter = TieWebSheetUtility.getExcelColumnName(cell
+				.getColumnIndex());
 
 		if (repeatZone) {
 			key = TieConstants.cellAddrPrefix + columnLetter
@@ -550,8 +552,7 @@ public final class CellUtility {
 	 * @return the string
 	 */
 	public static String findCellAddressAfterBodyPopulated(
-			final String oldCellAddr,
-			final SheetConfiguration sheetConfig) {
+			final String oldCellAddr, final SheetConfiguration sheetConfig) {
 
 		if (!sheetConfig.isBodyPopulated()) {
 			return null; // not valid
@@ -564,8 +565,7 @@ public final class CellUtility {
 		int row = Integer.parseInt(rowcol[0]);
 		int initialRows = sheetConfig.getBodyInitialRows();
 		if ((sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat"))
-				&& (row > (sheetConfig.getBodyCellRange().getTopRow()
-						+ 1))) {
+				&& (row > (sheetConfig.getBodyCellRange().getTopRow() + 1))) {
 			return TieConstants.cellAddrPrefix + rowcol[1]
 					+ TieConstants.cellAddrPrefix + (row + initialRows - 1);
 		}
@@ -599,8 +599,8 @@ public final class CellUtility {
 			if ((row >= bodyTopRow) && (row < (bodyTopRow + initRows))) {
 				repeatZone = true;
 			}
-			return findCellAttributesWithOffset(sheetConfig, cell, initRows,
-					bodyTopRow, repeatZone);
+			return findCellAttributesWithOffset(sheetConfig, cell,
+					initRows, bodyTopRow, repeatZone);
 		}
 		return findCellAttributesWithOffset(sheetConfig, cell, 1,
 				bodyTopRow, false);
@@ -649,8 +649,8 @@ public final class CellUtility {
 			} else {
 				tempStr = findStr;
 			}
-			replaceStr = getCellValueWithoutFormat(
-					TieWebSheetUtility.getCellByReference(tempStr, sheet));
+			replaceStr = getCellValueWithoutFormat(TieWebSheetUtility
+					.getCellByReference(tempStr, sheet));
 			if (replaceStr == null) {
 				replaceStr = "";
 			}
@@ -678,10 +678,11 @@ public final class CellUtility {
 
 			CellRangeAddress caddress = sheet1.getMergedRegion(i);
 			if (caddress != null) {
-				cellRangeMap.put(TieConstants.cellAddrPrefix
-						+ caddress.getFirstColumn()
-						+ TieConstants.cellAddrPrefix
-						+ caddress.getFirstRow(), caddress);
+				cellRangeMap.put(
+						TieConstants.cellAddrPrefix
+								+ caddress.getFirstColumn()
+								+ TieConstants.cellAddrPrefix
+								+ caddress.getFirstRow(), caddress);
 			}
 		}
 		return cellRangeMap;
@@ -706,15 +707,16 @@ public final class CellUtility {
 					for (int row = caddress.getFirstRow(); row <= caddress
 							.getLastRow(); row++) {
 						if ((col == caddress.getFirstColumn())
-								&& (row == caddress.getFirstRow()))
+								&& (row == caddress.getFirstRow())) {
 							continue;
+						}
 						skipCellList.add(TieConstants.cellAddrPrefix + col
 								+ TieConstants.cellAddrPrefix + row);
 					}
 				}
 			}
 		}
-		log.fine("skipCellList = " + skipCellList);
+		LOG.fine("skipCellList = " + skipCellList);
 		return skipCellList;
 	}
 
@@ -779,8 +781,8 @@ public final class CellUtility {
 				String attrType = attr.getType().trim();
 				if (attrType.equalsIgnoreCase("load") && (!bodyPopulated)) {
 					String attrValue = attr.getValue();
-					attrValue = attrValue.replace("$rowIndex",
-							rowindex + "");
+					attrValue = attrValue.replace("$rowIndex", rowindex
+							+ "");
 					if (attrValue.contains(TieConstants.EL_START)) {
 						attrValue = FacesUtility.evaluateExpression(
 								attrValue, String.class);
@@ -811,14 +813,14 @@ public final class CellUtility {
 			// has col or row span
 			fcell.setColspan((caddress.getLastColumn()
 					- caddress.getFirstColumn() + 1));
-			fcell.setRowspan(
-					(caddress.getLastRow() - caddress.getFirstRow() + 1));
+			fcell.setRowspan((caddress.getLastRow()
+					- caddress.getFirstRow() + 1));
 		}
 
 		setupControlAttributes(originRowIndex, fcell, poiCell, sheetConfig,
 				cellAttributesMap);
-		fcell.setHasSaveAttr(ConfigurationHelper
-				.isHasSaveAttr(poiCell.getColumnIndex(), saveAttrs));
+		fcell.setHasSaveAttr(ConfigurationHelper.isHasSaveAttr(
+				poiCell.getColumnIndex(), saveAttrs));
 
 	}
 
@@ -843,7 +845,8 @@ public final class CellUtility {
 			Map<String, String> commentMap = cellAttributesMap
 					.getTemplateCommentMap().get("$$");
 			String skey = poiCell.getSheet().getSheetName() + "!"
-					+ TieConstants.cellAddrPrefix + poiCell.getColumnIndex()
+					+ TieConstants.cellAddrPrefix
+					+ poiCell.getColumnIndex()
 					+ TieConstants.cellAddrPrefix + originRowIndex;
 			if (commentMap != null) {
 				String comment = commentMap.get(skey);
@@ -852,8 +855,8 @@ public final class CellUtility {
 							sheetConfig.getFinalCommentMap());
 				}
 			}
-			String widgetType = cellAttributesMap.getCellInputType()
-					.get(skey);
+			String widgetType = cellAttributesMap.getCellInputType().get(
+					skey);
 			if (widgetType != null) {
 				fcell.setControl(widgetType.toLowerCase());
 
@@ -861,8 +864,8 @@ public final class CellUtility {
 						.getCellInputAttributes().get(skey));
 				fcell.setSelectItemAttrs(cellAttributesMap
 						.getCellSelectItemsAttributes().get(skey));
-				fcell.setDatePattern(
-						cellAttributesMap.getCellDatePattern().get(skey));
+				fcell.setDatePattern(cellAttributesMap.getCellDatePattern()
+						.get(skey));
 			}
 
 		}
@@ -924,8 +927,8 @@ public final class CellUtility {
 			if (font.getItalic()) {
 				webStyle.append("font-style: italic;");
 			}
-			webStyle.append(
-					"font-size: " + font.getFontHeightInPoints() + "pt;");
+			webStyle.append("font-size: " + font.getFontHeightInPoints()
+					+ "pt;");
 			webStyle.append("font-weight:" + font.getBoldweight() + ";");
 
 			String decoration = "";
@@ -973,16 +976,16 @@ public final class CellUtility {
 	 *            the input type
 	 * @return the cell style
 	 */
-	public static String getCellStyle(final Workbook wb, final Cell poiCell,
-			final String inputType) {
+	public static String getCellStyle(final Workbook wb,
+			final Cell poiCell, final String inputType) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		StringBuffer webStyle = new StringBuffer();
 		if (cellStyle != null) {
 			if (!inputType.isEmpty()) {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(
-						getVerticalAlignmentFromCell(poiCell, cellStyle));
+				webStyle.append(getVerticalAlignmentFromCell(poiCell,
+						cellStyle));
 			}
 
 			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
@@ -1005,8 +1008,7 @@ public final class CellUtility {
 	 * @return the column style
 	 */
 	public static String getColumnStyle(final Workbook wb,
-			final FacesCell fcell, final Cell poiCell,
-			final float rowHeight) {
+			final FacesCell fcell, final Cell poiCell, final float rowHeight) {
 
 		String inputType = fcell.getInputType();
 		CellStyle cellStyle = poiCell.getCellStyle();
@@ -1016,8 +1018,8 @@ public final class CellUtility {
 				webStyle.append("vertical-align: top;");
 			} else {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(
-						getVerticalAlignmentFromCell(poiCell, cellStyle));
+				webStyle.append(getVerticalAlignmentFromCell(poiCell,
+						cellStyle));
 			}
 			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
 			webStyle.append(getRowStyle(wb, poiCell, inputType, rowHeight));
@@ -1042,22 +1044,18 @@ public final class CellUtility {
 
 		String style = "";
 		switch (cellStyle.getAlignment()) {
-		case CellStyle.ALIGN_LEFT: {
+		case CellStyle.ALIGN_LEFT:
 			style = "text-align: left;";
 			break;
-		}
-		case CellStyle.ALIGN_RIGHT: {
+		case CellStyle.ALIGN_RIGHT:
 			style = "text-align: right;";
 			break;
-		}
-		case CellStyle.ALIGN_CENTER: {
+		case CellStyle.ALIGN_CENTER:
 			style = "text-align: center;";
 			break;
-		}
-		case CellStyle.ALIGN_GENERAL: {
+		case CellStyle.ALIGN_GENERAL:
 			style = getAlignmentFromCellType(poiCell);
 			break;
-		}
 		}
 		return style;
 	}
@@ -1076,18 +1074,15 @@ public final class CellUtility {
 
 		String style = "";
 		switch (cellStyle.getVerticalAlignment()) {
-		case CellStyle.VERTICAL_TOP: {
+		case CellStyle.VERTICAL_TOP:
 			style = "vertical-align: top;";
 			break;
-		}
-		case CellStyle.VERTICAL_CENTER: {
+		case CellStyle.VERTICAL_CENTER:
 			style = "vertical-align: middle;";
 			break;
-		}
-		case CellStyle.VERTICAL_BOTTOM: {
+		case CellStyle.VERTICAL_BOTTOM:
 			style = "vertical-align: bottom;";
 			break;
-		}
 		}
 		return style;
 	}
@@ -1115,8 +1110,8 @@ public final class CellUtility {
 				HSSFPalette palette = ((HSSFWorkbook) wb)
 						.getCustomPalette();
 				HSSFColor color2 = palette.getColor(bkColorIndex);
-				if (!color.getHexString()
-						.equalsIgnoreCase(color2.getHexString())) {
+				if (!color.getHexString().equalsIgnoreCase(
+						color2.getHexString())) {
 					color = color2;
 				}
 				// String hexStr = color.getHexString();
@@ -1140,9 +1135,11 @@ public final class CellUtility {
 			XSSFColor color = ((XSSFCell) poiCell).getCellStyle()
 					.getFillForegroundColorColor();
 			if (color != null) {
-				style = "background-color:rgb(" + FacesUtility.strJoin(
-						ColorUtility.getTripletFromXSSFColor(color), ",")
-						+ ");";
+				style = "background-color:rgb("
+						+ FacesUtility
+								.strJoin(ColorUtility
+										.getTripletFromXSSFColor(color),
+										",") + ");";
 			}
 		}
 		return style;
@@ -1164,8 +1161,8 @@ public final class CellUtility {
 	 * @return the int
 	 */
 	// e.g. lineNumberColumnWidth and addRowColumnWidth
-	public static int calcTotalWidth(final Sheet sheet1, final int firstCol,
-			final int lastCol, final int additionalWidth) {
+	public static int calcTotalWidth(final Sheet sheet1,
+			final int firstCol, final int lastCol, final int additionalWidth) {
 
 		int totalWidth = additionalWidth;
 		for (int i = firstCol; i <= lastCol; i++) {
@@ -1439,7 +1436,7 @@ public final class CellUtility {
 
 		int rowIndex = (Integer) target.getAttributes().get("data-row");
 		int colIndex = (Integer) target.getAttributes().get("data-column");
-		log.fine("getRowColFromComponentAttributes rowindex = " + rowIndex
+		LOG.fine("getRowColFromComponentAttributes rowindex = " + rowIndex
 				+ " colindex = " + colIndex);
 		int[] list = { rowIndex, colIndex };
 		return list;
@@ -1551,22 +1548,21 @@ public final class CellUtility {
 			if (rowcol[1].isEmpty()) {
 				return null; // both empty meaning not valid targetcell
 			}
-			targetCell = TieConstants.cellAddrPrefix + rowcol[1]
+			targetCell = TieConstants.cellAddrPrefix
+					+ rowcol[1]
 					+ TieConstants.cellAddrPrefix
-					+ (datarow + sheetConfig.getBodyCellRange().getTopRow()
-							+ 1);
+					+ (datarow + sheetConfig.getBodyCellRange().getTopRow() + 1);
 		} else {
 			int row = Integer.parseInt(rowcol[0]);
 			if ((sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat"))
-					&& (row > (sheetConfig.getBodyCellRange().getTopRow()
-							+ 1))) {
+					&& (row > (sheetConfig.getBodyCellRange().getTopRow() + 1))) {
 				targetCell = TieConstants.cellAddrPrefix + rowcol[1]
 						+ TieConstants.cellAddrPrefix
 						+ (row + initialRows - 1);
 			}
 		}
-		Cell cell = TieWebSheetUtility.getCellByReference(targetCell,
-				sheet);
+		Cell cell = TieWebSheetUtility
+				.getCellByReference(targetCell, sheet);
 		return cell;
 	}
 
@@ -1589,10 +1585,12 @@ public final class CellUtility {
 				cell = bodyRows.get(bodyrow).getCells().get(bodycol);
 			}
 		} catch (Exception e) {
-			log.severe(
-					"Web Form WebFormHelper getFacesCellFromBodyRow Error bodyrow = "
-							+ bodyrow + " bodycol = " + bodycol
-							+ "; error = " + e.getLocalizedMessage());
+			LOG.severe("Web Form WebFormHelper getFacesCellFromBodyRow Error bodyrow = "
+					+ bodyrow
+					+ " bodycol = "
+					+ bodycol
+					+ "; error = "
+					+ e.getLocalizedMessage());
 		}
 		return cell;
 	}
@@ -1604,7 +1602,8 @@ public final class CellUtility {
 	 *            the row index
 	 * @param colIndex
 	 *            the col index
-     * @param wb  workbook.
+	 * @param wb
+	 *            workbook.
 	 * @return the poi cell with row col from current page
 	 */
 	public static Cell getPoiCellWithRowColFromCurrentPage(

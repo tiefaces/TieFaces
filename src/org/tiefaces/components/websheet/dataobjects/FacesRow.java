@@ -128,11 +128,11 @@ public class FacesRow {
 	/**
 	 * Sets the allow add.
 	 *
-	 * @param allowAdd
+	 * @param pallowAdd
 	 *            the new allow add
 	 */
-	public void setAllowAdd(boolean allowAdd) {
-		this.allowAdd = allowAdd;
+	public void setAllowAdd(boolean pallowAdd) {
+		this.allowAdd = pallowAdd;
 	}
 
 	/**
