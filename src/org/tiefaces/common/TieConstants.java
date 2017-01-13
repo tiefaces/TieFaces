@@ -250,18 +250,30 @@ public final class TieConstants {
 	/** component attributes locale. */
 	public static final String COMPONENT_ATTR_LOCALE = "locale";
 	/** method regex. */
-	public static final String METHOD_REGEX = "\\$+[^{$]+\\{+[^{}$]+\\}";
+	public static final String METHOD_REGEX = "\\$+[^{$]+\\{+[^{}]+\\}";
 	/** method prefix. */
 	public static final String METHOD_PREFIX = "${";
 	/** The expression notation end. */
 	public static final String METHOD_END = "}";
 	/** method widget prefix. */
 	public static final String METHOD_WIDGET_PREFIX = "$widget.";
-	
+	/** method validate prefix. */
+	public static final String METHOD_VALIDATE_PREFIX = "$validate";
 	/** The expression notation pattern. */
 	public static final Pattern expressionNotationPattern = Pattern
 			.compile("\\$\\{[^}]*}");
-	
+	/** The DEFAULT_HEADER_ROW_HEIGHT. */
 	public static final float DEFAULT_HEADER_ROW_HEIGHT = 12;
+	/** The NORMAL_COMMENT_KEY_IN_MAP. */
+	public static final String NORMAL_COMMENT_KEY_IN_MAP = "$$";
+	/** The VALIDATION_RULE_TAG. */
+	public static final String VALIDATION_RULE_TAG = "rule";
+	/** The VALIDATION_ERROR_MSG_TAG. */
+	public static final String VALIDATION_ERROR_MSG_TAG = "error";
+	/** SPLIT_SPACE_SEPERATE_ATTRS_REGX. */
+	public static final String SPLIT_SPACE_SEPERATE_ATTRS_REGX = "\" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
 	
+	public static final String DEFALT_MSG_INVALID_INPUT = "Invalid input";
+	
+
 }

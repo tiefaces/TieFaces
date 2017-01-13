@@ -304,6 +304,12 @@ public class ConfigurationHandler {
 			final XSSFSheet sheet, final int sheetRightCol,
 			final CellAttributesMap cellAttributesMap) {
 		List<ConfigCommand> commandList = new ArrayList<ConfigCommand>();
+		// if skip then return empty list.
+		if (parent.isSkipConfiguration()) {
+			return commandList;
+		}
+		
+		
 		Map<CellAddress, ? extends Comment> comments = null;
 
 		try {
@@ -384,6 +390,10 @@ public class ConfigurationHandler {
 			maxRowNum = sheet.getLastRowNum();
 		}
 
+		// if skip config then return.
+		if (parent.isSkipConfiguration()) {
+			return;
+		}
 		ConfigurationHelper.setSaveAttrsForSheet(sheet, minRowNum,
 				maxRowNum);
 
@@ -484,6 +494,10 @@ public class ConfigurationHandler {
 	 *            sheet.
 	 */
 	private void copyTemplateForTieCommands(final Sheet sheet) {
+		// if skip configuration. then return.
+		if (parent.isSkipConfiguration()) {
+			return;
+		}
 		Workbook wb = sheet.getWorkbook();
 		String copyName = TieConstants.COPY_SHEET_PREFIX
 				+ sheet.getSheetName();
@@ -548,8 +562,11 @@ public class ConfigurationHandler {
 				if (ParserUtility.isWidgetMethodString(line)) {
 					ParserUtility.parseWidgetAttributes(cell, line,
 							cellAttributesMap);
+				} else if (ParserUtility.isValidateMethodString(line)) {
+						ParserUtility.parseValidateAttributes(cell, line,
+								cellAttributesMap);
 				} else {
-					saveCellComment(cell, line,
+					moveCommentToMap(cell, line,
 							cellAttributesMap.getTemplateCommentMap(),
 							false);
 				}
@@ -564,8 +581,10 @@ public class ConfigurationHandler {
 		if (!changed) {
 			newComment = text;
 		}
-		saveCellComment(cell, newComment,
+		moveCommentToMap(cell, newComment,
 				cellAttributesMap.getTemplateCommentMap(), true);
+		// after saved to map. remove the cell comments.
+		cell.removeCellComment();		
 		return cList;
 	}
 
@@ -581,31 +600,16 @@ public class ConfigurationHandler {
 	 * @param normalComment
 	 *            the normal comment
 	 */
-	private void saveCellComment(final Cell cell, final String newComment,
+	private void moveCommentToMap(final Cell cell, final String newComment,
 			final Map<String, Map<String, String>> sheetCommentMap,
 			final boolean normalComment) {
 
-		if ((newComment != null) && (!newComment.trim().isEmpty())) {
-			// normal comment key is $$
-			String key = "$$";
-			if (!normalComment) {
-				// not normal comment. e.g. ${... or $init{... or
-				// $widget.dropdown{...
-				// key = $ or key = $init or key = $widget.dropdown
-				key = newComment.substring(0, newComment.indexOf("{"));
-			}
-			Map<String, String> map = sheetCommentMap.get(key);
-			if (map == null) {
-				map = new HashMap<String, String>();
-			}
-			// 2nd map's key is sheetName!$columnIndex$rowIndex
-			map.put(cell.getSheet().getSheetName() + "!$"
-					+ cell.getColumnIndex() + "$" + cell.getRowIndex(),
-					newComment);
-			sheetCommentMap.put(key, map);
-		}
-		// after saved to map. remove the cell comments.
-		cell.removeCellComment();
+		String cellKey = cell.getSheet().getSheetName() + "!$"
+				+ cell.getColumnIndex() + "$" + cell.getRowIndex();
+
+		ParserUtility.parseCommentToMap(cellKey, newComment,
+				sheetCommentMap, normalComment);
+
 	}
 
 	/**

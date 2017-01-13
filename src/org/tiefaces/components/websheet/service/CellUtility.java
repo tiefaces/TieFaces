@@ -573,6 +573,23 @@ public final class CellUtility {
 		return oldCellAddr;
 	}
 
+	
+/**
+ * 
+ * @param validateMaps validateMaps.
+ * @param cell cell.
+ * @param row row.
+ * @param bodyTopRow bodytoprow.
+ * @return list.
+ */
+	public static List<CellFormAttributes> findCellValidateAttributes(
+			final Map<String, List<CellFormAttributes>> validateMaps, final Cell cell,
+			final int row, final int bodyTopRow) {
+		String key = ParserUtility.getAttributeKeyInMapByCell(cell);
+		return validateMaps.get(key);
+	}
+
+	
 	/**
 	 * Find cell attributes.
 	 *

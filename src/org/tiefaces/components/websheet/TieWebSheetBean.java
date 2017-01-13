@@ -69,7 +69,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	private static final long serialVersionUID = 3495468356246589276L;
 
 	/** hold instance for columns in current display sheet. */
-	private List<String> columns;
+	private List<String> columns = new ArrayList<String>();;
 	/** hold instance for each body rows in current display sheet. */
 	private List<FacesRow> bodyRows;
 	/** hold instance for each header rows in current display sheet. */
@@ -94,7 +94,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 			new HashMap<String, String>(),
 			new HashMap<String, List<CellFormAttributes>>(),
 			new HashMap<String, Map<String, String>>(),
-			new HashMap<String, String>());
+			new HashMap<String, String>(),
+			new HashMap<String, List<CellFormAttributes>>());
 
 	/**
 	 * chars data.
@@ -112,26 +113,13 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	private Map<String, SheetConfiguration> sheetConfigMap;
 	/** hold expressionEngine instance. */
 	private ExpressionEngine expEngine = null;
-	/** current data context name. */
-	private String currentDataContextName = null;
-	/** current tab name of display sheet. */
-	private String currentTabName;
-	/** current top row of display sheet. */
-	private int currentTopRow;
-	/** current left column of display sheet. */
-	private int currentLeftColumn;
+	/** hold current objects. */
+	private TieWebSheetBeanCurrent current = new TieWebSheetBeanCurrent();
+
 	/** weather process full a validation. */
 	private Boolean fullValidation = false;
-	/** hold instance for loader class. */
-	private WebSheetLoader webSheetLoader = null;
-	/** hold instance for cell helper class. */
-	private CellHelper cellHelper = null;
-	/** hold instance for picture helper class. */
-	private PicturesHelper picHelper = null;
-	/** hold instance for validation handler class. */
-	private ValidationHandler validationHandler = null;
-	/** hold instance for chart helper class. */
-	private ChartHelper chartHelper = null;
+	/** create bean's helper. */
+	private TieWebSheetBeanHelper helper = new TieWebSheetBeanHelper(this);
 	/**
 	 * Client id for whole websheet component. This is the top level client id.
 	 * There're tabs and web forms under this top level.
@@ -139,6 +127,9 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	private String clientId = null;
 	/** Client id for web forms. */
 	private String webFormClientId = null;
+	/** skip configuration. show the excel form as is. */
+	private boolean skipConfiguration = false;
+	
 	/** logger. */
 	private static final Logger LOG 
 	= Logger.getLogger(TieWebSheetBean.class.getName());
@@ -151,12 +142,6 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	/** initialize. */
 	@PostConstruct
 	public final void init() {
-		columns = new ArrayList<String>();
-		webSheetLoader = new WebSheetLoader(this);
-		cellHelper = new CellHelper(this);
-		validationHandler = new ValidationHandler(this);
-		picHelper = new PicturesHelper(this);
-		chartHelper = new ChartHelper(this);
 		initialLoad();
 	}
 
@@ -337,7 +322,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return current tab name.
 	 */
 	public final String getCurrentTabName() {
-		return currentTabName;
+		return current.getCurrentTabName();
 	}
 
 	/**
@@ -347,7 +332,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 *            current tab name.
 	 */
 	public final void setCurrentTabName(final String pCurrentTabName) {
-		this.currentTabName = pCurrentTabName;
+		this.current.setCurrentTabName(pCurrentTabName);
 	}
 
 	/**
@@ -375,7 +360,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return cell helper.
 	 */
 	public final CellHelper getCellHelper() {
-		return cellHelper;
+		return helper.getCellHelper();
 	}
 
 	/**
@@ -396,7 +381,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return websheetloader.
 	 */
 	public final WebSheetLoader getWebSheetLoader() {
-		return webSheetLoader;
+		return helper.getWebSheetLoader();
 	}
 
 
@@ -406,7 +391,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return validation handler.
 	 */
 	public final ValidationHandler getValidationHandler() {
-		return validationHandler;
+		return helper.getValidationHandler();
 	}
 
 	/**
@@ -415,7 +400,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return picHelper.
 	 */
 	public final PicturesHelper getPicHelper() {
-		return picHelper;
+		return helper.getPicHelper();
 	}
 
 	/**
@@ -424,7 +409,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return charthelper.
 	 */
 	public final ChartHelper getChartHelper() {
-		return chartHelper;
+		return helper.getChartHelper();
 	}
 
 	/**
@@ -433,7 +418,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return current top row.
 	 */
 	public final int getCurrentTopRow() {
-		return currentTopRow;
+		return current.getCurrentTopRow();
 	}
 
 	/**
@@ -443,7 +428,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 *            current top row.
 	 */
 	public final void setCurrentTopRow(final int pCurrentTopRow) {
-		this.currentTopRow = pCurrentTopRow;
+		this.current.setCurrentTopRow(pCurrentTopRow);
 	}
 
 	/**
@@ -452,7 +437,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return current left column.
 	 */
 	public final int getCurrentLeftColumn() {
-		return currentLeftColumn;
+		return current.getCurrentLeftColumn();
 	}
 
 	/**
@@ -462,7 +447,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 *            current left column.
 	 */
 	public final void setCurrentLeftColumn(final int pCurrentLeftColumn) {
-		this.currentLeftColumn = pCurrentLeftColumn;
+		this.current.setCurrentLeftColumn(pCurrentLeftColumn);
 	}
 
 	/**
@@ -631,6 +616,22 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		return maxColCounts;
 	}
 
+	
+	
+	/**
+	 * @return the skipConfiguration
+	 */
+	public final boolean isSkipConfiguration() {
+		return skipConfiguration;
+	}
+
+	/**
+	 * @param pskipConfiguration the skipConfiguration to set
+	 */
+	public final void setSkipConfiguration(final boolean pskipConfiguration) {
+		this.skipConfiguration = pskipConfiguration;
+	}
+
 	/**
 	 * recalculate max coulumn count across sheets in the workbook.
 	 */
@@ -673,7 +674,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 */
 	public final int loadWebSheet(final InputStream inputStream,
 			final Map<String, Object> pDataContext) {
-		return webSheetLoader.loadWorkbook(inputStream, pDataContext);
+		return helper.getWebSheetLoader().loadWorkbook(inputStream, pDataContext);
 	}
 
 	/**
@@ -700,7 +701,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 
 	public final int loadWebSheet(final Workbook pWb,
 			final Map<String, Object> pDataContext) {
-		return webSheetLoader.loadWorkbook(pWb, pDataContext);
+		return helper.getWebSheetLoader().loadWorkbook(pWb, pDataContext);
 	}
 
 	/**
@@ -723,10 +724,10 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	public final int loadWorkSheetByTabName(final String tabName) {
 
 		try {
-			int sheetId = webSheetLoader.findTabIndexWithName(tabName);
+			int sheetId = helper.getWebSheetLoader().findTabIndexWithName(tabName);
 			if ((getSheetConfigMap() != null)
 					&& (sheetId < getSheetConfigMap().size())) {
-				webSheetLoader.loadWorkSheet(tabName);
+				helper.getWebSheetLoader().loadWorkSheet(tabName);
 			}
 			return 1;
 		} catch (Exception ex) {
@@ -753,7 +754,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	public final void doExport() {
 		try {
 
-			webSheetLoader.loadAllFields();
+			helper.getWebSheetLoader().loadAllFields();
 			String fileName = "WebSheetTemplate" + "."
 					+ TieConstants.EXCEL_2007_TYPE;
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -779,10 +780,10 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 */
 	private boolean preValidation(final boolean passEmptyCheck) {
 
-		String tabName = validationHandler
+		String tabName = helper.getValidationHandler()
 				.findFirstInvalidSheet(passEmptyCheck);
 		if (tabName != null) {
-			webSheetLoader.loadWorkSheet(tabName);
+			helper.getWebSheetLoader().loadWorkSheet(tabName);
 			return false;
 		}
 		return true;
@@ -837,7 +838,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 *            ajax event.
 	 */
 	public final void noteChangeEvent(final AjaxBehaviorEvent event) {
-		webSheetLoader.setUnsavedStatus(RequestContext.getCurrentInstance(),
+		helper.getWebSheetLoader().setUnsavedStatus(RequestContext.getCurrentInstance(),
 				true);
 	}
 
@@ -853,14 +854,14 @@ public class TieWebSheetBean extends TieWebSheetView implements
 		String tblName = getWebFormClientId();
 		UIComponent target = event.getComponent();
 
-		boolean pass = validationHandler.validateCell(target);
+		boolean pass = helper.getValidationHandler().validateCell(target);
 		if (pass) {
 			// to improve performance, re-validate current row only
 			// page validation take times. will happen when change tab(page) or
 			// reload page.
 			int[] rowcol = CellUtility
 					.getRowColFromComponentAttributes(target);
-			validationHandler.validateRowInCurrentPage(rowcol[0], true);
+			helper.getValidationHandler().validateRowInCurrentPage(rowcol[0], true);
 			// refresh current page calculation fields
 			UIComponent s = facesContext.getViewRoot().findComponent(
 					tblName);
@@ -895,7 +896,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 				}
 			}
 		}
-		webSheetLoader.setUnsavedStatus(RequestContext.getCurrentInstance(),
+		helper.getWebSheetLoader().setUnsavedStatus(RequestContext.getCurrentInstance(),
 				true);
 	}
 
@@ -973,7 +974,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 *            row index.
 	 */
 	public final void addRepeatRow(final int rowIndex) {
-		this.webSheetLoader.addRepeatRow(rowIndex);
+		this.helper.getWebSheetLoader().addRepeatRow(rowIndex);
 	}
 
 	/**
@@ -983,7 +984,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 *            row index.
 	 */
 	public final void deleteRepeatRow(final int rowIndex) {
-		this.webSheetLoader.deleteRepeatRow(rowIndex);
+		this.helper.getWebSheetLoader().deleteRepeatRow(rowIndex);
 	}
 
 	/**
@@ -1034,7 +1035,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 * @return current data context name.
 	 */
 	public final String getCurrentDataContextName() {
-		return currentDataContextName;
+		return current.getCurrentDataContextName();
 	}
 
 	/**
@@ -1045,7 +1046,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	 */
 	public final void setCurrentDataContextName(
 			final String pcurrentDataContextName) {
-		this.currentDataContextName = pcurrentDataContextName;
+		this.current.setCurrentDataContextName(pcurrentDataContextName);
 	}
 
 }

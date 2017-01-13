@@ -49,7 +49,16 @@ public class CellAttributesMap {
 	 * sheetName!$rowindex$columnindex value is the date pattern. date pattern
 	 * is necessary for covert date to string
 	 */
+
 	private Map<String, String> cellDatePattern;
+
+	/**
+	 * hold attributes for validate process. key is
+	 * sheetName!$rowindex$columnindex value is the list of attributes.
+	 * 
+	 * which .value = rule .message = error message.
+	 */
+	private Map<String, List<CellFormAttributes>> cellValidateAttributes;
 
 	/**
 	 * constructor.
@@ -64,18 +73,22 @@ public class CellAttributesMap {
 	 *            cell select items attributes.
 	 * @param pCellDatePattern
 	 *            cell date pattern.
+	 * @param pCellValidateAttributes
+	 *            cell validate attributes.
 	 */
 	public CellAttributesMap(
 			final Map<String, Map<String, String>> pTemplateCommentMap,
 			final Map<String, String> pCellInputType,
 			final Map<String, List<CellFormAttributes>> pCellInputAttributes,
 			final Map<String, Map<String, String>> pCellSelectItemsAttributes,
-			final Map<String, String> pCellDatePattern) {
+			final Map<String, String> pCellDatePattern,
+			final Map<String, List<CellFormAttributes>> pCellValidateAttributes) {
 		this.templateCommentMap = pTemplateCommentMap;
 		this.cellInputType = pCellInputType;
 		this.cellInputAttributes = pCellInputAttributes;
 		this.cellSelectItemsAttributes = pCellSelectItemsAttributes;
 		this.cellDatePattern = pCellDatePattern;
+		this.cellValidateAttributes = pCellValidateAttributes;
 	}
 
 	/**
@@ -123,8 +136,7 @@ public class CellAttributesMap {
 	 * 
 	 * @return cellinputattributes.
 	 */
-	public final Map<String, List<CellFormAttributes>> 
-	getCellInputAttributes() {
+	public final Map<String, List<CellFormAttributes>> getCellInputAttributes() {
 		return cellInputAttributes;
 	}
 
@@ -133,8 +145,7 @@ public class CellAttributesMap {
 	 * 
 	 * @return cellselectitemattributes.
 	 */
-	public final Map<String, Map<String, String>> 
-	getCellSelectItemsAttributes() {
+	public final Map<String, Map<String, String>> getCellSelectItemsAttributes() {
 		return cellSelectItemsAttributes;
 	}
 
@@ -145,6 +156,22 @@ public class CellAttributesMap {
 	 */
 	public final Map<String, String> getCellDatePattern() {
 		return cellDatePattern;
+	}
+
+	/**
+	 * @return the cellValidateAttributes
+	 */
+	public final Map<String, List<CellFormAttributes>> getCellValidateAttributes() {
+		return cellValidateAttributes;
+	}
+
+	/**
+	 * @param pcellValidateAttributes
+	 *            the cellValidateAttributes to set
+	 */
+	public final void setCellValidateAttributes(
+			Map<String, List<CellFormAttributes>> pcellValidateAttributes) {
+		this.cellValidateAttributes = pcellValidateAttributes;
 	}
 
 }
