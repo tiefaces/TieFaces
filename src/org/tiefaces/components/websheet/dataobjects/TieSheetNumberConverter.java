@@ -23,24 +23,26 @@ public class TieSheetNumberConverter implements Converter {
 	 * @see javax.faces.convert.Converter#getAsObject(javax.faces.context.
 	 * FacesContext, javax.faces.component.UIComponent, java.lang.String)
 	 */
-	public Object getAsObject(final FacesContext context, final UIComponent component,
-			final String value) {
+	public final Object getAsObject(final FacesContext context,
+			final UIComponent component, final String value) {
 		Double doubleValue = 0.0;
 		String symbol = "";
 		String strValue = (String) value;
 		try {
-			symbol = (String) component.getAttributes()
-					.get(TieConstants.TIE_WEBSHEET_CELL_DATA_SYMBOL);
+			symbol =
+					(String) component.getAttributes().get(
+							TieConstants.CELL_DATA_SYMBOL);
 
-			if ((symbol != null) && (symbol
-					.equals(TieConstants.cellFormatPercentageSymbol)
-					&& strValue != null)) {
+			if ((symbol != null)
+					&& (symbol
+							.equals(TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL) && strValue != null)) {
 				strValue = strValue.trim();
-				if (strValue.endsWith(
-						TieConstants.cellFormatPercentageSymbol)) {
-					doubleValue = Double.valueOf(
-							strValue.substring(0, strValue.length() - 1))
-							/ TieConstants.cellFormatPercentageValue;
+				if (strValue
+						.endsWith(TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL)) {
+					doubleValue =
+							Double.valueOf(strValue.substring(0, strValue
+									.length() - 1))
+									/ TieConstants.CELL_FORMAT_PERCENTAGE_VALUE;
 					strValue = doubleValue.toString();
 				}
 			}
@@ -72,7 +74,7 @@ public class TieSheetNumberConverter implements Converter {
 	 * @see javax.faces.convert.Converter#getAsString(javax.faces.context.
 	 * FacesContext, javax.faces.component.UIComponent, java.lang.Object)
 	 */
-	public String getAsString(final FacesContext context,
+	public final String getAsString(final FacesContext context,
 			final UIComponent component, final Object value) {
 
 		String strValue = null;
@@ -80,18 +82,21 @@ public class TieSheetNumberConverter implements Converter {
 		try {
 
 			strValue = (String) value;
-			symbol = (String) component.getAttributes()
-					.get(TieConstants.TIE_WEBSHEET_CELL_DATA_SYMBOL);
+			symbol =
+					(String) component.getAttributes().get(
+							TieConstants.CELL_DATA_SYMBOL);
 
 			if ((symbol != null)
 					&& (symbol
-							.equals(TieConstants.cellFormatPercentageSymbol))
+							.equals(TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL))
 					&& (value != null) && !((String) value).isEmpty()) {
 
-				Double doubleValue = Double.valueOf((String) value)
-						* TieConstants.cellFormatPercentageValue;
-				strValue = fmtNumber(doubleValue)
-						+ TieConstants.cellFormatPercentageSymbol;
+				Double doubleValue =
+						Double.valueOf((String) value)
+								* TieConstants.CELL_FORMAT_PERCENTAGE_VALUE;
+				strValue =
+						fmtNumber(doubleValue)
+								+ TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL;
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

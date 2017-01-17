@@ -55,12 +55,12 @@ public class TieWebSheetComponent extends UINamingContainer {
 	public final void encodeBegin(final FacesContext context)
 			throws IOException {
 		webSheetBean = (TieWebSheetBean) this.getAttributes().get(
-				TieConstants.TIE_WEBSHEET_ATTRS_WEBSHEETBEAN);
+				TieConstants.ATTRS_WEBSHEETBEAN);
 		if ((webSheetBean != null)
 				&& (webSheetBean.getWebFormClientId() == null)) {
 			webSheetBean.setClientId(this.getClientId());
 			webSheetBean.setWebFormClientId(this.getClientId() + ":"
-					+ TieConstants.TIE_WEBSHEET_COMPONENT_ID);
+					+ TieConstants.COMPONENT_ID);
 
 			String maxrows = (String) this.getAttributes().get(
 					"maxRowsPerPage");

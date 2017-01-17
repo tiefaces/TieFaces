@@ -5,8 +5,6 @@
 
 package org.tiefaces.common;
 
-import java.awt.BasicStroke;
-import java.awt.Rectangle;
 import java.util.regex.Pattern;
 
 /**
@@ -14,14 +12,23 @@ import java.util.regex.Pattern;
  */
 public final class TieConstants {
 
-	/** The Constant TIE_WEBSHEET_COMPONENT_ID. */
-	public static final String TIE_WEBSHEET_COMPONENT_ID = "websheettable";
+	/**
+	 * hide constructor.
+	 */
+	private TieConstants() {
+		// not called
+	}
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SHEET. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SHEET = "Configuration";
+	/** The Constant COMPONENT_ID. */
+	public static final String COMPONENT_ID = "websheettable";
 
-	/** The Constant TIE_WEBSHEET_ATTRS_WEBSHEETBEAN. */
-	public static final String TIE_WEBSHEET_ATTRS_WEBSHEETBEAN = "webSheetBean";
+	/** The Constant CONFIGURATION_SHEET. */
+	public static final String CONFIGURATION_SHEET =
+			"Configuration";
+
+	/** The Constant ATTRS_WEBSHEETBEAN. */
+	public static final String ATTRS_WEBSHEETBEAN =
+			"webSheetBean";
 
 	/** The Constant EXCEL_2003_TYPE. */
 	public static final String EXCEL_2003_TYPE = "xls";
@@ -29,86 +36,109 @@ public final class TieConstants {
 	/** The Constant EXCEL_2007_TYPE. */
 	public static final String EXCEL_2007_TYPE = "xlsx";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_VERSION. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_VERSION = "Version";
+	/** The Constant CONFIGURATION_SCHEMA_VERSION. */
+	public static final String CONFIGURATION_SCHEMA_VERSION =
+			"Version";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_TAB_NAME. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_TAB_NAME = "Tab Name";
+	/** The Constant CONFIGURATION_SCHEMA_TAB_NAME. */
+	public static final String CONFIGURATION_SCHEMA_TAB_NAME =
+			"Tab Name";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_SHEET_NAME. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_SHEET_NAME = "Sheet Name";
+	/** The Constant CONFIGURATION_SCHEMA_SHEET_NAME. */
+	public static final String CONFIGURATION_SCHEMA_SHEET_NAME =
+			"Sheet Name";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_HEADER_RANGE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_HEADER_RANGE = "Form Header Range";
+	/** The Constant CONFIGURATION_SCHEMA_FORM_HEADER_RANGE. */
+	public static final String CONFIGURATION_SCHEMA_FORM_HEADER_RANGE =
+			"Form Header Range";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_RANGE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_RANGE = "Form Body Range";
+	/** The Constant CONFIGURATION_SCHEMA_FORM_BODY_RANGE. */
+	public static final String CONFIGURATION_SCHEMA_FORM_BODY_RANGE =
+			"Form Body Range";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE = "Form Footer Range";
+	/** The Constant CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE. */
+	public static final String CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE =
+			"Form Footer Range";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_TYPE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_BODY_TYPE = "Form Body Type";
+	/** The Constant CONFIGURATION_SCHEMA_FORM_BODY_TYPE. */
+	public static final String CONFIGURATION_SCHEMA_FORM_BODY_TYPE =
+			"Form Body Type";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_ALLOW_ADD_ROW. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_ALLOW_ADD_ROW = "Allow ADD/DELETE ROW";
+	/** The Constant CONFIGURATION_SCHEMA_ALLOW_ADD_ROW. */
+	public static final String CONFIGURATION_SCHEMA_ALLOW_ADD_ROW =
+			"Allow ADD/DELETE ROW";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_INIT_ROWS. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_INIT_ROWS = "Initial Rows";
+	/** The Constant CONFIGURATION_SCHEMA_INIT_ROWS. */
+	public static final String CONFIGURATION_SCHEMA_INIT_ROWS =
+			"Initial Rows";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_PAGE_TYPE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_PAGE_TYPE = "Form Page Type";
+	/** The Constant CONFIGURATION_SCHEMA_FORM_PAGE_TYPE. */
+	public static final String CONFIGURATION_SCHEMA_FORM_PAGE_TYPE =
+			"Form Page Type";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_WIDTH. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_FORM_WIDTH = "Form Width";
+	/** The Constant CONFIGURATION_SCHEMA_FORM_WIDTH. */
+	public static final String CONFIGURATION_SCHEMA_FORM_WIDTH =
+			"Form Width";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE = "Max Rows Per Page";
+	/** The Constant CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE. */
+	public static final String CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE =
+			"Max Rows Per Page";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE = "Saved Rows Before Repeat";
+	/** The Constant CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE. */
+	public static final String CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE =
+			"Saved Rows Before Repeat";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER = "Saved Rows After Rpeat";
+	/** The Constant CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER. */
+	public static final String CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER =
+			"Saved Rows After Rpeat";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL = "Target Column/Cell";
+	/** The Constant CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL. */
+	public static final String CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL =
+			"Target Column/Cell";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE = "Attributes Type";
+	/** The Constant CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE. */
+	public static final String CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE =
+			"Attributes Type";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE = "Attributes Value";
+	/** The Constant CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE. */
+	public static final String CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE =
+			"Attributes Value";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG = "Validation Error Messages";
+	/** The Constant CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG. */
+	public static final String CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG =
+			"Validation Error Messages";
 
-	/** The Constant TIE_WEBSHEET_CONFIGURATION_ATTR_CONTROL. */
-	public static final String TIE_WEBSHEET_CONFIGURATION_ATTR_CONTROL = "Control";
+	/** The Constant CONFIGURATION_ATTR_CONTROL. */
+	public static final String CONFIGURATION_ATTR_CONTROL =
+			"Control";
 
-	/** The Constant TIE_WEBSHEET_FORM_TYPE_FREE. */
-	public static final String TIE_WEBSHEET_FORM_TYPE_FREE = "Free";
+	/** The Constant FORM_TYPE_FREE. */
+	public static final String FORM_TYPE_FREE = "Free";
 
-	/** The Constant TIE_WEBSHEET_FORM_TYPE_REPEAT. */
-	public static final String TIE_WEBSHEET_FORM_TYPE_REPEAT = "Repeat";
+	/** The Constant FORM_TYPE_REPEAT. */
+	public static final String FORM_TYPE_REPEAT = "Repeat";
 
-	/** The Constant TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE. */
-	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE = "double";
+	/** The Constant CELL_INPUT_TYPE_DOUBLE. */
+	public static final String CELL_INPUT_TYPE_DOUBLE =
+			"double";
 
-	/** The Constant TIE_WEBSHEET_CELL_INPUT_TYPE_INTEGER. */
-	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_INTEGER = "integer";
+	/** The Constant CELL_INPUT_TYPE_INTEGER. */
+	public static final String CELL_INPUT_TYPE_INTEGER =
+			"integer";
 
-	/** The Constant TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE. */
-	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE = "percentage";
+	/** The Constant CELL_INPUT_TYPE_PERCENTAGE. */
+	public static final String CELL_INPUT_TYPE_PERCENTAGE =
+			"percentage";
 
-	/** The Constant TIE_WEBSHEET_CELL_INPUT_TYPE_DATE. */
-	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_DATE = "date";
+	/** The Constant CELL_INPUT_TYPE_DATE. */
+	public static final String CELL_INPUT_TYPE_DATE = "date";
 
-	/** The Constant TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT. */
-	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT = "text";
+	/** The Constant CELL_INPUT_TYPE_TEXT. */
+	public static final String CELL_INPUT_TYPE_TEXT = "text";
 
-	/** The Constant TIE_WEBSHEET_CELL_INPUT_TYPE_TEXTAREA. */
-	public static final String TIE_WEBSHEET_CELL_INPUT_TYPE_TEXTAREA = "textarea";
+	/** The Constant CELL_INPUT_TYPE_TEXTAREA. */
+	public static final String CELL_INPUT_TYPE_TEXTAREA =
+			"textarea";
 
 	/** The Constant COPY_SHEET_PREFIX. */
 	public static final String COPY_SHEET_PREFIX = "cptieTemp_";
@@ -131,19 +161,22 @@ public final class TieConstants {
 	/** attribute suffix. */
 	public static final String ATTR_SUFFIX = ")";
 	/** attribute's regex. */
-	public static final String ATTR_REGEX = "\\s*\\w+\\s*=\\s*([\"|'])(?:(?!\\1).)*\\1";
+	public static final String ATTR_REGEX =
+			"\\s*\\w+\\s*=\\s*([\"|'])(?:(?!\\1).)*\\1";
 	/** attribute's regex pattern. */
 	public static final Pattern ATTR_REGEX_PATTERN = Pattern
 			.compile(ATTR_REGEX);
 
-	/** The Constant TIE_WEBSHEET_CELL_DATA_ROW. */
-	public static final String TIE_WEBSHEET_CELL_DATA_ROW = "data-row";
+	/** The Constant CELL_DATA_ROW. */
+	public static final String CELL_DATA_ROW = "data-row";
 
-	/** The Constant TIE_WEBSHEET_CELL_DATA_COLUMN. */
-	public static final String TIE_WEBSHEET_CELL_DATA_COLUMN = "data-column";
+	/** The Constant CELL_DATA_COLUMN. */
+	public static final String CELL_DATA_COLUMN =
+			"data-column";
 
-	/** The Constant TIE_WEBSHEET_CELL_DATA_SYMBOL. */
-	public static final String TIE_WEBSHEET_CELL_DATA_SYMBOL = "data-symbol";
+	/** The Constant CELL_DATA_SYMBOL. */
+	public static final String CELL_DATA_SYMBOL =
+			"data-symbol";
 
 	/** The Constant TIE_WEB_SHEET_MAX_ROWS. */
 	public static final int TIE_WEB_SHEET_MAX_ROWS = 99999;
@@ -167,40 +200,41 @@ public final class TieConstants {
 	public static final String TAB_STYLE_INVISIBLE = "height: 30px;";
 
 	/** The Constant defaultMaxRowsPerPage. */
-	public static final int defaultMaxRowsPerPage = 80;
+	public static final int DEFAULT_MAX_ROWS_PER_PAGE = 80;
 
 	/** The Constant defaultTableWidthStyle. */
-	public static final String defaultTableWidthStyle = "100%;";
+	public static final String DEFAULT_TABLE_WIDTH_STYLE = "100%;";
 
 	/** The Constant defaultLineNumberColumnWidth. */
-	public static final int defaultLineNumberColumnWidth = 26;
+	public static final int DEFAULT_LINENUMBER_COLUMN_WIDTH = 26;
 
 	/** The Constant excel letter total numbers. */
 	public static final int EXCEL_LETTER_NUMBERS = 26;
-	
+
 	/** The Constant defaultAddRowColumnWidth. */
-	public static final int defaultAddRowColumnWidth = 38;
+	public static final int DEFAULT_ADDROW_COLUMN_WIDTH = 38;
 
 	/** default basic stroke width. */
-	public static final float defaultBasicStroke = 0.1f;
+	public static final float DEFAULT_BASIC_STROKE = 0.1f;
 
 	/** The Constant defaultLegentItemShapeWidth. */
-	public static final int defaultLegentItemShapeWidth = 8;
+	public static final int DEFAULT_LEGENT_ITEM_SHAPE_WIDTH = 8;
 
 	/** The Constant defaultLegentItemShapeHeight. */
-	public static final int defaultLegentItemShapeHeight = 8;
+	public static final int DEFAULT_LEGENT_ITEM_SHAPE_HEIGHT = 8;
 
 	/** The Constant defaultBarStyleItemMargin. */
-	public static final float defaultBarStyleItemMargin = 0.02f;
+	public static final float DEFAULT_BAR_STYLE_ITEM_MARGIN = 0.02f;
 
 	/** The Constant defaultBarStyleForegroundAlpha. */
-	public static final int defaultBarStyleForegroundAlpha = 1;
+	public static final int DEFAULT_BARSTYLE_FOREGROUND_ALPHA = 1;
 
 	/** The Constant eachCommandInvalidMsg. */
-	public static final String eachCommandInvalidMsg = " is not a list collection, cannot support add/delete function.";
+	public static final String EACH_COMMAND_INVALID_MSG =
+			" is not a list collection, cannot support add/delete function.";
 
 	/** The Constant defaultCommandPartLength. */
-	public static final int defaultCommandPartLength = 3;
+	public static final int DEFAULT_COMMAND_PART_LENGTH = 3;
 
 	/** The Constant USER_FORMULA_PREFIX. */
 	public static final String USER_FORMULA_PREFIX = "$[";
@@ -208,31 +242,34 @@ public final class TieConstants {
 	/** The Constant USER_FORMULA_SUFFIX. */
 	public static final String USER_FORMULA_SUFFIX = "]";
 
+	/** The Constant hiddenOriginRowNumber. = AML */
+	public static final int HIDDEN_ORIGIN_ROW_NUMBER_COLUMN = 1025;
+
 	/** The Constant hiddenFullNameColumn. */
-	public static final int hiddenFullNameColumn = 255;
+	public static final int HIDDEN_FULL_NAME_COLUMN = 1026;
 
 	/** The Constant hiddenSaveObjectsColumn. */
-	public static final int hiddenSaveObjectsColumn = 256;
+	public static final int HIDDEN_SAVE_OBJECTS_COLUMN = 1027;
 
 	/** The Constant cellMapKeyChart. */
-	public static final String cellMapKeyChart = "chart";
+	public static final String CELL_MAP_KEY_CHART = "chart";
 
 	/** The Constant cellMapKeyPicture. */
-	public static final String cellMapKeyPicture = "picture";
+	public static final String CELL_MAP_KEY_PICTURE = "picture";
 
 	/** The Constant cellMapKeyFormat. */
-	public static final String cellMapKeyFormat = "format";
+	public static final String CELL_MAP_KEY_FORMAT = "format";
 
 	/** The Constant cellMapKeyPercent. */
-	public static final String cellMapKeyPercent = "percent";
+	public static final String CELL_MAP_KEY_PERCENT = "percent";
 
 	/** The Constant cellFormatPercentageSymbol. */
-	public static final String cellFormatPercentageSymbol = "%";
+	public static final String CELL_FORMAT_PERCENTAGE_SYMBOL = "%";
 
 	/** The Constant cellFormatPercentageValue. */
-	public static final int cellFormatPercentageValue = 100;
+	public static final int CELL_FORMAT_PERCENTAGE_VALUE = 100;
 	/** The Constant cellAddrPrefix. */
-	public static final String cellAddrPrefix = "$";
+	public static final String CELL_ADDR_PRE_FIX = "$";
 	/** The Constant rgb max. */
 	public static final short RGB_MAX = 256;
 	/** select item labels. */
@@ -260,7 +297,7 @@ public final class TieConstants {
 	/** method validate prefix. */
 	public static final String METHOD_VALIDATE_PREFIX = "$validate";
 	/** The expression notation pattern. */
-	public static final Pattern expressionNotationPattern = Pattern
+	public static final Pattern EXPRESSION_NOTATION_PATTERN = Pattern
 			.compile("\\$\\{[^}]*}");
 	/** The DEFAULT_HEADER_ROW_HEIGHT. */
 	public static final float DEFAULT_HEADER_ROW_HEIGHT = 12;
@@ -271,9 +308,17 @@ public final class TieConstants {
 	/** The VALIDATION_ERROR_MSG_TAG. */
 	public static final String VALIDATION_ERROR_MSG_TAG = "error";
 	/** SPLIT_SPACE_SEPERATE_ATTRS_REGX. */
-	public static final String SPLIT_SPACE_SEPERATE_ATTRS_REGX = "\" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
-	
+	public static final String SPLIT_SPACE_SEPERATE_ATTRS_REGX =
+			"\" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
+	/** The Constant DEFALT_MSG_INVALID_INPUT. */
 	public static final String DEFALT_MSG_INVALID_INPUT = "Invalid input";
-	
+
+	/** The Constant EACH_COMMAND_FULL_NAME_PREFIX. */
+	public static final String EACH_COMMAND_FULL_NAME_PREFIX = "E.";
+
+	/** The Constant FORM_COMMAND_FULL_NAME_PREFIX. */
+	public static final String FORM_COMMAND_FULL_NAME_PREFIX = "F.";
+	/** The Constant CELL_INVALID_STYLE. */
+	public static final String CELL_INVALID_STYLE = "border-color: red;";
 
 }

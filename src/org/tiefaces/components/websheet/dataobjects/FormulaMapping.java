@@ -28,7 +28,7 @@ public class FormulaMapping {
 	 *
 	 * @return the origin formula
 	 */
-	public String getOriginFormula() {
+	public final String getOriginFormula() {
 		return originFormula;
 	}
 
@@ -38,7 +38,7 @@ public class FormulaMapping {
 	 * @param poriginFormula
 	 *            the new origin formula
 	 */
-	public void setOriginFormula(final String poriginFormula) {
+	public final void setOriginFormula(final String poriginFormula) {
 		this.originFormula = poriginFormula;
 	}
 
@@ -47,7 +47,7 @@ public class FormulaMapping {
 	 *
 	 * @return the value
 	 */
-	public String getValue() {
+	public final String getValue() {
 		return value;
 	}
 
@@ -57,7 +57,7 @@ public class FormulaMapping {
 	 * @param pvalue
 	 *            the new value
 	 */
-	public void setValue(final String pvalue) {
+	public final void setValue(final String pvalue) {
 		this.value = pvalue;
 	}
 

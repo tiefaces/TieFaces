@@ -4,9 +4,6 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
-import static org.tiefaces.common.TieConstants.COPY_SHEET_PREFIX;
-import static org.tiefaces.common.TieConstants.EXCEL_SHEET_NAME_LIMIT;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,9 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
@@ -47,11 +43,9 @@ public final class ConfigurationHelper {
 		// not called
 	}
 
-	/** The Constant EACH_COMMAND_FULL_NAME_PREFIX. */
-	private static final String EACH_COMMAND_FULL_NAME_PREFIX = "E.";
-
-	/** The Constant FORM_COMMAND_FULL_NAME_PREFIX. */
-	private static final String FORM_COMMAND_FULL_NAME_PREFIX = "F.";
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(ConfigurationHelper.class.getName());
 
 	/**
 	 * Evaluate.
@@ -73,8 +67,8 @@ public final class ConfigurationHelper {
 		if (cellType == Cell.CELL_TYPE_STRING && cell != null) {
 			String strValue = cell.getStringCellValue();
 			if (isUserFormula(strValue)) {
-				String formulaStr = strValue.substring(2,
-						strValue.length() - 1);
+				String formulaStr =
+						strValue.substring(2, strValue.length() - 1);
 				if ((formulaStr != null) && (!formulaStr.isEmpty())) {
 					cell.setCellFormula(formulaStr);
 				}
@@ -128,7 +122,8 @@ public final class ConfigurationHelper {
 	public static String parseSaveAttr(final Cell cell) {
 		if ((cell.getCellType() == Cell.CELL_TYPE_STRING) && (cell != null)
 				&& !cell.getCellStyle().getLocked()) {
-			String saveAttr = parseSaveAttrString(cell.getStringCellValue());
+			String saveAttr =
+					parseSaveAttrString(cell.getStringCellValue());
 			if (!saveAttr.isEmpty()) {
 				return "$" + cell.getColumnIndex() + "=" + saveAttr + ",";
 			}
@@ -164,7 +159,7 @@ public final class ConfigurationHelper {
 	 */
 	public static String getSaveAttrListFromRow(final Row row) {
 		if (row != null) {
-			Cell cell = row.getCell(TieConstants.hiddenSaveObjectsColumn);
+			Cell cell = row.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
 			if (cell != null) {
 				String str = cell.getStringCellValue();
 				if ((str != null) && (!str.isEmpty())) {
@@ -192,8 +187,9 @@ public final class ConfigurationHelper {
 			if (istart >= 0) {
 				int iend = saveAttrs.indexOf(",", istart);
 				if (iend > istart) {
-					String saveAttr = saveAttrs.substring(
-							istart + str.length(), iend);
+					String saveAttr =
+							saveAttrs
+									.substring(istart + str.length(), iend);
 					return saveAttr;
 				}
 			}
@@ -209,8 +205,8 @@ public final class ConfigurationHelper {
 	 * @return true, if is checks for save attr
 	 */
 	public static boolean isHasSaveAttr(final Cell cell) {
-		Cell scell = cell.getRow().getCell(
-				TieConstants.hiddenSaveObjectsColumn);
+		Cell scell =
+				cell.getRow().getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
 		if (scell != null) {
 			return isHasSaveAttr(cell.getColumnIndex(),
 					scell.getStringCellValue());
@@ -259,13 +255,15 @@ public final class ConfigurationHelper {
 	 *            the engine
 	 * @return the object
 	 */
-	public static Object evaluate(final String strValue,
-			final Map<String, Object> context, final ExpressionEngine engine) {
+	public static Object
+			evaluate(final String strValue,
+					final Map<String, Object> context,
+					final ExpressionEngine engine) {
 		StringBuffer sb = new StringBuffer();
 		int beginExpressionLength = TieConstants.METHOD_PREFIX.length();
 		int endExpressionLength = TieConstants.METHOD_END.length();
-		Matcher exprMatcher = TieConstants.expressionNotationPattern
-				.matcher(strValue);
+		Matcher exprMatcher =
+				TieConstants.EXPRESSION_NOTATION_PATTERN.matcher(strValue);
 		String matchedString;
 		String expression;
 		Object lastMatchEvalResult = null;
@@ -275,8 +273,9 @@ public final class ConfigurationHelper {
 			endOffset = exprMatcher.end();
 			matchCount++;
 			matchedString = exprMatcher.group();
-			expression = matchedString.substring(beginExpressionLength,
-					matchedString.length() - endExpressionLength);
+			expression =
+					matchedString.substring(beginExpressionLength,
+							matchedString.length() - endExpressionLength);
 			lastMatchEvalResult = engine.evaluate(expression, context);
 			exprMatcher
 					.appendReplacement(
@@ -284,10 +283,11 @@ public final class ConfigurationHelper {
 							Matcher.quoteReplacement(lastMatchEvalResult != null ? lastMatchEvalResult
 									.toString() : ""));
 		}
-		String lastStringResult = lastMatchEvalResult != null ? lastMatchEvalResult
-				.toString() : "";
-		boolean isAppendTail = matchCount == 1
-				&& endOffset < strValue.length();
+		String lastStringResult =
+				lastMatchEvalResult != null ? lastMatchEvalResult
+						.toString() : "";
+		boolean isAppendTail =
+				matchCount == 1 && endOffset < strValue.length();
 		Object evaluationResult = null;
 		if (matchCount > 1 || isAppendTail) {
 			exprMatcher.appendTail(sb);
@@ -379,17 +379,13 @@ public final class ConfigurationHelper {
 			final SheetConfiguration sheetConfig) {
 		String fullName = getFullNameFromRow(row);
 		if (fullName != null) {
-			int index = fullName.indexOf(":");
-			if (index > 0) {
-				fullName = fullName.substring(index + 1);
-				ConfigRangeAttrs attrs = sheetConfig.getShiftMap().get(
-						fullName);
-				if ((attrs != null)
-						&& (attrs.isAllowAdd())
-						&& (row.getRowNum() == attrs.getFirstRowRef()
-								.getRowIndex())) {
-					return true;
-				}
+			ConfigRangeAttrs attrs =
+					sheetConfig.getShiftMap().get(fullName);
+			if ((attrs != null)
+					&& (attrs.isAllowAdd())
+					&& (row.getRowNum() == attrs.getFirstRowRef()
+							.getRowIndex())) {
+				return true;
 			}
 		}
 		return false;
@@ -404,7 +400,7 @@ public final class ConfigurationHelper {
 	 */
 	public static String getFullNameFromRow(final Row row) {
 		if (row != null) {
-			Cell cell = row.getCell(TieConstants.hiddenFullNameColumn);
+			Cell cell = row.getCell(TieConstants.HIDDEN_FULL_NAME_COLUMN);
 			if (cell != null) {
 				return cell.getStringCellValue();
 			}
@@ -429,8 +425,9 @@ public final class ConfigurationHelper {
 	public static int addRow(final ConfigBuildRef configBuildRef,
 			final int rowIndex, final SheetConfiguration sheetConfig,
 			final Map<String, Object> dataContext) {
-		String fullName = getFullNameFromRow(configBuildRef.getSheet()
-				.getRow(rowIndex));
+		String fullName =
+				getFullNameFromRow(configBuildRef.getSheet().getRow(
+						rowIndex));
 		if (fullName == null) {
 			return -1;
 		}
@@ -438,8 +435,6 @@ public final class ConfigurationHelper {
 		if (parts == null) {
 			return -1;
 		}
-
-		fullName = fullName.substring(fullName.indexOf(":") + 1);
 
 		Collection lastCollection = null;
 		int lastCollectionIndex = -1;
@@ -457,16 +452,19 @@ public final class ConfigurationHelper {
 			// need prepare department.1 and employee.0
 			for (int i = 0; i < parts.length; i++) {
 				String part = parts[i];
-				if (part.startsWith(EACH_COMMAND_FULL_NAME_PREFIX)) {
+				if (part.startsWith(TieConstants.EACH_COMMAND_FULL_NAME_PREFIX)) {
 					String[] varparts = part.split("\\.");
-					eachCommand = getEachCommandFromPartsName(
-							configBuildRef, varparts);
-					lastCollection = transformToCollectionObject(
-							configBuildRef.getEngine(),
-							eachCommand.getItems(), dataContext);
-					lastCollectionIndex = prepareCollectionDataInContext(
-							varparts, configBuildRef, eachCommand,
-							lastCollection, dataContext);
+					eachCommand =
+							getEachCommandFromPartsName(configBuildRef,
+									varparts);
+					lastCollection =
+							transformToCollectionObject(
+									configBuildRef.getEngine(),
+									eachCommand.getItems(), dataContext);
+					lastCollectionIndex =
+							prepareCollectionDataInContext(varparts,
+									configBuildRef, eachCommand,
+									lastCollection, dataContext);
 				}
 			}
 			if (lastCollectionIndex < 0) {
@@ -474,29 +472,31 @@ public final class ConfigurationHelper {
 				return 0;
 			}
 
-			String unitFullName = insertEmptyObjectInContext(fullName,
-					lastCollection, eachCommand, lastCollectionIndex,
-					dataContext);
+			String unitFullName =
+					insertEmptyObjectInContext(fullName, lastCollection,
+							eachCommand, lastCollectionIndex, dataContext);
 			RowsMapping unitRowsMapping = new RowsMapping();
-			ConfigRangeAttrs savedRangeAttrs = configBuildRef.getShiftMap()
-					.get(fullName);
-			int insertPosition = savedRangeAttrs.getFirstRowRef()
-					.getRowIndex() + savedRangeAttrs.getFinalLength();
+			ConfigRangeAttrs savedRangeAttrs =
+					configBuildRef.getShiftMap().get(fullName);
+			int insertPosition =
+					savedRangeAttrs.getFirstRowRef().getRowIndex()
+							+ savedRangeAttrs.getFinalLength();
 			configBuildRef.setInsertPosition(insertPosition);
 			insertEachTemplate(eachCommand.getConfigRange(),
 					configBuildRef, lastCollectionIndex + 1,
 					insertPosition, unitRowsMapping);
-			ConfigRange currentRange = buildCurrentRange(
-					eachCommand.getConfigRange(),
-					configBuildRef.getSheet(), insertPosition);
-			List<RowsMapping> currentRowsMappingList = findParentRowsMappingFromShiftMap(
-					parts, configBuildRef.getShiftMap());
+			ConfigRange currentRange =
+					buildCurrentRange(eachCommand.getConfigRange(),
+							configBuildRef.getSheet(), insertPosition);
+			List<RowsMapping> currentRowsMappingList =
+					findParentRowsMappingFromShiftMap(parts,
+							configBuildRef.getShiftMap());
 			currentRowsMappingList.add(unitRowsMapping);
 			currentRange.getAttrs().setAllowAdd(true);
 			configBuildRef.setBodyAllowAdd(true);
 			// reverse order of changeMap.
-			Map<String, String> changeMap = new TreeMap<String, String>(
-					Collections.reverseOrder());
+			Map<String, String> changeMap =
+					new TreeMap<String, String>(Collections.reverseOrder());
 			increaseIndexNumberInHiddenColumn(configBuildRef, currentRange
 					.getAttrs().getLastRowPlusRef().getRowIndex(),
 					fullName, changeMap);
@@ -504,8 +504,10 @@ public final class ConfigurationHelper {
 					changeMap);
 			configBuildRef.putShiftAttrs(unitFullName,
 					currentRange.getAttrs(), unitRowsMapping);
-			int length = currentRange.buildAt(unitFullName, configBuildRef,
-					insertPosition, dataContext, currentRowsMappingList);
+			int length =
+					currentRange.buildAt(unitFullName, configBuildRef,
+							insertPosition, dataContext,
+							currentRowsMappingList);
 			currentRange.getAttrs().setFinalLength(length);
 
 			reBuildUpperLevelFormula(configBuildRef, fullName);
@@ -518,6 +520,7 @@ public final class ConfigurationHelper {
 			return length;
 
 		} catch (Exception ex) {
+			LOG.severe("Add row error=" + ex.getMessage());
 			ex.printStackTrace();
 			return -1;
 		}
@@ -548,7 +551,7 @@ public final class ConfigurationHelper {
 			final Map<String, Object> dataContext) throws Exception {
 		if (!(lastCollection instanceof List)) {
 			throw new EvaluationException(eachCommand.getVar()
-					+ TieConstants.eachCommandInvalidMsg);
+					+ TieConstants.EACH_COMMAND_INVALID_MSG);
 		}
 		List collectionList = (List) lastCollection;
 		// the object must support empty constructor.
@@ -572,9 +575,10 @@ public final class ConfigurationHelper {
 	 */
 	private static EachCommand getEachCommandFromPartsName(
 			final ConfigBuildRef configBuildRef, final String[] varparts) {
-		if (varparts.length == TieConstants.defaultCommandPartLength) {
+		if (varparts.length == TieConstants.DEFAULT_COMMAND_PART_LENGTH) {
 			return (EachCommand) configBuildRef.getCommandIndexMap().get(
-					EACH_COMMAND_FULL_NAME_PREFIX + varparts[1]);
+					TieConstants.EACH_COMMAND_FULL_NAME_PREFIX
+							+ varparts[1]);
 		}
 		return null;
 
@@ -600,7 +604,7 @@ public final class ConfigurationHelper {
 			final String[] varparts, final ConfigBuildRef configBuildRef,
 			final EachCommand eachCommand, final Collection collection,
 			final Map<String, Object> dataContext) {
-		if (varparts.length == TieConstants.defaultCommandPartLength) {
+		if (varparts.length == TieConstants.DEFAULT_COMMAND_PART_LENGTH) {
 			int collectionIndex = Integer.parseInt(varparts[2]);
 			Object obj = findItemInCollection(collection, collectionIndex);
 			if (obj != null) {
@@ -622,25 +626,27 @@ public final class ConfigurationHelper {
 	public static void reBuildUpperLevelFormula(
 			final ConfigBuildRef configBuildRef, final String addFullName) {
 		Map<Cell, String> cachedMap = configBuildRef.getCachedCells();
-		Map<String, List<RowsMapping>> rowsMap = new HashMap<String, List<RowsMapping>>();
+		Map<String, List<RowsMapping>> rowsMap =
+				new HashMap<String, List<RowsMapping>>();
 		for (Map.Entry<Cell, String> entry : cachedMap.entrySet()) {
 			Cell cell = entry.getKey();
 			String originFormula = entry.getValue();
 			if (originFormula != null) {
 				String fullName = getFullNameFromRow(cell.getRow());
-				fullName = fullName.substring(fullName.indexOf(":") + 1);
 				// it's upper level
 				if (addFullName.startsWith(fullName + ":")) {
-					List<RowsMapping> currentRowsMappingList = rowsMap
-							.get(fullName);
+					List<RowsMapping> currentRowsMappingList =
+							rowsMap.get(fullName);
 					if (currentRowsMappingList == null) {
-						currentRowsMappingList = gatherRowsMappingByFullName(
-								configBuildRef, fullName);
+						currentRowsMappingList =
+								gatherRowsMappingByFullName(configBuildRef,
+										fullName);
 						rowsMap.put(fullName, currentRowsMappingList);
 					}
-					ShiftFormulaRef shiftFormulaRef = new ShiftFormulaRef(
-							configBuildRef.getWatchList(),
-							currentRowsMappingList);
+					ShiftFormulaRef shiftFormulaRef =
+							new ShiftFormulaRef(
+									configBuildRef.getWatchList(),
+									currentRowsMappingList);
 					shiftFormulaRef.setFormulaChanged(0);
 					buildCellFormulaForShiftedRows(
 							configBuildRef.getSheet(),
@@ -678,11 +684,13 @@ public final class ConfigurationHelper {
 		// only shift when there's watchlist exist.
 		if ((shiftFormulaRef.getWatchList() != null)
 				&& (shiftFormulaRef.getWatchList().size() > 0)) {
-			Ptg[] ptgs = FormulaParser.parse(originFormula, wbWrapper,
-					FormulaType.CELL,
-					sheet.getWorkbook().getSheetIndex(sheet));
-			Ptg[] convertedFormulaPtg = ShiftFormulaUtility
-					.convertSharedFormulas(ptgs, shiftFormulaRef);
+			Ptg[] ptgs =
+					FormulaParser.parse(originFormula, wbWrapper,
+							FormulaType.CELL, sheet.getWorkbook()
+									.getSheetIndex(sheet));
+			Ptg[] convertedFormulaPtg =
+					ShiftFormulaUtility.convertSharedFormulas(ptgs,
+							shiftFormulaRef);
 			if (shiftFormulaRef.getFormulaChanged() > 0) {
 				// only change formula when indicator is true
 				cell.setCellFormula(FormulaRenderer.toFormulaString(
@@ -704,8 +712,8 @@ public final class ConfigurationHelper {
 	public static List<RowsMapping> gatherRowsMappingByFullName(
 			final ConfigBuildRef configBuildRef, final String fullName) {
 		List<RowsMapping> list = new ArrayList<RowsMapping>();
-		Map<String, ConfigRangeAttrs> shiftMap = configBuildRef
-				.getShiftMap();
+		Map<String, ConfigRangeAttrs> shiftMap =
+				configBuildRef.getShiftMap();
 		for (Map.Entry<String, ConfigRangeAttrs> entry : shiftMap
 				.entrySet()) {
 			String fname = entry.getKey();
@@ -780,8 +788,8 @@ public final class ConfigurationHelper {
 	public static void increaseIndexNumberInHiddenColumn(
 			final ConfigBuildRef configBuildRef, final int startRowIndex,
 			final String fullName, final Map<String, String> changeMap) {
-		String searchName = fullName.substring(0,
-				fullName.lastIndexOf(".") + 1);
+		String searchName =
+				fullName.substring(0, fullName.lastIndexOf(".") + 1);
 		Sheet sheet = configBuildRef.getSheet();
 		for (int i = startRowIndex; i <= sheet.getLastRowNum(); i++) {
 			Row row = sheet.getRow(i);
@@ -800,12 +808,13 @@ public final class ConfigurationHelper {
 			}
 			int increaseNum = Integer.parseInt(snum) + 1;
 			String realFullName = fname.substring(sindex);
-			String changeName = fname.replace((searchName + snum + suffix),
-					(searchName + increaseNum + suffix));
+			String changeName =
+					fname.replace((searchName + snum + suffix), (searchName
+							+ increaseNum + suffix));
 			if (changeMap.get(realFullName) == null) {
 				changeMap.put(realFullName, changeName.substring(sindex));
 			}
-			setFullNameInHiddenColumn(row, changeName, true);
+			setFullNameInHiddenColumn(row, changeName);
 		}
 	}
 
@@ -816,19 +825,14 @@ public final class ConfigurationHelper {
 	 *            the row
 	 * @param fullName
 	 *            the full name
-	 * @param includeOriginNum
-	 *            the include origin num
 	 */
 	public static void setFullNameInHiddenColumn(final Row row,
-			final String fullName, final boolean includeOriginNum) {
-		Cell cell = row.getCell(TieConstants.hiddenFullNameColumn,
-				MissingCellPolicy.CREATE_NULL_AS_BLANK);
-		String rowNum = "";
+			final String fullName) {
+		Cell cell =
+				row.getCell(TieConstants.HIDDEN_FULL_NAME_COLUMN,
+						MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
-		if (!includeOriginNum) {
-			rowNum = cell.getStringCellValue();
-		}
-		cell.setCellValue(rowNum + fullName);
+		cell.setCellValue(fullName);
 	}
 
 	/**
@@ -841,8 +845,9 @@ public final class ConfigurationHelper {
 	 */
 	public static void setSaveObjectsInHiddenColumn(final Row row,
 			final String saveAttr) {
-		Cell cell = row.getCell(TieConstants.hiddenSaveObjectsColumn,
-				MissingCellPolicy.CREATE_NULL_AS_BLANK);
+		Cell cell =
+				row.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN,
+						MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
 		cell.setCellValue(saveAttr);
 	}
@@ -886,22 +891,38 @@ public final class ConfigurationHelper {
 	 * @return the original row num in hidden column
 	 */
 	public static int getOriginalRowNumInHiddenColumn(final Row row) {
-		Cell cell = row.getCell(TieConstants.hiddenFullNameColumn,
-				MissingCellPolicy.CREATE_NULL_AS_BLANK);
+		Cell cell =
+				row.getCell(TieConstants.HIDDEN_ORIGIN_ROW_NUMBER_COLUMN,
+						MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		String rowNum = cell.getStringCellValue();
 		try {
 			if ((rowNum != null) && (!rowNum.isEmpty())) {
-				int index = rowNum.indexOf(":");
-				if (index > 0) {
-					rowNum = rowNum.substring(0, index);
-				}
 				return Integer.parseInt(rowNum);
 			}
+
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.severe("getOriginalRowNumInHiddenColumn rowNum = " + rowNum
+					+ " error = " + ex.getLocalizedMessage());
 
 		}
 		return -1;
+	}
+
+	/**
+	 * Sets the original row num in hidden column.
+	 *
+	 * @param row
+	 *            the row.
+	 * @param rowNum
+	 *            row number.
+	 */
+	public static void setOriginalRowNumInHiddenColumn(final Row row,
+			final int rowNum) {
+		Cell cell =
+				row.getCell(TieConstants.HIDDEN_ORIGIN_ROW_NUMBER_COLUMN,
+						MissingCellPolicy.CREATE_NULL_AS_BLANK);
+		cell.setCellValue(rowNum + "");
+		cell.setCellType(Cell.CELL_TYPE_STRING);
 	}
 
 	/**
@@ -954,8 +975,8 @@ public final class ConfigurationHelper {
 			final TreeMap<String, ConfigRangeAttrs> shiftMap) {
 
 		List<RowsMapping> rowsMappingList = new ArrayList<RowsMapping>();
-		NavigableMap<String, ConfigRangeAttrs> tailmap = shiftMap.tailMap(
-				fullName, false);
+		NavigableMap<String, ConfigRangeAttrs> tailmap =
+				shiftMap.tailMap(fullName, false);
 		for (Map.Entry<String, ConfigRangeAttrs> entry : tailmap.entrySet()) {
 			String key = entry.getKey();
 			// check it's children
@@ -1020,13 +1041,14 @@ public final class ConfigurationHelper {
 		int srcEndRow = sourceConfigRange.getLastRowPlusAddr().getRow() - 1;
 
 		Sheet sheet = configBuildRef.getSheet();
-		CellHelper cellHelper = configBuildRef.getCellHelper();
-
 		Workbook wb = sheet.getWorkbook();
 		// excel sheet name has limit 31 chars
-		String copyName = (COPY_SHEET_PREFIX + sheet.getSheetName());
-		if (copyName.length() > EXCEL_SHEET_NAME_LIMIT) {
-			copyName = copyName.substring(0, EXCEL_SHEET_NAME_LIMIT);
+		String copyName =
+				(TieConstants.COPY_SHEET_PREFIX + sheet.getSheetName());
+		if (copyName.length() > TieConstants.EXCEL_SHEET_NAME_LIMIT) {
+			copyName =
+					copyName.substring(0,
+							TieConstants.EXCEL_SHEET_NAME_LIMIT);
 		}
 		Sheet srcSheet = wb.getSheet(copyName);
 		if (index > 0) {
@@ -1061,8 +1083,9 @@ public final class ConfigurationHelper {
 			final ConfigRange sourceConfigRange, final Sheet sheet,
 			final int insertPosition) {
 		ConfigRange current = new ConfigRange(sourceConfigRange);
-		int shiftNum = insertPosition
-				- sourceConfigRange.getFirstRowAddr().getRow();
+		int shiftNum =
+				insertPosition
+						- sourceConfigRange.getFirstRowAddr().getRow();
 		current.shiftRowRef(sheet, shiftNum);
 		return current;
 	}
@@ -1150,8 +1173,9 @@ public final class ConfigurationHelper {
 	 * @param finalCommentMap
 	 *            the final comment map
 	 */
-	public static void createCellComment(final Cell cell,
-			final String newComment, final Map<Cell, String> finalCommentMap) {
+	public static void
+			createCellComment(final Cell cell, final String newComment,
+					final Map<Cell, String> finalCommentMap) {
 		// due to poi's bug. the comment must be set in sorted order ( row first
 		// then column),
 		// otherwise poi will mess up.

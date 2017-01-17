@@ -81,7 +81,7 @@ public class HeaderCell {
 	 *
 	 * @return the rowspan
 	 */
-	public String getRowspan() {
+	public final String getRowspan() {
 		return rowspan;
 	}
 
@@ -91,7 +91,7 @@ public class HeaderCell {
 	 * @param prowspan
 	 *            the new rowspan
 	 */
-	public void setRowspan(final String prowspan) {
+	public final void setRowspan(final String prowspan) {
 		this.rowspan = prowspan;
 	}
 
@@ -100,7 +100,7 @@ public class HeaderCell {
 	 *
 	 * @return the colspan
 	 */
-	public String getColspan() {
+	public final String getColspan() {
 		return colspan;
 	}
 
@@ -110,7 +110,7 @@ public class HeaderCell {
 	 * @param pcolspan
 	 *            the new colspan
 	 */
-	public void setColspan(final String pcolspan) {
+	public final void setColspan(final String pcolspan) {
 		this.colspan = pcolspan;
 	}
 
@@ -119,7 +119,7 @@ public class HeaderCell {
 	 *
 	 * @return the cell value
 	 */
-	public String getCellValue() {
+	public final String getCellValue() {
 		return cellValue;
 	}
 
@@ -129,7 +129,7 @@ public class HeaderCell {
 	 * @param pcellValue
 	 *            the new cell value
 	 */
-	public void setCellValue(final String pcellValue) {
+	public final void setCellValue(final String pcellValue) {
 		this.cellValue = pcellValue;
 	}
 
@@ -138,7 +138,7 @@ public class HeaderCell {
 	 *
 	 * @return the column style
 	 */
-	public String getColumnStyle() {
+	public final String getColumnStyle() {
 		return columnStyle;
 	}
 
@@ -148,7 +148,7 @@ public class HeaderCell {
 	 * @param pcolumnStyle
 	 *            the new column style
 	 */
-	public void setColumnStyle(final String pcolumnStyle) {
+	public final void setColumnStyle(final String pcolumnStyle) {
 		this.columnStyle = pcolumnStyle;
 	}
 
@@ -157,7 +157,7 @@ public class HeaderCell {
 	 *
 	 * @return the style
 	 */
-	public String getStyle() {
+	public final String getStyle() {
 		return style;
 	}
 
@@ -167,7 +167,7 @@ public class HeaderCell {
 	 * @param pstyle
 	 *            the new style
 	 */
-	public void setStyle(final String pstyle) {
+	public final void setStyle(final String pstyle) {
 		this.style = pstyle;
 	}
 
@@ -176,7 +176,7 @@ public class HeaderCell {
 	 *
 	 * @return true, if is rendered
 	 */
-	public boolean isRendered() {
+	public final boolean isRendered() {
 		return rendered;
 	}
 
@@ -186,7 +186,7 @@ public class HeaderCell {
 	 * @param prendered
 	 *            the new rendered
 	 */
-	public void setRendered(final boolean prendered) {
+	public final void setRendered(final boolean prendered) {
 		this.rendered = prendered;
 	}
 
@@ -195,7 +195,7 @@ public class HeaderCell {
 	 *
 	 * @return true, if is column rendered
 	 */
-	public boolean isColumnRendered() {
+	public final boolean isColumnRendered() {
 		return columnRendered;
 	}
 
@@ -205,7 +205,7 @@ public class HeaderCell {
 	 * @param pcolumnRendered
 	 *            the new column rendered
 	 */
-	public void setColumnRendered(boolean pcolumnRendered) {
+	public final void setColumnRendered(final boolean pcolumnRendered) {
 		this.columnRendered = pcolumnRendered;
 	}
 
@@ -214,7 +214,7 @@ public class HeaderCell {
 	 * 
 	 * @return String Human readable label
 	 */
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");

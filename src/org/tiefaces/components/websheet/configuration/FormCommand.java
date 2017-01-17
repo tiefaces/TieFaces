@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.service.ShiftFormulaUtility;
@@ -84,7 +83,7 @@ public class FormCommand extends ConfigCommand {
 	 *
 	 * @return the header length
 	 */
-	public String getHeaderLength() {
+	public final String getHeaderLength() {
 		return headerLength;
 	}
 
@@ -94,7 +93,7 @@ public class FormCommand extends ConfigCommand {
 	 * @param pheaderLength
 	 *            the new header length
 	 */
-	public void setHeaderLength(final String pheaderLength) {
+	public final void setHeaderLength(final String pheaderLength) {
 		this.headerLength = pheaderLength;
 	}
 
@@ -103,7 +102,7 @@ public class FormCommand extends ConfigCommand {
 	 *
 	 * @return the footer length
 	 */
-	public String getFooterLength() {
+	public final String getFooterLength() {
 		return footerLength;
 	}
 
@@ -113,7 +112,7 @@ public class FormCommand extends ConfigCommand {
 	 * @param pfooterLength
 	 *            the new footer length
 	 */
-	public void setFooterLength(final String pfooterLength) {
+	public final void setFooterLength(final String pfooterLength) {
 		this.footerLength = pfooterLength;
 	}
 
@@ -315,7 +314,7 @@ public class FormCommand extends ConfigCommand {
 		configBuildRef.putShiftAttrs(fullName,
 				this.getConfigRange().getAttrs(),
 				new RowsMapping(unitRowsMapping));
-		initFullNameInHiddenColumn(configBuildRef.getSheet());
+		//initFullNameInHiddenColumn(configBuildRef.getSheet());
 		configBuildRef.setOriginConfigRange(
 				new ConfigRange(this.getConfigRange()));
 		configBuildRef.getOriginConfigRange()
@@ -325,9 +324,11 @@ public class FormCommand extends ConfigCommand {
 		this.getConfigRange().getAttrs().setFinalLength(length);
 		this.setFinalLength(length);
 		configBuildRef.getSheet().setColumnHidden(
-				TieConstants.hiddenFullNameColumn, true);
+				TieConstants.HIDDEN_FULL_NAME_COLUMN, true);
 		configBuildRef.getSheet().setColumnHidden(
-				TieConstants.hiddenSaveObjectsColumn, true);
+				TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN, true);
+		configBuildRef.getSheet().setColumnHidden(
+				TieConstants.HIDDEN_ORIGIN_ROW_NUMBER_COLUMN, true);		
 
 		return length;
 	}
@@ -337,7 +338,7 @@ public class FormCommand extends ConfigCommand {
 	 *
 	 * @param sheet
 	 *            the sheet
-	 */
+	 
 	private void initFullNameInHiddenColumn(final Sheet sheet) {
 
 		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
@@ -345,15 +346,12 @@ public class FormCommand extends ConfigCommand {
 			if (row == null) {
 				row = sheet.createRow(i);
 			}
-			Cell cell = row.getCell(
-					TieConstants.hiddenFullNameColumn,
-					MissingCellPolicy.CREATE_NULL_AS_BLANK);
-			cell.setCellValue(i + ":");
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			ConfigurationHelper.setOriginalRowNumInHiddenColumn(row, i);
 		}
 
 	}
 
+*/
 	/* (non-Javadoc)
 	 * @see org.tiefaces.components.websheet.configuration.Command#getCommandName()
 	 */
@@ -363,7 +361,7 @@ public class FormCommand extends ConfigCommand {
 	 * org.tiefaces.components.websheet.configuration.Command#getCommandName()
 	 */
 	@Override
-	public String getCommandName() {
+	public final String getCommandName() {
 		return this.getCommandTypeName().substring(0, 1).toUpperCase() + "."
 				+ this.getName().trim();
 	}

@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
@@ -29,6 +27,7 @@ import org.tiefaces.components.websheet.CellAttributesMap;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.CellRange;
+import org.tiefaces.components.websheet.service.CellUtility;
 import org.tiefaces.components.websheet.service.ParserUtility;
 import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
@@ -72,9 +71,10 @@ public class ConfigurationHandler {
 	 *
 	 * @return the map
 	 */
-	public Map<String, SheetConfiguration> buildConfiguration() {
+	public final Map<String, SheetConfiguration> buildConfiguration() {
 
-		Map<String, SheetConfiguration> sheetConfigMap = new LinkedHashMap<String, SheetConfiguration>();
+		Map<String, SheetConfiguration> sheetConfigMap =
+				new LinkedHashMap<String, SheetConfiguration>();
 		// in buildsheet, it's possible to add sheets in workbook.
 		// so cache the sheetname first here.
 		List<String> sheetNames = new ArrayList<String>();
@@ -145,32 +145,32 @@ public class ConfigurationHandler {
 		}
 		LOG.fine("form tabName = " + formName + " maxRow = " + maxRow);
 
-		Cell firstCell = sheet.getRow(firstRow).getCell(leftCol,
-				MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		// header range row set to 0 while column set to first column to
 		// max
 		// column (FF) e.g. $A$0 : $FF$0
-		String tempStr = TieConstants.cellAddrPrefix
-				+ TieWebSheetUtility.getExcelColumnName(leftCol)
-				+ TieConstants.cellAddrPrefix + "0 : "
-				+ TieConstants.cellAddrPrefix
-				+ TieWebSheetUtility.getExcelColumnName(rightCol)
-				+ TieConstants.cellAddrPrefix + "0";
+		String tempStr =
+				TieConstants.CELL_ADDR_PRE_FIX
+						+ TieWebSheetUtility.getExcelColumnName(leftCol)
+						+ TieConstants.CELL_ADDR_PRE_FIX + "0 : "
+						+ TieConstants.CELL_ADDR_PRE_FIX
+						+ TieWebSheetUtility.getExcelColumnName(rightCol)
+						+ TieConstants.CELL_ADDR_PRE_FIX + "0";
 		sheetConfig.setFormHeaderRange(tempStr);
 		sheetConfig.setHeaderCellRange(new CellRange(tempStr));
 		// body range row set to first row to last row while column set
 		// to
 		// first column to max column (FF) e.g. $A$1 : $FF$1000
-		tempStr = TieConstants.cellAddrPrefix
-				+ TieWebSheetUtility.getExcelColumnName(leftCol)
-				+ TieConstants.cellAddrPrefix + (firstRow + 1) + " : "
-				+ TieConstants.cellAddrPrefix
-				+ TieWebSheetUtility.getExcelColumnName(rightCol)
-				+ TieConstants.cellAddrPrefix + (lastRow + 1);
+		tempStr =
+				TieConstants.CELL_ADDR_PRE_FIX
+						+ TieWebSheetUtility.getExcelColumnName(leftCol)
+						+ TieConstants.CELL_ADDR_PRE_FIX + (firstRow + 1)
+						+ " : " + TieConstants.CELL_ADDR_PRE_FIX
+						+ TieWebSheetUtility.getExcelColumnName(rightCol)
+						+ TieConstants.CELL_ADDR_PRE_FIX + (lastRow + 1);
 		sheetConfig.setFormBodyRange(tempStr);
 		sheetConfig.setBodyCellRange(new CellRange(tempStr));
 		sheetConfig
-				.setFormBodyType(org.tiefaces.common.TieConstants.TIE_WEBSHEET_FORM_TYPE_FREE);
+				.setFormBodyType(org.tiefaces.common.TieConstants.FORM_TYPE_FREE);
 		sheetConfig
 				.setCellFormAttributes(new HashMap<String, List<CellFormAttributes>>());
 
@@ -181,9 +181,6 @@ public class ConfigurationHandler {
 			sheetConfig.setHidden(true);
 		}
 
-		FormCommand fcommand = buildFormCommandFromSheetConfig(sheetConfig,
-				sheet, firstCell, rightCol, lastRow);
-		sheetConfig.setFormCommand(fcommand);
 		return sheetConfig;
 
 	}
@@ -195,17 +192,20 @@ public class ConfigurationHandler {
 	 *            the sheet config
 	 * @param sheet
 	 *            the sheet
-	 * @param firstCell
-	 *            the first cell
-	 * @param rightCol
-	 *            the right col
-	 * @param lastRow
-	 *            the last row
 	 * @return the form command
 	 */
 	private FormCommand buildFormCommandFromSheetConfig(
-			final SheetConfiguration sheetConfig, final Sheet sheet,
-			final Cell firstCell, final int rightCol, final int lastRow) {
+			final SheetConfiguration sheetConfig, final Sheet sheet) {
+
+		int firstRow = sheetConfig.getBodyCellRange().getTopRow();
+		int leftCol = sheetConfig.getBodyCellRange().getLeftCol();
+		int rightCol = sheetConfig.getBodyCellRange().getRightCol();
+		int lastRow = sheetConfig.getBodyCellRange().getBottomRow();
+
+		Cell firstCell =
+				sheet.getRow(firstRow).getCell(leftCol,
+						MissingCellPolicy.CREATE_NULL_AS_BLANK);
+
 		FormCommand fcommand = new FormCommand();
 		fcommand.setCommandTypeName(TieConstants.COMMAND_FORM);
 		if (sheetConfig.isHidden()) {
@@ -217,6 +217,9 @@ public class ConfigurationHandler {
 		fcommand.getConfigRange().setFirstRowRef(firstCell, true);
 		fcommand.getConfigRange().setLastRowPlusRef(sheet, rightCol,
 				lastRow, true);
+		fcommand.setHeaderLength("0");
+		fcommand.setFooterLength("0");
+		fcommand.setLength((lastRow - firstRow + 1) + "");
 		return fcommand;
 	}
 
@@ -247,7 +250,8 @@ public class ConfigurationHandler {
 
 	/** command map. */
 	@SuppressWarnings("rawtypes")
-	private static Map<String, Class> commandMap = new HashMap<String, Class>();
+	private static Map<String, Class> commandMap =
+			new HashMap<String, Class>();
 
 	static {
 		commandMap.put(TieConstants.COMMAND_FORM, FormCommand.class);
@@ -273,8 +277,11 @@ public class ConfigurationHandler {
 			return;
 		}
 		int sheetRightCol = TieWebSheetUtility.getSheetRightCol(sheet);
-		List<ConfigCommand> commandList = buildCommandListFromSheetComment(
-				(XSSFSheet) sheet, sheetRightCol, cellAttributesMap);
+		List<ConfigCommand> commandList =
+				buildCommandListFromSheetComment((XSSFSheet) sheet,
+						sheetRightCol, cellAttributesMap);
+
+		boolean hasEachCommand = hasEachCommandInTheList(commandList);
 
 		List<String> formList = new ArrayList<String>();
 
@@ -286,6 +293,49 @@ public class ConfigurationHandler {
 		// loop command list again to assemble other command list into sheet
 		// configuration
 		matchSheetConfigForm(sheet, sheetConfigMap, commandList, formList);
+		initTemplateForCommand(sheet, sheetConfigMap, formList,
+				hasEachCommand);
+	}
+
+	/**
+	 * Initialize template for command to use. e.g. set origin row number and
+	 * copy template if there's each command. create missing row as row require
+	 * sequenced.
+	 * 
+	 * @param sheet
+	 *            sheet.
+	 * @param sheetConfigMap
+	 *            sheet config map.
+	 * @param formList
+	 *            list of form.
+	 * @param hasEachCommand
+	 *            whether has each command.
+	 */
+	private void initTemplateForCommand(final Sheet sheet,
+			final Map<String, SheetConfiguration> sheetConfigMap,
+			final List<String> formList, final boolean hasEachCommand) {
+
+		for (String formname : formList) {
+			SheetConfiguration sheetConfig = sheetConfigMap.get(formname);
+			CellRange range = sheetConfig.getBodyCellRange();
+			for (int index = range.getTopRow(); index <= range
+					.getBottomRow(); index++) {
+				Row row = sheet.getRow(index);
+				if (row == null) {
+					row = sheet.createRow(index);
+				}
+				if (hasEachCommand) {
+					ConfigurationHelper.setOriginalRowNumInHiddenColumn(
+							row, index);
+				}
+
+			}
+		}
+
+		if (hasEachCommand) {
+			copyTemplateForTieCommands(sheet);
+		}
+
 	}
 
 	/**
@@ -308,8 +358,7 @@ public class ConfigurationHandler {
 		if (parent.isSkipConfiguration()) {
 			return commandList;
 		}
-		
-		
+
 		Map<CellAddress, ? extends Comment> comments = null;
 
 		try {
@@ -325,16 +374,18 @@ public class ConfigurationHandler {
 		}
 
 		// not sure the map is sorted. So use tree map to sort it.
-		SortedSet<CellAddress> keys = new TreeSet<CellAddress>(
-				comments.keySet());
+		SortedSet<CellAddress> keys =
+				new TreeSet<CellAddress>(comments.keySet());
 		// go through each comments
 		// if found tie command then transfer it to list also remove from
 		// comments.
 		for (CellAddress key : keys) {
-			Cell cell = sheet.getRow(key.getRow()).getCell(key.getColumn(),
-					MissingCellPolicy.CREATE_NULL_AS_BLANK);
-			commandList = buildCommandList(sheet, sheetRightCol, cell,
-					commandList, cellAttributesMap);
+			Cell cell =
+					sheet.getRow(key.getRow()).getCell(key.getColumn(),
+							MissingCellPolicy.CREATE_NULL_AS_BLANK);
+			commandList =
+					buildCommandList(sheet, sheetRightCol, cell,
+							commandList, cellAttributesMap);
 		}
 		return commandList;
 
@@ -367,8 +418,7 @@ public class ConfigurationHandler {
 					TieConstants.COMMAND_FORM)) {
 				foundForm = true;
 				FormCommand fcommand = (FormCommand) command;
-				sheetConfigMap.put(
-						fcommand.getName(),
+				sheetConfigMap.put(fcommand.getName(),
 						getSheetConfigurationFromConfigCommand(sheet,
 								fcommand));
 				formList.add(fcommand.getName());
@@ -383,8 +433,13 @@ public class ConfigurationHandler {
 		// if no form found, then use the whole sheet as form
 		if (!foundForm) {
 			String formName = sheet.getSheetName();
-			sheetConfigMap.put(formName,
-					getSheetConfiguration(sheet, formName));
+			SheetConfiguration sheetConfig =
+					getSheetConfiguration(sheet, formName);
+			FormCommand fcommand =
+					buildFormCommandFromSheetConfig(sheetConfig, sheet);
+			commandList.add(fcommand);
+			sheetConfig.setFormCommand(fcommand);
+			sheetConfigMap.put(formName, sheetConfig);
 			formList.add(formName);
 			minRowNum = sheet.getFirstRowNum();
 			maxRowNum = sheet.getLastRowNum();
@@ -421,17 +476,18 @@ public class ConfigurationHandler {
 							if (!commandParent.getCommandTypeName()
 									.equalsIgnoreCase(
 											TieConstants.COMMAND_FORM)) {
-								if (TieWebSheetUtility.insideRange(
-										child.getConfigRange(),
-										commandParent.getConfigRange())) {
+								if (TieWebSheetUtility.insideRange(child
+										.getConfigRange(), commandParent
+										.getConfigRange())) {
 									if ((matchRange == null)
 											|| (TieWebSheetUtility
 													.insideRange(
 															commandParent
 																	.getConfigRange(),
 															matchRange))) {
-										matchRange = commandParent
-												.getConfigRange();
+										matchRange =
+												commandParent
+														.getConfigRange();
 										matchIndex = j;
 									}
 								}
@@ -446,6 +502,25 @@ public class ConfigurationHandler {
 				}
 			}
 		}
+	}
+
+	/**
+	 * check whether contain each command in the list.
+	 * @param commandList command list.
+	 * @return true if contain each command.
+	 */
+	private boolean hasEachCommandInTheList(
+			final List<ConfigCommand> commandList) {
+
+		if (commandList != null) {
+			for (ConfigCommand command : commandList) {
+				if (command.getCommandTypeName().equalsIgnoreCase(
+						TieConstants.COMMAND_EACH)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -471,14 +546,13 @@ public class ConfigurationHandler {
 					TieConstants.COMMAND_FORM)
 					&& (!command.isParentFound())) {
 				for (String formname : formList) {
-					SheetConfiguration sheetConfig = sheetConfigMap
-							.get(formname);
+					SheetConfiguration sheetConfig =
+							sheetConfigMap.get(formname);
 					if (TieWebSheetUtility.insideRange(command
 							.getConfigRange(), sheetConfig.getFormCommand()
 							.getConfigRange())) {
 						sheetConfig.getFormCommand().getConfigRange()
 								.addCommand(command);
-						copyTemplateForTieCommands(sheet);
 						break;
 					}
 				}
@@ -499,13 +573,13 @@ public class ConfigurationHandler {
 			return;
 		}
 		Workbook wb = sheet.getWorkbook();
-		String copyName = TieConstants.COPY_SHEET_PREFIX
-				+ sheet.getSheetName();
+		String copyName =
+				TieConstants.COPY_SHEET_PREFIX + sheet.getSheetName();
 		if (wb.getSheet(copyName) == null) {
 			Sheet newSheet = wb.cloneSheet(wb.getSheetIndex(sheet));
 			int sheetIndex = wb.getSheetIndex(newSheet);
 			wb.setSheetName(sheetIndex, copyName);
-			wb.setSheetHidden(sheetIndex, Workbook.SHEET_STATE_VERY_HIDDEN);
+			// wb.setSheetHidden(sheetIndex, Workbook.SHEET_STATE_VERY_HIDDEN);
 		}
 	}
 
@@ -537,22 +611,27 @@ public class ConfigurationHandler {
 		for (String commentLine : commentLines) {
 			String line = commentLine.trim();
 			if (ParserUtility.isCommandString(line)) {
-				int nameEndIndex = line.indexOf(TieConstants.ATTR_PREFIX,
-						TieConstants.COMMAND_PREFIX.length());
+				int nameEndIndex =
+						line.indexOf(TieConstants.ATTR_PREFIX,
+								TieConstants.COMMAND_PREFIX.length());
 				if (nameEndIndex < 0) {
-					String errMsg = "Failed to parse command line [" + line
-							+ "]. Expected '" + TieConstants.ATTR_PREFIX
-							+ "' symbol.";
+					String errMsg =
+							"Failed to parse command line [" + line
+									+ "]. Expected '"
+									+ TieConstants.ATTR_PREFIX
+									+ "' symbol.";
 					LOG.severe(errMsg);
 					throw new IllegalStateException(errMsg);
 				}
-				String commandName = line.substring(
-						TieConstants.COMMAND_PREFIX.length(), nameEndIndex)
-						.trim();
-				Map<String, String> attrMap = buildAttrMap(line,
-						nameEndIndex);
-				ConfigCommand configCommand = createConfigCommand(sheet,
-						cell, sheetRightCol, commandName, attrMap);
+				String commandName =
+						line.substring(
+								TieConstants.COMMAND_PREFIX.length(),
+								nameEndIndex).trim();
+				Map<String, String> attrMap =
+						buildAttrMap(line, nameEndIndex);
+				ConfigCommand configCommand =
+						createConfigCommand(sheet, cell, sheetRightCol,
+								commandName, attrMap);
 				if (configCommand != null) {
 					cList.add(configCommand);
 				}
@@ -563,12 +642,11 @@ public class ConfigurationHandler {
 					ParserUtility.parseWidgetAttributes(cell, line,
 							cellAttributesMap);
 				} else if (ParserUtility.isValidateMethodString(line)) {
-						ParserUtility.parseValidateAttributes(cell, line,
-								cellAttributesMap);
+					ParserUtility.parseValidateAttributes(cell, line,
+							cellAttributesMap);
 				} else {
-					moveCommentToMap(cell, line,
-							cellAttributesMap.getTemplateCommentMap(),
-							false);
+					moveCommentToMap(cell, line, cellAttributesMap
+							.getTemplateCommentMap(), false);
 				}
 				changed = true;
 			} else {
@@ -581,10 +659,10 @@ public class ConfigurationHandler {
 		if (!changed) {
 			newComment = text;
 		}
-		moveCommentToMap(cell, newComment,
-				cellAttributesMap.getTemplateCommentMap(), true);
+		moveCommentToMap(cell, newComment, cellAttributesMap
+				.getTemplateCommentMap(), true);
 		// after saved to map. remove the cell comments.
-		cell.removeCellComment();		
+		cell.removeCellComment();
 		return cList;
 	}
 
@@ -604,8 +682,9 @@ public class ConfigurationHandler {
 			final Map<String, Map<String, String>> sheetCommentMap,
 			final boolean normalComment) {
 
-		String cellKey = cell.getSheet().getSheetName() + "!$"
-				+ cell.getColumnIndex() + "$" + cell.getRowIndex();
+		String cellKey =
+				cell.getSheet().getSheetName() + "!$"
+						+ cell.getColumnIndex() + "$" + cell.getRowIndex();
 
 		ParserUtility.parseCommentToMap(cellKey, newComment,
 				sheetCommentMap, normalComment);
@@ -668,16 +747,18 @@ public class ConfigurationHandler {
 	 */
 	private Map<String, String> buildAttrMap(final String commandLine,
 			final int nameEndIndex) {
-		int paramsEndIndex = commandLine
-				.lastIndexOf(TieConstants.ATTR_SUFFIX);
+		int paramsEndIndex =
+				commandLine.lastIndexOf(TieConstants.ATTR_SUFFIX);
 		if (paramsEndIndex < 0) {
-			String errMsg = "Failed to parse command line [" + commandLine
-					+ "]. Expected '" + TieConstants.ATTR_SUFFIX
-					+ "' symbol.";
+			String errMsg =
+					"Failed to parse command line [" + commandLine
+							+ "]. Expected '" + TieConstants.ATTR_SUFFIX
+							+ "' symbol.";
 			throw new IllegalArgumentException(errMsg);
 		}
-		String attrString = commandLine.substring(nameEndIndex + 1,
-				paramsEndIndex).trim();
+		String attrString =
+				commandLine.substring(nameEndIndex + 1, paramsEndIndex)
+						.trim();
 		return ParserUtility.parseCommandAttributes(attrString);
 	}
 
@@ -722,39 +803,36 @@ public class ConfigurationHandler {
 		// column (FF) e.g. $A$0 : $FF$0
 		String tempStr;
 		if (fcommand.calcHeaderLength() == 0) {
-			tempStr = TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(leftCol)
-					+ TieConstants.cellAddrPrefix + "0 : "
-					+ TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(rightCol)
-					+ TieConstants.cellAddrPrefix + "0";
+			tempStr =
+					CellUtility.getCellIndexLetterKey(leftCol, 0)
+							+ " : "
+							+ CellUtility
+									.getCellIndexLetterKey(rightCol, 0);
 		} else {
-			tempStr = TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(leftCol)
-					+ TieConstants.cellAddrPrefix
-					+ (fcommand.getTopRow() + 1) + " : "
-					+ TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(rightCol)
-					+ TieConstants.cellAddrPrefix
-					+ (fcommand.getTopRow() + fcommand.calcHeaderLength());
+			tempStr =
+					CellUtility.getCellIndexLetterKey(leftCol, (fcommand
+							.getTopRow() + 1))
+							+ " : "
+							+ CellUtility.getCellIndexLetterKey(rightCol,
+									(fcommand.getTopRow() + fcommand
+											.calcHeaderLength()));
 		}
 		sheetConfig.setFormHeaderRange(tempStr);
 		sheetConfig.setHeaderCellRange(new CellRange(tempStr));
 		// body range row set to first row to last row while column set
 		// to
 		// first column to max column (FF) e.g. $A$1 : $FF$1000
-		tempStr = TieConstants.cellAddrPrefix
-				+ TieWebSheetUtility.getExcelColumnName(leftCol)
-				+ TieConstants.cellAddrPrefix
-				+ (fcommand.getTopRow() + fcommand.calcHeaderLength() + 1)
-				+ " : " + TieConstants.cellAddrPrefix
-				+ TieWebSheetUtility.getExcelColumnName(rightCol)
-				+ TieConstants.cellAddrPrefix + (lastRow + 1);
-		sheetConfig.setFormBodyRange(tempStr);
+		tempStr =
+				CellUtility.getCellIndexLetterKey(leftCol, (fcommand
+						.getTopRow()
+						+ fcommand.calcHeaderLength() + 1))
+						+ " : "
+						+ CellUtility.getCellIndexLetterKey(rightCol,
+								(lastRow + 1));
 
+		sheetConfig.setFormBodyRange(tempStr);
 		sheetConfig.setBodyCellRange(new CellRange(tempStr));
-		sheetConfig
-				.setFormBodyType(TieConstants.TIE_WEBSHEET_FORM_TYPE_FREE);
+		sheetConfig.setFormBodyType(TieConstants.FORM_TYPE_FREE);
 		sheetConfig
 				.setCellFormAttributes(new HashMap<String, List<CellFormAttributes>>());
 
@@ -762,25 +840,21 @@ public class ConfigurationHandler {
 		// max
 		// column (FF) e.g. $A$0 : $FF$0
 		if (fcommand.calcFooterLength() == 0) {
-			tempStr = TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(leftCol)
-					+ TieConstants.cellAddrPrefix + "0 : "
-					+ TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(rightCol)
-					+ TieConstants.cellAddrPrefix + "0";
+			tempStr =
+					CellUtility.getCellIndexLetterKey(leftCol, 0)
+							+ " : "
+							+ CellUtility
+									.getCellIndexLetterKey(rightCol, 0);
 		} else {
-			tempStr = TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(leftCol)
-					+ TieConstants.cellAddrPrefix
-					+ (fcommand.getTopRow() + fcommand.calcHeaderLength() + fcommand
-							.calcBodyLength())
-					+ " : "
-					+ TieConstants.cellAddrPrefix
-					+ TieWebSheetUtility.getExcelColumnName(rightCol)
-					+ TieConstants.cellAddrPrefix
-					+ (fcommand.getTopRow() + fcommand.calcHeaderLength()
-							+ fcommand.calcBodyLength()
-							+ fcommand.calcFooterLength() - 1);
+			tempStr =
+					CellUtility.getCellIndexLetterKey(leftCol, (fcommand
+							.getTopRow()
+							+ fcommand.calcHeaderLength() + fcommand
+							.calcBodyLength()))
+							+ " : "
+							+ CellUtility.getCellIndexLetterKey(rightCol,
+									(fcommand.getTopRow() + fcommand
+											.calcHeaderLength()));
 		}
 		sheetConfig.setFormFooterRange(tempStr);
 		sheetConfig.setFooterCellRange(new CellRange(tempStr));

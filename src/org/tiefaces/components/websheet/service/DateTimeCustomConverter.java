@@ -5,15 +5,11 @@
 package org.tiefaces.components.websheet.service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
-import java.util.StringTokenizer;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
-import javax.faces.convert.DateTimeConverter;
 import javax.faces.convert.FacesConverter;
 
 import org.tiefaces.common.TieConstants;
@@ -32,8 +28,8 @@ public class DateTimeCustomConverter implements Converter {
 	 * , javax.faces.component.UIComponent, java.lang.String)
 	 */
 	@Override
-	public Object getAsObject(FacesContext context, UIComponent component,
-			String value) {
+	public final Object getAsObject(final FacesContext context,
+			final UIComponent component, final String value) {
 		if (value == null) {
 			return null;
 		}
@@ -54,7 +50,7 @@ public class DateTimeCustomConverter implements Converter {
 	 * javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext
 	 * , javax.faces.component.UIComponent, java.lang.Object)
 	 */
-	public String getAsString(final FacesContext context,
+	public final String getAsString(final FacesContext context,
 			final UIComponent component, final Object value) {
 		if (value == null) {
 			return "";

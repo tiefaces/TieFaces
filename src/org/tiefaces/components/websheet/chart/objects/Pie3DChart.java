@@ -30,8 +30,11 @@ public class Pie3DChart extends PieChart {
 		return ctChart.getPlotArea().getPie3DChartList();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.PieChart#getSerListFromCtObjChart(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.PieChart#
+	 * getSerListFromCtObjChart(java.lang.Object)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override

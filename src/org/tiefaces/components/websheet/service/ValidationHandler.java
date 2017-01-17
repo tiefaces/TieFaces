@@ -195,7 +195,7 @@ public class ValidationHandler {
 	 *            the target
 	 * @return true, if successful
 	 */
-	public boolean validateCell(final UIComponent target) {
+	public final boolean validateCell(final UIComponent target) {
 
 		try {
 			int[] rowcol = CellUtility
@@ -217,7 +217,7 @@ public class ValidationHandler {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean validateCurrentPage() {
+	public final boolean validateCurrentPage() {
 		boolean allpass = true;
 		boolean passEmptyCheck = true;
 
@@ -252,11 +252,50 @@ public class ValidationHandler {
 	 *            the pass empty check
 	 * @return true, if successful
 	 */
-	public boolean validateRowInCurrentPage(final int irow,
+	public final boolean validateRowInCurrentPage(final int irow,
 			final boolean passEmptyCheck) {
-		boolean pass = true;
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap().get(
 				parent.getCurrentTabName());
+		return this.validateRow(irow, passEmptyCheck, sheetConfig);
+	}
+
+	/**
+	 * Find first invalid sheet.
+	 *
+	 * @param passEmptyCheck
+	 *            the pass empty check
+	 * @return the string
+	 */
+	public final String findFirstInvalidSheet(final boolean passEmptyCheck) {
+		for (Map.Entry<String, SheetConfiguration> entry : parent
+				.getSheetConfigMap().entrySet()) {
+			SheetConfiguration sheetConfig = entry.getValue();
+			String tabName = entry.getKey();
+			int topRow = sheetConfig.getBodyCellRange().getTopRow();
+			for (int irow = 0; irow < parent.getBodyRows().size(); irow++) {
+				if (!validateRow(irow + topRow, passEmptyCheck, sheetConfig)) {
+					return tabName;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Validate data row.
+	 * 
+	 * @param irow
+	 *            row number.
+	 * @param passEmptyCheck
+	 *            whether pass empty cell.
+	 * @param sheetConfig
+	 *            sheet config.
+	 * @return true if passed validation.
+	 */
+	private boolean validateRow(final int irow,
+			final boolean passEmptyCheck,
+			final SheetConfiguration sheetConfig) {
+		boolean pass = true;
 		if (sheetConfig != null) {
 			int top = sheetConfig.getBodyCellRange().getTopRow();
 			List<FacesCell> cellRow = parent.getBodyRows().get(irow - top)
@@ -275,88 +314,6 @@ public class ValidationHandler {
 			}
 		}
 		return pass;
-	}
-
-	/**
-	 * Find first invalid sheet.
-	 *
-	 * @param passEmptyCheck
-	 *            the pass empty check
-	 * @return the string
-	 */
-	public String findFirstInvalidSheet(final boolean passEmptyCheck) {
-		for (Map.Entry<String, SheetConfiguration> entry : parent
-				.getSheetConfigMap().entrySet()) {
-			SheetConfiguration sheetConfig = entry.getValue();
-			String tabName = entry.getKey();
-			Sheet sheet = parent.getWb().getSheet(
-					sheetConfig.getSheetName());
-			int initialRows = sheetConfig.getBodyInitialRows();
-			int topRow = sheetConfig.getBodyCellRange().getTopRow();
-			for (int datarow = 0; datarow < initialRows; datarow++) {
-				if (!validateDataRow(datarow, initialRows, topRow, sheet,
-						sheetConfig, passEmptyCheck)) {
-					return tabName;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Validate data row.
-	 *
-	 * @param datarow
-	 *            the datarow
-	 * @param initialRows
-	 *            the initial rows
-	 * @param topRow
-	 *            the top row
-	 * @param sheet
-	 *            the sheet
-	 * @param sheetConfig
-	 *            the sheet config
-	 * @param passEmptyCheck
-	 *            the pass empty check
-	 * @return true, if successful
-	 */
-	private boolean validateDataRow(int datarow, int initialRows,
-			int topRow, Sheet sheet, SheetConfiguration sheetConfig,
-			boolean passEmptyCheck) {
-
-		boolean rowpass = true;
-		for (Map.Entry<String, List<CellFormAttributes>> entry : sheetConfig
-				.getCellFormAttributes().entrySet()) {
-			String targetCell = entry.getKey();
-			List<CellFormAttributes> attributeList = entry.getValue();
-			Cell cell = null;
-			for (CellFormAttributes attr : attributeList) {
-				if ((attr.getType().equalsIgnoreCase("input") || attr
-						.getType().equalsIgnoreCase("check"))) {
-					if (cell == null) {
-						cell = CellUtility.getCellReferenceWithConfig(
-								targetCell, datarow, initialRows,
-								sheetConfig, sheet);
-					}
-					if (cell != null) {
-						String cellValue = CellUtility
-								.getCellValueWithoutFormat(cell);
-						if (!(passEmptyCheck && cellValue.isEmpty())) {
-							if (!doValidation(cellValue, attr, topRow
-									+ datarow, sheet)) {
-								LOG.fine("Web Form ValidationHandler validateDatarow targetCell = "
-										+ targetCell
-										+ " validation failed; datarow="
-										+ datarow);
-								rowpass = false;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		return rowpass;
 	}
 
 }

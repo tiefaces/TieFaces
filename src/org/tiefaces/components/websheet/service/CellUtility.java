@@ -28,7 +28,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -37,7 +36,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.tiefaces.common.FacesUtility;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.CellAttributesMap;
-import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.configuration.ConfigurationHelper;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
@@ -67,8 +65,20 @@ public final class CellUtility {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static String getCellValueWithFormat(Cell poiCell,
-			FormulaEvaluator formulaEvaluator, DataFormatter dataFormatter) {
+	/**
+	 * return cell value with format.
+	 * 
+	 * @param poiCell
+	 *            cell.
+	 * @param formulaEvaluator
+	 *            formula evaluator.
+	 * @param dataFormatter
+	 *            data formatter.
+	 * @return cell string value with format.
+	 */
+	public static String getCellValueWithFormat(final Cell poiCell,
+			final FormulaEvaluator formulaEvaluator,
+			final DataFormatter dataFormatter) {
 
 		if (poiCell == null) {
 			return null;
@@ -255,7 +265,7 @@ public final class CellUtility {
 	 * @param destRow
 	 *            the dest row
 	 */
-	public static final void copyRow(final Workbook wb,
+	public static void copyRow(final Workbook wb,
 			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int srcRow, final int destRow) {
 
@@ -285,7 +295,7 @@ public final class CellUtility {
 	 * @param setHiddenColumn
 	 *            the set hidden column
 	 */
-	public static final void copyRows(final Workbook wb,
+	public static void copyRows(final Workbook wb,
 			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
 			final Sheet destSheet, final int srcRowStart,
 			final int srcRowEnd, final int destRow,
@@ -364,10 +374,8 @@ public final class CellUtility {
 					oldCell, newCell, checkLock);
 		}
 		if (setHiddenColumn) {
-			Cell cell = newRow.getCell(TieConstants.hiddenFullNameColumn,
-					MissingCellPolicy.CREATE_NULL_AS_BLANK);
-			cell.setCellValue(sourceRow.getRowNum() + ":");
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			ConfigurationHelper.setOriginalRowNumInHiddenColumn(newRow,
+					sourceRow.getRowNum());
 		}
 		return;
 
@@ -490,7 +498,7 @@ public final class CellUtility {
 	 *            ture ( in the repeat zone) false ( not in the repeat zone).
 	 * @return list of the attributes.
 	 */
-	private static final List<CellFormAttributes> findCellAttributesWithOffset(
+	private static List<CellFormAttributes> findCellAttributesWithOffset(
 			final SheetConfiguration sheetConfig, final Cell cell,
 			final int initRows, final int bodyTopRow,
 			final boolean repeatZone) {
@@ -501,7 +509,7 @@ public final class CellUtility {
 				repeatZone);
 		List<CellFormAttributes> result = map.get(key);
 		if ((result == null) && repeatZone) {
-			key = TieConstants.cellAddrPrefix
+			key = TieConstants.CELL_ADDR_PRE_FIX
 					+ TieWebSheetUtility.getExcelColumnName(cell
 							.getColumnIndex());
 			result = map.get(key);
@@ -532,64 +540,96 @@ public final class CellUtility {
 				.getColumnIndex());
 
 		if (repeatZone) {
-			key = TieConstants.cellAddrPrefix + columnLetter
-					+ TieConstants.cellAddrPrefix + (bodyTopRow + 1);
+			key = getCellIndexLetterKey(columnLetter, bodyTopRow + 1);
 		} else {
-			key = TieConstants.cellAddrPrefix + columnLetter
-					+ TieConstants.cellAddrPrefix
-					+ (cell.getRowIndex() - initRows + 1 + 1);
+			key = getCellIndexLetterKey(columnLetter, (cell.getRowIndex()
+					- initRows + 1 + 1));
 		}
 		return key;
 	}
 
 	/**
-	 * Find cell address after body populated.
-	 *
-	 * @param oldCellAddr
-	 *            the old cell addr
-	 * @param sheetConfig
-	 *            the sheet config
-	 * @return the string
+	 * return cell index number key. e.g. $0$0 for A1 cell.
+	 * 
+	 * @param cell
+	 *            input cell.
+	 * @return string.
 	 */
-	public static String findCellAddressAfterBodyPopulated(
-			final String oldCellAddr, final SheetConfiguration sheetConfig) {
-
-		if (!sheetConfig.isBodyPopulated()) {
-			return null; // not valid
+	public static String getCellIndexNumberKey(final Cell cell) {
+		if (cell != null) {
+			return TieConstants.CELL_ADDR_PRE_FIX + cell.getColumnIndex()
+					+ TieConstants.CELL_ADDR_PRE_FIX + cell.getRowIndex();
 		}
-		String[] rowcol = getRowColFromExcelReferenceName(oldCellAddr);
-		if (rowcol[0].isEmpty()) {
-			// not valid
-			return null;
-		}
-		int row = Integer.parseInt(rowcol[0]);
-		int initialRows = sheetConfig.getBodyInitialRows();
-		if ((sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat"))
-				&& (row > (sheetConfig.getBodyCellRange().getTopRow() + 1))) {
-			return TieConstants.cellAddrPrefix + rowcol[1]
-					+ TieConstants.cellAddrPrefix + (row + initialRows - 1);
-		}
-		// no change
-		return oldCellAddr;
+		return null;
 	}
 
-	
-/**
- * 
- * @param validateMaps validateMaps.
- * @param cell cell.
- * @param row row.
- * @param bodyTopRow bodytoprow.
- * @return list.
- */
+	/**
+	 * return cell index number key. e.g. $0$0 for A1 cell.
+	 * 
+	 * @param columnIndex
+	 *            column index.
+	 * @param rowIndex
+	 *            row index.
+	 * @return string.
+	 */
+	public static String getCellIndexNumberKey(final int columnIndex,
+			final int rowIndex) {
+		return TieConstants.CELL_ADDR_PRE_FIX + columnIndex
+				+ TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
+	}
+
+	/**
+	 * return cell index key with column letter and row index. e.g. $A$0 for A1
+	 * cell.
+	 * 
+	 * @param columnLetter
+	 *            column letter.
+	 * @param rowIndex
+	 *            row index.
+	 * @return String.
+	 */
+	public static String getCellIndexLetterKey(final String columnLetter,
+			final int rowIndex) {
+		return TieConstants.CELL_ADDR_PRE_FIX + columnLetter
+				+ TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
+	}
+
+	/**
+	 * return cell index key with column and row index. e.g. $A$0 for A1 cell.
+	 * 
+	 * @param columnIndex
+	 *            column index.
+	 * @param rowIndex
+	 *            row index.
+	 * @return key.
+	 */
+
+	public static String getCellIndexLetterKey(final int columnIndex,
+			final int rowIndex) {
+		return TieConstants.CELL_ADDR_PRE_FIX
+				+ TieWebSheetUtility.getExcelColumnName(columnIndex)
+				+ TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
+	}
+
+	/**
+	 * 
+	 * @param validateMaps
+	 *            validateMaps.
+	 * @param cell
+	 *            cell.
+	 * @param row
+	 *            row.
+	 * @param bodyTopRow
+	 *            bodytoprow.
+	 * @return list.
+	 */
 	public static List<CellFormAttributes> findCellValidateAttributes(
-			final Map<String, List<CellFormAttributes>> validateMaps, final Cell cell,
-			final int row, final int bodyTopRow) {
+			final Map<String, List<CellFormAttributes>> validateMaps,
+			final Cell cell, final int row, final int bodyTopRow) {
 		String key = ParserUtility.getAttributeKeyInMapByCell(cell);
 		return validateMaps.get(key);
 	}
 
-	
 	/**
 	 * Find cell attributes.
 	 *
@@ -651,7 +691,7 @@ public final class CellUtility {
 		String tempStr;
 		String findStr;
 		String replaceStr;
-		while ((ifind = attrValue.indexOf(TieConstants.cellAddrPrefix,
+		while ((ifind = attrValue.indexOf(TieConstants.CELL_ADDR_PRE_FIX,
 				ibegin)) > 0) {
 			iblank = attrValue.indexOf(' ', ifind);
 			if (iblank > 0) {
@@ -659,9 +699,9 @@ public final class CellUtility {
 			} else {
 				findStr = attrValue.substring(ifind);
 			}
-			if (findStr.indexOf(TieConstants.cellAddrPrefix, 1) < 0) {
+			if (findStr.indexOf(TieConstants.CELL_ADDR_PRE_FIX, 1) < 0) {
 				// only $A
-				tempStr = findStr + TieConstants.cellAddrPrefix
+				tempStr = findStr + TieConstants.CELL_ADDR_PRE_FIX
 						+ (rowIndex + 1);
 			} else {
 				tempStr = findStr;
@@ -696,10 +736,9 @@ public final class CellUtility {
 			CellRangeAddress caddress = sheet1.getMergedRegion(i);
 			if (caddress != null) {
 				cellRangeMap.put(
-						TieConstants.cellAddrPrefix
-								+ caddress.getFirstColumn()
-								+ TieConstants.cellAddrPrefix
-								+ caddress.getFirstRow(), caddress);
+						CellUtility.getCellIndexNumberKey(
+								caddress.getFirstColumn(),
+								caddress.getFirstRow()), caddress);
 			}
 		}
 		return cellRangeMap;
@@ -712,7 +751,7 @@ public final class CellUtility {
 	 *            the sheet 1
 	 * @return the list
 	 */
-	public static List<String> skippedRegionCells(Sheet sheet1) {
+	public static List<String> skippedRegionCells(final Sheet sheet1) {
 		int numRegions = sheet1.getNumMergedRegions();
 		List<String> skipCellList = new ArrayList<String>();
 		for (int i = 0; i < numRegions; i++) {
@@ -727,8 +766,8 @@ public final class CellUtility {
 								&& (row == caddress.getFirstRow())) {
 							continue;
 						}
-						skipCellList.add(TieConstants.cellAddrPrefix + col
-								+ TieConstants.cellAddrPrefix + row);
+						skipCellList.add(CellUtility.getCellIndexNumberKey(
+								col, row));
 					}
 				}
 			}
@@ -745,7 +784,7 @@ public final class CellUtility {
 	 * @param rowIndex
 	 *            the row index
 	 */
-	public static void removeRow(Sheet sheet, int rowIndex) {
+	public static void removeRow(final Sheet sheet, final int rowIndex) {
 		int lastRowNum = sheet.getLastRowNum();
 		if (rowIndex >= 0 && rowIndex < lastRowNum) {
 			sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
@@ -767,14 +806,6 @@ public final class CellUtility {
 	 *            the fcell
 	 * @param poiCell
 	 *            the poi cell
-	 * @param rowindex
-	 *            the rowindex
-	 * @param initRows
-	 *            the init rows
-	 * @param bodyTopRow
-	 *            the body top row
-	 * @param repeatZone
-	 *            the repeat zone
 	 * @param cellRangeMap
 	 *            the cell range map
 	 * @param originRowIndex
@@ -785,46 +816,14 @@ public final class CellUtility {
 	 *            the save attrs
 	 */
 	// set up facesCell's attribute from poiCell and others.
-	public static void convertCell(SheetConfiguration sheetConfig,
-			FacesCell fcell, Cell poiCell, int rowindex, int initRows,
-			int bodyTopRow, boolean repeatZone,
-			Map<String, CellRangeAddress> cellRangeMap, int originRowIndex,
-			CellAttributesMap cellAttributesMap, String saveAttrs) {
-		boolean bodyPopulated = sheetConfig.isBodyPopulated();
-		List<CellFormAttributes> cellAttributes = findCellAttributesWithOffset(
-				sheetConfig, poiCell, initRows, bodyTopRow, repeatZone);
-		if (cellAttributes != null) {
-			for (CellFormAttributes attr : cellAttributes) {
-				String attrType = attr.getType().trim();
-				if (attrType.equalsIgnoreCase("load") && (!bodyPopulated)) {
-					String attrValue = attr.getValue();
-					attrValue = attrValue.replace("$rowIndex", rowindex
-							+ "");
-					if (attrValue.contains(TieConstants.EL_START)) {
-						attrValue = FacesUtility.evaluateExpression(
-								attrValue, String.class);
-						setCellValue(poiCell, attrValue);
-					}
-				} else if (attrType.equalsIgnoreCase("input")) {
-					String attrValue = attr.getValue().toLowerCase();
-					fcell.setInputType(attrValue);
-					if ((attrValue != null) && (!attrValue.isEmpty())
-							&& (!attrValue.equalsIgnoreCase("textarea"))) {
-						fcell.setStyle("text-align: right;");
-					}
-					if (attrValue.equalsIgnoreCase("textarea")) {
-						fcell.setControl("textarea");
-					}
-					if ((fcell.getControl() == null)
-							|| (fcell.getControl().isEmpty())) {
-						fcell.setControl("text");
-					}
-				}
-			}
-		}
+	public static void convertCell(final SheetConfiguration sheetConfig,
+			final FacesCell fcell, final Cell poiCell,
+			final Map<String, CellRangeAddress> cellRangeMap,
+			final int originRowIndex,
+			final CellAttributesMap cellAttributesMap,
+			final String saveAttrs) {
 		CellRangeAddress caddress = null;
-		String key = TieConstants.cellAddrPrefix + poiCell.getColumnIndex()
-				+ TieConstants.cellAddrPrefix + poiCell.getRowIndex();
+		String key = getCellIndexNumberKey(poiCell);
 		caddress = cellRangeMap.get(key);
 		if (caddress != null) {
 			// has col or row span
@@ -855,16 +854,17 @@ public final class CellUtility {
 	 * @param cellAttributesMap
 	 *            the cell attributes map
 	 */
-	private static void setupControlAttributes(int originRowIndex,
-			FacesCell fcell, Cell poiCell, SheetConfiguration sheetConfig,
-			CellAttributesMap cellAttributesMap) {
+	private static void setupControlAttributes(final int originRowIndex,
+			final FacesCell fcell, final Cell poiCell,
+			final SheetConfiguration sheetConfig,
+			final CellAttributesMap cellAttributesMap) {
 		if (originRowIndex >= 0) {
 			Map<String, String> commentMap = cellAttributesMap
 					.getTemplateCommentMap().get("$$");
-			String skey = poiCell.getSheet().getSheetName() + "!"
-					+ TieConstants.cellAddrPrefix
-					+ poiCell.getColumnIndex()
-					+ TieConstants.cellAddrPrefix + originRowIndex;
+			String skey = poiCell.getSheet().getSheetName()
+					+ "!"
+					+ CellUtility.getCellIndexNumberKey(
+							poiCell.getColumnIndex(), originRowIndex);
 			if (commentMap != null) {
 				String comment = commentMap.get(skey);
 				if (comment != null) {
@@ -901,8 +901,8 @@ public final class CellUtility {
 	 *            the row height
 	 * @return the row style
 	 */
-	public static String getRowStyle(Workbook wb, Cell poiCell,
-			String inputType, float rowHeight) {
+	public static String getRowStyle(final Workbook wb, final Cell poiCell,
+			final String inputType, final float rowHeight) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		if (cellStyle != null) {
@@ -1227,8 +1227,8 @@ public final class CellUtility {
 	 * @param rowHeight
 	 *            the row height
 	 */
-	public static void setupCellStyle(Workbook wb, Sheet sheet1,
-			FacesCell fcell, Cell poiCell, float rowHeight) {
+	public static void setupCellStyle(final Workbook wb, final Sheet sheet1,
+			final FacesCell fcell, final Cell poiCell, final float rowHeight) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		if ((cellStyle != null) && (!cellStyle.getLocked())) {
@@ -1268,17 +1268,17 @@ public final class CellUtility {
 		}
 
 		switch (fcell.getInputType()) {
-		case TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE:
+		case TieConstants.CELL_INPUT_TYPE_PERCENTAGE:
 			fcell.setSymbol("%");
 			fcell.setSymbolPosition("p");
 			fcell.setDecimalPlaces(getDecimalPlacesFromFormat(poiCell));
 			break;
 
-		case TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_INTEGER:
+		case TieConstants.CELL_INPUT_TYPE_INTEGER:
 			fcell.setDecimalPlaces((short) 0);
 			break;
 
-		case TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE:
+		case TieConstants.CELL_INPUT_TYPE_DOUBLE:
 			fcell.setDecimalPlaces(getDecimalPlacesFromFormat(poiCell));
 			fcell.setSymbol(getSymbolFromFormat(poiCell));
 			fcell.setSymbolPosition(getSymbolPositionFromFormat(poiCell));
@@ -1296,7 +1296,7 @@ public final class CellUtility {
 	 *            the poi cell
 	 * @return the alignment from cell type
 	 */
-	private static String getAlignmentFromCellType(Cell poiCell) {
+	private static String getAlignmentFromCellType(final Cell poiCell) {
 
 		switch (poiCell.getCellType()) {
 		case Cell.CELL_TYPE_FORMULA:
@@ -1316,19 +1316,19 @@ public final class CellUtility {
 	 */
 	private static String getInputTypeFromCellType(final Cell cell) {
 
-		String inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_TEXT;
+		String inputType = TieConstants.CELL_INPUT_TYPE_TEXT;
 		if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-			inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DOUBLE;
+			inputType = TieConstants.CELL_INPUT_TYPE_DOUBLE;
 		}
 		CellStyle style = cell.getCellStyle();
 		if (style != null) {
 			int formatIndex = style.getDataFormat();
 			String formatString = style.getDataFormatString();
 			if (DateUtil.isADateFormat(formatIndex, formatString)) {
-				inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_DATE;
+				inputType = TieConstants.CELL_INPUT_TYPE_DATE;
 			} else {
 				if (isAPercentageCell(formatString)) {
-					inputType = TieConstants.TIE_WEBSHEET_CELL_INPUT_TYPE_PERCENTAGE;
+					inputType = TieConstants.CELL_INPUT_TYPE_PERCENTAGE;
 				}
 			}
 		}
@@ -1390,7 +1390,7 @@ public final class CellUtility {
 	 *            the cell
 	 * @return symbol of the formatted string
 	 */
-	private static String getSymbolFromFormat(Cell cell) {
+	private static String getSymbolFromFormat(final Cell cell) {
 		CellStyle style = cell.getCellStyle();
 		if (style == null) {
 			return null;
@@ -1399,7 +1399,7 @@ public final class CellUtility {
 		if (formatString == null) {
 			return null;
 		}
-		if (formatString.indexOf(TieConstants.cellAddrPrefix) < 0) {
+		if (formatString.indexOf(TieConstants.CELL_ADDR_PRE_FIX) < 0) {
 			return null;
 		}
 		int ipos = formatString.indexOf("[$");
@@ -1420,7 +1420,7 @@ public final class CellUtility {
 	 *            the cell
 	 * @return symbol position of the formatted string
 	 */
-	private static String getSymbolPositionFromFormat(Cell cell) {
+	private static String getSymbolPositionFromFormat(final Cell cell) {
 		CellStyle style = cell.getCellStyle();
 		if (style == null) {
 			return "p";
@@ -1504,41 +1504,13 @@ public final class CellUtility {
 	 *
 	 * @param sheetConfig
 	 *            the sheet config
-	 * @param initRows
-	 *            the init rows
 	 * @return the body bottom from config
 	 */
 	public static int getBodyBottomFromConfig(
-			final SheetConfiguration sheetConfig, final int initRows) {
+			final SheetConfiguration sheetConfig) {
 
 		int bottom = sheetConfig.getBodyCellRange().getBottomRow();
 		return bottom;
-	}
-
-	/**
-	 * Gets the cell value with config.
-	 *
-	 * @param targetCell
-	 *            the target cell
-	 * @param datarow
-	 *            the datarow
-	 * @param initialRows
-	 *            the initial rows
-	 * @param sheetConfig
-	 *            the sheet config
-	 * @param sheet
-	 *            the sheet
-	 * @return the cell value with config
-	 */
-	public static String getCellValueWithConfig(final String targetCell,
-			final int datarow, final int initialRows,
-			final SheetConfiguration sheetConfig, final Sheet sheet) {
-		Cell cell = getCellReferenceWithConfig(targetCell, datarow,
-				initialRows, sheetConfig, sheet);
-		if (cell != null) {
-			return getCellValueWithoutFormat(cell);
-		}
-		return "";
 	}
 
 	/**
@@ -1565,16 +1537,16 @@ public final class CellUtility {
 			if (rowcol[1].isEmpty()) {
 				return null; // both empty meaning not valid targetcell
 			}
-			targetCell = TieConstants.cellAddrPrefix
+			targetCell = TieConstants.CELL_ADDR_PRE_FIX
 					+ rowcol[1]
-					+ TieConstants.cellAddrPrefix
+					+ TieConstants.CELL_ADDR_PRE_FIX
 					+ (datarow + sheetConfig.getBodyCellRange().getTopRow() + 1);
 		} else {
 			int row = Integer.parseInt(rowcol[0]);
 			if ((sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat"))
 					&& (row > (sheetConfig.getBodyCellRange().getTopRow() + 1))) {
-				targetCell = TieConstants.cellAddrPrefix + rowcol[1]
-						+ TieConstants.cellAddrPrefix
+				targetCell = TieConstants.CELL_ADDR_PRE_FIX + rowcol[1]
+						+ TieConstants.CELL_ADDR_PRE_FIX
 						+ (row + initialRows - 1);
 			}
 		}

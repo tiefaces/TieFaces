@@ -6,14 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -24,6 +20,11 @@ import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 
+/**
+ * 
+ * @author Jason Jiang
+ *
+ */
 public class ParserUtilityTest {
 
 	@BeforeClass
@@ -123,6 +124,8 @@ public class ParserUtilityTest {
 		assertEquals(attrs2.get(1).getValue(), "s");
 		assertEquals(attrs2.get(2).getType(), "minValue");
 		assertEquals(attrs2.get(2).getValue(), "0");
+		
+		wb.close();
 
 	}
 
@@ -220,11 +223,13 @@ public class ParserUtilityTest {
 				cellAttributesMap);
 		assertEquals(cellAttributesMap.getCellDatePattern().get(key2),
 				"yyyy/MM/dd");
+		
+		wb.close();
 
 	}
 
 	@Test
-	public void testParseCommentToMap() throws Exception {
+	public final void testParseCommentToMap() throws Exception {
 
 		String cellKey = "sheet1!$0$0";
 		Map<String, Map<String, String>> sheetCommentMap = new HashMap<String, Map<String, String>>();
@@ -246,7 +251,7 @@ public class ParserUtilityTest {
 	}
 
 	@Test
-	public void testIsValidateMethodString() throws Exception {
+	public final void testIsValidateMethodString() throws Exception {
 		assertTrue(ParserUtility.isValidateMethodString("$validate{ rule=\"abc\" error=\"error\"}"));
 		assertFalse(ParserUtility
 				.isValidateMethodString("$save{department.name}"));
@@ -254,7 +259,7 @@ public class ParserUtilityTest {
 	}
 
 	@Test
-	public void testParseValidateAttributesCellStringCellAttributesMap()
+	public final void testParseValidateAttributesCellStringCellAttributesMap()
 			throws Exception {
 		Workbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = (XSSFSheet) wb.createSheet("sheet1");
@@ -288,6 +293,8 @@ public class ParserUtilityTest {
 		assertEquals(attrs.size(), 2);
 		assertEquals(attrs.get(1).getValue(), "$value<=employee.total");
 		assertEquals(attrs.get(1).getMessage(), "payment must be less than total");
+		
+		wb.close();
 
 	
 	}

@@ -13,7 +13,6 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 
 /**
@@ -45,7 +44,7 @@ public class PicturesHelper {
 	 *            the wb
 	 * @return the pictrues map
 	 */
-	public Map<String, Picture> getPictruesMap(final Workbook wb) {
+	public final Map<String, Picture> getPictruesMap(final Workbook wb) {
 		return PicturesUtility.getPictruesMap(wb);
 	}
 
@@ -59,7 +58,7 @@ public class PicturesHelper {
 	 * @param fId
 	 *            the f id
 	 */
-	public void setupFacesCellPictureCharts(final Sheet sheet1,
+	public final void setupFacesCellPictureCharts(final Sheet sheet1,
 			final FacesCell fcell, final String fId) {
 		if (parent.getPicturesMap() != null) {
 			try {

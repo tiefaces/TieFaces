@@ -26,7 +26,7 @@ public class MapObject {
 	 *
 	 * @return the key
 	 */
-	public Object getKey() {
+	public final Object getKey() {
 		return key;
 	}
 	
@@ -35,7 +35,7 @@ public class MapObject {
 	 *
 	 * @return the value
 	 */
-	public Object getValue() {
+	public final Object getValue() {
 		return value;
 	}
 	

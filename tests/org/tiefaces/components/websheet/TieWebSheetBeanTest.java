@@ -5,7 +5,6 @@ package org.tiefaces.components.websheet;
 
 import java.io.InputStream;
 
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -14,7 +13,6 @@ import org.tiefaces.common.TieConstants;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 /**
  * @author Jason Jiang
@@ -23,14 +21,14 @@ import static org.junit.Assert.assertFalse;
 public class TieWebSheetBeanTest {
 
 	/**
-	 * @throws java.lang.Exception
+	 * @throws Exception java.lang.Exception.
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	/**
-	 * @throws java.lang.Exception
+	 * @throws Exception java.lang.Exception.
 	 */
 	@Before
 	public void setUp() throws Exception {

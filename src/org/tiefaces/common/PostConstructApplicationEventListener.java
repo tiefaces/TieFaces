@@ -4,13 +4,15 @@ package org.tiefaces.common;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.SystemEvent;
 import javax.faces.event.SystemEventListener;
 
-import org.tiefaces.components.websheet.configuration.CellControlsHelper;
-
+/**
+ * use show the version of tiefaces.
+ * @author Jason Jiang
+ *
+ */
 public class PostConstructApplicationEventListener
 		implements SystemEventListener {
 
@@ -18,11 +20,23 @@ public class PostConstructApplicationEventListener
 	private static final Logger LOGGER = Logger.getLogger(
 			PostConstructApplicationEventListener.class.getName());
 
-	public boolean isListenerForSource(Object source) {
+	/**
+	 * is listener for source.
+	 * @param source
+	 *            source.
+	 * @return true.
+	 * 
+	 */
+	public final boolean isListenerForSource(final Object source) {
 		return true;
 	}
 
-	public void processEvent(SystemEvent event)
+	/**
+	 * process event.
+	 * @param event systemevent.
+	 * @throws AbortProcessingException abort process exception.
+	 */
+	public final void processEvent(final SystemEvent event)
 			throws AbortProcessingException {
 
 		LOGGER.log(Level.INFO, "Running on TieFaces {0}",

@@ -50,7 +50,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the first row ref
 	 */
-	public Cell getFirstRowRef() {
+	public final Cell getFirstRowRef() {
 		return firstRowRef;
 	}
 
@@ -60,7 +60,7 @@ public class ConfigRangeAttrs {
 	 * @param pfirstRowRef
 	 *            the new first row ref
 	 */
-	public void setFirstRowRef(Cell pfirstRowRef) {
+	public final void setFirstRowRef(final Cell pfirstRowRef) {
 		this.firstRowRef = pfirstRowRef;
 	}
 
@@ -69,7 +69,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the last row plus ref
 	 */
-	public Cell getLastRowPlusRef() {
+	public final Cell getLastRowPlusRef() {
 		return lastRowPlusRef;
 	}
 
@@ -88,7 +88,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the first row addr
 	 */
-	public CellAddress getFirstRowAddr() {
+	public final CellAddress getFirstRowAddr() {
 		return firstRowAddr;
 	}
 
@@ -98,7 +98,7 @@ public class ConfigRangeAttrs {
 	 * @param pfirstRowAddr
 	 *            the new first row addr
 	 */
-	public void setFirstRowAddr(CellAddress pfirstRowAddr) {
+	public final void setFirstRowAddr(final CellAddress pfirstRowAddr) {
 		this.firstRowAddr = pfirstRowAddr;
 	}
 
@@ -107,7 +107,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the last row plus addr
 	 */
-	public CellAddress getLastRowPlusAddr() {
+	public final CellAddress getLastRowPlusAddr() {
 		return lastRowPlusAddr;
 	}
 
@@ -117,7 +117,7 @@ public class ConfigRangeAttrs {
 	 * @param plastRowPlusAddr
 	 *            the new last row plus addr
 	 */
-	public void setLastRowPlusAddr(CellAddress plastRowPlusAddr) {
+	public final void setLastRowPlusAddr(final CellAddress plastRowPlusAddr) {
 		this.lastRowPlusAddr = plastRowPlusAddr;
 	}
 
@@ -126,7 +126,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return true, if is last cell created
 	 */
-	public boolean isLastCellCreated() {
+	public final boolean isLastCellCreated() {
 		return lastCellCreated;
 	}
 
@@ -145,7 +145,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the final length
 	 */
-	public int getFinalLength() {
+	public final int getFinalLength() {
 		return finalLength;
 	}
 
@@ -155,7 +155,7 @@ public class ConfigRangeAttrs {
 	 * @param pfinalLength
 	 *            the new final length
 	 */
-	public void setFinalLength(int pfinalLength) {
+	public final void setFinalLength(final int pfinalLength) {
 		this.finalLength = pfinalLength;
 	}
 
@@ -164,7 +164,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return true, if is allow add
 	 */
-	public boolean isAllowAdd() {
+	public final boolean isAllowAdd() {
 		return allowAdd;
 	}
 
@@ -174,7 +174,7 @@ public class ConfigRangeAttrs {
 	 * @param pallowAdd
 	 *            the new allow add
 	 */
-	public void setAllowAdd(boolean pallowAdd) {
+	public final void setAllowAdd(final boolean pallowAdd) {
 		this.allowAdd = pallowAdd;
 	}
 
@@ -183,7 +183,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the unit rows mapping
 	 */
-	public RowsMapping getUnitRowsMapping() {
+	public final RowsMapping getUnitRowsMapping() {
 		return unitRowsMapping;
 	}
 
@@ -193,7 +193,7 @@ public class ConfigRangeAttrs {
 	 * @param punitRowsMapping
 	 *            the new unit rows mapping
 	 */
-	public void setUnitRowsMapping(RowsMapping punitRowsMapping) {
+	public final void setUnitRowsMapping(final RowsMapping punitRowsMapping) {
 		this.unitRowsMapping = punitRowsMapping;
 	}
 
@@ -202,7 +202,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the context snap
 	 */
-	public MapSnapShot getContextSnap() {
+	public final MapSnapShot getContextSnap() {
 		return contextSnap;
 	}
 
@@ -212,7 +212,7 @@ public class ConfigRangeAttrs {
 	 * @param pcontextSnap
 	 *            the new context snap
 	 */
-	public void setContextSnap(MapSnapShot pcontextSnap) {
+	public final void setContextSnap(final MapSnapShot pcontextSnap) {
 		this.contextSnap = pcontextSnap;
 	}
 

@@ -52,7 +52,7 @@ public class CachedCells {
 	 * @param cellType
 	 *            the cell type
 	 */
-	public void put(final Cell cell, final Integer cellType) {
+	public final void put(final Cell cell, final Integer cellType) {
 		Map<Cell, FormulaMapping> map = cachedMap;
 		// if cellType not null then only specified Type will be put into Cache
 		// e.g. only formula cell will be cached then pass in
@@ -83,7 +83,7 @@ public class CachedCells {
 	 * @param originFormula
 	 *            the origin formula
 	 */
-	public void put(final Cell cell, final String originFormula) {
+	public final void put(final Cell cell, final String originFormula) {
 		Map<Cell, FormulaMapping> map = cachedMap;
 		// if cellType not null then only specified Type will be put into Cache
 		// e.g. only formula cell will be cached then pass in
@@ -112,14 +112,14 @@ public class CachedCells {
 	 *            the cell
 	 * @return the value
 	 */
-	public String getValue(final Cell cell) {
+	public final String getValue(final Cell cell) {
 		return cachedMap.get(cell).getValue();
 	}
 
 	/**
 	 * Clear.
 	 */
-	public void clear() {
+	public final void clear() {
 		cachedMap.clear();
 		LOG.fine("cache cleared");
 	}
@@ -133,7 +133,7 @@ public class CachedCells {
 	 *            the cell
 	 * @return true, if is value changed
 	 */
-	public boolean isValueChanged(final Sheet sheet1, final Cell cell) {
+	public final boolean isValueChanged(final Sheet sheet1, final Cell cell) {
 		String newValue = CellUtility.getCellValueWithFormat(cell,
 				parent.getFormulaEvaluator(), parent.getDataFormatter());
 		return isValueChanged(sheet1, cell, newValue);
@@ -150,7 +150,7 @@ public class CachedCells {
 	 *            the new value
 	 * @return true, if is value changed
 	 */
-	public boolean isValueChanged(final Sheet sheet1, final Cell cell,
+	public final boolean isValueChanged(final Sheet sheet1, final Cell cell,
 			final String pnewValue) {
 		Map<Cell, FormulaMapping> map = cachedMap;
 		String oldValue = map.get(cell).getValue();
@@ -172,7 +172,7 @@ public class CachedCells {
 	 *
 	 * @return the cached map
 	 */
-	public Map<Cell, FormulaMapping> getCachedMap() {
+	public final Map<Cell, FormulaMapping> getCachedMap() {
 		return cachedMap;
 	}
 

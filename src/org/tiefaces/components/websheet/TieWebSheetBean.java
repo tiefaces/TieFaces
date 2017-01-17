@@ -754,7 +754,6 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	public final void doExport() {
 		try {
 
-			helper.getWebSheetLoader().loadAllFields();
 			String fileName = "WebSheetTemplate" + "."
 					+ TieConstants.EXCEL_2007_TYPE;
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

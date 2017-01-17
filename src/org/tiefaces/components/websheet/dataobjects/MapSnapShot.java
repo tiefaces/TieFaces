@@ -39,7 +39,7 @@ public class MapSnapShot {
 	 *
 	 * @return the snap list
 	 */
-	public List<MapObject> getSnapList() {
+	public final List<MapObject> getSnapList() {
 		return snapList;
 	}
 

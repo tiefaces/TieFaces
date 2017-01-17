@@ -29,7 +29,7 @@ public class ExpressionEngine {
 	 */
 	/** jexlEngine local map. */
 	private static final ThreadLocal<JexlEngine> 
-	jexlLocal = new ThreadLocal<JexlEngine>() {
+	JEXL_LOCAL = new ThreadLocal<JexlEngine>() {
 		@Override
 		protected JexlEngine initialValue() {
 			return new JexlEngine();
@@ -37,7 +37,7 @@ public class ExpressionEngine {
 	};
 	/** jexpmap local map. */
 	private static final ThreadLocal<Map<String, Expression>> 
-	jexpMapLocal = new ThreadLocal<Map<String, Expression>>() {
+	JEXL_MAP_LOCAL = new ThreadLocal<Map<String, Expression>>() {
 		@Override
 		protected Map<String, Expression> initialValue() {
 			return new HashMap<>();
@@ -48,7 +48,7 @@ public class ExpressionEngine {
 	 * empty context used for evaluate single script.
 	 */
 	private static final Map<String, Object> 
-	emptyContext = new HashMap<String, Object>();
+	EMPTY_CONTEXT = new HashMap<String, Object>();
 
 	/**
 	 * constructor.
@@ -57,7 +57,7 @@ public class ExpressionEngine {
 	 *            expression.
 	 */
 	public ExpressionEngine(final String pExpression) {
-		JexlEngine jexl = jexlLocal.get();
+		JexlEngine jexl = JEXL_LOCAL.get();
 		jExpression = jexl.createExpression(pExpression);
 	}
 
@@ -87,7 +87,7 @@ public class ExpressionEngine {
 	 * @return evaluated object.
 	 */
 	public final Object evaluate(final String expression) {
-		return evaluate(expression, emptyContext);
+		return evaluate(expression, EMPTY_CONTEXT);
 	}
 
 	/**
@@ -103,8 +103,8 @@ public class ExpressionEngine {
 			final Map<String, Object> context) {
 		JexlContext jexlContext = new MapContext(context);
 		try {
-			JexlEngine jexl = jexlLocal.get();
-			Map<String, Expression> expMap = jexpMapLocal.get();
+			JexlEngine jexl = JEXL_LOCAL.get();
+			Map<String, Expression> expMap = JEXL_MAP_LOCAL.get();
 			Expression jexlExpression = expMap.get(expression);
 			if (jexlExpression == null) {
 				jexlExpression = jexl.createExpression(expression);
@@ -152,7 +152,7 @@ public class ExpressionEngine {
 	 * @return jexlengine.
 	 */
 	public final JexlEngine getJexlEngine() {
-		return jexlLocal.get();
+		return JEXL_LOCAL.get();
 	}
 
 }

@@ -35,7 +35,7 @@ public class CellRange {
 	 *
 	 * @return the top row
 	 */
-	public int getTopRow() {
+	public final int getTopRow() {
 		return topRow;
 	}
 
@@ -45,7 +45,7 @@ public class CellRange {
 	 * @param ptopRow
 	 *            the new top row
 	 */
-	public void setTopRow(final int ptopRow) {
+	public final void setTopRow(final int ptopRow) {
 		this.topRow = ptopRow;
 	}
 
@@ -54,7 +54,7 @@ public class CellRange {
 	 *
 	 * @return the bottom row
 	 */
-	public int getBottomRow() {
+	public final int getBottomRow() {
 		return bottomRow;
 	}
 
@@ -64,7 +64,7 @@ public class CellRange {
 	 * @param pbottomRow
 	 *            the new bottom row
 	 */
-	public void setBottomRow(final int pbottomRow) {
+	public final void setBottomRow(final int pbottomRow) {
 		this.bottomRow = pbottomRow;
 	}
 
@@ -73,7 +73,7 @@ public class CellRange {
 	 *
 	 * @return the left col
 	 */
-	public int getLeftCol() {
+	public final int getLeftCol() {
 		return leftCol;
 	}
 
@@ -83,7 +83,7 @@ public class CellRange {
 	 * @param pleftCol
 	 *            the new left col
 	 */
-	public void setLeftCol(final int pleftCol) {
+	public final void setLeftCol(final int pleftCol) {
 		this.leftCol = pleftCol;
 	}
 
@@ -92,7 +92,7 @@ public class CellRange {
 	 *
 	 * @return the right col
 	 */
-	public int getRightCol() {
+	public final int getRightCol() {
 		return rightCol;
 	}
 
@@ -102,7 +102,7 @@ public class CellRange {
 	 * @param prightCol
 	 *            the new right col
 	 */
-	public void setRightCol(final int prightCol) {
+	public final void setRightCol(final int prightCol) {
 		this.rightCol = prightCol;
 	}
 
@@ -156,7 +156,7 @@ public class CellRange {
 	 * 
 	 * @return String Human readable label
 	 */
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");

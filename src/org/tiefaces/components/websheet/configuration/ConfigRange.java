@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
-import org.tiefaces.components.websheet.service.ParserUtility;
 
 /**
  * Simple class for area range. Also include nested command list. Note: command
@@ -86,7 +85,7 @@ public class ConfigRange {
 	 *
 	 * @return the attrs
 	 */
-	public ConfigRangeAttrs getAttrs() {
+	public final ConfigRangeAttrs getAttrs() {
 		return attrs;
 	}
 
@@ -98,7 +97,7 @@ public class ConfigRange {
 	 * @param shiftnum
 	 *            the shiftnum
 	 */
-	public void shiftRowRef(final Sheet sheet, final int shiftnum) {
+	public final void shiftRowRef(final Sheet sheet, final int shiftnum) {
 		try {
 			this.setFirstRowRef(
 					sheet.getRow(attrs.getFirstRowAddr().getRow() + shiftnum)
@@ -337,7 +336,7 @@ public class ConfigRange {
 	 * @param indexMap
 	 *            the index map
 	 */
-	public void indexCommandRange(final Map<String, Command> indexMap) {
+	public final void indexCommandRange(final Map<String, Command> indexMap) {
 		ConfigurationHelper.indexCommandRange(this, indexMap);
 	}
 
@@ -413,8 +412,7 @@ public class ConfigRange {
 								+ ex.getLocalizedMessage());
 					}
 				}
-				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName,
-						false);
+				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName);
 			}
 		}
 	}

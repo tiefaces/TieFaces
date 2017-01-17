@@ -14,7 +14,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.tiefaces.components.websheet.chart.objects.ChartObject;
-import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 import org.tiefaces.components.websheet.utility.ColorUtility;
@@ -154,6 +153,7 @@ public class ChartData {
 	 * @param ctObj
 	 *            ctobj.
 	 */
+	@SuppressWarnings("rawtypes")
 	public final void buildSeriesList(final List bsers,
 			final ThemesTable themeTable, final ChartObject ctObj) {
 

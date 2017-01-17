@@ -122,7 +122,7 @@ public class AnchorSize {
 	 *
 	 * @return the string
 	 */
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");

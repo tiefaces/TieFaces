@@ -128,7 +128,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the sheet name
 	 */
-	public String getSheetName() {
+	public final String getSheetName() {
 		return sheetName;
 	}
 
@@ -138,7 +138,7 @@ public class SheetConfiguration {
 	 * @param psheetName
 	 *            the new sheet name
 	 */
-	public void setSheetName(final String psheetName) {
+	public final void setSheetName(final String psheetName) {
 		this.sheetName = psheetName;
 	}
 
@@ -147,7 +147,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form name
 	 */
-	public String getFormName() {
+	public final String getFormName() {
 		return formName;
 	}
 
@@ -157,7 +157,7 @@ public class SheetConfiguration {
 	 * @param pformName
 	 *            the new form name
 	 */
-	public void setFormName(final String pformName) {
+	public final void setFormName(final String pformName) {
 		this.formName = pformName;
 	}
 
@@ -166,7 +166,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form header range
 	 */
-	public String getFormHeaderRange() {
+	public final String getFormHeaderRange() {
 		return formHeaderRange;
 	}
 
@@ -176,7 +176,7 @@ public class SheetConfiguration {
 	 * @param pformHeaderRange
 	 *            the new form header range
 	 */
-	public void setFormHeaderRange(final String pformHeaderRange) {
+	public final void setFormHeaderRange(final String pformHeaderRange) {
 		this.formHeaderRange = pformHeaderRange;
 	}
 
@@ -185,7 +185,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form body range
 	 */
-	public String getFormBodyRange() {
+	public final String getFormBodyRange() {
 		return formBodyRange;
 	}
 
@@ -195,7 +195,7 @@ public class SheetConfiguration {
 	 * @param pformBodyRange
 	 *            the new form body range
 	 */
-	public void setFormBodyRange(final String pformBodyRange) {
+	public final void setFormBodyRange(final String pformBodyRange) {
 		this.formBodyRange = pformBodyRange;
 	}
 
@@ -204,7 +204,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form footer range
 	 */
-	public String getFormFooterRange() {
+	public final String getFormFooterRange() {
 		return formFooterRange;
 	}
 
@@ -214,7 +214,7 @@ public class SheetConfiguration {
 	 * @param pformFooterRange
 	 *            the new form footer range
 	 */
-	public void setFormFooterRange(final String pformFooterRange) {
+	public final void setFormFooterRange(final String pformFooterRange) {
 		this.formFooterRange = pformFooterRange;
 	}
 
@@ -223,7 +223,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the cell form attributes
 	 */
-	public Map<String, List<CellFormAttributes>> getCellFormAttributes() {
+	public final Map<String, List<CellFormAttributes>> getCellFormAttributes() {
 		return cellFormAttributes;
 	}
 
@@ -233,7 +233,7 @@ public class SheetConfiguration {
 	 * @param pcellFormAttributes
 	 *            the cell form attributes
 	 */
-	public void setCellFormAttributes(
+	public final void setCellFormAttributes(
 			final Map<String, List<CellFormAttributes>> pcellFormAttributes) {
 		this.cellFormAttributes = pcellFormAttributes;
 	}
@@ -243,7 +243,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the header cell range
 	 */
-	public CellRange getHeaderCellRange() {
+	public final CellRange getHeaderCellRange() {
 		return headerCellRange;
 	}
 
@@ -253,7 +253,7 @@ public class SheetConfiguration {
 	 * @param pheaderCellRange
 	 *            the new header cell range
 	 */
-	public void setHeaderCellRange(final CellRange pheaderCellRange) {
+	public final void setHeaderCellRange(final CellRange pheaderCellRange) {
 		this.headerCellRange = pheaderCellRange;
 	}
 
@@ -262,7 +262,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the body cell range
 	 */
-	public CellRange getBodyCellRange() {
+	public final CellRange getBodyCellRange() {
 		return bodyCellRange;
 	}
 
@@ -272,7 +272,7 @@ public class SheetConfiguration {
 	 * @param pbodyCellRange
 	 *            the new body cell range
 	 */
-	public void setBodyCellRange(final CellRange pbodyCellRange) {
+	public final void setBodyCellRange(final CellRange pbodyCellRange) {
 		this.bodyCellRange = pbodyCellRange;
 	}
 
@@ -281,7 +281,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the footer cell range
 	 */
-	public CellRange getFooterCellRange() {
+	public final CellRange getFooterCellRange() {
 		return footerCellRange;
 	}
 
@@ -291,7 +291,7 @@ public class SheetConfiguration {
 	 * @param pfooterCellRange
 	 *            the new footer cell range
 	 */
-	public void setFooterCellRange(final CellRange pfooterCellRange) {
+	public final void setFooterCellRange(final CellRange pfooterCellRange) {
 		this.footerCellRange = pfooterCellRange;
 	}
 
@@ -300,7 +300,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form body type
 	 */
-	public String getFormBodyType() {
+	public final String getFormBodyType() {
 		return formBodyType;
 	}
 
@@ -310,7 +310,7 @@ public class SheetConfiguration {
 	 * @param pformBodyType
 	 *            the new form body type
 	 */
-	public void setFormBodyType(final String pformBodyType) {
+	public final void setFormBodyType(final String pformBodyType) {
 		this.formBodyType = pformBodyType;
 	}
 
@@ -319,7 +319,7 @@ public class SheetConfiguration {
 	 *
 	 * @return true, if is body allow add rows
 	 */
-	public boolean isBodyAllowAddRows() {
+	public final boolean isBodyAllowAddRows() {
 		return bodyAllowAddRows;
 	}
 
@@ -329,7 +329,7 @@ public class SheetConfiguration {
 	 * @param pbodyAllowAddRows
 	 *            the new body allow add rows
 	 */
-	public void setBodyAllowAddRows(final boolean pbodyAllowAddRows) {
+	public final void setBodyAllowAddRows(final boolean pbodyAllowAddRows) {
 		this.bodyAllowAddRows = pbodyAllowAddRows;
 	}
 
@@ -338,7 +338,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the body initial rows
 	 */
-	public int getBodyInitialRows() {
+	public final int getBodyInitialRows() {
 		return bodyInitialRows;
 	}
 
@@ -348,7 +348,7 @@ public class SheetConfiguration {
 	 * @param pbodyInitialRows
 	 *            the new body initial rows
 	 */
-	public void setBodyInitialRows(final int pbodyInitialRows) {
+	public final void setBodyInitialRows(final int pbodyInitialRows) {
 		this.bodyInitialRows = pbodyInitialRows;
 	}
 
@@ -357,7 +357,7 @@ public class SheetConfiguration {
 	 *
 	 * @return true, if is body populated
 	 */
-	public boolean isBodyPopulated() {
+	public final boolean isBodyPopulated() {
 		return bodyPopulated;
 	}
 
@@ -367,7 +367,7 @@ public class SheetConfiguration {
 	 * @param pbodyPopulated
 	 *            the new body populated
 	 */
-	public void setBodyPopulated(final boolean pbodyPopulated) {
+	public final void setBodyPopulated(final boolean pbodyPopulated) {
 		this.bodyPopulated = pbodyPopulated;
 	}
 
@@ -376,7 +376,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form page type id
 	 */
-	public String getFormPageTypeId() {
+	public final String getFormPageTypeId() {
 		return formPageTypeId;
 	}
 
@@ -386,7 +386,7 @@ public class SheetConfiguration {
 	 * @param pformPageTypeId
 	 *            the new form page type id
 	 */
-	public void setFormPageTypeId(final String pformPageTypeId) {
+	public final void setFormPageTypeId(final String pformPageTypeId) {
 		this.formPageTypeId = pformPageTypeId;
 	}
 
@@ -395,7 +395,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form page id
 	 */
-	public String getFormPageId() {
+	public final String getFormPageId() {
 		return formPageId;
 	}
 
@@ -405,7 +405,7 @@ public class SheetConfiguration {
 	 * @param pformPageId
 	 *            the new form page id
 	 */
-	public void setFormPageId(final String pformPageId) {
+	public final void setFormPageId(final String pformPageId) {
 		this.formPageId = pformPageId;
 	}
 
@@ -414,7 +414,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form fiscal year
 	 */
-	public String getFormFiscalYear() {
+	public final String getFormFiscalYear() {
 		return formFiscalYear;
 	}
 
@@ -424,7 +424,7 @@ public class SheetConfiguration {
 	 * @param pformFiscalYear
 	 *            the new form fiscal year
 	 */
-	public void setFormFiscalYear(final String pformFiscalYear) {
+	public final void setFormFiscalYear(final String pformFiscalYear) {
 		this.formFiscalYear = pformFiscalYear;
 	}
 
@@ -433,7 +433,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form width
 	 */
-	public String getFormWidth() {
+	public final String getFormWidth() {
 		return formWidth;
 	}
 
@@ -443,7 +443,7 @@ public class SheetConfiguration {
 	 * @param pformWidth
 	 *            the new form width
 	 */
-	public void setFormWidth(final String pformWidth) {
+	public final void setFormWidth(final String pformWidth) {
 		this.formWidth = pformWidth;
 	}
 
@@ -452,7 +452,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the max row per page
 	 */
-	public int getMaxRowPerPage() {
+	public final int getMaxRowPerPage() {
 		return maxRowPerPage;
 	}
 
@@ -462,7 +462,7 @@ public class SheetConfiguration {
 	 * @param pmaxRowPerPage
 	 *            the new max row per page
 	 */
-	public void setMaxRowPerPage(final int pmaxRowPerPage) {
+	public final void setMaxRowPerPage(final int pmaxRowPerPage) {
 		this.maxRowPerPage = pmaxRowPerPage;
 	}
 
@@ -471,7 +471,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the saved rows before
 	 */
-	public int getSavedRowsBefore() {
+	public final int getSavedRowsBefore() {
 		return savedRowsBefore;
 	}
 
@@ -481,7 +481,7 @@ public class SheetConfiguration {
 	 * @param psavedRowsBefore
 	 *            the new saved rows before
 	 */
-	public void setSavedRowsBefore(final int psavedRowsBefore) {
+	public final void setSavedRowsBefore(final int psavedRowsBefore) {
 		this.savedRowsBefore = psavedRowsBefore;
 	}
 
@@ -490,7 +490,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the saved rows after
 	 */
-	public int getSavedRowsAfter() {
+	public final int getSavedRowsAfter() {
 		return savedRowsAfter;
 	}
 
@@ -500,7 +500,7 @@ public class SheetConfiguration {
 	 * @param psavedRowsAfter
 	 *            the new saved rows after
 	 */
-	public void setSavedRowsAfter(final int psavedRowsAfter) {
+	public final void setSavedRowsAfter(final int psavedRowsAfter) {
 		this.savedRowsAfter = psavedRowsAfter;
 	}
 
@@ -509,7 +509,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the watch list
 	 */
-	public List<Integer> getWatchList() {
+	public final List<Integer> getWatchList() {
 		return watchList;
 	}
 
@@ -519,7 +519,7 @@ public class SheetConfiguration {
 	 * @param pwatchList
 	 *            the new watch list
 	 */
-	public void setWatchList(final List<Integer> pwatchList) {
+	public final void setWatchList(final List<Integer> pwatchList) {
 		this.watchList = pwatchList;
 	}
 
@@ -528,7 +528,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the shift map
 	 */
-	public TreeMap<String, ConfigRangeAttrs> getShiftMap() {
+	public final TreeMap<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
 
@@ -538,7 +538,7 @@ public class SheetConfiguration {
 	 * @param pshiftMap
 	 *            the shift map
 	 */
-	public void setShiftMap(
+	public final void setShiftMap(
 			final TreeMap<String, ConfigRangeAttrs> pshiftMap) {
 		this.shiftMap = pshiftMap;
 	}
@@ -548,7 +548,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the command index map
 	 */
-	public Map<String, Command> getCommandIndexMap() {
+	public final Map<String, Command> getCommandIndexMap() {
 		return commandIndexMap;
 	}
 
@@ -558,7 +558,7 @@ public class SheetConfiguration {
 	 * @param pcommandIndexMap
 	 *            the command index map
 	 */
-	public void setCommandIndexMap(
+	public final void setCommandIndexMap(
 			final Map<String, Command> pcommandIndexMap) {
 		this.commandIndexMap = pcommandIndexMap;
 	}
@@ -568,7 +568,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the collection obj name map
 	 */
-	public Map<String, String> getCollectionObjNameMap() {
+	public final Map<String, String> getCollectionObjNameMap() {
 		return collectionObjNameMap;
 	}
 
@@ -578,7 +578,7 @@ public class SheetConfiguration {
 	 * @param pcollectionObjNameMap
 	 *            the collection obj name map
 	 */
-	public void setCollectionObjNameMap(
+	public final void setCollectionObjNameMap(
 			final Map<String, String> pcollectionObjNameMap) {
 		this.collectionObjNameMap = pcollectionObjNameMap;
 	}
@@ -588,7 +588,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the form command
 	 */
-	public FormCommand getFormCommand() {
+	public final FormCommand getFormCommand() {
 		if (this.formCommand == null) {
 			this.formCommand = new FormCommand();
 		}
@@ -601,7 +601,7 @@ public class SheetConfiguration {
 	 * @param pformCommand
 	 *            the new form command
 	 */
-	public void setFormCommand(final FormCommand pformCommand) {
+	public final void setFormCommand(final FormCommand pformCommand) {
 		this.formCommand = pformCommand;
 	}
 
@@ -610,7 +610,7 @@ public class SheetConfiguration {
 	 *
 	 * @return true, if is hidden
 	 */
-	public boolean isHidden() {
+	public final boolean isHidden() {
 		return hidden;
 	}
 
@@ -620,7 +620,7 @@ public class SheetConfiguration {
 	 * @param phidden
 	 *            the new hidden
 	 */
-	public void setHidden(final boolean phidden) {
+	public final void setHidden(final boolean phidden) {
 		this.hidden = phidden;
 	}
 
@@ -629,7 +629,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the cached origin formulas
 	 */
-	public Map<Cell, String> getCachedOriginFormulas() {
+	public final Map<Cell, String> getCachedOriginFormulas() {
 		return cachedOriginFormulas;
 	}
 
@@ -639,7 +639,7 @@ public class SheetConfiguration {
 	 * @param pcachedOriginFormulas
 	 *            the cached origin formulas
 	 */
-	public void setCachedOriginFormulas(
+	public final void setCachedOriginFormulas(
 			final Map<Cell, String> pcachedOriginFormulas) {
 		this.cachedOriginFormulas = pcachedOriginFormulas;
 	}
@@ -649,7 +649,7 @@ public class SheetConfiguration {
 	 *
 	 * @return the final comment map
 	 */
-	public Map<Cell, String> getFinalCommentMap() {
+	public final Map<Cell, String> getFinalCommentMap() {
 		return finalCommentMap;
 	}
 
@@ -658,7 +658,7 @@ public class SheetConfiguration {
 	 * 
 	 * @return String Human readable label
 	 */
-	public String toString() {
+	public final String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");
 		sb.append("formName = " + formName);

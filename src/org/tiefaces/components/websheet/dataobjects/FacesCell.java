@@ -8,6 +8,7 @@ package org.tiefaces.components.websheet.dataobjects;
 import java.util.List;
 import java.util.Map;
 
+import org.tiefaces.common.TieConstants;
 
 /**
  * Cell object used for JSF datatable. This object hold an reference to POI cell
@@ -91,9 +92,9 @@ public class FacesCell {
 	 *
 	 * @return the valid style
 	 */
-	public String getValidStyle() {
+	public final String getValidStyle() {
 		if (invalid) {
-			return style + "border-color: red;";
+			return style + TieConstants.CELL_INVALID_STYLE;
 		} else {
 			return style;
 		}
@@ -104,7 +105,7 @@ public class FacesCell {
 	 *
 	 * @return the input type
 	 */
-	public String getInputType() {
+	public final String getInputType() {
 		return inputType;
 	}
 
@@ -114,7 +115,7 @@ public class FacesCell {
 	 * @param pinputType
 	 *            the new input type
 	 */
-	public void setInputType(final String pinputType) {
+	public final void setInputType(final String pinputType) {
 		this.inputType = pinputType;
 	}
 
@@ -123,7 +124,7 @@ public class FacesCell {
 	 *
 	 * @return the column index
 	 */
-	public int getColumnIndex() {
+	public final int getColumnIndex() {
 		return columnIndex;
 	}
 
@@ -133,7 +134,7 @@ public class FacesCell {
 	 * @param pcolumnIndex
 	 *            the new column index
 	 */
-	public void setColumnIndex(final int pcolumnIndex) {
+	public final void setColumnIndex(final int pcolumnIndex) {
 		this.columnIndex = pcolumnIndex;
 	}
 
@@ -142,7 +143,7 @@ public class FacesCell {
 	 *
 	 * @return true, if is invalid
 	 */
-	public boolean isInvalid() {
+	public final boolean isInvalid() {
 		return invalid;
 	}
 
@@ -152,7 +153,7 @@ public class FacesCell {
 	 * @param pinvalid
 	 *            the new invalid
 	 */
-	public void setInvalid(final boolean pinvalid) {
+	public final void setInvalid(final boolean pinvalid) {
 		this.invalid = pinvalid;
 	}
 
@@ -161,7 +162,7 @@ public class FacesCell {
 	 *
 	 * @return true, if is contain pic
 	 */
-	public boolean isContainPic() {
+	public final boolean isContainPic() {
 		return containPic;
 	}
 
@@ -171,7 +172,7 @@ public class FacesCell {
 	 * @param pcontainPic
 	 *            the new contain pic
 	 */
-	public void setContainPic(final boolean pcontainPic) {
+	public final void setContainPic(final boolean pcontainPic) {
 		this.containPic = pcontainPic;
 	}
 
@@ -180,7 +181,7 @@ public class FacesCell {
 	 *
 	 * @return the picture style
 	 */
-	public String getPictureStyle() {
+	public final String getPictureStyle() {
 		return pictureStyle;
 	}
 
@@ -190,7 +191,7 @@ public class FacesCell {
 	 * @param ppictureStyle
 	 *            the new picture style
 	 */
-	public void setPictureStyle(final String ppictureStyle) {
+	public final void setPictureStyle(final String ppictureStyle) {
 		this.pictureStyle = ppictureStyle;
 	}
 
@@ -199,7 +200,7 @@ public class FacesCell {
 	 *
 	 * @return the picture id
 	 */
-	public String getPictureId() {
+	public final String getPictureId() {
 		return pictureId;
 	}
 
@@ -209,7 +210,7 @@ public class FacesCell {
 	 * @param ppictureId
 	 *            the new picture id
 	 */
-	public void setPictureId(final String ppictureId) {
+	public final void setPictureId(final String ppictureId) {
 		this.pictureId = ppictureId;
 	}
 
@@ -218,7 +219,7 @@ public class FacesCell {
 	 *
 	 * @return the errormsg
 	 */
-	public String getErrormsg() {
+	public final String getErrormsg() {
 		return errormsg;
 	}
 
@@ -228,7 +229,7 @@ public class FacesCell {
 	 * @param perrormsg
 	 *            the new errormsg
 	 */
-	public void setErrormsg(final String perrormsg) {
+	public final void setErrormsg(final String perrormsg) {
 		this.errormsg = perrormsg;
 	}
 
@@ -237,7 +238,7 @@ public class FacesCell {
 	 *
 	 * @return the colspan
 	 */
-	public int getColspan() {
+	public final int getColspan() {
 		return colspan;
 	}
 
@@ -247,7 +248,7 @@ public class FacesCell {
 	 * @param pcolspan
 	 *            the new colspan
 	 */
-	public void setColspan(final int pcolspan) {
+	public final void setColspan(final int pcolspan) {
 		this.colspan = pcolspan;
 	}
 
@@ -256,7 +257,7 @@ public class FacesCell {
 	 *
 	 * @return the rowspan
 	 */
-	public int getRowspan() {
+	public final int getRowspan() {
 		return rowspan;
 	}
 
@@ -266,7 +267,7 @@ public class FacesCell {
 	 * @param prowspan
 	 *            the new rowspan
 	 */
-	public void setRowspan(final int prowspan) {
+	public final void setRowspan(final int prowspan) {
 		this.rowspan = prowspan;
 	}
 
@@ -275,7 +276,7 @@ public class FacesCell {
 	 *
 	 * @return the column style
 	 */
-	public String getColumnStyle() {
+	public final String getColumnStyle() {
 		return columnStyle;
 	}
 
@@ -285,7 +286,7 @@ public class FacesCell {
 	 * @param pcolumnStyle
 	 *            the new column style
 	 */
-	public void setColumnStyle(final String pcolumnStyle) {
+	public final void setColumnStyle(final String pcolumnStyle) {
 		this.columnStyle = pcolumnStyle;
 	}
 
@@ -294,7 +295,7 @@ public class FacesCell {
 	 *
 	 * @return the decimal places
 	 */
-	public short getDecimalPlaces() {
+	public final short getDecimalPlaces() {
 		return decimalPlaces;
 	}
 
@@ -304,7 +305,7 @@ public class FacesCell {
 	 * @param pdecimalPlaces
 	 *            the new decimal places
 	 */
-	public void setDecimalPlaces(final short pdecimalPlaces) {
+	public final void setDecimalPlaces(final short pdecimalPlaces) {
 		this.decimalPlaces = pdecimalPlaces;
 	}
 
@@ -313,7 +314,7 @@ public class FacesCell {
 	 *
 	 * @return the symbol
 	 */
-	public String getSymbol() {
+	public final String getSymbol() {
 		return symbol;
 	}
 
@@ -323,7 +324,7 @@ public class FacesCell {
 	 * @param ppsymbol
 	 *            the new symbol
 	 */
-	public void setSymbol(final String ppsymbol) {
+	public final void setSymbol(final String ppsymbol) {
 		this.symbol = ppsymbol;
 	}
 
@@ -332,7 +333,7 @@ public class FacesCell {
 	 *
 	 * @return the symbol position
 	 */
-	public String getSymbolPosition() {
+	public final String getSymbolPosition() {
 		return symbolPosition;
 	}
 
@@ -342,7 +343,7 @@ public class FacesCell {
 	 * @param psymbolPosition
 	 *            the new symbol position
 	 */
-	public void setSymbolPosition(final String psymbolPosition) {
+	public final void setSymbolPosition(final String psymbolPosition) {
 		this.symbolPosition = psymbolPosition;
 	}
 
@@ -351,7 +352,7 @@ public class FacesCell {
 	 *
 	 * @return true, if is contain chart
 	 */
-	public boolean isContainChart() {
+	public final boolean isContainChart() {
 		return containChart;
 	}
 
@@ -361,7 +362,7 @@ public class FacesCell {
 	 * @param pcontainChart
 	 *            the new contain chart
 	 */
-	public void setContainChart(final boolean pcontainChart) {
+	public final void setContainChart(final boolean pcontainChart) {
 		this.containChart = pcontainChart;
 	}
 
@@ -370,7 +371,7 @@ public class FacesCell {
 	 *
 	 * @return the chart id
 	 */
-	public String getChartId() {
+	public final String getChartId() {
 		return chartId;
 	}
 
@@ -380,7 +381,7 @@ public class FacesCell {
 	 * @param pchartId
 	 *            the new chart id
 	 */
-	public void setChartId(final String pchartId) {
+	public final void setChartId(final String pchartId) {
 		this.chartId = pchartId;
 	}
 
@@ -389,7 +390,7 @@ public class FacesCell {
 	 *
 	 * @return the chart style
 	 */
-	public String getChartStyle() {
+	public final String getChartStyle() {
 		return chartStyle;
 	}
 
@@ -399,7 +400,7 @@ public class FacesCell {
 	 * @param pchartStyle
 	 *            the new chart style
 	 */
-	public void setChartStyle(final String pchartStyle) {
+	public final void setChartStyle(final String pchartStyle) {
 		this.chartStyle = pchartStyle;
 	}
 
@@ -408,7 +409,7 @@ public class FacesCell {
 	 *
 	 * @return the input attrs
 	 */
-	public List<CellFormAttributes> getInputAttrs() {
+	public final List<CellFormAttributes> getInputAttrs() {
 		return inputAttrs;
 	}
 
@@ -418,7 +419,7 @@ public class FacesCell {
 	 * @param pinputAttrs
 	 *            the new input attrs
 	 */
-	public void setInputAttrs(final List<CellFormAttributes> pinputAttrs) {
+	public final void setInputAttrs(final List<CellFormAttributes> pinputAttrs) {
 		this.inputAttrs = pinputAttrs;
 	}
 
@@ -427,7 +428,7 @@ public class FacesCell {
 	 *
 	 * @return the select item attrs
 	 */
-	public Map<String, String> getSelectItemAttrs() {
+	public final Map<String, String> getSelectItemAttrs() {
 		return selectItemAttrs;
 	}
 
@@ -437,7 +438,8 @@ public class FacesCell {
 	 * @param pselectItemAttrs
 	 *            the select item attrs
 	 */
-	public void setSelectItemAttrs(final Map<String, String> pselectItemAttrs) {
+	public final void setSelectItemAttrs(
+			final Map<String, String> pselectItemAttrs) {
 		this.selectItemAttrs = pselectItemAttrs;
 	}
 
@@ -446,7 +448,7 @@ public class FacesCell {
 	 *
 	 * @return the control
 	 */
-	public String getControl() {
+	public final String getControl() {
 		return control;
 	}
 
@@ -456,7 +458,7 @@ public class FacesCell {
 	 * @param pcontrol
 	 *            the new control
 	 */
-	public void setControl(final String pcontrol) {
+	public final void setControl(final String pcontrol) {
 		this.control = pcontrol;
 	}
 
@@ -465,7 +467,7 @@ public class FacesCell {
 	 *
 	 * @return the date pattern
 	 */
-	public String getDatePattern() {
+	public final String getDatePattern() {
 		return datePattern;
 	}
 
@@ -475,7 +477,7 @@ public class FacesCell {
 	 * @param pdatePattern
 	 *            the new date pattern
 	 */
-	public void setDatePattern(final String pdatePattern) {
+	public final void setDatePattern(final String pdatePattern) {
 		this.datePattern = pdatePattern;
 
 	}
@@ -485,7 +487,7 @@ public class FacesCell {
 	 *
 	 * @return true, if is checks for save attr
 	 */
-	public boolean isHasSaveAttr() {
+	public final boolean isHasSaveAttr() {
 		return hasSaveAttr;
 	}
 
@@ -495,7 +497,7 @@ public class FacesCell {
 	 * @param phasSaveAttr
 	 *            the new checks for save attr
 	 */
-	public void setHasSaveAttr(final boolean phasSaveAttr) {
+	public final void setHasSaveAttr(final boolean phasSaveAttr) {
 		this.hasSaveAttr = phasSaveAttr;
 	}
 
@@ -504,7 +506,7 @@ public class FacesCell {
 	 * 
 	 * @return String Human readable label
 	 */
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");

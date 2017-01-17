@@ -170,7 +170,7 @@ public class CellAttributesMap {
 	 *            the cellValidateAttributes to set
 	 */
 	public final void setCellValidateAttributes(
-			Map<String, List<CellFormAttributes>> pcellValidateAttributes) {
+			final Map<String, List<CellFormAttributes>> pcellValidateAttributes) {
 		this.cellValidateAttributes = pcellValidateAttributes;
 	}
 

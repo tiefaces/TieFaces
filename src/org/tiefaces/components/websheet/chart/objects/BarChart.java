@@ -35,8 +35,11 @@ public class BarChart implements ChartObject {
 		return ctChart.getPlotArea().getBarChartList();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getSerListFromCtObjChart(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
+	 * getSerListFromCtObjChart(java.lang.Object)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -48,8 +51,11 @@ public class BarChart implements ChartObject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getCtAxDataSourceFromSerList(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
+	 * getCtAxDataSourceFromSerList(java.util.List)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -63,8 +69,11 @@ public class BarChart implements ChartObject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getSeriesLabelFromCTSer(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
+	 * getSeriesLabelFromCTSer(java.lang.Object)
 	 */
 	@Override
 	public final String getSeriesLabelFromCTSer(final Object ctObjSer) {
@@ -74,8 +83,11 @@ public class BarChart implements ChartObject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getShapePropertiesFromCTSer(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
+	 * getShapePropertiesFromCTSer(java.lang.Object)
 	 */
 	@Override
 	public final CTShapeProperties getShapePropertiesFromCTSer(
@@ -86,8 +98,11 @@ public class BarChart implements ChartObject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getCTNumDataSourceFromCTSer(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
+	 * getCTNumDataSourceFromCTSer(java.lang.Object)
 	 */
 	@Override
 	public final CTNumDataSource getCTNumDataSourceFromCTSer(
@@ -98,8 +113,11 @@ public class BarChart implements ChartObject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#getDPtListFromCTSer(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
+	 * getDPtListFromCTSer(java.lang.Object)
 	 */
 	@Override
 	public final List<CTDPt> getDPtListFromCTSer(final Object ctObjSer) {
@@ -107,8 +125,11 @@ public class BarChart implements ChartObject {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#isLineColor()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.chart.objects.ChartObject#isLineColor()
 	 */
 	@Override
 	public final boolean isLineColor() {

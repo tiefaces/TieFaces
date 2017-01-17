@@ -56,18 +56,18 @@ public class CellMapKey {
 				if (keylength > 2) {
 					String key = keyList[2].toLowerCase();
 					if (key.equalsIgnoreCase(
-							TieConstants.cellMapKeyChart)) {
+							TieConstants.CELL_MAP_KEY_CHART)) {
 						this.charted = true;
 					} else if (key.equalsIgnoreCase(
-							TieConstants.cellMapKeyPicture)) {
+							TieConstants.CELL_MAP_KEY_PICTURE)) {
 
 						this.pictured = true;
 					} else if (key.equalsIgnoreCase(
-							TieConstants.cellMapKeyFormat)) {
+							TieConstants.CELL_MAP_KEY_FORMAT)) {
 
 						this.formatted = true;
 					} else if (key.equalsIgnoreCase(
-							TieConstants.cellMapKeyPercent)) {
+							TieConstants.CELL_MAP_KEY_PERCENT)) {
 						this.percented = true;
 					}
 				}
@@ -84,7 +84,7 @@ public class CellMapKey {
 	 *
 	 * @return the row index
 	 */
-	public int getRowIndex() {
+	public final int getRowIndex() {
 		return rowIndex;
 	}
 
@@ -93,7 +93,7 @@ public class CellMapKey {
 	 *
 	 * @return the col index
 	 */
-	public int getColIndex() {
+	public final int getColIndex() {
 		return colIndex;
 	}
 
@@ -102,7 +102,7 @@ public class CellMapKey {
 	 *
 	 * @return true, if is formatted
 	 */
-	public boolean isFormatted() {
+	public final boolean isFormatted() {
 		return formatted;
 	}
 
@@ -111,7 +111,7 @@ public class CellMapKey {
 	 *
 	 * @return true, if is percented
 	 */
-	public boolean isPercented() {
+	public final boolean isPercented() {
 		return percented;
 	}
 
@@ -120,7 +120,7 @@ public class CellMapKey {
 	 *
 	 * @return true, if is pictured
 	 */
-	public boolean isPictured() {
+	public final boolean isPictured() {
 		return pictured;
 	}
 
@@ -129,7 +129,7 @@ public class CellMapKey {
 	 *
 	 * @return true, if is parses the success
 	 */
-	public boolean isParseSuccess() {
+	public final boolean isParseSuccess() {
 		return parseSuccess;
 	}
 
@@ -138,7 +138,7 @@ public class CellMapKey {
 	 *
 	 * @return true, if is charted
 	 */
-	public boolean isCharted() {
+	public final boolean isCharted() {
 		return charted;
 	}
 
@@ -148,7 +148,7 @@ public class CellMapKey {
 	 * @return String Human readable label
 	 */
 
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");

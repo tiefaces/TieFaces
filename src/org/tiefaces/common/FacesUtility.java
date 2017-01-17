@@ -301,7 +301,7 @@ public final class FacesUtility {
 	 */
 
 	public static <T> T evaluateExpression(final FacesContext context,
-			final String expression, Class<? extends T> expected) {
+			final String expression, final Class<? extends T> expected) {
 		return context.getApplication().evaluateExpressionGet(context,
 				expression, expected);
 	}

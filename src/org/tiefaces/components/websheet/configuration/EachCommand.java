@@ -114,7 +114,7 @@ public class EachCommand extends ConfigCommand {
 	 *
 	 * @return the select
 	 */
-	public String getSelect() {
+	public final String getSelect() {
 		return select;
 	}
 
@@ -124,7 +124,7 @@ public class EachCommand extends ConfigCommand {
 	 * @param pselect
 	 *            the new select
 	 */
-	public void setSelect(final String pselect) {
+	public final void setSelect(final String pselect) {
 		this.select = pselect;
 	}
 
@@ -133,7 +133,7 @@ public class EachCommand extends ConfigCommand {
 	 *
 	 * @return the class name
 	 */
-	public String getClassName() {
+	public final String getClassName() {
 		return className;
 	}
 
@@ -143,7 +143,7 @@ public class EachCommand extends ConfigCommand {
 	 * @param pclassName
 	 *            the new class name
 	 */
-	public void setClassName(final String pclassName) {
+	public final void setClassName(final String pclassName) {
 		this.className = pclassName;
 	}
 
@@ -183,7 +183,7 @@ public class EachCommand extends ConfigCommand {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public int buildAt(String fullName, 
+	public final int buildAt(String fullName, 
 			final ConfigBuildRef configBuildRef,
 			final int atRow, final Map<String, Object> context,
 			final List<RowsMapping> currentRowsMappingList) {
@@ -274,7 +274,7 @@ public class EachCommand extends ConfigCommand {
 	 * org.tiefaces.components.websheet.configuration.Command#getCommandName()
 	 */
 	@Override
-	public String getCommandName() {
+	public final String getCommandName() {
 		return this.getCommandTypeName().substring(0, 1).toUpperCase() + "."
 				+ this.getVar().trim();
 	}

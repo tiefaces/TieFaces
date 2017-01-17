@@ -42,7 +42,7 @@ public class RowsMapping {
 	 *
 	 * @return the rows map
 	 */
-	public Map<Integer, List<Row>> getRowsMap() {
+	public final Map<Integer, List<Row>> getRowsMap() {
 		return rowsMap;
 	}
 
@@ -54,7 +54,7 @@ public class RowsMapping {
 	 * @param targetRow
 	 *            the target row
 	 */
-	public void addRow(final Integer sourceRowNum, final Row targetRow) {
+	public final void addRow(final Integer sourceRowNum, final Row targetRow) {
 		List<Row> mapRowList = rowsMap.get(sourceRowNum);
 		if (mapRowList == null) {
 			mapRowList = new ArrayList<Row>();
@@ -73,7 +73,7 @@ public class RowsMapping {
 	 * @param targetRow
 	 *            the target row
 	 */
-	public void removeRow(final Integer sourceRowNum, final Row targetRow) {
+	public final void removeRow(final Integer sourceRowNum, final Row targetRow) {
 		List<Row> mapRowList = rowsMap.get(sourceRowNum);
 		if (mapRowList != null) {
 			mapRowList.remove(targetRow);
@@ -88,7 +88,7 @@ public class RowsMapping {
 	 *            the source row num
 	 * @return the list
 	 */
-	public List<Row> get(final Integer sourceRowNum) {
+	public final List<Row> get(final Integer sourceRowNum) {
 		List<Row> mapRowList = rowsMap.get(sourceRowNum);
 		return mapRowList;
 	}
@@ -99,11 +99,7 @@ public class RowsMapping {
 	 * @param addMap
 	 *            the add map
 	 */
-	/*
-	 * public Object clone() { try { return super.clone(); } catch (Exception e)
-	 * { return null; } }
-	 */
-	public void mergeMap(final RowsMapping addMap) {
+	public final void mergeMap(final RowsMapping addMap) {
 		Map<Integer, List<Row>> map = addMap.getRowsMap();
 		for (Map.Entry<Integer, List<Row>> entry : map.entrySet()) {
 			List<Row> entryRowList = entry.getValue();
@@ -120,7 +116,7 @@ public class RowsMapping {
 	 * 
 	 * @return String Human readable label
 	 */
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");

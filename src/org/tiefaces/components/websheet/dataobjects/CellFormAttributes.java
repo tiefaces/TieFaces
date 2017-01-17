@@ -29,7 +29,7 @@ public class CellFormAttributes {
 	 *
 	 * @return the type
 	 */
-	public String getType() {
+	public final String getType() {
 		return type;
 	}
 
@@ -39,7 +39,7 @@ public class CellFormAttributes {
 	 * @param ptype
 	 *            the new type
 	 */
-	public void setType(final String ptype) {
+	public final void setType(final String ptype) {
 		this.type = ptype;
 	}
 
@@ -48,7 +48,7 @@ public class CellFormAttributes {
 	 *
 	 * @return the value
 	 */
-	public String getValue() {
+	public final String getValue() {
 		return value;
 	}
 
@@ -58,7 +58,7 @@ public class CellFormAttributes {
 	 * @param pvalue
 	 *            the new value
 	 */
-	public void setValue(final String pvalue) {
+	public final void setValue(final String pvalue) {
 		this.value = pvalue;
 	}
 
@@ -67,7 +67,7 @@ public class CellFormAttributes {
 	 *
 	 * @return the message
 	 */
-	public String getMessage() {
+	public final String getMessage() {
 		return message;
 	}
 
@@ -77,7 +77,7 @@ public class CellFormAttributes {
 	 * @param pmessage
 	 *            the new message
 	 */
-	public void setMessage(final String pmessage) {
+	public final void setMessage(final String pmessage) {
 		this.message = pmessage;
 	}
 
@@ -86,7 +86,7 @@ public class CellFormAttributes {
 	 * 
 	 * @return String Human readable label
 	 */
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{");

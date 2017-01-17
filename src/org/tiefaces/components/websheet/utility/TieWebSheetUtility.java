@@ -21,7 +21,6 @@ import org.tiefaces.components.websheet.configuration.ConfigRange;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -370,39 +369,39 @@ public final class TieWebSheetUtility {
 	 * @param date
 	 *            the date
 	 * @return true, if is weekend
-	 */
+	 
 	private static boolean isWeekend(final Calendar date) {
 		return date.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
 				|| date.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
 	}
-
+*/
 	/**
 	 * Gets the yesterday.
 	 *
 	 * @return the yesterday
-	 */
+	 
 	private static Calendar getYesterday() {
 		Calendar date = Calendar.getInstance();
 		date.add(Calendar.DATE, -1);
 		return date;
 	}
-
+*/
 	/**
 	 * Gets the last weekday.
 	 *
 	 * @return the last weekday
-	 */
+	 
 	private static Calendar getLastWeekday() {
 		return getLastWeekday(getYesterday());
 	}
-
+*/
 	/**
 	 * Gets the last weekday.
 	 *
 	 * @param date
 	 *            the date
 	 * @return the last weekday
-	 */
+	 
 	private static Calendar getLastWeekday(final Calendar date) {
 		Calendar lDate = Calendar.getInstance();
 		lDate.setTime(date.getTime());
@@ -411,7 +410,7 @@ public final class TieWebSheetUtility {
 		}
 		return lDate;
 	}
-
+*/
 	/**
 	 * Checks if is date.
 	 *

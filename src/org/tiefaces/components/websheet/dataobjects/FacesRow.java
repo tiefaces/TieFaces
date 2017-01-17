@@ -121,7 +121,7 @@ public class FacesRow {
 	 *
 	 * @return true, if is allow add
 	 */
-	public boolean isAllowAdd() {
+	public final boolean isAllowAdd() {
 		return allowAdd;
 	}
 
@@ -131,7 +131,7 @@ public class FacesRow {
 	 * @param pallowAdd
 	 *            the new allow add
 	 */
-	public void setAllowAdd(boolean pallowAdd) {
+	public final void setAllowAdd(final boolean pallowAdd) {
 		this.allowAdd = pallowAdd;
 	}
 
@@ -159,7 +159,7 @@ public class FacesRow {
 	 *
 	 * @return the origin row index
 	 */
-	public int getOriginRowIndex() {
+	public final int getOriginRowIndex() {
 		return originRowIndex;
 	}
 
@@ -169,7 +169,7 @@ public class FacesRow {
 	 * @param poriginRowIndex
 	 *            the new origin row index
 	 */
-	public void setOriginRowIndex(final int poriginRowIndex) {
+	public final void setOriginRowIndex(final int poriginRowIndex) {
 		this.originRowIndex = poriginRowIndex;
 	}
 	

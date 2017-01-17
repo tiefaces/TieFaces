@@ -49,7 +49,7 @@ public class XColor {
 	 *
 	 * @return the xssf color
 	 */
-	public XSSFColor getXssfColor() {
+	public final XSSFColor getXssfColor() {
 		return xssfColor;
 	}
 	
@@ -59,7 +59,7 @@ public class XColor {
 	 * @param pxssfColor
 	 *            the new series color
 	 */
-	public void setSeriesColor(final XSSFColor pxssfColor) {
+	public final void setSeriesColor(final XSSFColor pxssfColor) {
 		this.xssfColor = pxssfColor;
 	}
 	
@@ -68,7 +68,7 @@ public class XColor {
 	 *
 	 * @return the alpha
 	 */
-	public double getAlpha() {
+	public final double getAlpha() {
 		return alpha;
 	}
 	
@@ -78,7 +78,7 @@ public class XColor {
 	 * @param palpha
 	 *            the new alpha
 	 */
-	public void setAlpha(final double palpha) {
+	public final void setAlpha(final double palpha) {
 		this.alpha = palpha;
 	}
 	

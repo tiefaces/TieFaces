@@ -113,7 +113,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the watch list
 	 */
-	public List<Integer> getWatchList() {
+	public final List<Integer> getWatchList() {
 		return watchList;
 	}
 
@@ -123,7 +123,7 @@ public class ConfigBuildRef {
 	 * @param pwatchList
 	 *            the new watch list
 	 */
-	public void setWatchList(final List<Integer> pwatchList) {
+	public final void setWatchList(final List<Integer> pwatchList) {
 		this.watchList = pwatchList;
 	}
 
@@ -132,7 +132,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the wb wrapper
 	 */
-	public XSSFEvaluationWorkbook getWbWrapper() {
+	public final XSSFEvaluationWorkbook getWbWrapper() {
 		return wbWrapper;
 	}
 
@@ -141,7 +141,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the sheet
 	 */
-	public Sheet getSheet() {
+	public final Sheet getSheet() {
 		return sheet;
 	}
 
@@ -150,7 +150,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the engine
 	 */
-	public ExpressionEngine getEngine() {
+	public final ExpressionEngine getEngine() {
 		return engine;
 	}
 
@@ -159,7 +159,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the cell helper
 	 */
-	public CellHelper getCellHelper() {
+	public final CellHelper getCellHelper() {
 		return cellHelper;
 	}
 
@@ -168,7 +168,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the cached cells
 	 */
-	public Map<Cell, String> getCachedCells() {
+	public final Map<Cell, String> getCachedCells() {
 		return cachedCells;
 	}
 
@@ -182,7 +182,7 @@ public class ConfigBuildRef {
 	 * @param unitRowsMapping
 	 *            the unit rows mapping
 	 */
-	public void putShiftAttrs(final String fullName,
+	public final void putShiftAttrs(final String fullName,
 			final ConfigRangeAttrs attrs,
 			final RowsMapping unitRowsMapping) {
 		attrs.setUnitRowsMapping(unitRowsMapping);
@@ -194,7 +194,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the shift map
 	 */
-	public TreeMap<String, ConfigRangeAttrs> getShiftMap() {
+	public final TreeMap<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
 
@@ -204,7 +204,7 @@ public class ConfigBuildRef {
 	 * @param pshiftMap
 	 *            the shift map
 	 */
-	public void setShiftMap(
+	public final void setShiftMap(
 			final TreeMap<String, ConfigRangeAttrs> pshiftMap) {
 		this.shiftMap = pshiftMap;
 	}
@@ -214,7 +214,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return true, if is body allow add
 	 */
-	public boolean isBodyAllowAdd() {
+	public final boolean isBodyAllowAdd() {
 		return bodyAllowAdd;
 	}
 
@@ -224,7 +224,7 @@ public class ConfigBuildRef {
 	 * @param pbodyAllowAdd
 	 *            the new body allow add
 	 */
-	public void setBodyAllowAdd(final boolean pbodyAllowAdd) {
+	public final void setBodyAllowAdd(final boolean pbodyAllowAdd) {
 		this.bodyAllowAdd = pbodyAllowAdd;
 	}
 
@@ -233,7 +233,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the origin config range
 	 */
-	public ConfigRange getOriginConfigRange() {
+	public final ConfigRange getOriginConfigRange() {
 		return originConfigRange;
 	}
 
@@ -243,7 +243,7 @@ public class ConfigBuildRef {
 	 * @param poriginConfigRange
 	 *            the new origin config range
 	 */
-	public void setOriginConfigRange(final ConfigRange poriginConfigRange) {
+	public final void setOriginConfigRange(final ConfigRange poriginConfigRange) {
 		this.originConfigRange = poriginConfigRange;
 	}
 
@@ -252,7 +252,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the command index map
 	 */
-	public Map<String, Command> getCommandIndexMap() {
+	public final Map<String, Command> getCommandIndexMap() {
 		return commandIndexMap;
 	}
 
@@ -262,7 +262,7 @@ public class ConfigBuildRef {
 	 * @param pcommandIndexMap
 	 *            the command index map
 	 */
-	public void setCommandIndexMap(
+	public final void setCommandIndexMap(
 			final Map<String, Command> pcommandIndexMap) {
 		this.commandIndexMap = pcommandIndexMap;
 	}
@@ -272,7 +272,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return true, if is adds the mode
 	 */
-	public boolean isAddMode() {
+	public final boolean isAddMode() {
 		return addMode;
 	}
 
@@ -282,7 +282,7 @@ public class ConfigBuildRef {
 	 * @param paddMode
 	 *            the new adds the mode
 	 */
-	public void setAddMode(final boolean paddMode) {
+	public final void setAddMode(final boolean paddMode) {
 		this.addMode = paddMode;
 	}
 
@@ -291,7 +291,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the collection obj name map
 	 */
-	public Map<String, String> getCollectionObjNameMap() {
+	public final Map<String, String> getCollectionObjNameMap() {
 		return collectionObjNameMap;
 	}
 
@@ -301,7 +301,7 @@ public class ConfigBuildRef {
 	 * @param pcollectionObjNameMap
 	 *            the collection obj name map
 	 */
-	public void setCollectionObjNameMap(
+	public final void setCollectionObjNameMap(
 			final Map<String, String> pcollectionObjNameMap) {
 		this.collectionObjNameMap = pcollectionObjNameMap;
 	}
@@ -311,7 +311,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the insert position
 	 */
-	public int getInsertPosition() {
+	public final int getInsertPosition() {
 		return insertPosition;
 	}
 
@@ -321,7 +321,7 @@ public class ConfigBuildRef {
 	 * @param pinsertPosition
 	 *            the new insert position
 	 */
-	public void setInsertPosition(final int pinsertPosition) {
+	public final void setInsertPosition(final int pinsertPosition) {
 		this.insertPosition = pinsertPosition;
 	}
 
@@ -330,7 +330,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the cell attributes map
 	 */
-	public CellAttributesMap getCellAttributesMap() {
+	public final CellAttributesMap getCellAttributesMap() {
 		return cellAttributesMap;
 	}
 
@@ -339,7 +339,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the final comment map
 	 */
-	public Map<Cell, String> getFinalCommentMap() {
+	public final Map<Cell, String> getFinalCommentMap() {
 		return finalCommentMap;
 	}
 

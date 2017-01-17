@@ -45,7 +45,7 @@ public abstract class ConfigCommand implements Command {
 	 * @param source
 	 *            the source
 	 */
-	public ConfigCommand(ConfigCommand source) {
+	public ConfigCommand(final ConfigCommand source) {
 		this.commandTypeName = source.commandTypeName;
 		this.length = source.length;
 		this.finalLength = source.finalLength;
@@ -60,7 +60,7 @@ public abstract class ConfigCommand implements Command {
 	 * @param shiftnum
 	 *            the shiftnum
 	 */
-	public void shiftRowRef(Sheet sheet, int shiftnum) {
+	public final void shiftRowRef(final Sheet sheet, final int shiftnum) {
 		this.getConfigRange().shiftRowRef(sheet, shiftnum);
 	}
 
@@ -121,7 +121,7 @@ public abstract class ConfigCommand implements Command {
 	 * org.tiefaces.components.websheet.configuration.Command#isParentFound()
 	 */
 	@Override
-	public Boolean isParentFound() {
+	public final Boolean isParentFound() {
 		return parentFound;
 	}
 
@@ -133,7 +133,7 @@ public abstract class ConfigCommand implements Command {
 	 * (java.lang.Boolean)
 	 */
 	@Override
-	public void setParentFound(final Boolean pparentFound) {
+	public final void setParentFound(final Boolean pparentFound) {
 		this.parentFound = pparentFound;
 	}
 

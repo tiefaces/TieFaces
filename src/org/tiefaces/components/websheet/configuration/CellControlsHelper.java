@@ -5,22 +5,14 @@
 package org.tiefaces.components.websheet.configuration;
 
 import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
-
 import javax.faces.component.UIComponent;
-
-import org.tiefaces.components.websheet.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
-import org.tiefaces.components.websheet.service.ParserUtility;
 
 /**
  * Cell controls helper.

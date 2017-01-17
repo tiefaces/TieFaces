@@ -34,8 +34,8 @@ public class EvaluationException extends RuntimeException {
 	 * @param writableStackTrace
 	 *            the writable stack trace
 	 */
-	public EvaluationException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
+	public EvaluationException(final String message, final Throwable cause,
+			final boolean enableSuppression, final boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 		// TODO Auto-generated constructor stub
 	}
@@ -48,7 +48,7 @@ public class EvaluationException extends RuntimeException {
 	 * @param cause
 	 *            the cause
 	 */
-	public EvaluationException(String message, Throwable cause) {
+	public EvaluationException(final String message, final Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
@@ -59,7 +59,7 @@ public class EvaluationException extends RuntimeException {
 	 * @param message
 	 *            the message
 	 */
-	public EvaluationException(String message) {
+	public EvaluationException(final String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
@@ -70,7 +70,7 @@ public class EvaluationException extends RuntimeException {
 	 * @param cause
 	 *            the cause
 	 */
-	public EvaluationException(Throwable cause) {
+	public EvaluationException(final Throwable cause) {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}

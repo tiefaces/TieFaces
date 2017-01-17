@@ -66,7 +66,7 @@ public class ParsedCell {
 	 *
 	 * @return the sheet name
 	 */
-	public String getSheetName() {
+	public final String getSheetName() {
 		return sheetName;
 	}
 
@@ -76,7 +76,7 @@ public class ParsedCell {
 	 * @param psheetName
 	 *            the new sheet name
 	 */
-	public void setSheetName(final String psheetName) {
+	public final void setSheetName(final String psheetName) {
 		this.sheetName = psheetName;
 	}
 
@@ -85,7 +85,7 @@ public class ParsedCell {
 	 *
 	 * @return the row
 	 */
-	public int getRow() {
+	public final int getRow() {
 		return row;
 	}
 
@@ -95,7 +95,7 @@ public class ParsedCell {
 	 * @param prow
 	 *            the new row
 	 */
-	public void setRow(final int prow) {
+	public final void setRow(final int prow) {
 		this.row = prow;
 	}
 
@@ -104,7 +104,7 @@ public class ParsedCell {
 	 *
 	 * @return the col
 	 */
-	public int getCol() {
+	public final int getCol() {
 		return col;
 	}
 
@@ -114,7 +114,7 @@ public class ParsedCell {
 	 * @param pcol
 	 *            the new col
 	 */
-	public void setCol(final int pcol) {
+	public final void setCol(final int pcol) {
 		this.col = pcol;
 	}
 

@@ -28,14 +28,14 @@ public class TieWebSheetView {
 	/**
 	 * tabs.
 	 */
-	private List<tabModel> tabs;
+	private List<TabModel> tabs;
 
 	/**
 	 * get tabs.
 	 * 
 	 * @return list of tabs.
 	 */
-	public final List<tabModel> getTabs() {
+	public final List<TabModel> getTabs() {
 		return tabs;
 	}
 
@@ -45,7 +45,7 @@ public class TieWebSheetView {
 	 * @param ptabs
 	 *            list of tabs.
 	 */
-	public final void setTabs(final List<tabModel> ptabs) {
+	public final void setTabs(final List<TabModel> ptabs) {
 		this.tabs = ptabs;
 	}
 
@@ -55,7 +55,7 @@ public class TieWebSheetView {
 	 * @author Jason Jiang
 	 *
 	 */
-	public static class tabModel implements Serializable {
+	public static class TabModel implements Serializable {
 
 		/** serialid. */
 		private static final long serialVersionUID = 1L;
@@ -76,7 +76,7 @@ public class TieWebSheetView {
 		 * @param ptype
 		 *            type.
 		 */
-		public tabModel(final String pid, final String ptitle,
+		public TabModel(final String pid, final String ptitle,
 				final String ptype) {
 			this.id = pid;
 			if (this.id != null) {
@@ -205,7 +205,7 @@ public class TieWebSheetView {
 	}
 
 	/** maxrowsperpage. */
-	private Integer maxRowsPerPage = TieConstants.defaultMaxRowsPerPage;
+	private Integer maxRowsPerPage = TieConstants.DEFAULT_MAX_ROWS_PER_PAGE;
 
 	/**
 	 * get maxrowsperpage.
@@ -229,7 +229,7 @@ public class TieWebSheetView {
 	/**
 	 * tabwidth style.
 	 */
-	private String tableWidthStyle = TieConstants.defaultTableWidthStyle;
+	private String tableWidthStyle = TieConstants.DEFAULT_TABLE_WIDTH_STYLE;
 
 	/**
 	 * get table width style.
@@ -252,9 +252,9 @@ public class TieWebSheetView {
 
 	/** line number column width. */
 	private int lineNumberColumnWidth 
-	= TieConstants.defaultLineNumberColumnWidth;
+	= TieConstants.DEFAULT_LINENUMBER_COLUMN_WIDTH;
 	/** add row column width. */
-	private int addRowColumnWidth = TieConstants.defaultAddRowColumnWidth;
+	private int addRowColumnWidth = TieConstants.DEFAULT_ADDROW_COLUMN_WIDTH;
 	/** line number column width style. */
 	private String lineNumberColumnWidthStyle = "";
 	/** add row column width style. */

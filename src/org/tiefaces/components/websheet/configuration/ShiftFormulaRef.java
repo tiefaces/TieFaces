@@ -30,7 +30,7 @@ public class ShiftFormulaRef {
 	 *
 	 * @return the watch list
 	 */
-	public List<Integer> getWatchList() {
+	public final List<Integer> getWatchList() {
 		return watchList;
 	}
 
@@ -40,7 +40,7 @@ public class ShiftFormulaRef {
 	 * @param pwatchList
 	 *            the new watch list
 	 */
-	public void setWatchList(final List<Integer> pwatchList) {
+	public final void setWatchList(final List<Integer> pwatchList) {
 		this.watchList = pwatchList;
 	}
 
@@ -49,7 +49,7 @@ public class ShiftFormulaRef {
 	 *
 	 * @return the current rows mapping list
 	 */
-	public List<RowsMapping> getCurrentRowsMappingList() {
+	public final List<RowsMapping> getCurrentRowsMappingList() {
 		return currentRowsMappingList;
 	}
 
@@ -59,7 +59,7 @@ public class ShiftFormulaRef {
 	 * @param pcurrentRowsMappingList
 	 *            the new current rows mapping list
 	 */
-	public void setCurrentRowsMappingList(
+	public final void setCurrentRowsMappingList(
 			final List<RowsMapping> pcurrentRowsMappingList) {
 		this.currentRowsMappingList = pcurrentRowsMappingList;
 	}
@@ -69,7 +69,7 @@ public class ShiftFormulaRef {
 	 *
 	 * @return the formula changed
 	 */
-	public int getFormulaChanged() {
+	public final int getFormulaChanged() {
 		return formulaChanged;
 	}
 
@@ -79,7 +79,7 @@ public class ShiftFormulaRef {
 	 * @param pformulaChanged
 	 *            the new formula changed
 	 */
-	public void setFormulaChanged(final int pformulaChanged) {
+	public final void setFormulaChanged(final int pformulaChanged) {
 		this.formulaChanged = pformulaChanged;
 	}
 
@@ -103,7 +103,7 @@ public class ShiftFormulaRef {
 	 * 
 	 * @return String Human readable label
 	 */
-	public String toString() {
+	public final String toString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("{ watchList = " + watchList);

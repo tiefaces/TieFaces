@@ -38,7 +38,6 @@ import org.tiefaces.components.websheet.chart.objects.ChartObject;
 import org.tiefaces.components.websheet.chart.objects.LineChart;
 import org.tiefaces.components.websheet.chart.objects.Pie3DChart;
 import org.tiefaces.components.websheet.chart.objects.PieChart;
-import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.dataobjects.AnchorSize;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
@@ -669,7 +668,7 @@ public class ChartHelper {
 		plot.setRangeGridlinesVisible(true);
 		plot.setRangeGridlinePaint(Color.BLACK);
 		plot.setRangeGridlineStroke(new BasicStroke(
-				TieConstants.defaultBasicStroke));
+				TieConstants.DEFAULT_BASIC_STROKE));
 		plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 		chart.setBackgroundPaint(Color.WHITE);
 		LegendTitle legend = chart.getLegend();
@@ -719,8 +718,8 @@ public class ChartHelper {
 
 		plot.setOutlineVisible(false);
 		plot.setLegendItemShape(new Rectangle(
-				TieConstants.defaultLegentItemShapeWidth,
-				TieConstants.defaultLegentItemShapeHeight));
+				TieConstants.DEFAULT_LEGENT_ITEM_SHAPE_WIDTH,
+				TieConstants.DEFAULT_LEGENT_ITEM_SHAPE_HEIGHT));
 		chart.setBackgroundPaint(Color.WHITE);
 		LegendTitle legend = chart.getLegend();
 		legend.setPosition(RectangleEdge.RIGHT);
@@ -745,9 +744,9 @@ public class ChartHelper {
 		// StandardBarPainter());
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setBarPainter(new StandardBarPainter());
-		renderer.setItemMargin(TieConstants.defaultBarStyleItemMargin);
+		renderer.setItemMargin(TieConstants.DEFAULT_BAR_STYLE_ITEM_MARGIN);
 
-		plot.setForegroundAlpha(TieConstants.defaultBarStyleForegroundAlpha);
+		plot.setForegroundAlpha(TieConstants.DEFAULT_BARSTYLE_FOREGROUND_ALPHA);
 	}
 
 	/**
