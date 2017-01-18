@@ -16,6 +16,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -589,7 +590,8 @@ public class WebSheetLoader implements Serializable {
 		// reset datatable current page to 1
 		setDataTablePage(0);
 		saveObjs();
-		if (RequestContext.getCurrentInstance() != null) {
+		if ((RequestContext.getCurrentInstance() != null)
+				&& (parent.getClientId() != null)) {
 			RequestContext.getCurrentInstance().update(
 					parent.getClientId() + ":websheettab");
 		}
@@ -804,7 +806,7 @@ public class WebSheetLoader implements Serializable {
 	 *            the cell
 	 */
 	private void addCache(final Sheet sheet1, final Cell cell) {
-		parent.getCachedCells().put(cell, Cell.CELL_TYPE_FORMULA);
+		parent.getCachedCells().put(cell, CellType.FORMULA);
 	}
 
 	/**
@@ -835,8 +837,8 @@ public class WebSheetLoader implements Serializable {
 			final int index, final Sheet sheet1, final Cell cell,
 			final FacesCell fcell) {
 
-		if ((cell != null)
-				&& (cell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
+		if ((cell != null) && (cell.getCellTypeEnum() == CellType.FORMULA)
+				&& (tblName != null)) {
 			String newValue =
 					CellUtility.getCellValueWithFormat(cell, parent
 							.getFormulaEvaluator(), parent
@@ -855,7 +857,7 @@ public class WebSheetLoader implements Serializable {
 
 				RequestContext.getCurrentInstance().update(
 						tblName + ":" + i + ":cocalc" + index);
-				parent.getCachedCells().put(cell, Cell.CELL_TYPE_FORMULA);
+				parent.getCachedCells().put(cell, CellType.FORMULA);
 			}
 		}
 	}

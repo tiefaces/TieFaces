@@ -30,7 +30,7 @@ This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for m
 ##### Latest Downloads
 Version | Binary | Source | Java Doc 
 ------------ | -------------  | ------------- | -------------  
-1.0.0 | [tiefaces-1.0.0.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.0/tiefaces-1.0.0.jar) | [tiefaces-1.0.0-sources.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.0/tiefaces-1.0.0-sources.jar) | [tiefaces-1.0.0-javadoc.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.0/tiefaces-1.0.0-javadoc.jar)
+1.0.2 | [tiefaces-1.0.2.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.2/tiefaces-1.0.2.jar) | [tiefaces-1.0.2-sources.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.2/tiefaces-1.0.2-sources.jar) | [tiefaces-1.0.2-javadoc.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.2/tiefaces-1.0.2-javadoc.jar)
 
 You can also visit download page in [tiefaces.org](http://www.tiefaces.org/).
 
@@ -49,10 +49,10 @@ You can also visit download page in [tiefaces.org](http://www.tiefaces.org/).
 
 ##### Namespaces
 
-TieFaces built upon Primefaces as a composite component. Use namespace below to add TieFaces components to your pages.
+Use namespace below to add TieFaces components to your pages.
 
 ```xml
-xmlns:tie="http://java.sun.com/jsf/composite/tiefaces"
+xmlns:tie="http://tiefaces.org/tiefaces"
 ```
 
 ### Demo

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -388,7 +389,7 @@ public class ConfigRange {
 						ConfigurationHelper.evaluate(context, cell,
 								configBuildRef.getEngine(),
 								configBuildRef.getCellHelper());
-						if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+						if (cell.getCellTypeEnum() == CellType.FORMULA) {
 							// rebuild formula if necessary for dynamic row
 							String originFormula = cell.getCellFormula();
 							shiftFormulaRef.setFormulaChanged(0);

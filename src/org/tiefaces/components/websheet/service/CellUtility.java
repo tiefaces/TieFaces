@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
@@ -86,11 +87,11 @@ public final class CellUtility {
 
 		String result;
 		try {
-			int cellType = poiCell.getCellType();
-			if (cellType == Cell.CELL_TYPE_FORMULA) {
-				cellType = formulaEvaluator.evaluate(poiCell).getCellType();
+			CellType cellType = poiCell.getCellTypeEnum();
+			if (cellType == CellType.FORMULA) {
+				cellType = formulaEvaluator.evaluate(poiCell).getCellTypeEnum();
 			}
-			if (cellType == Cell.CELL_TYPE_ERROR) {
+			if (cellType == CellType.ERROR) {
 				result = "";
 			} else {
 				result = dataFormatter.formatCellValue(poiCell,
@@ -123,12 +124,12 @@ public final class CellUtility {
 			return null;
 		}
 
-		if (poiCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+		if (poiCell.getCellTypeEnum() == CellType.FORMULA) {
 			return getCellStringValueWithType(poiCell,
-					poiCell.getCachedFormulaResultType());
+					poiCell.getCachedFormulaResultTypeEnum());
 		} else {
 			return getCellStringValueWithType(poiCell,
-					poiCell.getCellType());
+					poiCell.getCellTypeEnum());
 		}
 	}
 
@@ -142,16 +143,16 @@ public final class CellUtility {
 	 * @return Sting cell value.
 	 */
 	private static String getCellStringValueWithType(final Cell poiCell,
-			final int cellType) {
+			final CellType cellType) {
 
 		switch (cellType) {
-		case Cell.CELL_TYPE_BOOLEAN:
+		case BOOLEAN:
 			if (poiCell.getBooleanCellValue()) {
 				return "Y";
 			} else {
 				return "N";
 			}
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			String result;
 			if (DateUtil.isCellDateFormatted(poiCell)) {
 				result = poiCell.getDateCellValue().toString();
@@ -164,12 +165,12 @@ public final class CellUtility {
 				}
 			}
 			return result;
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			return poiCell.getStringCellValue();
+		default:
+			return "";
 		} // switch
 
-		// others all return blank
-		return "";
 	}
 
 	/**
@@ -185,35 +186,35 @@ public final class CellUtility {
 
 		try {
 			if (value.length() == 0) {
-				c.setCellType(Cell.CELL_TYPE_BLANK);
+				c.setCellType(CellType.BLANK);
 			} else if (TieWebSheetUtility.isNumeric(value)) {
 				double val = Double
 						.parseDouble(value.replace("" + ',', ""));
-				c.setCellType(Cell.CELL_TYPE_NUMERIC);
+				c.setCellType(CellType.NUMERIC);
 				c.setCellValue(val);
 			} else if (TieWebSheetUtility.isDate(value)) {
 				String date = TieWebSheetUtility.parseDate(value);
-				c.setCellType(Cell.CELL_TYPE_STRING);
+				c.setCellType(CellType.STRING);
 				c.setCellValue(date);
 			} else {
-				if (c.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
+				if (c.getCellTypeEnum() == CellType.BOOLEAN) {
 					if (value.equalsIgnoreCase("Y")) {
 						c.setCellValue(true);
 					} else {
 						c.setCellValue(false);
 					}
 				} else {
-					c.setCellType(Cell.CELL_TYPE_STRING);
+					c.setCellType(CellType.STRING);
 					c.setCellValue(value);
 				}
 			}
 		} catch (Exception e) {
-			c.setCellType(Cell.CELL_TYPE_STRING);
+			c.setCellType(CellType.STRING);
 			c.setCellValue(value);
 		}
 		LOG.fine(" set cell value row = " + c.getRowIndex() + " col = "
 				+ c.getColumnIndex() + " value = " + value + " cellType = "
-				+ c.getCellType());
+				+ c.getCellTypeEnum());
 		return c;
 	}
 
@@ -430,21 +431,21 @@ public final class CellUtility {
 		}
 
 		// Set the cell data type
-		newCell.setCellType(sourceCell.getCellType());
+		newCell.setCellType(sourceCell.getCellTypeEnum());
 
 		// Set the cell data value
-		switch (sourceCell.getCellType()) {
-		case Cell.CELL_TYPE_BOOLEAN:
+		switch (sourceCell.getCellTypeEnum()) {
+		case BOOLEAN:
 			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellValue(sourceCell.getBooleanCellValue());
 			}
 			break;
-		case Cell.CELL_TYPE_ERROR:
+		case ERROR:
 			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellErrorValue(sourceCell.getErrorCellValue());
 			}
 			break;
-		case Cell.CELL_TYPE_FORMULA:
+		case FORMULA:
 			/*
 			 * if (shiftFormula) { Ptg[] sharedFormulaPtg = FormulaParser.parse(
 			 * sourceCell.getCellFormula(), wbWrapper, FormulaType.CELL,
@@ -461,12 +462,12 @@ public final class CellUtility {
 			// formulaEvaluator.notifySetFormula(newCell);
 			// formulaEvaluator.evaluate(newCell);
 			break;
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellValue(sourceCell.getNumericCellValue());
 			}
 			break;
-		case Cell.CELL_TYPE_STRING:
+		case STRING:
 			if ((!checkLock) || newCellStyle.getLocked()) {
 				newCell.setCellValue(sourceCell.getRichStringCellValue());
 			}
@@ -1060,18 +1061,20 @@ public final class CellUtility {
 			final CellStyle cellStyle) {
 
 		String style = "";
-		switch (cellStyle.getAlignment()) {
-		case CellStyle.ALIGN_LEFT:
-			style = "text-align: left;";
+		switch (cellStyle.getAlignmentEnum()) {
+		case LEFT:
+			style = TieConstants.TEXT_ALIGN_LEFT;
 			break;
-		case CellStyle.ALIGN_RIGHT:
-			style = "text-align: right;";
+		case RIGHT:
+			style = TieConstants.TEXT_ALIGN_RIGHT;
 			break;
-		case CellStyle.ALIGN_CENTER:
-			style = "text-align: center;";
+		case CENTER:
+			style = TieConstants.TEXT_ALIGN_CENTER;
 			break;
-		case CellStyle.ALIGN_GENERAL:
+		case GENERAL:
 			style = getAlignmentFromCellType(poiCell);
+			break;
+		default:
 			break;
 		}
 		return style;
@@ -1090,15 +1093,17 @@ public final class CellUtility {
 			final CellStyle cellStyle) {
 
 		String style = "";
-		switch (cellStyle.getVerticalAlignment()) {
-		case CellStyle.VERTICAL_TOP:
-			style = "vertical-align: top;";
+		switch (cellStyle.getVerticalAlignmentEnum()) {
+		case TOP:
+			style = TieConstants.VERTICAL_ALIGN_TOP;
 			break;
-		case CellStyle.VERTICAL_CENTER:
-			style = "vertical-align: middle;";
+		case CENTER:
+			style = TieConstants.VERTICAL_ALIGN_CENTER;
 			break;
-		case CellStyle.VERTICAL_BOTTOM:
-			style = "vertical-align: bottom;";
+		case BOTTOM:
+			style = TieConstants.VERTICAL_ALIGN_BOTTOM;
+			break;
+		default:
 			break;
 		}
 		return style;
@@ -1298,13 +1303,15 @@ public final class CellUtility {
 	 */
 	private static String getAlignmentFromCellType(final Cell poiCell) {
 
-		switch (poiCell.getCellType()) {
-		case Cell.CELL_TYPE_FORMULA:
+		switch (poiCell.getCellTypeEnum()) {
+		case FORMULA:
 			return "text-align: right;";
-		case Cell.CELL_TYPE_NUMERIC:
+		case NUMERIC:
 			return "text-align: right;";
+		default:
+			return "";
 		}
-		return "";
+		
 	}
 
 	/**
@@ -1317,7 +1324,7 @@ public final class CellUtility {
 	private static String getInputTypeFromCellType(final Cell cell) {
 
 		String inputType = TieConstants.CELL_INPUT_TYPE_TEXT;
-		if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+		if (cell.getCellTypeEnum() == CellType.NUMERIC) {
 			inputType = TieConstants.CELL_INPUT_TYPE_DOUBLE;
 		}
 		CellStyle style = cell.getCellStyle();

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.service.CellUtility;
@@ -49,16 +50,16 @@ public class CachedCells {
 	 *
 	 * @param cell
 	 *            the cell
-	 * @param cellType
+	 * @param formula
 	 *            the cell type
 	 */
-	public final void put(final Cell cell, final Integer cellType) {
+	public final void put(final Cell cell, final CellType formula) {
 		Map<Cell, FormulaMapping> map = cachedMap;
 		// if cellType not null then only specified Type will be put into Cache
 		// e.g. only formula cell will be cached then pass in
 		// Cell.CELL_TYPE_FORMULA
-		if ((cell != null) && ((cellType == null)
-				|| (cell.getCellType() == cellType))) {
+		if ((cell != null) && ((formula == null)
+				|| (cell.getCellTypeEnum() == formula))) {
 			// String refName = TieWebSheetUtility.getFullCellRefName(sheet1,
 			// cell);
 			String value = CellUtility.getCellValueWithFormat(cell,

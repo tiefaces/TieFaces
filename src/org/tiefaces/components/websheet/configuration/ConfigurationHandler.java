@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -239,7 +241,7 @@ public class ConfigurationHandler {
 
 			Cell cell = row.getCell(col);
 			if ((cell != null)
-					&& (cell.getCellType() != Cell.CELL_TYPE_BLANK)) {
+					&& (cell.getCellTypeEnum() != CellType.BLANK)) {
 				break;
 			}
 		}
@@ -579,7 +581,7 @@ public class ConfigurationHandler {
 			Sheet newSheet = wb.cloneSheet(wb.getSheetIndex(sheet));
 			int sheetIndex = wb.getSheetIndex(newSheet);
 			wb.setSheetName(sheetIndex, copyName);
-			// wb.setSheetHidden(sheetIndex, Workbook.SHEET_STATE_VERY_HIDDEN);
+			wb.setSheetHidden(sheetIndex, Workbook.SHEET_STATE_VERY_HIDDEN);
 		}
 	}
 

@@ -23,12 +23,10 @@ public final class TieConstants {
 	public static final String COMPONENT_ID = "websheettable";
 
 	/** The Constant CONFIGURATION_SHEET. */
-	public static final String CONFIGURATION_SHEET =
-			"Configuration";
+	public static final String CONFIGURATION_SHEET = "Configuration";
 
 	/** The Constant ATTRS_WEBSHEETBEAN. */
-	public static final String ATTRS_WEBSHEETBEAN =
-			"webSheetBean";
+	public static final String ATTRS_WEBSHEETBEAN = "webSheetBean";
 
 	/** The Constant EXCEL_2003_TYPE. */
 	public static final String EXCEL_2003_TYPE = "xls";
@@ -37,12 +35,10 @@ public final class TieConstants {
 	public static final String EXCEL_2007_TYPE = "xlsx";
 
 	/** The Constant CONFIGURATION_SCHEMA_VERSION. */
-	public static final String CONFIGURATION_SCHEMA_VERSION =
-			"Version";
+	public static final String CONFIGURATION_SCHEMA_VERSION = "Version";
 
 	/** The Constant CONFIGURATION_SCHEMA_TAB_NAME. */
-	public static final String CONFIGURATION_SCHEMA_TAB_NAME =
-			"Tab Name";
+	public static final String CONFIGURATION_SCHEMA_TAB_NAME = "Tab Name";
 
 	/** The Constant CONFIGURATION_SCHEMA_SHEET_NAME. */
 	public static final String CONFIGURATION_SCHEMA_SHEET_NAME =
@@ -109,8 +105,7 @@ public final class TieConstants {
 			"Validation Error Messages";
 
 	/** The Constant CONFIGURATION_ATTR_CONTROL. */
-	public static final String CONFIGURATION_ATTR_CONTROL =
-			"Control";
+	public static final String CONFIGURATION_ATTR_CONTROL = "Control";
 
 	/** The Constant FORM_TYPE_FREE. */
 	public static final String FORM_TYPE_FREE = "Free";
@@ -119,16 +114,13 @@ public final class TieConstants {
 	public static final String FORM_TYPE_REPEAT = "Repeat";
 
 	/** The Constant CELL_INPUT_TYPE_DOUBLE. */
-	public static final String CELL_INPUT_TYPE_DOUBLE =
-			"double";
+	public static final String CELL_INPUT_TYPE_DOUBLE = "double";
 
 	/** The Constant CELL_INPUT_TYPE_INTEGER. */
-	public static final String CELL_INPUT_TYPE_INTEGER =
-			"integer";
+	public static final String CELL_INPUT_TYPE_INTEGER = "integer";
 
 	/** The Constant CELL_INPUT_TYPE_PERCENTAGE. */
-	public static final String CELL_INPUT_TYPE_PERCENTAGE =
-			"percentage";
+	public static final String CELL_INPUT_TYPE_PERCENTAGE = "percentage";
 
 	/** The Constant CELL_INPUT_TYPE_DATE. */
 	public static final String CELL_INPUT_TYPE_DATE = "date";
@@ -137,8 +129,7 @@ public final class TieConstants {
 	public static final String CELL_INPUT_TYPE_TEXT = "text";
 
 	/** The Constant CELL_INPUT_TYPE_TEXTAREA. */
-	public static final String CELL_INPUT_TYPE_TEXTAREA =
-			"textarea";
+	public static final String CELL_INPUT_TYPE_TEXTAREA = "textarea";
 
 	/** The Constant COPY_SHEET_PREFIX. */
 	public static final String COPY_SHEET_PREFIX = "cptieTemp_";
@@ -171,12 +162,10 @@ public final class TieConstants {
 	public static final String CELL_DATA_ROW = "data-row";
 
 	/** The Constant CELL_DATA_COLUMN. */
-	public static final String CELL_DATA_COLUMN =
-			"data-column";
+	public static final String CELL_DATA_COLUMN = "data-column";
 
 	/** The Constant CELL_DATA_SYMBOL. */
-	public static final String CELL_DATA_SYMBOL =
-			"data-symbol";
+	public static final String CELL_DATA_SYMBOL = "data-symbol";
 
 	/** The Constant TIE_WEB_SHEET_MAX_ROWS. */
 	public static final int TIE_WEB_SHEET_MAX_ROWS = 99999;
@@ -320,5 +309,20 @@ public final class TieConstants {
 	public static final String FORM_COMMAND_FULL_NAME_PREFIX = "F.";
 	/** The Constant CELL_INVALID_STYLE. */
 	public static final String CELL_INVALID_STYLE = "border-color: red;";
+	/** The Constant TEXT_ALIGN_LEFT. */
+	public static final String TEXT_ALIGN_LEFT = "text-align: left;";
+	/** The Constant TEXT_ALIGN_RIGHT. */
+	public static final String TEXT_ALIGN_RIGHT = "text-align: right;";
+	/** The Constant TEXT_ALIGN_CENTER. */
+	public static final String TEXT_ALIGN_CENTER = "text-align: center;";
+
+	/** The Constant VERTICAL_ALIGN_TOP. */
+	public static final String VERTICAL_ALIGN_TOP = "vertical-align: top;";
+	/** The Constant VERTICAL_ALIGN_BOTTOM. */
+	public static final String VERTICAL_ALIGN_BOTTOM =
+			"vertical-align: bottom;";
+	/** The Constant VERTICAL_ALIGN_CENTER. */
+	public static final String VERTICAL_ALIGN_CENTER =
+			"vertical-align: middle;";
 
 }

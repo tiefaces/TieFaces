@@ -7,7 +7,6 @@ package org.tiefaces.components.websheet.configuration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +14,13 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -62,9 +63,9 @@ public final class ConfigurationHelper {
 	public static void evaluate(final Map<String, Object> context,
 			final Cell cell, final ExpressionEngine engine,
 			final CellHelper cellHelper) {
-		int cellType = cell.getCellType();
+		CellType cellType = cell.getCellTypeEnum();
 		Object evaluationResult = null;
-		if (cellType == Cell.CELL_TYPE_STRING && cell != null) {
+		if (cellType == CellType.STRING && cell != null) {
 			String strValue = cell.getStringCellValue();
 			if (isUserFormula(strValue)) {
 				String formulaStr =
@@ -120,7 +121,7 @@ public final class ConfigurationHelper {
 	 * @return the string
 	 */
 	public static String parseSaveAttr(final Cell cell) {
-		if ((cell.getCellType() == Cell.CELL_TYPE_STRING) && (cell != null)
+		if ((cell.getCellTypeEnum() == CellType.STRING) && (cell != null)
 				&& !cell.getCellStyle().getLocked()) {
 			String saveAttr =
 					parseSaveAttrString(cell.getStringCellValue());
@@ -304,24 +305,7 @@ public final class ConfigurationHelper {
 		return evaluationResult;
 	}
 
-	/**
-	 * Check cell type from result.
-	 *
-	 * @param result
-	 *            the result
-	 * @return the int
-	 */
-	public static int checkCellTypeFromResult(final Object result) {
-		int type = Cell.CELL_TYPE_STRING;
-		if (result instanceof Number) {
-			type = Cell.CELL_TYPE_NUMERIC;
-		} else if (result instanceof Boolean) {
-			type = Cell.CELL_TYPE_BOOLEAN;
-		} else if (result instanceof Date) {
-			type = Cell.CELL_TYPE_NUMERIC;
-		}
-		return type;
-	}
+
 
 	/**
 	 * Transform to collection object.
@@ -922,7 +906,7 @@ public final class ConfigurationHelper {
 				row.getCell(TieConstants.HIDDEN_ORIGIN_ROW_NUMBER_COLUMN,
 						MissingCellPolicy.CREATE_NULL_AS_BLANK);
 		cell.setCellValue(rowNum + "");
-		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellType(CellType.STRING);
 	}
 
 	/**

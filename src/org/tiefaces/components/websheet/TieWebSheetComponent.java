@@ -32,7 +32,7 @@ public class TieWebSheetComponent extends UINamingContainer {
 
 	/** constructor. */
 	public TieWebSheetComponent() {
-		LOG.fine("TieWebSheetBean Constructor");
+		LOG.fine("TieWebSheetComponent Constructor");
 	}
 
 	/**

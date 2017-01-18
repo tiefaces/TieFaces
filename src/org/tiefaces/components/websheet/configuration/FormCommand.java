@@ -12,6 +12,7 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -219,7 +220,7 @@ public class FormCommand extends ConfigCommand {
 		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
 			Row row = sheet.getRow(i);
 			for (Cell cell : row) {
-				if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+				if (cell.getCellTypeEnum() == CellType.FORMULA) {
 
 					String formula = cell.getCellFormula();
 
@@ -246,7 +247,7 @@ public class FormCommand extends ConfigCommand {
 					// workaround.
 					// change formula to user formula to preserve the row
 					// changes.
-					cell.setCellType(Cell.CELL_TYPE_STRING);
+					cell.setCellType(CellType.STRING);
 					cell.setCellValue(
 							TieConstants.USER_FORMULA_PREFIX
 									+ formula
@@ -333,25 +334,7 @@ public class FormCommand extends ConfigCommand {
 		return length;
 	}
 
-	/**
-	 * Inits the full name in hidden column.
-	 *
-	 * @param sheet
-	 *            the sheet
-	 
-	private void initFullNameInHiddenColumn(final Sheet sheet) {
 
-		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
-			Row row = sheet.getRow(i);
-			if (row == null) {
-				row = sheet.createRow(i);
-			}
-			ConfigurationHelper.setOriginalRowNumInHiddenColumn(row, i);
-		}
-
-	}
-
-*/
 	/* (non-Javadoc)
 	 * @see org.tiefaces.components.websheet.configuration.Command#getCommandName()
 	 */
