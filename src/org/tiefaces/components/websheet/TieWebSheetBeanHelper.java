@@ -1,5 +1,7 @@
 package org.tiefaces.components.websheet;
 
+import java.io.Serializable;
+
 import org.tiefaces.components.websheet.chart.ChartHelper;
 import org.tiefaces.components.websheet.service.CellHelper;
 import org.tiefaces.components.websheet.service.PicturesHelper;
@@ -13,6 +15,8 @@ import org.tiefaces.components.websheet.service.WebSheetLoader;
  *
  */
 public class TieWebSheetBeanHelper {
+	/** parent. */
+	private TieWebSheetBean parent;
 	/** hold instance for loader class. */
 	private WebSheetLoader webSheetLoader;
 	/** hold instance for cell helper class. */
@@ -27,21 +31,19 @@ public class TieWebSheetBeanHelper {
 	/**
 	 * assign bean object into helper.
 	 * 
-	 * @param parent
+	 * @param pparent
 	 *            parent bean.
 	 */
-	public TieWebSheetBeanHelper(final TieWebSheetBean parent) {
-		this.webSheetLoader = new WebSheetLoader(parent);
-		this.cellHelper = new CellHelper(parent);
-		this.validationHandler = new ValidationHandler(parent);
-		this.picHelper = new PicturesHelper(parent);
-		this.chartHelper = new ChartHelper(parent);
+	public TieWebSheetBeanHelper(final TieWebSheetBean pparent) {
+		this.parent = pparent;
 	}
 
 	/**
 	 * @return the webSheetLoader
 	 */
 	public final WebSheetLoader getWebSheetLoader() {
+		this.webSheetLoader = new WebSheetLoader(parent);
+
 		return webSheetLoader;
 	}
 
@@ -49,7 +51,8 @@ public class TieWebSheetBeanHelper {
 	 * @param pwebSheetLoader
 	 *            the webSheetLoader to set
 	 */
-	public final void setWebSheetLoader(final WebSheetLoader pwebSheetLoader) {
+	public final void
+			setWebSheetLoader(final WebSheetLoader pwebSheetLoader) {
 		this.webSheetLoader = pwebSheetLoader;
 	}
 
@@ -57,6 +60,9 @@ public class TieWebSheetBeanHelper {
 	 * @return the cellHelper
 	 */
 	public final CellHelper getCellHelper() {
+		if ((this.cellHelper == null) && (this.parent != null)) {
+			this.cellHelper = new CellHelper(parent);
+		}
 		return cellHelper;
 	}
 
@@ -72,6 +78,9 @@ public class TieWebSheetBeanHelper {
 	 * @return the picHelper
 	 */
 	public final PicturesHelper getPicHelper() {
+		if ((this.picHelper == null) && (this.parent != null)) {
+			this.picHelper = new PicturesHelper(parent);
+		}
 		return picHelper;
 	}
 
@@ -87,6 +96,9 @@ public class TieWebSheetBeanHelper {
 	 * @return the validationHandler
 	 */
 	public final ValidationHandler getValidationHandler() {
+		if ((this.validationHandler == null) && (this.parent != null)) {
+			this.validationHandler = new ValidationHandler(parent);
+		}
 		return validationHandler;
 	}
 
@@ -103,6 +115,9 @@ public class TieWebSheetBeanHelper {
 	 * @return the chartHelper
 	 */
 	public final ChartHelper getChartHelper() {
+		if ((this.chartHelper == null) && (this.parent != null)) {
+			this.chartHelper = new ChartHelper(parent);
+		}
 		return chartHelper;
 	}
 

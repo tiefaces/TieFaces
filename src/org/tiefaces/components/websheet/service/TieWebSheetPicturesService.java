@@ -3,16 +3,17 @@
  * Licensed under MIT
  */
 
-package org.tiefaces.components.websheet;
+package org.tiefaces.components.websheet.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.logging.Logger;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
+import javax.inject.Named;
 
 import org.apache.poi.ss.usermodel.PictureData;
 import org.primefaces.model.DefaultStreamedContent;
@@ -25,10 +26,15 @@ import org.primefaces.model.StreamedContent;
  *
  */
 
-@ManagedBean
-@SessionScoped
-public class TieWebSheetPicturesService {
 
+@Named
+@SessionScoped
+public class TieWebSheetPicturesService implements Serializable  {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 6230419110838095593L;
 	/** log instance. */
 	private static final Logger LOG = Logger
 			.getLogger(TieWebSheetPicturesService.class.getName());
@@ -48,7 +54,7 @@ public class TieWebSheetPicturesService {
 	 * @throws IOException
 	 *             exception.
 	 */
-	public final StreamedContent getPicture() throws IOException {
+	public StreamedContent getPicture() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
@@ -72,5 +78,6 @@ public class TieWebSheetPicturesService {
 					picData.getData()));
 		}
 	}
+	
 
 }

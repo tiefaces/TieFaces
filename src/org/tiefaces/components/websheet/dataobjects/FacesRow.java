@@ -5,6 +5,7 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -13,8 +14,12 @@ import java.util.List;
  * 
  * @author Jason Jiang
  */
-public class FacesRow {
+public class FacesRow implements Serializable {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -1576241602026457797L;
 	/** row number. */
 	private int rowIndex;
 	/** whether the row is visible. */

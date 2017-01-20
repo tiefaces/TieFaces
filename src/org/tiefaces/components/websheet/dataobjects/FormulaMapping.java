@@ -4,6 +4,8 @@
  */
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
+
 
 
 /**
@@ -12,8 +14,12 @@ package org.tiefaces.components.websheet.dataobjects;
  * @author Jason Jiang
  *
  */
-public class FormulaMapping {
+public class FormulaMapping implements Serializable {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -6332637628608363196L;
 	/**
 	 * original formula.
 	 */

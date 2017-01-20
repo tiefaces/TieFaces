@@ -4,22 +4,29 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellAddress;
 import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
+import org.tiefaces.components.websheet.dataobjects.SerialCellAddress;
 
 /**
  * The Class ConfigRangeAttrs.
  */
-public class ConfigRangeAttrs {
+public class ConfigRangeAttrs implements Serializable {
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -6331060203032223425L;
 	/** first cell. */
 	private Cell firstRowRef;
 	/** last cell. */
 	private Cell lastRowPlusRef;
 	/** first cell address. This used to calculate relative address. */
-	private CellAddress firstRowAddr;
+	private SerialCellAddress firstRowAddr;
 	/** last cell address. This used to calculate relative address. */
-	private CellAddress lastRowPlusAddr;
+	private SerialCellAddress lastRowPlusAddr;
 	/** if true then the lastCell is created instead of exist cell. */
 	private boolean lastCellCreated;
 
@@ -88,7 +95,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the first row addr
 	 */
-	public final CellAddress getFirstRowAddr() {
+	public final SerialCellAddress getFirstRowAddr() {
 		return firstRowAddr;
 	}
 
@@ -98,7 +105,7 @@ public class ConfigRangeAttrs {
 	 * @param pfirstRowAddr
 	 *            the new first row addr
 	 */
-	public final void setFirstRowAddr(final CellAddress pfirstRowAddr) {
+	public final void setFirstRowAddr(final SerialCellAddress pfirstRowAddr) {
 		this.firstRowAddr = pfirstRowAddr;
 	}
 
@@ -107,7 +114,7 @@ public class ConfigRangeAttrs {
 	 *
 	 * @return the last row plus addr
 	 */
-	public final CellAddress getLastRowPlusAddr() {
+	public final SerialCellAddress getLastRowPlusAddr() {
 		return lastRowPlusAddr;
 	}
 
@@ -117,7 +124,7 @@ public class ConfigRangeAttrs {
 	 * @param plastRowPlusAddr
 	 *            the new last row plus addr
 	 */
-	public final void setLastRowPlusAddr(final CellAddress plastRowPlusAddr) {
+	public final void setLastRowPlusAddr(final SerialCellAddress plastRowPlusAddr) {
 		this.lastRowPlusAddr = plastRowPlusAddr;
 	}
 

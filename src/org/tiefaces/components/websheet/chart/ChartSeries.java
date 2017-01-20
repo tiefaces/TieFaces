@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.chart;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;

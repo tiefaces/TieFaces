@@ -4,6 +4,8 @@
  */
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
+
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
@@ -12,7 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 public class XColor {
 
 	/** The xssf color. */
-	private XSSFColor xssfColor = null;
+	private XSSFColor xssfColor;
 	
 	/** The alpha. */
 	private double alpha = 0;

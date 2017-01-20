@@ -5,6 +5,8 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
+
 import org.tiefaces.common.TieConstants;
 
 /**
@@ -14,7 +16,12 @@ import org.tiefaces.common.TieConstants;
  *         value, message) in configuration tab.
  */
 
-public class CellMapKey {
+public class CellMapKey implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 1487088594582219129L;
 
 	/** The row index. */
 	private int rowIndex = -1;

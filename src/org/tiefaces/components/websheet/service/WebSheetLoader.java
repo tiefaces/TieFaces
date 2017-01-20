@@ -374,14 +374,17 @@ public class WebSheetLoader implements Serializable {
 	 * Clear workbook.
 	 */
 	private void clearWorkbook() {
-		parent.setWb(null);
 		parent.setFormulaEvaluator(null);
 		parent.setDataFormatter(null);
-		parent.setHeaderRows(null);
-		parent.setBodyRows(null);
 		parent.setSheetConfigMap(null);
 		parent.setTabs(null);
 		parent.setDataContext(null);
+		parent.setPicturesMap(null);
+		parent.setHeaderRows(null);
+		parent.setBodyRows(null);
+		parent.setWb(null);
+		parent.getHeaderRows().clear();
+		parent.getBodyRows().clear();
 		parent.getChartsMap().clear();
 		parent.getChartDataMap().clear();
 		parent.getChartAnchorsMap().clear();
@@ -436,14 +439,9 @@ public class WebSheetLoader implements Serializable {
 			}
 			parent.setWb(wb);
 			parent.setDataContext(dataContext);
-			parent.setFormulaEvaluator(parent.getWb().getCreationHelper()
-					.createFormulaEvaluator());
-			parent.setDataFormatter(new DataFormatter());
 			parent.setSheetConfigMap(new ConfigurationHandler(parent)
 					.buildConfiguration());
 			parent.reCalcMaxColCounts();
-			parent.setPicturesMap(parent.getPicHelper().getPictruesMap(
-					parent.getWb()));
 			parent.getChartHelper().loadChartsMap();
 			initSheet();
 			initTabs();
@@ -702,7 +700,7 @@ public class WebSheetLoader implements Serializable {
 		String sheetName = sheetConfig.getSheetName();
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
 
-		parent.setBodyRows(new ArrayList<FacesRow>());
+		parent.getBodyRows().clear();
 		clearCache();
 
 		for (int i = top; i <= bottom; i++) {

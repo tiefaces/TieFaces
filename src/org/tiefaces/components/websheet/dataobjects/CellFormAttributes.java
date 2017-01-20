@@ -5,6 +5,8 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
+
 /**
  * Form attributes object defined in configuration tab.
  * 
@@ -13,7 +15,12 @@ package org.tiefaces.components.websheet.dataobjects;
  *       in configuration tab.
  */
 
-public class CellFormAttributes {
+public class CellFormAttributes implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 904076322986778019L;
 
 	/** The type. */
 	private String type;

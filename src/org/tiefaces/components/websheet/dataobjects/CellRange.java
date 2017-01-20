@@ -5,6 +5,8 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
+
 import org.apache.poi.ss.util.CellReference;
 
 /**
@@ -16,7 +18,12 @@ import org.apache.poi.ss.util.CellReference;
  *       configuration tab.
  */
 
-public class CellRange {
+public class CellRange implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 2504125263900250917L;
 
 	/** The top row. */
 	private int topRow;

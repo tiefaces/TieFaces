@@ -124,10 +124,6 @@ public final class ColorUtility {
 			alpha = alphaInt / MILLION_NUMBERS;
 		}
 
-		LOG.fine("assmebleXcolor lumOff = " + lumOff + " lumMod = "
-				+ lumMod + " tint = " + tint + " alpha = " + alpha
-				+ " xssfcolor = " + bcolor.getRGBWithTint());
-
 		return new XColor(bcolor, alpha);
 
 	}

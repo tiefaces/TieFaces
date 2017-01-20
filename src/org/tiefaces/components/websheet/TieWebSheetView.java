@@ -35,7 +35,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return list of tabs.
 	 */
-	public final List<TabModel> getTabs() {
+	public List<TabModel> getTabs() {
 		return tabs;
 	}
 
@@ -45,7 +45,7 @@ public class TieWebSheetView {
 	 * @param ptabs
 	 *            list of tabs.
 	 */
-	public final void setTabs(final List<TabModel> ptabs) {
+	public void setTabs(final List<TabModel> ptabs) {
 		this.tabs = ptabs;
 	}
 
@@ -91,7 +91,7 @@ public class TieWebSheetView {
 		 * 
 		 * @return id.
 		 */
-		public final String getId() {
+		public String getId() {
 			return id;
 		}
 
@@ -100,7 +100,7 @@ public class TieWebSheetView {
 		 * 
 		 * @param pid id.
 		 */
-		public final void setId(final String pid) {
+		public void setId(final String pid) {
 			this.id = pid;
 		}
 
@@ -109,7 +109,7 @@ public class TieWebSheetView {
 		 * 
 		 * @return title.
 		 */
-		public final String getTitle() {
+		public String getTitle() {
 			return title;
 		}
 
@@ -118,7 +118,7 @@ public class TieWebSheetView {
 		 * 
 		 * @return type.
 		 */
-		public final String getType() {
+		public String getType() {
 			return type;
 		}
 	}
@@ -133,7 +133,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return webformtabview.
 	 */
-	public final TabView getWebFormTabView() {
+	public TabView getWebFormTabView() {
 		return webFormTabView;
 	}
 
@@ -143,7 +143,7 @@ public class TieWebSheetView {
 	 * @param pwebFormTabView
 	 *            webformtabview.
 	 */
-	public final void setWebFormTabView(final TabView pwebFormTabView) {
+	public void setWebFormTabView(final TabView pwebFormTabView) {
 		this.webFormTabView = pwebFormTabView;
 	}
 
@@ -157,7 +157,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return tab type.
 	 */
-	public final String getTabType() {
+	public String getTabType() {
 
 		int sheetId = webFormTabView.getActiveIndex();
 		if ((sheetId >= 0) && (tabs != null)) {
@@ -181,7 +181,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return string.
 	 */
-	public final String getTabStyle() {
+	public String getTabStyle() {
 
 		tabStyle = TieConstants.TAB_STYLE_VISIBLE;
 		int sheetId = webFormTabView.getActiveIndex();
@@ -200,7 +200,7 @@ public class TieWebSheetView {
 	 * @param ptabType
 	 *            tab type.
 	 */
-	public final void setTabType(final String ptabType) {
+	public void setTabType(final String ptabType) {
 		this.tabType = ptabType;
 	}
 
@@ -212,7 +212,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return maxrowsperpage.
 	 */
-	public final Integer getMaxRowsPerPage() {
+	public Integer getMaxRowsPerPage() {
 		return maxRowsPerPage;
 	}
 
@@ -222,7 +222,7 @@ public class TieWebSheetView {
 	 * @param pmaxRowsPerPage
 	 *            maxrowsperpage.
 	 */
-	public final void setMaxRowsPerPage(final Integer pmaxRowsPerPage) {
+	public void setMaxRowsPerPage(final Integer pmaxRowsPerPage) {
 		this.maxRowsPerPage = pmaxRowsPerPage;
 	}
 
@@ -236,7 +236,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return tablewidthstyle.
 	 */
-	public final String getTableWidthStyle() {
+	public String getTableWidthStyle() {
 		return tableWidthStyle;
 	}
 
@@ -246,7 +246,7 @@ public class TieWebSheetView {
 	 * @param ptableWidthStyle
 	 *            tablewidth style.
 	 */
-	public final void setTableWidthStyle(final String ptableWidthStyle) {
+	public void setTableWidthStyle(final String ptableWidthStyle) {
 		this.tableWidthStyle = ptableWidthStyle;
 	}
 
@@ -265,7 +265,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return linenumbercolumnwidth.
 	 */
-	public final int getLineNumberColumnWidth() {
+	public int getLineNumberColumnWidth() {
 		return lineNumberColumnWidth;
 	}
 
@@ -275,7 +275,7 @@ public class TieWebSheetView {
 	 * @param plineNumberColumnWidth
 	 *            column width.
 	 */
-	public final void setLineNumberColumnWidth(
+	public void setLineNumberColumnWidth(
 			final int plineNumberColumnWidth) {
 		this.lineNumberColumnWidth = plineNumberColumnWidth;
 	}
@@ -285,7 +285,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return add row column width.
 	 */
-	public final int getAddRowColumnWidth() {
+	public int getAddRowColumnWidth() {
 		return addRowColumnWidth;
 	}
 
@@ -295,7 +295,7 @@ public class TieWebSheetView {
 	 * @param addWidth
 	 *            add row column width.
 	 */
-	public final void setAddRowColumnWidth(final int addWidth) {
+	public void setAddRowColumnWidth(final int addWidth) {
 		this.addRowColumnWidth = addWidth;
 	}
 
@@ -304,7 +304,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return column width style.
 	 */
-	public final String getLineNumberColumnWidthStyle() {
+	public String getLineNumberColumnWidthStyle() {
 		return lineNumberColumnWidthStyle;
 	}
 
@@ -314,7 +314,7 @@ public class TieWebSheetView {
 	 * @param lineNumberCoumnWidthStyle
 	 *            style.
 	 */
-	public final void setLineNumberColumnWidthStyle(
+	public void setLineNumberColumnWidthStyle(
 			final String lineNumberCoumnWidthStyle) {
 		this.lineNumberColumnWidthStyle = lineNumberCoumnWidthStyle;
 	}
@@ -324,7 +324,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return style.
 	 */
-	public final String getAddRowColumnWidthStyle() {
+	public String getAddRowColumnWidthStyle() {
 		return addRowColumnWidthStyle;
 	}
 
@@ -334,7 +334,7 @@ public class TieWebSheetView {
 	 * @param addWidthStyle
 	 *            style.
 	 */
-	public final void setAddRowColumnWidthStyle(final String addWidthStyle) {
+	public void setAddRowColumnWidthStyle(final String addWidthStyle) {
 		this.addRowColumnWidthStyle = addWidthStyle;
 	}
 
@@ -346,7 +346,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return true if allowed.
 	 */
-	public final boolean isBodyAllowAddRows() {
+	public boolean isBodyAllowAddRows() {
 		return bodyAllowAddRows;
 	}
 
@@ -356,7 +356,7 @@ public class TieWebSheetView {
 	 * @param pbodyAllowAddRows
 	 *            true if allowed.
 	 */
-	public final void setBodyAllowAddRows(final boolean pbodyAllowAddRows) {
+	public void setBodyAllowAddRows(final boolean pbodyAllowAddRows) {
 		this.bodyAllowAddRows = pbodyAllowAddRows;
 	}
 
@@ -368,7 +368,7 @@ public class TieWebSheetView {
 	 * 
 	 * @return true if show.
 	 */
-	public final boolean isShowLineNumber() {
+	public boolean isShowLineNumber() {
 		return showLineNumber;
 	}
 
@@ -378,7 +378,7 @@ public class TieWebSheetView {
 	 * @param pshowLineNumber
 	 *            true if show.
 	 */
-	public final void setShowLineNumber(final boolean pshowLineNumber) {
+	public void setShowLineNumber(final boolean pshowLineNumber) {
 		this.showLineNumber = pshowLineNumber;
 	}
 

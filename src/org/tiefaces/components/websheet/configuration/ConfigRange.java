@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
+import org.tiefaces.components.websheet.dataobjects.SerialCellAddress;
 
 /**
  * Simple class for area range. Also include nested command list. Note: command
@@ -141,7 +142,7 @@ public class ConfigRange {
 			final boolean alsoCreateAddr) {
 		this.attrs.setFirstRowRef(pFirstRowRef);
 		if (alsoCreateAddr) {
-			this.setFirstRowAddr(new CellAddress(pFirstRowRef));
+			this.setFirstRowAddr(new SerialCellAddress(pFirstRowRef));
 		}
 	}
 
@@ -185,7 +186,7 @@ public class ConfigRange {
 			}
 			this.attrs.setLastRowPlusRef(cell);
 			if (alsoSetAddr) {
-				this.setLastRowPlusAddr(new CellAddress(cell));
+				this.setLastRowPlusAddr(new SerialCellAddress(cell));
 			}
 		} else {
 			this.attrs.setLastRowPlusRef(null);
@@ -200,7 +201,7 @@ public class ConfigRange {
 	 *
 	 * @return the first row addr
 	 */
-	public final CellAddress getFirstRowAddr() {
+	public final SerialCellAddress getFirstRowAddr() {
 		return attrs.getFirstRowAddr();
 	}
 
@@ -210,7 +211,7 @@ public class ConfigRange {
 	 * @param pFirstRowAddr
 	 *            the new first row addr
 	 */
-	public final void setFirstRowAddr(final CellAddress pFirstRowAddr) {
+	public final void setFirstRowAddr(final SerialCellAddress pFirstRowAddr) {
 		this.attrs.setFirstRowAddr(pFirstRowAddr);
 	}
 
@@ -219,7 +220,7 @@ public class ConfigRange {
 	 *
 	 * @return the last row plus addr
 	 */
-	public final CellAddress getLastRowPlusAddr() {
+	public final SerialCellAddress getLastRowPlusAddr() {
 		return attrs.getLastRowPlusAddr();
 	}
 
@@ -230,7 +231,7 @@ public class ConfigRange {
 	 *            the new last row plus addr
 	 */
 	public final void setLastRowPlusAddr(
-			final CellAddress pLastRowPlusAddr) {
+			final SerialCellAddress pLastRowPlusAddr) {
 		this.attrs.setLastRowPlusAddr(pLastRowPlusAddr);
 	}
 

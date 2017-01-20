@@ -2,13 +2,14 @@
  * Copyright 2015 TieFaces.
  * Licensed under MIT
  */
-package org.tiefaces.components.websheet;
+package org.tiefaces.components.websheet.chart;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.tiefaces.components.websheet.chart.ChartData;
 
 /**
  * Collection class for charts data.
@@ -16,7 +17,7 @@ import org.tiefaces.components.websheet.chart.ChartData;
  * @author Jason Jiang
  *
  */
-public class ChartsData {
+public class ChartsData  {
 	/** hold chart data for current display sheet. */
 	private Map<String, ChartData> chartDataMap;
 	/**
@@ -44,6 +45,9 @@ public class ChartsData {
 	 * @return chartdatamap.
 	 */
 	public final Map<String, ChartData> getChartDataMap() {
+		if (this.chartDataMap == null) {
+			this.chartDataMap = new HashMap<String, ChartData>();
+		}
 		return chartDataMap;
 	}
 
@@ -54,6 +58,10 @@ public class ChartsData {
 	 */
 
 	public final Map<String, BufferedImage> getChartsMap() {
+		if (this.chartsMap == null) {
+			this.chartsMap = new HashMap<String, BufferedImage>();
+		}		
+		
 		return chartsMap;
 	}
 
@@ -64,6 +72,10 @@ public class ChartsData {
 	 */
 
 	public final Map<String, ClientAnchor> getChartAnchorsMap() {
+		if (this.chartAnchorsMap == null) {
+			this.chartAnchorsMap = new HashMap<String, ClientAnchor>();
+		}
+		
 		return chartAnchorsMap;
 	}
 
@@ -73,6 +85,10 @@ public class ChartsData {
 	 * @return chartpositionmap.
 	 */
 	public final Map<String, String> getChartPositionMap() {
+		if (this.chartPositionMap == null) {
+			this.chartPositionMap = new HashMap<String, String>();
+		}
+		
 		return chartPositionMap;
 	}
 
@@ -88,16 +104,7 @@ public class ChartsData {
 		this.chartDataMap = pchartDataMap;
 	}
 
-	/**
-	 * set chartsmap.
-	 * 
-	 * @param pchartsMap
-	 *            chartsmap.
-	 */
-	public final void setChartsMap(
-			final Map<String, BufferedImage> pchartsMap) {
-		this.chartsMap = pchartsMap;
-	}
+
 
 	/**
 	 * set chartanchors map.

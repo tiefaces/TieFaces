@@ -3,19 +3,20 @@
  * Licensed under MIT
  */
 
-package org.tiefaces.components.websheet;
+package org.tiefaces.components.websheet.service;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.logging.Logger;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 import javax.imageio.ImageIO;
+import javax.inject.Named;
 
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -27,10 +28,14 @@ import org.primefaces.model.StreamedContent;
  *
  */
 
-@ManagedBean
+@Named
 @SessionScoped
-public class TieWebSheetChartsService {
+public class TieWebSheetChartsService implements Serializable {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -7490246985617724098L;
 	/** log instance. */
 	private static final Logger LOG = Logger
 			.getLogger(TieWebSheetChartsService.class.getName());
@@ -39,7 +44,7 @@ public class TieWebSheetChartsService {
 	 * Constructor.
 	 */
 	public TieWebSheetChartsService() {
-		LOG.fine("TieWebSheetBean Constructor");
+		LOG.fine("ChartsService Constructor");
 	}
 
 	/**
@@ -49,7 +54,7 @@ public class TieWebSheetChartsService {
 	 * @throws IOException
 	 *             exception.
 	 */
-	public final StreamedContent getChart() throws IOException {
+	public StreamedContent getChart() throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {

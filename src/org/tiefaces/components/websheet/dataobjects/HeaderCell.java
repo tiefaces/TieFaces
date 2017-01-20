@@ -5,6 +5,7 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 /**
@@ -12,7 +13,12 @@ import java.util.logging.Logger;
  * 
  * @author Jason Jiang
  */
-public class HeaderCell {
+public class HeaderCell implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 1669739622422183590L;
 
 	/** logger. */
 	private static final Logger LOG  = Logger.getLogger(

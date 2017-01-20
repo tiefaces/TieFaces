@@ -12,7 +12,7 @@ import java.util.TreeMap;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
-import org.tiefaces.components.websheet.CellAttributesMap;
+import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.service.CellHelper;
 
 /**

@@ -4,6 +4,8 @@
  */
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
+
 
 /**
  * static snapshot for current map object.
@@ -12,9 +14,14 @@ package org.tiefaces.components.websheet.dataobjects;
  * @author Jason Jiang
  *
  */
-public class MapObject {
+public class MapObject implements Serializable {
 	
 	
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 1562494509399249829L;
+
 	/** The key. */
 	private Object key = null;
 	

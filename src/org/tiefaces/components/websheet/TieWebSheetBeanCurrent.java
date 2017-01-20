@@ -1,12 +1,18 @@
 package org.tiefaces.components.websheet;
 
+import java.io.Serializable;
+
 /**
  * Current collections for websheet bean.
  * 
  * @author Jason Jiang
  *
  */
-public class TieWebSheetBeanCurrent {
+public class TieWebSheetBeanCurrent implements Serializable {
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -4330466518786654088L;
 	/** current data context name. */
 	private String currentDataContextName;
 	/** current tab name of display sheet. */

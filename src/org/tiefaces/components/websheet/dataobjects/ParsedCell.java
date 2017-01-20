@@ -4,13 +4,20 @@
  */
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
+
 import org.apache.poi.ss.util.CellReference;
 import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
 
 /**
  * The Class ParsedCell.
  */
-public class ParsedCell {
+public class ParsedCell implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 3548212424005260206L;
 
 	/** The sheet name. */
 	private String sheetName;

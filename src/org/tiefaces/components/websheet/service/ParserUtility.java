@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.tiefaces.common.TieConstants;
-import org.tiefaces.components.websheet.CellAttributesMap;
+import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 
 /**

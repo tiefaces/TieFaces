@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +29,12 @@ import org.tiefaces.components.websheet.service.ShiftFormulaUtility;
  *
  */
 
-public class FormCommand extends ConfigCommand {
+public class FormCommand extends ConfigCommand implements Serializable  {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -6612626038249384415L;
 	/** name holder. */
 	private String name;
 	/** header holder. */

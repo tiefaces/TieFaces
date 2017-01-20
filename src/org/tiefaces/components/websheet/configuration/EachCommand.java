@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -18,8 +19,12 @@ import java.util.Map;
  * @author Jason Jiang
  *
  */
-public class EachCommand extends ConfigCommand {
+public class EachCommand extends ConfigCommand  implements Serializable  {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -281289717576958023L;
 	/** items holder. */
 	private String items;
 	/** var holder. */

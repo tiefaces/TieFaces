@@ -2,12 +2,11 @@
  * Copyright 2015 TieFaces.
  * Licensed under MIT
  */
-package org.tiefaces.components.websheet;
+package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 
 /**
  * Cell Attributes Map. Contain several related maps for cell.
@@ -15,7 +14,12 @@ import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
  * @author Jason Jiang
  *
  */
-public class CellAttributesMap {
+public class CellAttributesMap implements Serializable {
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -1080211494689904695L;
+
 	/**
 	 * hold comments for the current sheet config form. key is $$ - for normal
 	 * comment $ - empty method comment $xxx -- method comment while xxx is

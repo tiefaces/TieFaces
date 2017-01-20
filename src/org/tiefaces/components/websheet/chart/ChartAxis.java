@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.chart;
 
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
@@ -16,7 +17,7 @@ import org.tiefaces.components.websheet.configuration.CellControlsHelper;
  * @author Jason Jiang
  *
  */
-public class ChartAxis {
+public class ChartAxis  {
 
 	/** logger. */
 	private static final Logger LOG = Logger.getLogger(

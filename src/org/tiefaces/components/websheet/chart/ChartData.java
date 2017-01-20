@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.chart;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
  *
  */
 public class ChartData {
+
 
 	/** id. */
 	private String id;

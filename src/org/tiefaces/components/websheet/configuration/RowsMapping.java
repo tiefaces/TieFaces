@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +15,12 @@ import org.apache.poi.ss.usermodel.Row;
 /**
  * The Class RowsMapping.
  */
-public class RowsMapping {
+public class RowsMapping implements Serializable {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -2827255600933776496L;
 	/** The rows map. */
 	private Map<Integer, List<Row>> rowsMap = new HashMap<Integer, List<Row>>();
 

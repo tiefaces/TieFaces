@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -22,7 +23,12 @@ import org.tiefaces.components.websheet.service.CellUtility;
  * @author Jason Jiang
  *
  */
-public class CachedCells {
+public class CachedCells implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = 916959757743324812L;
 
 	/** logger. */
 	private static final Logger LOG = Logger.getLogger(

@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,12 @@ import java.util.Map;
  * @author Jason Jiang
  *
  */
-public class MapSnapShot {
+public class MapSnapShot implements Serializable {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -5867976654801671714L;
 	/** The snap list. */
 	private List<MapObject> snapList = new ArrayList<MapObject>();
 

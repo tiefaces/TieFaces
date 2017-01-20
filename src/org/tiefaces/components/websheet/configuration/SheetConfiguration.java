@@ -5,6 +5,7 @@
 
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,12 @@ import org.tiefaces.components.websheet.dataobjects.CellRange;
  *
  * @author Jason Jiang
  */
-public class SheetConfiguration {
+public class SheetConfiguration implements Serializable {
+
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -108522960628560962L;
 
 	/** The form name. */
 	private String formName; // corresponds to tab name of configuration tab

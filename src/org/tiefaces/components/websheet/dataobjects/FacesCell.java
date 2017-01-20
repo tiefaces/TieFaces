@@ -5,6 +5,7 @@
 
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +17,12 @@ import org.tiefaces.common.TieConstants;
  * 
  * @author Jason Jiang
  */
-public class FacesCell {
+public class FacesCell implements Serializable {
 
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -6811957210518221928L;
 	/** cell web css style. */
 	private String style = "";
 	/** column css style. */
