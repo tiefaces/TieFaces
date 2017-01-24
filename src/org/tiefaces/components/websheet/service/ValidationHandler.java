@@ -94,7 +94,7 @@ public class ValidationHandler {
 	 * @throws ValidatorException
 	 *             the validator exception
 	 */
-	private void validateWithRowColInCurrentPage(final int row,
+	public void validateWithRowColInCurrentPage(final int row,
 			final int col, final boolean passEmptyCheck)
 			throws ValidatorException {
 

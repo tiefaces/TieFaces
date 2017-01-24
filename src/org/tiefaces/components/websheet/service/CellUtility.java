@@ -631,39 +631,6 @@ public final class CellUtility {
 		return validateMaps.get(key);
 	}
 
-	/**
-	 * Find cell attributes.
-	 *
-	 * @param sheetConfig
-	 *            the sheet config
-	 * @param cell
-	 *            the cell
-	 * @param row
-	 *            the row
-	 * @param bodyTopRow
-	 *            the body top row
-	 * @return the list
-	 */
-	public static List<CellFormAttributes> findCellAttributes(
-			final SheetConfiguration sheetConfig, final Cell cell,
-			final int row, final int bodyTopRow) {
-
-		boolean repeatZone = false;
-		if (sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat")) {
-			int initRows = sheetConfig.getBodyInitialRows();
-			if (initRows < 1) {
-				initRows = 1;
-			}
-			if ((row >= bodyTopRow) && (row < (bodyTopRow + initRows))) {
-				repeatZone = true;
-			}
-			return findCellAttributesWithOffset(sheetConfig, cell,
-					initRows, bodyTopRow, repeatZone);
-		}
-		return findCellAttributesWithOffset(sheetConfig, cell, 1,
-				bodyTopRow, false);
-
-	}
 
 	// This method mainly doing 2 things
 	// 1. covert $A to $A$rowIndex
@@ -1466,26 +1433,6 @@ public final class CellUtility {
 		return list;
 	}
 
-	/**
-	 * Gets the row col from excel reference name.
-	 *
-	 * @param excelRef
-	 *            the excel ref
-	 * @return the row col from excel reference name
-	 */
-	public static String[] getRowColFromExcelReferenceName(
-			final String excelRef) {
-		String[] parts = excelRef.split("\\$");
-		String[] list = { "", "" };
-		int i = parts.length;
-		if (i > 1) {
-			list[1] = parts[1]; // column
-		}
-		if (i > 2) {
-			list[0] = parts[2]; // row
-		}
-		return list;
-	}
 
 	/**
 	 * Gets the inits the rows from config.
@@ -1520,47 +1467,7 @@ public final class CellUtility {
 		return bottom;
 	}
 
-	/**
-	 * Gets the cell reference with config.
-	 *
-	 * @param targetCell
-	 *            the target cell
-	 * @param datarow
-	 *            the datarow
-	 * @param initialRows
-	 *            the initial rows
-	 * @param sheetConfig
-	 *            the sheet config
-	 * @param sheet
-	 *            the sheet
-	 * @return the cell reference with config
-	 */
-	public static Cell getCellReferenceWithConfig(String targetCell,
-			final int datarow, final int initialRows,
-			final SheetConfiguration sheetConfig, final Sheet sheet) {
 
-		String[] rowcol = getRowColFromExcelReferenceName(targetCell);
-		if (rowcol[0].isEmpty()) {
-			if (rowcol[1].isEmpty()) {
-				return null; // both empty meaning not valid targetcell
-			}
-			targetCell = TieConstants.CELL_ADDR_PRE_FIX
-					+ rowcol[1]
-					+ TieConstants.CELL_ADDR_PRE_FIX
-					+ (datarow + sheetConfig.getBodyCellRange().getTopRow() + 1);
-		} else {
-			int row = Integer.parseInt(rowcol[0]);
-			if ((sheetConfig.getFormBodyType().equalsIgnoreCase("Repeat"))
-					&& (row > (sheetConfig.getBodyCellRange().getTopRow() + 1))) {
-				targetCell = TieConstants.CELL_ADDR_PRE_FIX + rowcol[1]
-						+ TieConstants.CELL_ADDR_PRE_FIX
-						+ (row + initialRows - 1);
-			}
-		}
-		Cell cell = TieWebSheetUtility
-				.getCellByReference(targetCell, sheet);
-		return cell;
-	}
 
 	/**
 	 * Gets the faces cell from body row.

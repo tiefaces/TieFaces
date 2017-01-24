@@ -206,13 +206,15 @@ public class CellMap implements Serializable, java.util.Map {
 			String chartId = facesCell.getChartId();
 			String chartViewId = Integer.toHexString(
 					System.identityHashCode(parent.getWb())) + chartId;
-			Map<String, Object> sessionMap = context.getExternalContext()
-					.getSessionMap();
-			if (sessionMap.get(chartViewId) == null) {
-				sessionMap.put(chartViewId,
-						parent.getChartsMap().get(chartId));
-				LOG.fine("load chart put session map id = " + chartViewId);
-			}
+			if (context != null) {
+				Map<String, Object> sessionMap = context.getExternalContext()
+						.getSessionMap();
+				if (sessionMap.get(chartViewId) == null) {
+					sessionMap.put(chartViewId,
+							parent.getChartsMap().get(chartId));
+					LOG.fine("load chart put session map id = " + chartViewId);
+				}
+			}	
 			return chartViewId;
 		} else {
 			return null;

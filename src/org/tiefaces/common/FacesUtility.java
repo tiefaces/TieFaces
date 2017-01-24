@@ -36,10 +36,6 @@ public final class FacesUtility {
 		// not called
 	}
 
-	/**
-	 * default stream buffer setting.
-	 */
-	private static final int DEFAULT_STREAM_BUFFER_SIZE = 10240;
 
 	/**
 	 * return faces context resource paths.
@@ -156,52 +152,7 @@ public final class FacesUtility {
 		return FacesContext.getCurrentInstance();
 	}
 
-	/**
-	 * convert input stream to byte array.
-	 * 
-	 * @param input
-	 *            input stream.
-	 * @return byte array.
-	 * @throws IOException
-	 *             throw exception.
-	 */
-	public static byte[] toByteArray(final InputStream input)
-			throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		stream(input, output);
-		return output.toByteArray();
-	}
 
-	/**
-	 * stream from input into output.
-	 * 
-	 * @param input
-	 *            input stream.
-	 * @param output
-	 *            output stream.
-	 * @return stream size.
-	 * @throws IOException
-	 *             Exception.
-	 */
-
-	public static long stream(final InputStream input,
-			final OutputStream output) throws IOException {
-		try (ReadableByteChannel inputChannel = Channels.newChannel(input);
-				WritableByteChannel outputChannel = Channels
-						.newChannel(output)) {
-			ByteBuffer buffer = ByteBuffer
-					.allocateDirect(DEFAULT_STREAM_BUFFER_SIZE);
-			long size = 0;
-
-			while (inputChannel.read(buffer) != -1) {
-				buffer.flip();
-				size += outputChannel.write(buffer);
-				buffer.clear();
-			}
-
-			return size;
-		}
-	}
 
 	/**
 	 * remove prefix path of the full path.

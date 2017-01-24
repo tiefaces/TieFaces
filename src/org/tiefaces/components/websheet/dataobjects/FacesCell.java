@@ -506,54 +506,5 @@ public class FacesCell implements Serializable {
 		this.hasSaveAttr = phasSaveAttr;
 	}
 
-	/**
-	 * Obtain a human readable representation.
-	 * 
-	 * @return String Human readable label
-	 */
-	public final String toString() {
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("{");
-		sb.append("style = " + style);
-		sb.append(",");
-		sb.append("columnStyle = " + columnStyle);
-		sb.append(",");
-		sb.append("colspan = " + colspan);
-		sb.append(",");
-		sb.append("rowspan = " + rowspan);
-		sb.append(",");
-		sb.append("columnIndex = " + columnIndex);
-		sb.append(",");
-		sb.append("invalid = " + invalid);
-		sb.append(",");
-		sb.append("errormsg = " + errormsg);
-		sb.append(",");
-		sb.append("inputType = " + inputType);
-		sb.append(",");
-		sb.append("containPic = " + containPic);
-		sb.append(",");
-		sb.append("pictureId = " + pictureId);
-		sb.append(",");
-		sb.append("pictureStyle = " + pictureStyle);
-		sb.append(",");
-		sb.append("decimalPlaces = " + decimalPlaces);
-		sb.append(",");
-		sb.append("symbol = " + symbol);
-		sb.append(",");
-		sb.append("symbolPosition = " + symbolPosition);
-		sb.append(",");
-		sb.append("containChart = " + containChart);
-		sb.append(",");
-		sb.append("chartId = " + chartId);
-		sb.append(",");
-		sb.append("chartStyle = " + chartStyle);
-		sb.append(",");
-		sb.append("control = " + control);
-		sb.append(",");
-		sb.append("saveAttr = " + hasSaveAttr);
-		sb.append("}");
-		return sb.toString();
-	}
 
 }
