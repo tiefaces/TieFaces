@@ -37,7 +37,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>${javase.version}</maven.compiler.source>
 		<maven.compiler.target>${javase.version}</maven.compiler.target>
-		<maven.source.excludeResources>true</maven.source.excludeResources>		
 		
 	</properties>
 
@@ -121,7 +120,9 @@
 
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+	<sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>tests</testSourceDirectory>	
+	
     <resources>
       <resource>
         <directory>src</directory>
@@ -130,6 +131,16 @@
         </excludes>
       </resource>	
      </resources> 	
+
+    <testResources>
+      <testResource>
+        <directory>tests</directory>
+        <excludes>
+          <exclude>org/*.*</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+         
 		<plugins>
 
 			<plugin>

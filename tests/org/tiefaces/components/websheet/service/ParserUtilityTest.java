@@ -40,7 +40,7 @@ public class ParserUtilityTest {
 	public final void testIsCommandString() throws Exception {
 		assertTrue(ParserUtility.isCommandString("tie:form"));
 		assertFalse(ParserUtility.isCommandString(""));
-		assertFalse(ParserUtility.isCommandString(null));
+		assertFalse(ParserUtility.isCommandString("hello"));
 	}
 
 	@Test
