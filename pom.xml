@@ -30,10 +30,15 @@
 	</licenses>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<javase.version>1.7</javase.version>
 		<javaee.version>7.0</javaee.version>
+		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>${javase.version}</maven.compiler.source>
+		<maven.compiler.target>${javase.version}</maven.compiler.target>
+		<maven.source.excludeResources>true</maven.source.excludeResources>		
+		
 	</properties>
 
 	<developers>
@@ -126,15 +131,6 @@
       </resource>	
      </resources> 	
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${javase.version}</source>
-					<target>${javase.version}</target>
-				</configuration>
-			</plugin>
 
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
@@ -193,14 +189,15 @@
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-jar-plugin</artifactId>
-			    <configuration>
-			        <archive>                   
-			            <manifest>
-			                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-			                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-			            </manifest>
-			        </archive>
-			    </configuration>
+			    <version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>			    
 			</plugin>
 
 		</plugins>
