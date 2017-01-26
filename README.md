@@ -1,4 +1,5 @@
 [![Maven](https://maven-badges.herokuapp.com/maven-central/org.tiefaces/tiefaces/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.tiefaces/tiefaces)
+[![Travis](https://travis-ci.org/tiefaces/TieFaces.svg?branch=master)](https://travis-ci.org/tiefaces/TieFaces)
 
 # Tiefaces Web Sheet
 
