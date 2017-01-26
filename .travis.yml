@@ -3,3 +3,5 @@ install: mvn install -DskipTests=true -Dgpg.skip=true
 jdk:
 - oraclejdk7
 script: mvn clean test
+after_success:
+  - mvn clean test coveralls:report
