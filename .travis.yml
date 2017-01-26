@@ -4,4 +4,4 @@ jdk:
 - oraclejdk7
 script: mvn clean test
 after_success:
-  - mvn clean test coveralls:report
+  - mvn clean test jacoco:report coveralls:report
