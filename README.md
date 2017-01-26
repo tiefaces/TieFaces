@@ -1,5 +1,7 @@
 [![Maven](https://maven-badges.herokuapp.com/maven-central/org.tiefaces/tiefaces/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.tiefaces/tiefaces)
 [![Travis](https://travis-ci.org/tiefaces/TieFaces.svg?branch=master)](https://travis-ci.org/tiefaces/TieFaces)
+[![Coverage Status](https://coveralls.io/repos/github/tiefaces/TieFaces/badge.svg)](https://coveralls.io/github/tiefaces/TieFaces)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 # Tiefaces Web Sheet
 
