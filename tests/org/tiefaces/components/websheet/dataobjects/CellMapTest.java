@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class CellMapTest {
 	 */
 	@Test
 	public final void testKeySet() throws Exception {
-		assertNull(cellMap.keySet());
+		assertTrue(cellMap.keySet().isEmpty());
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class CellMapTest {
 	 */
 	@Test
 	public final void testValues() throws Exception {
-		assertNull(cellMap.values());
+		assertTrue(cellMap.values().isEmpty());
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class CellMapTest {
 	 */
 	@Test
 	public final void testEntrySet() throws Exception {
-		assertNull(cellMap.entrySet());
+		assertTrue(cellMap.entrySet().isEmpty());
 	}
 
 	/**
