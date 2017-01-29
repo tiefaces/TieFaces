@@ -5,16 +5,9 @@
 
 package org.tiefaces.common;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -35,7 +28,6 @@ public final class FacesUtility {
 	private FacesUtility() {
 		// not called
 	}
-
 
 	/**
 	 * return faces context resource paths.
@@ -152,8 +144,6 @@ public final class FacesUtility {
 		return FacesContext.getCurrentInstance();
 	}
 
-
-
 	/**
 	 * remove prefix path of the full path.
 	 * 
@@ -167,8 +157,8 @@ public final class FacesUtility {
 			final String resource) {
 		String normalizedResource = resource;
 		if (normalizedResource.startsWith(prefix)) {
-			normalizedResource = normalizedResource.substring(prefix
-					.length() - 1);
+			normalizedResource =
+					normalizedResource.substring(prefix.length() - 1);
 		}
 
 		return normalizedResource;
@@ -183,24 +173,24 @@ public final class FacesUtility {
 	 *            input type.
 	 * @return true if input meet type, otherwise false.
 	 */
-	@SuppressWarnings("resource")
 	public static boolean evalInputType(final String input,
 			final String type) {
 
 		Scanner scanner = new Scanner(input);
-		if (type.equalsIgnoreCase("Integer")) {
-			return scanner.hasNextInt();
-		} else if (type.equalsIgnoreCase("Double")) {
-			return scanner.hasNextDouble();
-		} else if (type.equalsIgnoreCase("Boolean")) {
-			return scanner.hasNextBoolean();
-		} else if (type.equalsIgnoreCase("Byte")) {
-			return scanner.hasNextByte();
+		boolean ireturn=false;
+		if ("Integer".equalsIgnoreCase(type)) {
+			ireturn =  scanner.hasNextInt();
+		} else if ("Double".equalsIgnoreCase(type)) {
+			ireturn = scanner.hasNextDouble();
+		} else if ("Boolean".equalsIgnoreCase(type)) {
+			ireturn = scanner.hasNextBoolean();
+		} else if ("Byte".equalsIgnoreCase(type)) {
+			ireturn = scanner.hasNextByte();
 		} else if (type.toLowerCase().startsWith("text")) {
-			return true;
+			ireturn = true;
 		}
-
-		return false;
+		scanner.close();
+		return ireturn;
 	}
 
 	/**
@@ -291,7 +281,7 @@ public final class FacesUtility {
 			throw new IllegalArgumentException();
 		}
 
-		BigDecimal bd = new BigDecimal(value);
+		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.setScale(places, RoundingMode.HALF_UP);
 		return bd.doubleValue();
 	}

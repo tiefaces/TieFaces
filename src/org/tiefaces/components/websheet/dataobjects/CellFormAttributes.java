@@ -93,9 +93,10 @@ public class CellFormAttributes implements Serializable {
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("type = " + type);
 		sb.append(",");

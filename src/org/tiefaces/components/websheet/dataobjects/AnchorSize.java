@@ -19,6 +19,27 @@ public class AnchorSize {
 	private int width;
 	/** anchor's height. */
 	private int height;
+	
+	/**
+	 * Constructor.
+	 *
+	 * @param pleft
+	 *            the pleft
+	 * @param ptop
+	 *            the ptop
+	 * @param pwidth
+	 *            the pwidth
+	 * @param pheight
+	 *            the pheight
+	 */
+	public AnchorSize(final int pleft, final int ptop, final int pwidth,
+			final int pheight) {
+		super();
+		this.left = pleft;
+		this.top = ptop;
+		this.width = pwidth;
+		this.height = pheight;
+	}	
 
 	/**
 	 * Gets the top.
@@ -96,35 +117,16 @@ public class AnchorSize {
 		this.height = pheight;
 	}
 
-	/**
-	 * Constructor.
-	 *
-	 * @param pleft
-	 *            the pleft
-	 * @param ptop
-	 *            the ptop
-	 * @param pwidth
-	 *            the pwidth
-	 * @param pheight
-	 *            the pheight
-	 */
-	public AnchorSize(final int pleft, final int ptop, final int pwidth,
-			final int pheight) {
-		super();
-		this.left = pleft;
-		this.top = ptop;
-		this.width = pwidth;
-		this.height = pheight;
-	}
+
 
 	/**
 	 * show human readable message.
 	 *
 	 * @return the string
 	 */
+	@Override
 	public final String toString() {
-
-		StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("left = " + left);
 		sb.append(",");

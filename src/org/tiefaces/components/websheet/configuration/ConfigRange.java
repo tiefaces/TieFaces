@@ -7,6 +7,7 @@ package org.tiefaces.components.websheet.configuration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -49,7 +50,6 @@ public class ConfigRange {
 	 */
 	public ConfigRange() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -116,8 +116,7 @@ public class ConfigRange {
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			LOG.severe("shiftRowRef error =" + ex.getLocalizedMessage());
+			LOG.log(Level.SEVERE,"shiftRowRef error =" + ex.getLocalizedMessage(), ex);
 		}
 	}
 
@@ -242,7 +241,7 @@ public class ConfigRange {
 	 */
 	public final List<ConfigCommand> getCommandList() {
 		if (this.commandList == null) {
-			this.commandList = new ArrayList<ConfigCommand>();
+			this.commandList = new ArrayList<>();
 		}
 		return this.commandList;
 	}
@@ -305,12 +304,8 @@ public class ConfigRange {
 			final List<RowsMapping> currentRowsMappingList) {
 		LOG.fine("build xls sheet at row : " + atRow);
 
-		// List<Row> staticRows = setUpBuildRows(sheet,
-		// this.getFirstRowRef().getRowIndex(),
-		// this.getLastRowPlusRef().getRowIndex(), this.getCommandList());
 		if (commandList != null) {
 			for (int i = 0; i < commandList.size(); i++) {
-				// cellRange.resetChangeMatrix();
 				Command command = commandList.get(i);
 				command.setFinalLength(0);
 				int populatedLength = command.buildAt(fullName,
@@ -325,10 +320,9 @@ public class ConfigRange {
 		buildCells(fullName, configBuildRef, atRow, context,
 				currentRowsMappingList);
 
-		int finalLength = this.getLastRowPlusRef().getRowIndex()
+		return this.getLastRowPlusRef().getRowIndex()
 				- this.getFirstRowRef().getRowIndex();
 
-		return finalLength;
 
 	}
 
@@ -361,7 +355,7 @@ public class ConfigRange {
 			final Map<String, Object> context,
 			final List<RowsMapping> rowsMappingList) {
 
-		if ((context == null) || (context.size() == 0)) {
+		if ((context == null) || context.isEmpty()) {
 			// no need to evaluate as there's no data object.
 			return;
 		}
@@ -384,7 +378,6 @@ public class ConfigRange {
 			Row row = configBuildRef.getSheet().getRow(i);
 			if ((row != null)
 					&& ConfigurationHelper.isStaticRowRef(this, row)) {
-				new StringBuffer();
 				for (Cell cell : row) {
 					try {
 						ConfigurationHelper.evaluate(context, cell,
@@ -407,11 +400,10 @@ public class ConfigRange {
 						}
 
 					} catch (Exception ex) {
-						ex.printStackTrace();
-						LOG.severe("build cell ( row = "
+						LOG.log(Level.SEVERE,"build cell ( row = "
 								+ cell.getRowIndex() + " column = "
 								+ cell.getColumnIndex() + " error = "
-								+ ex.getLocalizedMessage());
+								+ ex.getLocalizedMessage(), ex);
 					}
 				}
 				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName);

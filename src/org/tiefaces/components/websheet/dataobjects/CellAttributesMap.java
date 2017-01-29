@@ -163,6 +163,8 @@ public class CellAttributesMap implements Serializable {
 	}
 
 	/**
+	 * Gets the cell validate attributes.
+	 *
 	 * @return the cellValidateAttributes
 	 */
 	public final Map<String, List<CellFormAttributes>> getCellValidateAttributes() {
@@ -170,6 +172,8 @@ public class CellAttributesMap implements Serializable {
 	}
 
 	/**
+	 * Sets the cell validate attributes.
+	 *
 	 * @param pcellValidateAttributes
 	 *            the cellValidateAttributes to set
 	 */

@@ -63,7 +63,7 @@ public class PieChart implements ChartObject {
 	public final CTAxDataSource getCtAxDataSourceFromSerList(
 			final List serList) {
 
-		if ((serList != null) && (serList.size() > 0)
+		if ((serList != null) && (!serList.isEmpty())
 				&& (serList.get(0) instanceof CTPieSer)) {
 			return ((CTPieSer) serList.get(0)).getCat();
 		}
@@ -127,7 +127,7 @@ public class PieChart implements ChartObject {
 			if (dptList == null) {
 				// return empty list instead of null for pie.
 				// this will ensure pie create valueColorList in serial object.
-				dptList = new ArrayList<CTDPt>();
+				dptList = new ArrayList<>();
 			}
 			return dptList;
 		}
@@ -142,7 +142,6 @@ public class PieChart implements ChartObject {
 	 */
 	@Override
 	public final boolean isLineColor() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

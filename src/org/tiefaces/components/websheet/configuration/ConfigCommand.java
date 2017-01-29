@@ -4,6 +4,9 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
@@ -14,6 +17,10 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 
 public abstract class ConfigCommand implements Command {
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(
+			ConfigCommand.class.getName());
+		
 	/** Type Name. */
 	private String commandTypeName;
 	/** Range. */
@@ -170,7 +177,7 @@ public abstract class ConfigCommand implements Command {
 		try {
 			return Integer.parseInt(lengthStr);
 		} catch (Exception ex) {
-			// do nothing
+			LOG.log(Level.FINE,"canot calcLength :"+ex.getLocalizedMessage(), ex);
 		}
 		return 0;
 	}

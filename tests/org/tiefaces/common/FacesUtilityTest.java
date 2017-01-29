@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.common;
 
 import static org.junit.Assert.assertEquals;
@@ -6,8 +10,17 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
+/**
+ * The Class FacesUtilityTest.
+ */
 public class FacesUtilityTest {
 
+	/**
+	 * Test remove prefix path.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public final void testRemovePrefixPath() throws Exception {
 
@@ -15,6 +28,12 @@ public class FacesUtilityTest {
 				"/showcase/first/first.xhtml"), "/first/first.xhtml");
 	}
 
+	/**
+	 * Test eval input type.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public final void testEvalInputType() throws Exception {
 		assertTrue(FacesUtility.evalInputType("String", "text"));
@@ -25,6 +44,12 @@ public class FacesUtilityTest {
 		assertFalse(FacesUtility.evalInputType("Text", "Integer"));
 	}
 
+	/**
+	 * Test str join.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public final void testStrJoin() throws Exception {
 		short[] rgb = { 192, 192, 192 };
@@ -32,6 +57,12 @@ public class FacesUtilityTest {
 
 	}
 
+	/**
+	 * Test round.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
 	@Test
 	public final void testRound() throws Exception {
 		assertEquals(FacesUtility.round(100.123456, 2), 100.12, 0.001);

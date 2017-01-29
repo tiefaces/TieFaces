@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -368,8 +369,8 @@ public class ConfigurationHandler {
 			// sheet.
 			comments = sheet.getCellComments();
 		} catch (Exception ex) {
-			LOG.fine("due to a poi bug, null exception throwed where there's no comment. exeption = "
-					+ ex.getLocalizedMessage());
+			LOG.log(Level.FINE,"due to a poi bug, null exception throwed where there's no comment. exeption = "
+					+ ex.getLocalizedMessage(), ex);
 		}
 		if (comments == null) {
 			return commandList;
@@ -731,9 +732,9 @@ public class ConfigurationHandler {
 					sheetRightCol, command.getLastRow(), true);
 			return command;
 		} catch (Exception e) {
-			LOG.warning("Failed to instantiate command class '"
+			LOG.log(Level.WARNING,"Failed to instantiate command class '"
 					+ clas.getName() + "' mapped to command name '"
-					+ commandName + "'");
+					+ commandName + "'", e);
 			return null;
 		}
 	}

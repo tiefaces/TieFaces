@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet;
 
 import java.io.Serializable;
@@ -23,6 +27,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	private int currentLeftColumn;
 
 	/**
+	 * Gets the current data context name.
+	 *
 	 * @return the currentDataContextName
 	 */
 	public final String getCurrentDataContextName() {
@@ -30,6 +36,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
+	 * Sets the current data context name.
+	 *
 	 * @param pcurrentDataContextName
 	 *            the currentDataContextName to set
 	 */
@@ -39,6 +47,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
+	 * Gets the current tab name.
+	 *
 	 * @return the currentTabName
 	 */
 	public final String getCurrentTabName() {
@@ -46,6 +56,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
+	 * Sets the current tab name.
+	 *
 	 * @param pcurrentTabName
 	 *            the currentTabName to set
 	 */
@@ -54,6 +66,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
+	 * Gets the current top row.
+	 *
 	 * @return the currentTopRow
 	 */
 	public final int getCurrentTopRow() {
@@ -61,6 +75,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
+	 * Sets the current top row.
+	 *
 	 * @param pcurrentTopRow
 	 *            the currentTopRow to set
 	 */
@@ -69,6 +85,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
+	 * Gets the current left column.
+	 *
 	 * @return the currentLeftColumn
 	 */
 	public final int getCurrentLeftColumn() {
@@ -76,6 +94,8 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
+	 * Sets the current left column.
+	 *
 	 * @param pcurrentLeftColumn
 	 *            the currentLeftColumn to set
 	 */

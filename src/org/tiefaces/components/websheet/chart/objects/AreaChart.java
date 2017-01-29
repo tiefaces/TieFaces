@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.chart.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaChart;
@@ -22,6 +23,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
  */
 public class AreaChart implements ChartObject {
 
+	
+	/** empty list . */
+	private List<CTAreaSer> emptySerlist = new ArrayList<>();
+	
+	/** empty list. */
+	private List<CTDPt> dPlist = new ArrayList<>();	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -35,12 +42,15 @@ public class AreaChart implements ChartObject {
 		return ctChart.getPlotArea().getAreaChartList();
 	}
 
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
 	 * getSerListFromCtObjChart(java.lang.Object)
 	 */
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public final List getSerListFromCtObjChart(final Object ctObjChart) {
@@ -48,7 +58,7 @@ public class AreaChart implements ChartObject {
 		if (ctObjChart instanceof CTAreaChart) {
 			return ((CTAreaChart) ctObjChart).getSerList();
 		}
-		return null;
+		return emptySerlist;
 	}
 
 	/*
@@ -62,7 +72,7 @@ public class AreaChart implements ChartObject {
 	public final CTAxDataSource getCtAxDataSourceFromSerList(
 			final List serList) {
 
-		if ((serList != null) && (serList.size() > 0)
+		if ((serList != null) && (!serList.isEmpty())
 				&& (serList.get(0) instanceof CTAreaSer)) {
 			return ((CTAreaSer) serList.get(0)).getCat();
 		}
@@ -113,15 +123,18 @@ public class AreaChart implements ChartObject {
 		return null;
 	}
 
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.tiefaces.components.websheet.chart.objects.ChartObject#
 	 * getDPtListFromCTSer(java.lang.Object)
 	 */
+
 	@Override
 	public final List<CTDPt> getDPtListFromCTSer(final Object ctObjSer) {
-		return null;
+		return dPlist;
 	}
 
 	/*

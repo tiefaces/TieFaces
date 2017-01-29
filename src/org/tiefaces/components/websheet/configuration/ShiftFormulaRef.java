@@ -103,9 +103,10 @@ public class ShiftFormulaRef {
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{ watchList = " + watchList);
 		sb.append(",");
 		sb.append("currentRowsMappingList = " + currentRowsMappingList);

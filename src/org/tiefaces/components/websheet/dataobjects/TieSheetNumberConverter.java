@@ -4,6 +4,9 @@
  */
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -17,17 +20,22 @@ import org.tiefaces.common.TieConstants;
 @FacesConverter("tieSheetNumberConverter")
 public class TieSheetNumberConverter implements Converter {
 
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(TieSheetNumberConverter.class.getName());
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see javax.faces.convert.Converter#getAsObject(javax.faces.context.
 	 * FacesContext, javax.faces.component.UIComponent, java.lang.String)
 	 */
+	@Override
 	public final Object getAsObject(final FacesContext context,
 			final UIComponent component, final String value) {
 		Double doubleValue = 0.0;
 		String symbol = "";
-		String strValue = (String) value;
+		String strValue =  value;
 		try {
 			symbol =
 					(String) component.getAttributes().get(
@@ -47,7 +55,9 @@ public class TieSheetNumberConverter implements Converter {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.SEVERE,
+					"error in getAsObject of TieSheetNumberConverter : "
+							+ ex.getLocalizedMessage(), ex);
 		}
 		return strValue;
 
@@ -74,6 +84,7 @@ public class TieSheetNumberConverter implements Converter {
 	 * @see javax.faces.convert.Converter#getAsString(javax.faces.context.
 	 * FacesContext, javax.faces.component.UIComponent, java.lang.Object)
 	 */
+	@Override
 	public final String getAsString(final FacesContext context,
 			final UIComponent component, final Object value) {
 
@@ -99,7 +110,9 @@ public class TieSheetNumberConverter implements Converter {
 								+ TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL;
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.SEVERE,
+					"error in getAsString of TieSheetNumberConverter : "
+							+ ex.getLocalizedMessage(), ex);
 		}
 		return strValue;
 	}

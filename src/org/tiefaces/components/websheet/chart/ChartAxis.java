@@ -4,7 +4,7 @@
  */
 package org.tiefaces.components.websheet.chart;
 
-import java.io.Serializable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
@@ -30,6 +30,59 @@ public class ChartAxis  {
 	/** title. */
 	private String title;
 
+	/**
+	 * Constructor from CTCatAx.
+	 * 
+	 * @param ctCatAx
+	 *            the CTCatAx object from xml.
+	 */
+	public ChartAxis(final CTCatAx ctCatAx) {
+		super();
+		try {
+			this.position = ctCatAx.getAxPos().getVal().toString();
+		} catch (Exception ex) {
+			LOG.log(Level.FINE,"cannot get axpos from CtCatAx", ex);
+		}
+		try {
+			this.orientation = ctCatAx.getScaling().getOrientation().getVal()
+					.toString();
+		} catch (Exception ex) {
+			LOG.log(Level.FINE,"cannot get scaling.orientation from CtCatAx",ex);
+		}
+		try {
+			this.title = ctCatAx.getTitle().getTx().getRich().getPList().get(0)
+					.getRList().get(0).getT();
+		} catch (Exception ex) {
+			LOG.log(Level.FINE,"cannot get title from CtCatAx",ex);
+		}
+	}
+	
+	/**
+	 * Constructor from CTValAx.
+	 * @param ctValAx CTValAx object from xml.
+	 */
+		public ChartAxis(final CTValAx ctValAx) {
+			super();
+			try {
+				this.position = ctValAx.getAxPos().getVal().toString();
+			} catch (Exception ex) {
+				LOG.log(Level.FINE,"cannot get AxPos from CtValAx",ex);
+			}
+			try {
+				this.orientation = ctValAx.getScaling().getOrientation().getVal()
+						.toString();
+			} catch (Exception ex) {
+				LOG.log(Level.FINE,"cannot get scaling.orientation from CtValAx",ex);
+			}
+			try {
+				this.title = ctValAx.getTitle().getTx().getRich().getPList().get(0)
+						.getRList().get(0).getT();
+			} catch (Exception ex) {
+				LOG.log(Level.FINE,"cannot get title from CtValAx",ex);
+			}
+		}
+	
+	
 	/**
 	 * get position.
 	 * @return position.
@@ -78,55 +131,6 @@ public class ChartAxis  {
 		this.title = pTitle;
 	}
 
-	/**
-	 * Constructor from CTCatAx.
-	 * 
-	 * @param ctCatAx
-	 *            the CTCatAx object from xml.
-	 */
-	public ChartAxis(final CTCatAx ctCatAx) {
-		super();
-		try {
-			this.position = ctCatAx.getAxPos().getVal().toString();
-		} catch (Exception ex) {
-			LOG.fine("cannot get axpos from CtCatAx");
-		}
-		try {
-			this.orientation = ctCatAx.getScaling().getOrientation().getVal()
-					.toString();
-		} catch (Exception ex) {
-			LOG.fine("cannot get scaling.orientation from CtCatAx");
-		}
-		try {
-			this.title = ctCatAx.getTitle().getTx().getRich().getPList().get(0)
-					.getRList().get(0).getT();
-		} catch (Exception ex) {
-			LOG.fine("cannot get title from CtCatAx");
-		}
-	}
-/**
- * Constructor from CTValAx.
- * @param ctValAx CTValAx object from xml.
- */
-	public ChartAxis(final CTValAx ctValAx) {
-		super();
-		try {
-			this.position = ctValAx.getAxPos().getVal().toString();
-		} catch (Exception ex) {
-			LOG.fine("cannot get AxPos from CtValAx");
-		}
-		try {
-			this.orientation = ctValAx.getScaling().getOrientation().getVal()
-					.toString();
-		} catch (Exception ex) {
-			LOG.fine("cannot get scaling.orientation from CtValAx");
-		}
-		try {
-			this.title = ctValAx.getTitle().getTx().getRich().getPList().get(0)
-					.getRList().get(0).getT();
-		} catch (Exception ex) {
-			LOG.fine("cannot get title from CtValAx");
-		}
-	}
+
 
 }

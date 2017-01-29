@@ -37,6 +37,44 @@ public class CellRange implements Serializable {
 	/** The right col. */
 	private int rightCol;
 
+	
+	/**
+	 * Instantiates a new cell range.
+	 *
+	 * @param range
+	 *            the range
+	 */
+	public CellRange(final String range) {
+
+		if ((range != null) && range.contains(":")) {
+
+			String[] rlist = range.split(":");
+
+			if (rlist.length == 2) {
+				if (rlist[0].trim().endsWith("$0")) {
+					// no row configured
+					CellReference ref0 = new CellReference(rlist[0].trim()
+							.replaceAll("$0", "$1"));
+					CellReference ref1 = new CellReference(rlist[1].trim()
+							.replaceAll("$0", "$1"));
+					this.setTopRow(-1);
+					this.setLeftCol(ref0.getCol());
+					this.setBottomRow(-1);
+					this.setRightCol(ref1.getCol());
+
+				} else {
+					CellReference ref0 = new CellReference(rlist[0].trim());
+					CellReference ref1 = new CellReference(rlist[1].trim());
+					this.setTopRow(ref0.getRow());
+					this.setLeftCol(ref0.getCol());
+					this.setBottomRow(ref1.getRow());
+					this.setRightCol(ref1.getCol());
+				}
+
+			}
+		}
+	}
+	
 	/**
 	 * Gets the top row.
 	 *
@@ -113,59 +151,17 @@ public class CellRange implements Serializable {
 		this.rightCol = prightCol;
 	}
 
-	/**
-	 * Instantiates a new cell range.
-	 *
-	 * @param range
-	 *            the range
-	 */
-	public CellRange(final String range) {
 
-		if ((range != null) && range.contains(":")) {
-
-			String[] rlist = range.split(":");
-
-			if (rlist.length == 2) {
-				if (rlist[0].trim().endsWith("$0")) {
-					// no row configured
-					CellReference ref0 = new CellReference(rlist[0].trim()
-							.replaceAll("$0", "$1"));
-					CellReference ref1 = new CellReference(rlist[1].trim()
-							.replaceAll("$0", "$1"));
-					this.setTopRow(-1);
-					this.setLeftCol(ref0.getCol());
-					this.setBottomRow(-1);
-					this.setRightCol(ref1.getCol());
-
-				} else {
-					CellReference ref0 = new CellReference(rlist[0].trim());
-					CellReference ref1 = new CellReference(rlist[1].trim());
-					this.setTopRow(ref0.getRow());
-					this.setLeftCol(ref0.getCol());
-					this.setBottomRow(ref1.getRow());
-					this.setRightCol(ref1.getCol());
-				}
-
-			}
-		}
-	}
-
-	// commented below is another way to get reference in POI. In case we need
-	// it.
-	// private Cell getCellFromReference(HSSFSheet sheet, String refStr) {
-	// CellReference ref = new CellReference(refStr);
-	// Row r = sheet.getRow(ref.getRow());
-	// return r.getCell(ref.getCol(),Row.CREATE_NULL_AS_BLANK);
-	// }
 
 	/**
 	 * Obtain a human readable representation.
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("topRow = " + topRow);
 		sb.append(",");

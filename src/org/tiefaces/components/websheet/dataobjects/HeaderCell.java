@@ -220,9 +220,10 @@ public class HeaderCell implements Serializable {
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("rowspan = " + rowspan);
 		sb.append(",");

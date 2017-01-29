@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.chart.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
@@ -21,7 +22,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
  *
  */
 public class BarChart implements ChartObject {
+	
+	/** empty list. */
+	private List<CTBarSer> emptySerlist = new ArrayList<>();
 
+	/** empty list. */
+	private List<CTDPt> emptyDPlist = new ArrayList<>();
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -34,6 +40,7 @@ public class BarChart implements ChartObject {
 	public List getChartListFromCtChart(final CTChart ctChart) {
 		return ctChart.getPlotArea().getBarChartList();
 	}
+
 
 	/*
 	 * (non-Javadoc)
@@ -48,7 +55,7 @@ public class BarChart implements ChartObject {
 		if (ctObjChart instanceof CTBarChart) {
 			return ((CTBarChart) ctObjChart).getSerList();
 		}
-		return null;
+		return emptySerlist;
 	}
 
 	/*
@@ -62,7 +69,7 @@ public class BarChart implements ChartObject {
 	public final CTAxDataSource getCtAxDataSourceFromSerList(
 			final List serList) {
 
-		if ((serList != null) && (serList.size() > 0)
+		if ((serList != null) && (!serList.isEmpty())
 				&& (serList.get(0) instanceof CTBarSer)) {
 			return ((CTBarSer) serList.get(0)).getCat();
 		}
@@ -113,6 +120,7 @@ public class BarChart implements ChartObject {
 		return null;
 	}
 
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,8 +129,7 @@ public class BarChart implements ChartObject {
 	 */
 	@Override
 	public final List<CTDPt> getDPtListFromCTSer(final Object ctObjSer) {
-		// TODO Auto-generated method stub
-		return null;
+		return emptyDPlist;
 	}
 
 	/*
@@ -133,7 +140,6 @@ public class BarChart implements ChartObject {
 	 */
 	@Override
 	public final boolean isLineColor() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

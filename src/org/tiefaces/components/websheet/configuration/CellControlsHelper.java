@@ -9,8 +9,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.faces.component.UIComponent;
+
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 
@@ -22,20 +25,30 @@ import org.tiefaces.components.websheet.dataobjects.FacesCell;
  */
 public final class CellControlsHelper {
 
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(CellControlsHelper.class.getName());
+
+	/** list of supported components. */
+	private static List<String> supportComponents = Arrays.asList(
+			"Calendar", "SelectOneMenu", "InputNumber", "InputTextarea");
+
+	/**
+	 * array list for possible parameter's type.
+	 */
+
+	@SuppressWarnings("rawtypes")
+	private static Class[] paraMatchArray = { String.class, boolean.class,
+			Boolean.class, int.class, Integer.class, long.class, Long.class,
+			float.class, Float.class, double.class, Double.class,
+			byte.class, Byte.class, short.class, Short.class };
+
 	/**
 	 * hide constructor.
 	 */
 	private CellControlsHelper() {
 		// not called
 	}
-
-	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			CellControlsHelper.class.getName());
-
-	/** list of supported components. */
-	private static List<String> supportComponents = Arrays
-			.asList("Calendar", "SelectOneMenu", "InputNumber");
 
 	/**
 	 * find component according it's class.
@@ -77,7 +90,7 @@ public final class CellControlsHelper {
 
 		Map<String, String> defaultMap = defaultControlMap.get(cname);
 		if (defaultMap == null) {
-			defaultMap = new HashMap<String, String>();
+			defaultMap = new HashMap<>();
 			defaultControlMap.put(cname, defaultMap);
 		}
 		for (Map.Entry<String, String> entry : defaultMap.entrySet()) {
@@ -95,18 +108,7 @@ public final class CellControlsHelper {
 			setObjectProperty(component, propertyName, propertyValue, true);
 		}
 
-		// }
 	}
-
-	/**
-	 * array list for possible parameter's type.
-	 */
-
-	@SuppressWarnings("rawtypes")
-	private static Class[] paraMatchArray = { String.class, boolean.class,
-			Boolean.class, int.class, Integer.class, long.class, Long.class,
-			float.class, Float.class, double.class, Double.class,
-			byte.class, Byte.class, short.class, Short.class };
 
 	/**
 	 * match parameter of method.
@@ -127,7 +129,8 @@ public final class CellControlsHelper {
 				return i;
 
 			} catch (Exception ex) {
-				LOG.fine(ex.getLocalizedMessage());
+				LOG.log(Level.FINE, " error in matchParaMeterOfMethod = "
+						+ ex.getLocalizedMessage(), ex);
 			}
 		}
 		return -1;
@@ -143,7 +146,7 @@ public final class CellControlsHelper {
 	 * @return object according to class.
 	 */
 	@SuppressWarnings("rawtypes")
-	private static Object convertToObject(final Class clazz,
+	static Object convertToObject(final Class clazz,
 			final String value) {
 		if (String.class == clazz) {
 			return value;
@@ -205,7 +208,7 @@ public final class CellControlsHelper {
 					+ "' to value '" + propertyValue + "' for object "
 					+ obj;
 			if (ignoreNonExisting) {
-				LOG.fine(msg);
+				LOG.log(Level.FINE, msg, e);
 			} else {
 				LOG.warning(msg);
 				throw new IllegalArgumentException(e);
@@ -231,13 +234,12 @@ public final class CellControlsHelper {
 					.getMethod("get"
 							+ Character.toUpperCase(propertyName.charAt(0))
 							+ propertyName.substring(1));
-			String value = (String) method.invoke(obj);
-			return value;
+			return (String) method.invoke(obj);
 		} catch (Exception e) {
 			String msg = "failed to get property '" + propertyName
 					+ "' for object " + obj;
 			if (ignoreNonExisting) {
-				LOG.fine(msg);
+				LOG.log(Level.FINE, msg, e);
 			} else {
 				LOG.warning(msg);
 				throw new IllegalArgumentException(e);
@@ -245,9 +247,5 @@ public final class CellControlsHelper {
 		}
 		return null;
 	}
-
-
-
-
 
 }

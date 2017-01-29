@@ -8,6 +8,7 @@ package org.tiefaces.components.websheet.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -38,6 +39,10 @@ import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
  */
 public final class PicturesUtility {
 
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(PicturesUtility.class.getName());
+
 	/**
 	 * hide constructor.
 	 */
@@ -45,9 +50,6 @@ public final class PicturesUtility {
 		// not called
 	}
 
-	/** logger. */
-	private static final Logger LOG = Logger
-			.getLogger(PicturesUtility.class.getName());
 
 	/**
 	 * Gets the pictrues map.
@@ -64,9 +66,8 @@ public final class PicturesUtility {
 				return getXSSFPictruesMap((XSSFWorkbook) wb);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.severe("Web Form getPictruesMap Error Exception = "
-					+ e.getLocalizedMessage());
+			LOG.log(Level.SEVERE,"Web Form getPictruesMap Error Exception = "
+					+ e.getLocalizedMessage(), e);
 		}
 		return null;
 	}
@@ -81,9 +82,9 @@ public final class PicturesUtility {
 	private static Map<String, Picture> getHSSFPictruesMap(
 			final HSSFWorkbook wb) {
 
-		Map<String, Picture> picMap = new HashMap<String, Picture>();
+		Map<String, Picture> picMap = new HashMap<>();
 		List<HSSFPictureData> pictures = wb.getAllPictures();
-		if (pictures.size() != 0) {
+		if (!pictures.isEmpty()) {
 			for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 				HSSFSheet sheet = wb.getSheetAt(i);
 				for (HSSFShape shape : sheet.getDrawingPatriarch()
@@ -120,7 +121,7 @@ public final class PicturesUtility {
 		Map<String, Picture> picMap = new HashMap<String, Picture>();
 
 		List<XSSFPictureData> pictures = wb.getAllPictures();
-		if (pictures.size() != 0) {
+		if (!pictures.isEmpty()) {
 			for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 				XSSFSheet sheet = wb.getSheetAt(i);
 
@@ -167,12 +168,12 @@ public final class PicturesUtility {
 
 		ClientAnchor anchor = pic.getPreferredSize();
 		AnchorSize anchorSize = getAnchorSize(sheet1, anchor);
-		String style =
+		return
 				"PADDING-LEFT:" + anchorSize.getLeft() + "px;PADDING-TOP:"
 						+ anchorSize.getTop() + "px;width:"
 						+ anchorSize.getWidth() + "px; height:"
 						+ anchorSize.getHeight() + "px;";
-		return style;
+
 	}
 
 	/**
@@ -193,13 +194,13 @@ public final class PicturesUtility {
 		ClientAnchor anchor = anchorsMap.get(chartId);
 		if (anchor != null) {
 			AnchorSize anchorSize = getAnchorSize(sheet1, anchor);
-			String style =
+			return
 					"PADDING-LEFT:" + anchorSize.getLeft()
 							+ "px;PADDING-TOP:" + anchorSize.getTop()
 							+ "px;width:" + anchorSize.getWidth()
 							+ "px; height:" + anchorSize.getHeight()
 							+ "px;";
-			return style;
+
 		}
 		return "";
 	}
@@ -226,29 +227,29 @@ public final class PicturesUtility {
 		if (sheet1 instanceof HSSFSheet) {
 			left =
 					TieWebSheetUtility
-							.widthUnits2Pixel((sheet1.getColumnWidth(anchor
+							.widthUnits2Pixel(sheet1.getColumnWidth(anchor
 									.getCol1())
-									* anchor.getDx1() / TieWebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS));
+									* anchor.getDx1() / TieWebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS);
 			if (sheet1.getRow(anchor.getRow1()) != null) {
 				top =
 						TieWebSheetUtility
-								.pointsToPixels((sheet1.getRow(
+								.pointsToPixels(sheet1.getRow(
 										anchor.getRow1())
 										.getHeightInPoints()
-										* anchor.getDy1() / TieWebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS));
+										* anchor.getDy1() / TieWebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS);
 			}
 			right =
 					TieWebSheetUtility
-							.widthUnits2Pixel((sheet1.getColumnWidth(anchor
+							.widthUnits2Pixel(sheet1.getColumnWidth(anchor
 									.getCol2())
-									* anchor.getDx2() / TieWebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS));
+									* anchor.getDx2() / TieWebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS);
 			if (sheet1.getRow(anchor.getRow2()) != null) {
 				bottom =
 						TieWebSheetUtility
-								.pointsToPixels((sheet1.getRow(
+								.pointsToPixels(sheet1.getRow(
 										anchor.getRow2())
 										.getHeightInPoints()
-										* anchor.getDy2() / TieWebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS));
+										* anchor.getDy2() / TieWebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS);
 			}
 		} else if (sheet1 instanceof XSSFSheet) {
 			left =
@@ -257,14 +258,14 @@ public final class PicturesUtility {
 									/ TieWebSheetUtility.EMU_PER_MM));
 			top =
 					TieWebSheetUtility
-							.pointsToPixels((anchor.getDy1() / TieWebSheetUtility.EMU_PER_POINTS));
+							.pointsToPixels(anchor.getDy1() / TieWebSheetUtility.EMU_PER_POINTS);
 			right =
 					TieWebSheetUtility.widthUnits2Pixel(TieWebSheetUtility
 							.millimetres2WidthUnits(anchor.getDx2()
 									/ TieWebSheetUtility.EMU_PER_MM));
 			bottom =
 					TieWebSheetUtility
-							.pointsToPixels((anchor.getDy2() / TieWebSheetUtility.EMU_PER_POINTS));
+							.pointsToPixels(anchor.getDy2() / TieWebSheetUtility.EMU_PER_POINTS);
 		}
 
 		for (short col = anchor.getCol1(); col < anchor.getCol2(); col++) {

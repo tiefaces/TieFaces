@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.common;
 
 import static org.junit.Assert.assertTrue;
@@ -8,8 +12,9 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 /**
- * @author ihsb_developer
+ * The Class AppUtilsTest.
  *
+ * @author ihsb_developer
  */
 public class AppUtilsTest {
 

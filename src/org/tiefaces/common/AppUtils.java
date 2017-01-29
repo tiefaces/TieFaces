@@ -41,7 +41,7 @@ public final class AppUtils {
      */
     @SuppressWarnings("rawtypes")
     public static boolean emptyList(final List list) {
-        return (list == null) || (list.size() == 0);
+        return (list == null) || list.isEmpty();
     }
 
     /**

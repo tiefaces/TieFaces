@@ -9,8 +9,10 @@ import java.io.Serializable;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
@@ -32,12 +34,14 @@ public class CellMap implements Serializable, java.util.Map {
 
 	/** serial instance. */
 	private static final long serialVersionUID = 1L;
-	
-	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			CellMap.class.getName());
 
-	
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(CellMap.class.getName());
+
+	/** The Constant emptySet. */
+	private static final Set emptySet = new HashSet();
+
 	/** instance to parent websheet bean. */
 	private TieWebSheetBean parent = null;
 
@@ -111,7 +115,7 @@ public class CellMap implements Serializable, java.util.Map {
 	 */
 	@Override
 	public void putAll(final Map m) {
-
+		emptySet.clear();
 	}
 
 	/*
@@ -121,8 +125,7 @@ public class CellMap implements Serializable, java.util.Map {
 	 */
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-
+		emptySet.clear();
 	}
 
 	/*
@@ -132,7 +135,7 @@ public class CellMap implements Serializable, java.util.Map {
 	 */
 	@Override
 	public final Set keySet() {
-		return null;
+		return emptySet;
 	}
 
 	/*
@@ -142,7 +145,7 @@ public class CellMap implements Serializable, java.util.Map {
 	 */
 	@Override
 	public final Collection values() {
-		return null;
+		return emptySet;
 	}
 
 	/*
@@ -152,7 +155,7 @@ public class CellMap implements Serializable, java.util.Map {
 	 */
 	@Override
 	public final Set entrySet() {
-		return null;
+		return emptySet;
 	}
 
 	/**
@@ -207,14 +210,15 @@ public class CellMap implements Serializable, java.util.Map {
 			String chartViewId = Integer.toHexString(
 					System.identityHashCode(parent.getWb())) + chartId;
 			if (context != null) {
-				Map<String, Object> sessionMap = context.getExternalContext()
-						.getSessionMap();
+				Map<String, Object> sessionMap = context
+						.getExternalContext().getSessionMap();
 				if (sessionMap.get(chartViewId) == null) {
 					sessionMap.put(chartViewId,
 							parent.getChartsMap().get(chartId));
-					LOG.fine("load chart put session map id = " + chartViewId);
+					LOG.fine("load chart put session map id = "
+							+ chartViewId);
 				}
-			}	
+			}
 			return chartViewId;
 		} else {
 			return null;
@@ -231,34 +235,35 @@ public class CellMap implements Serializable, java.util.Map {
 		Object result = "";
 		try {
 			CellMapKey mkey = new CellMapKey((String) key);
-			if (mkey.isParseSuccess()) {
-				Cell poiCell = parent.getCellHelper()
-						.getPoiCellWithRowColFromCurrentPage(
-								mkey.getRowIndex(), mkey.getColIndex());
-				if (poiCell != null) {
-					if (mkey.isCharted()) {
-						result = loadChart(mkey.getRowIndex(),
-								mkey.getColIndex());
-					} else if (mkey.isPictured()) {
-						result = loadPicture(mkey.getRowIndex(),
-								mkey.getColIndex());
-					} else if (mkey.isFormatted()) {
-						result = CellUtility.getCellValueWithFormat(poiCell,
-								parent.getFormulaEvaluator(),
-								parent.getDataFormatter());
-					} else {
-						result = CellUtility
-								.getCellValueWithoutFormat(poiCell);
-					}
-					LOG.fine("Web Form CellMap getCellValue row = "
-							+ mkey.getRowIndex() + " col = "
-							+ mkey.getColIndex() + " format = "
-							+ mkey.isFormatted() + " result = " + result);
-				}
+			if (!mkey.isParseSuccess()) {
+				return result;
 			}
+			Cell poiCell = parent.getCellHelper()
+					.getPoiCellWithRowColFromCurrentPage(mkey.getRowIndex(),
+							mkey.getColIndex());
+			if (poiCell == null) {
+				return result;
+			}
+			if (mkey.isCharted()) {
+				result = loadChart(mkey.getRowIndex(), mkey.getColIndex());
+			} else if (mkey.isPictured()) {
+				result = loadPicture(mkey.getRowIndex(),
+						mkey.getColIndex());
+			} else if (mkey.isFormatted()) {
+				result = CellUtility.getCellValueWithFormat(poiCell,
+						parent.getFormulaEvaluator(),
+						parent.getDataFormatter());
+			} else {
+				result = CellUtility.getCellValueWithoutFormat(poiCell);
+			}
+			LOG.fine("Web Form CellMap getCellValue row = "
+					+ mkey.getRowIndex() + " col = " + mkey.getColIndex()
+					+ " format = " + mkey.isFormatted() + " result = "
+					+ result);
+
 		} catch (Exception ex) {
-			LOG.severe("Web Form CellMap get value error="
-					+ ex.getLocalizedMessage());
+			LOG.log(Level.SEVERE, "Web Form CellMap get value error="
+					+ ex.getLocalizedMessage(), ex);
 		}
 		// return blank if null
 		return result;
@@ -272,45 +277,44 @@ public class CellMap implements Serializable, java.util.Map {
 	@Override
 	public final Object put(final Object key, final Object value) {
 		CellMapKey mkey = new CellMapKey((String) key);
-		if (mkey.isParseSuccess()) {
-			Cell poiCell = parent.getCellHelper()
-					.getPoiCellWithRowColFromCurrentPage(mkey.getRowIndex(),
-							mkey.getColIndex());
-			if (poiCell != null) {
-				String oldValue = CellUtility
-						.getCellValueWithoutFormat(poiCell);
-				FacesCell facesCell = parent.getCellHelper()
-						.getFacesCellWithRowColFromCurrentPage(
-								mkey.getRowIndex(), mkey.getColIndex());
-				String newValue = null;
-				if ((value instanceof java.util.Date)
-						&& (facesCell.getDatePattern() != null)
-						&& (!facesCell.getDatePattern().isEmpty())) {
-					Format formatter = new SimpleDateFormat(
-							facesCell.getDatePattern());
-					newValue = formatter.format(value);
-				} else {
-					newValue = (String) value;
-				}
-				if (facesCell.getInputType().equalsIgnoreCase("textarea")
-						&& (newValue != null)) {
-					// remove "\r" because excel issue
-					newValue = newValue.replace("\r\n", "\n");
-				}
-				if (newValue != null && !newValue.equals(oldValue)) {
-					LOG.fine("Web Form CellMap setCellValue Old: "
-							+ oldValue + ", New: " + newValue + ", row ="
-							+ mkey.getRowIndex() + " col ="
-							+ mkey.getColIndex() + " inputtype = "
-							+ facesCell.getInputType());
-					CellUtility.setCellValue(poiCell, newValue);
-					if (facesCell.isHasSaveAttr()) {
-						parent.getCellHelper().saveDataInContext(poiCell,
-								newValue);
-					}
-					parent.getCellHelper().reCalc();
-				}
+		if (!mkey.isParseSuccess()) {
+			return null;
+		}
+		Cell poiCell = parent.getCellHelper()
+				.getPoiCellWithRowColFromCurrentPage(mkey.getRowIndex(),
+						mkey.getColIndex());
+		if (poiCell == null) {
+			return null;
+		}
+		String oldValue = CellUtility.getCellValueWithoutFormat(poiCell);
+		FacesCell facesCell = parent.getCellHelper()
+				.getFacesCellWithRowColFromCurrentPage(mkey.getRowIndex(),
+						mkey.getColIndex());
+		String newValue;
+		if ((value instanceof java.util.Date)
+				&& (facesCell.getDatePattern() != null)
+				&& (!facesCell.getDatePattern().isEmpty())) {
+			Format formatter = new SimpleDateFormat(
+					facesCell.getDatePattern());
+			newValue = formatter.format(value);
+		} else {
+			newValue = (String) value;
+		}
+		if ("textarea".equalsIgnoreCase(facesCell.getInputType())
+				&& (newValue != null)) {
+			// remove "\r" because excel issue
+			newValue = newValue.replace("\r\n", "\n");
+		}
+		if (newValue != null && !newValue.equals(oldValue)) {
+			LOG.fine("Web Form CellMap setCellValue Old: " + oldValue
+					+ ", New: " + newValue + ", row =" + mkey.getRowIndex()
+					+ " col =" + mkey.getColIndex() + " inputtype = "
+					+ facesCell.getInputType());
+			CellUtility.setCellValue(poiCell, newValue);
+			if (facesCell.isHasSaveAttr()) {
+				parent.getCellHelper().saveDataInContext(poiCell, newValue);
 			}
+			parent.getCellHelper().reCalc();
 		}
 
 		return value;

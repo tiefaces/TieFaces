@@ -174,8 +174,9 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("commandName = " + this.getCommandTypeName());
 		sb.append(",");
@@ -210,7 +211,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 
 		ConfigRange cRange = this.getConfigRange();
 		List<ConfigCommand> commandList = cRange.getCommandList();
-		if (commandList.size() <= 0) {
+		if (commandList.isEmpty()) {
 			// if no command then no dynamic changes. then no need formula
 			// shifts.
 			return watchList;
@@ -320,7 +321,6 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 		configBuildRef.putShiftAttrs(fullName,
 				this.getConfigRange().getAttrs(),
 				new RowsMapping(unitRowsMapping));
-		//initFullNameInHiddenColumn(configBuildRef.getSheet());
 		configBuildRef.setOriginConfigRange(
 				new ConfigRange(this.getConfigRange()));
 		configBuildRef.getOriginConfigRange()

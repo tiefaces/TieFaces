@@ -127,7 +127,7 @@ public class SheetConfiguration implements Serializable {
 									// hide the sheet.
 
 	/** The cached origin formulas. */
-	private Map<Cell, String> cachedOriginFormulas = new HashMap<Cell, String>();
+	private HashMap<Cell, String> cachedOriginFormulas = new HashMap<Cell, String>();
 
 	/**
 	 * Gets the sheet name.
@@ -647,7 +647,7 @@ public class SheetConfiguration implements Serializable {
 	 */
 	public final void setCachedOriginFormulas(
 			final Map<Cell, String> pcachedOriginFormulas) {
-		this.cachedOriginFormulas = pcachedOriginFormulas;
+		this.cachedOriginFormulas = (HashMap<Cell, String>) pcachedOriginFormulas;
 	}
 
 	/**
@@ -664,8 +664,9 @@ public class SheetConfiguration implements Serializable {
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("formName = " + formName);
 		sb.append(",");
@@ -697,8 +698,6 @@ public class SheetConfiguration implements Serializable {
 		sb.append(",");
 		sb.append("FooterCellRange = " + footerCellRange);
 		sb.append(",");
-		// sb.append("ConfigRange = " + configRange);
-		// sb.append(",");
 		sb.append("cellFormAttributes = " + cellFormAttributes);
 		sb.append(",");
 		sb.append("hidden = " + hidden);

@@ -1,6 +1,9 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 package org.tiefaces.components.websheet;
 
-import java.io.Serializable;
 
 import org.tiefaces.components.websheet.chart.ChartHelper;
 import org.tiefaces.components.websheet.service.CellHelper;
@@ -39,6 +42,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Gets the web sheet loader.
+	 *
 	 * @return the webSheetLoader
 	 */
 	public final WebSheetLoader getWebSheetLoader() {
@@ -48,6 +53,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Sets the web sheet loader.
+	 *
 	 * @param pwebSheetLoader
 	 *            the webSheetLoader to set
 	 */
@@ -57,6 +64,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Gets the cell helper.
+	 *
 	 * @return the cellHelper
 	 */
 	public final CellHelper getCellHelper() {
@@ -67,6 +76,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Sets the cell helper.
+	 *
 	 * @param pcellHelper
 	 *            the cellHelper to set
 	 */
@@ -75,6 +86,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Gets the pic helper.
+	 *
 	 * @return the picHelper
 	 */
 	public final PicturesHelper getPicHelper() {
@@ -85,6 +98,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Sets the pic helper.
+	 *
 	 * @param ppicHelper
 	 *            the picHelper to set
 	 */
@@ -93,6 +108,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Gets the validation handler.
+	 *
 	 * @return the validationHandler
 	 */
 	public final ValidationHandler getValidationHandler() {
@@ -103,6 +120,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Sets the validation handler.
+	 *
 	 * @param pvalidationHandler
 	 *            the validationHandler to set
 	 */
@@ -112,6 +131,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Gets the chart helper.
+	 *
 	 * @return the chartHelper
 	 */
 	public final ChartHelper getChartHelper() {
@@ -122,6 +143,8 @@ public class TieWebSheetBeanHelper {
 	}
 
 	/**
+	 * Sets the chart helper.
+	 *
 	 * @param pchartHelper
 	 *            the chartHelper to set
 	 */

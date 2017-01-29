@@ -62,7 +62,7 @@ public class LineChart implements ChartObject {
 	public final CTAxDataSource getCtAxDataSourceFromSerList(
 			final List serList) {
 
-		if ((serList != null) && (serList.size() > 0)
+		if ((serList != null) && (!serList.isEmpty())
 				&& (serList.get(0) instanceof CTLineSer)) {
 			return ((CTLineSer) serList.get(0)).getCat();
 		}
@@ -121,7 +121,6 @@ public class LineChart implements ChartObject {
 	 */
 	@Override
 	public final List<CTDPt> getDPtListFromCTSer(final Object ctObjSer) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

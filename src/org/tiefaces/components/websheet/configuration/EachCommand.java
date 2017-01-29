@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Each command represent the repeat area which typically using a group of data.
@@ -21,6 +23,10 @@ import java.util.Map;
  */
 public class EachCommand extends ConfigCommand  implements Serializable  {
 
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(
+			EachCommand.class.getName());
+	
 	/**
 	 * serialVersionUID.
 	 */
@@ -157,8 +163,9 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("commandName = " + this.getCommandTypeName());
 		sb.append(",");
@@ -219,7 +226,8 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 				itemsCollection
 						.add(Class.forName(objClassName).newInstance());
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				LOG.log(Level.SEVERE,"canot insert empty object in itemCollections error = "+ex.getLocalizedMessage(), ex);
+				return 0;
 			}
 		}
 
@@ -249,7 +257,7 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			String unitFullName = fullName + "." + index;
 			currentRange.getAttrs().setAllowAdd(false);
 			if ((this.allowAdd != null)
-					&& (this.allowAdd.trim().equalsIgnoreCase("true"))) {
+					&& ("true".equalsIgnoreCase(this.allowAdd.trim()))) {
 				currentRange.getAttrs().setAllowAdd(true);
 				configBuildRef.setBodyAllowAdd(true);
 			}
@@ -266,8 +274,7 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			context.remove(var);
 		}
 
-		int finalLength = insertPosition - atRow;
-		return finalLength;
+		return insertPosition - atRow;
 	}
 
 	/* (non-Javadoc)

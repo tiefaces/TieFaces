@@ -7,6 +7,7 @@ package org.tiefaces.components.websheet.service;
 
 import java.awt.image.BufferedImage;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Picture;
@@ -24,8 +25,9 @@ public class PicturesHelper {
 	private TieWebSheetBean parent = null;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			PicturesHelper.class.getName());
+	private static final Logger LOG = Logger.getLogger(PicturesHelper.class
+			.getName());
+
 	/**
 	 * Instantiates a new pictures helper.
 	 *
@@ -62,7 +64,7 @@ public class PicturesHelper {
 			final FacesCell fcell, final String fId) {
 		if (parent.getPicturesMap() != null) {
 			try {
-				Picture pic = (Picture) parent.getPicturesMap().get(fId);
+				Picture pic =  parent.getPicturesMap().get(fId);
 				if (pic != null) {
 					LOG.fine(" pic dimension = " + pic.getImageDimension()
 							+ " perfersize = " + pic.getPreferredSize());
@@ -72,29 +74,30 @@ public class PicturesHelper {
 							.generatePictureStyle(sheet1, pic));
 				}
 			} catch (Exception ex) {
-				LOG.severe("setupFacesCell Picture error = "
-						+ ex.getMessage());
+				LOG.log(Level.SEVERE, "setupFacesCell Picture error = "
+						+ ex.getMessage(), ex);
 			}
 		}
 		if (parent.getChartsMap() != null) {
 			try {
 				String chartId = parent.getChartPositionMap().get(fId);
 				if (chartId != null) {
-					BufferedImage img = (BufferedImage) parent
-							.getChartsMap().get(chartId);
+					BufferedImage img =
+							 parent.getChartsMap().get(
+									chartId);
 					if (img != null) {
 						LOG.fine(" pic dimension width = " + img.getWidth()
 								+ " height = " + img.getHeight());
 						fcell.setContainChart(true);
 						fcell.setChartId(chartId);
 						fcell.setChartStyle(PicturesUtility
-								.generateChartStyle(sheet1, chartId,
-										parent.getChartAnchorsMap()));
+								.generateChartStyle(sheet1, chartId, parent
+										.getChartAnchorsMap()));
 					}
 				}
 			} catch (Exception ex) {
-				LOG.severe(
-						"setupFacesCell Charts error = " + ex.getMessage());
+				LOG.log(Level.SEVERE, "setupFacesCell Charts error = "
+						+ ex.getMessage(), ex);
 			}
 		}
 	}

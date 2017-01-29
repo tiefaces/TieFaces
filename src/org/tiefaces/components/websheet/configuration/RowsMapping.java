@@ -22,14 +22,13 @@ public class RowsMapping implements Serializable {
 	 */
 	private static final long serialVersionUID = -2827255600933776496L;
 	/** The rows map. */
-	private Map<Integer, List<Row>> rowsMap = new HashMap<Integer, List<Row>>();
+	private Map<Integer, List<Row>> rowsMap = new HashMap<>();
 
 	/**
 	 * Instantiates a new rows mapping.
 	 */
 	public RowsMapping() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -62,7 +61,7 @@ public class RowsMapping implements Serializable {
 	public final void addRow(final Integer sourceRowNum, final Row targetRow) {
 		List<Row> mapRowList = rowsMap.get(sourceRowNum);
 		if (mapRowList == null) {
-			mapRowList = new ArrayList<Row>();
+			mapRowList = new ArrayList<>();
 		}
 		if (!mapRowList.contains(targetRow)) {
 			mapRowList.add(targetRow);
@@ -94,8 +93,7 @@ public class RowsMapping implements Serializable {
 	 * @return the list
 	 */
 	public final List<Row> get(final Integer sourceRowNum) {
-		List<Row> mapRowList = rowsMap.get(sourceRowNum);
-		return mapRowList;
+		return rowsMap.get(sourceRowNum);
 	}
 
 	/**
@@ -108,7 +106,7 @@ public class RowsMapping implements Serializable {
 		Map<Integer, List<Row>> map = addMap.getRowsMap();
 		for (Map.Entry<Integer, List<Row>> entry : map.entrySet()) {
 			List<Row> entryRowList = entry.getValue();
-			if ((entryRowList != null) && (entryRowList.size() > 0)) {
+			if ((entryRowList != null) && (!entryRowList.isEmpty())) {
 				for (Row row : entryRowList) {
 					this.addRow(entry.getKey(), row);
 				}
@@ -121,9 +119,10 @@ public class RowsMapping implements Serializable {
 	 * 
 	 * @return String Human readable label
 	 */
+	@Override
 	public final String toString() {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		for (Map.Entry<Integer, List<Row>> entry : rowsMap.entrySet()) {
 			sb.append(entry.getKey() + "=[");

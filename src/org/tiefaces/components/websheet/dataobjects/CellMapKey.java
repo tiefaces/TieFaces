@@ -6,6 +6,8 @@
 package org.tiefaces.components.websheet.dataobjects;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.tiefaces.common.TieConstants;
 
@@ -17,6 +19,10 @@ import org.tiefaces.common.TieConstants;
  */
 
 public class CellMapKey implements Serializable {
+
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(CellMapKey.class.getName());
 
 	/**
 	 * serialVersionUID.
@@ -55,33 +61,36 @@ public class CellMapKey implements Serializable {
 		try {
 			String[] keyList = skey.split(":");
 			int keylength = keyList.length;
-			if ((keylength >= 2) && (!keyList[0].isEmpty())
-					&& (!keyList[1].isEmpty())) {
-				this.rowIndex = Integer.parseInt(keyList[0]);
-				this.colIndex = Integer.parseInt(keyList[1]);
-
-				if (keylength > 2) {
-					String key = keyList[2].toLowerCase();
-					if (key.equalsIgnoreCase(
-							TieConstants.CELL_MAP_KEY_CHART)) {
-						this.charted = true;
-					} else if (key.equalsIgnoreCase(
-							TieConstants.CELL_MAP_KEY_PICTURE)) {
-
-						this.pictured = true;
-					} else if (key.equalsIgnoreCase(
-							TieConstants.CELL_MAP_KEY_FORMAT)) {
-
-						this.formatted = true;
-					} else if (key.equalsIgnoreCase(
-							TieConstants.CELL_MAP_KEY_PERCENT)) {
-						this.percented = true;
-					}
-				}
-				this.parseSuccess = true;
+			if ((keylength < 2) || keyList[0].isEmpty()
+					|| keyList[1].isEmpty()) {
+				return;
 			}
+
+			this.rowIndex = Integer.parseInt(keyList[0]);
+			this.colIndex = Integer.parseInt(keyList[1]);
+
+			if (keylength > 2) {
+				String key = keyList[2].toLowerCase();
+				if (key.equalsIgnoreCase(TieConstants.CELL_MAP_KEY_CHART)) {
+					this.charted = true;
+				} else if (key.equalsIgnoreCase(
+						TieConstants.CELL_MAP_KEY_PICTURE)) {
+
+					this.pictured = true;
+				} else if (key.equalsIgnoreCase(
+						TieConstants.CELL_MAP_KEY_FORMAT)) {
+
+					this.formatted = true;
+				} else if (key.equalsIgnoreCase(
+						TieConstants.CELL_MAP_KEY_PERCENT)) {
+					this.percented = true;
+				}
+			}
+			this.parseSuccess = true;
+
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.SEVERE, "error in create cell map key = "
+					+ ex.getLocalizedMessage(), ex);
 		}
 
 	}
@@ -154,10 +163,10 @@ public class CellMapKey implements Serializable {
 	 * 
 	 * @return String Human readable label
 	 */
-
+	@Override
 	public final String toString() {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("parseSuccess= " + parseSuccess);
 		sb.append(",");

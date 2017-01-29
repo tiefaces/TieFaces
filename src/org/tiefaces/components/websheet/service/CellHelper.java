@@ -6,8 +6,8 @@
 package org.tiefaces.components.websheet.service;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.tiefaces.components.websheet.TieWebSheetBean;
@@ -29,15 +29,14 @@ public class CellHelper {
 	private TieWebSheetBean parent = null;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(CellHelper.class
-			.getName());
+	private static final Logger LOG = Logger
+			.getLogger(CellHelper.class.getName());
 
 	/**
 	 * Instantiates a new cell helper.
 	 */
 	public CellHelper() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -88,25 +87,25 @@ public class CellHelper {
 	 */
 	public final void restoreDataContext(final String fullName) {
 
-		if ((parent.getCurrentDataContextName() == null)
-				|| (!parent.getCurrentDataContextName().equalsIgnoreCase(
-						fullName))) {
-			SheetConfiguration sheetConfig = parent.getSheetConfigMap()
-					.get(parent.getCurrentTabName());
-			ConfigRangeAttrs attrs = sheetConfig.getShiftMap()
-					.get(fullName);
-			if ((attrs != null) && (attrs.getContextSnap() != null)) {
-				List<MapObject> mapList = attrs.getContextSnap()
-						.getSnapList();
-				if (mapList != null) {
-					for (MapObject mObj : mapList) {
-						parent.getDataContext().put((String) mObj.getKey(),
-								mObj.getValue());
-					}
+		String currentDataContext = parent.getCurrentDataContextName();
+		if ((currentDataContext != null)
+				&& (currentDataContext.equalsIgnoreCase(fullName))) {
+			return;
+		}
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
+				.get(parent.getCurrentTabName());
+		ConfigRangeAttrs attrs = sheetConfig.getShiftMap().get(fullName);
+		if ((attrs != null) && (attrs.getContextSnap() != null)) {
+			List<MapObject> mapList = attrs.getContextSnap().getSnapList();
+			if (mapList != null) {
+				for (MapObject mObj : mapList) {
+					parent.getDataContext().put((String) mObj.getKey(),
+							mObj.getValue());
 				}
 			}
-			parent.setCurrentDataContextName(fullName);
 		}
+		parent.setCurrentDataContextName(fullName);
+
 	}
 
 	/**
@@ -119,8 +118,9 @@ public class CellHelper {
 			parent.getFormulaEvaluator().evaluateAll();
 		} catch (Exception ex) {
 			// skip the formula exception when recalc but log it
-			LOG.severe(" recalc formula error : "
-					+ ex.getLocalizedMessage());
+			LOG.log(Level.SEVERE,
+					" recalc formula error : " + ex.getLocalizedMessage(),
+					ex);
 		}
 
 	}
@@ -167,12 +167,9 @@ public class CellHelper {
 			final int colIndex, final String tabName) {
 		if (parent.getWb() != null) {
 
-			return CellUtility.getPoiCellFromSheet(
-					rowIndex,
-					colIndex,
-					parent.getWb().getSheet(
-							parent.getSheetConfigMap().get(tabName)
-									.getSheetName()));
+			return CellUtility.getPoiCellFromSheet(rowIndex, colIndex,
+					parent.getWb().getSheet(parent.getSheetConfigMap()
+							.get(tabName).getSheetName()));
 		}
 		return null;
 	}

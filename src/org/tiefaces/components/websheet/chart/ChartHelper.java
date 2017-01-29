@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -78,8 +79,9 @@ public class ChartHelper {
 	private TieWebSheetBean parent = null;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			ChartHelper.class.getName());
+	private static final Logger LOG = Logger
+			.getLogger(ChartHelper.class.getName());
+
 	/**
 	 * Constructor. Pass in websheet bean, So this helper can access related
 	 * instance class.
@@ -114,8 +116,10 @@ public class ChartHelper {
 				initXSSFAnchorsMap((XSSFWorkbook) wb);
 			}
 		} catch (Exception e) {
-			LOG.severe("Web Form getAnchorsMap Error Exception = "
-					+ e.getLocalizedMessage());
+			LOG.log(Level.SEVERE,
+					"Web Form getAnchorsMap Error Exception = "
+							+ e.getLocalizedMessage(),
+					e);
 		}
 	}
 
@@ -131,24 +135,10 @@ public class ChartHelper {
 				initXSSFChartsMap((XSSFWorkbook) wb);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.severe("Web Form getChartsMap Error Exception = "
-					+ e.getLocalizedMessage());
+			LOG.log(Level.SEVERE, "getChartsMap Error Exception = "
+					+ e.getLocalizedMessage(), e);
 		}
 	}
-
-	// below code demo how to read theme
-	// ThemeDocument theme;
-	// try {
-	// theme = ThemeDocument.Factory.parse(
-	// themeTable.getPackagePart().getInputStream());
-	// CTColorScheme colorScheme =
-	// theme.getTheme().getThemeElements().getClrScheme();
-	// System.out.println(" colorScheme = "+colorScheme);
-	// } catch (Exception e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
 
 	/**
 	 * build chartData for line chart. chartData include categoryList and
@@ -173,15 +163,15 @@ public class ChartHelper {
 		List plotCharts = ctObj.getChartListFromCtChart(ctChart);
 
 		// chart object
-		if (plotCharts != null && plotCharts.size() > 0) {
+		if (plotCharts != null && (!plotCharts.isEmpty())) {
 			chartObj = plotCharts.get(0);
 		}
 		if (chartObj != null) {
 			@SuppressWarnings("rawtypes")
 			List bsers = ctObj.getSerListFromCtObjChart(chartObj);
 			if (!AppUtils.emptyList(bsers)) {
-				chartData.buildCategoryList(ctObj
-						.getCtAxDataSourceFromSerList(bsers));
+				chartData.buildCategoryList(
+						ctObj.getCtAxDataSourceFromSerList(bsers));
 				chartData.buildSeriesList(bsers, themeTable, ctObj);
 			}
 		}
@@ -208,31 +198,54 @@ public class ChartHelper {
 			XSSFSheet sheet = wb.getSheetAt(i);
 			XSSFDrawing drawing = sheet.createDrawingPatriarch();
 			List<XSSFChart> charts = drawing.getCharts();
-			if ((charts != null) && (charts.size() > 0)) {
+			if ((charts != null) && (!charts.isEmpty())) {
 				for (XSSFChart chart : charts) {
 					String chartId = sheet.getSheetName() + "!"
 							+ chart.getPackageRelationship().getId();
-					// ChartLegend legend = chart.getOrCreateLegend();
-					ClientAnchor anchor = null;
-					if (chartId != null) {
-						anchor = anchorMap.get(chartId);
-						if (anchor != null) {
-							ChartData chartData = initChartDataFromXSSFChart(
-									chartId, chart);
-							chartDataMap.put(chartId, chartData);
-							JFreeChart jchart = createChart(chartData);
-							AnchorSize anchorSize = PicturesUtility
-									.getAnchorSize(sheet, anchor);
-							BufferedImage img = jchart.createBufferedImage(
-									anchorSize.getWidth(),
-									anchorSize.getHeight());
-							chartMap.put(chartId, img);
-						}
-					}
+					generateSingleXSSFChart(chart, chartId, sheet,
+							anchorMap, chartMap, chartDataMap);
 				}
 			}
 		}
 
+	}
+
+	/**
+	 * Generate single XSSF chart.
+	 *
+	 * @param chart
+	 *            the chart
+	 * @param chartId
+	 *            the chart id
+	 * @param sheet
+	 *            the sheet
+	 * @param anchorMap
+	 *            the anchor map
+	 * @param chartMap
+	 *            the chart map
+	 * @param chartDataMap
+	 *            the chart data map
+	 */
+	private void generateSingleXSSFChart(final XSSFChart chart,
+			final String chartId, final XSSFSheet sheet,
+			final Map<String, ClientAnchor> anchorMap,
+			final Map<String, BufferedImage> chartMap,
+			final Map<String, ChartData> chartDataMap) {
+		ClientAnchor anchor;
+		if (chartId != null) {
+			anchor = anchorMap.get(chartId);
+			if (anchor != null) {
+				ChartData chartData = initChartDataFromXSSFChart(chartId,
+						chart);
+				chartDataMap.put(chartId, chartData);
+				JFreeChart jchart = createChart(chartData);
+				AnchorSize anchorSize = PicturesUtility.getAnchorSize(sheet,
+						anchor);
+				BufferedImage img = jchart.createBufferedImage(
+						anchorSize.getWidth(), anchorSize.getHeight());
+				chartMap.put(chartId, img);
+			}
+		}
 	}
 
 	/**
@@ -249,11 +262,12 @@ public class ChartHelper {
 		try {
 			Cell poiCell = parent.getWb().getSheet(pCell.getSheetName())
 					.getRow(pCell.getRow()).getCell(pCell.getCol());
-			result = CellUtility.getCellValueWithoutFormat(
-					poiCell);
+			result = CellUtility.getCellValueWithoutFormat(poiCell);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.FINE,
+					"error getParsedCellValue :" + ex.getLocalizedMessage(),
+					ex);
 		}
 		return result;
 
@@ -267,22 +281,24 @@ public class ChartHelper {
 	 * @return DefaultCategoryDataset for jfreechart.
 	 */
 
-	private DefaultCategoryDataset createDataset(final ChartData chartData) {
+	private DefaultCategoryDataset createDataset(
+			final ChartData chartData) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		List<ParsedCell> categoryList = chartData.getCategoryList();
 		for (ChartSeries chartSeries : chartData.getSeriesList()) {
-			String seriesLabel = getParsedCellValue(chartSeries
-					.getSeriesLabel());
+			String seriesLabel = getParsedCellValue(
+					chartSeries.getSeriesLabel());
 			List<ParsedCell> valueList = chartSeries.getValueList();
 			for (int i = 0; i < categoryList.size(); i++) {
 				try {
-					String sCategory = getParsedCellValue(categoryList
-							.get(i));
+					String sCategory = getParsedCellValue(
+							categoryList.get(i));
 					String sValue = getParsedCellValue(valueList.get(i));
 					dataset.addValue(Double.parseDouble(sValue),
 							seriesLabel, sCategory);
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					LOG.log(Level.FINE, "error in creatDataset : "
+							+ ex.getLocalizedMessage(), ex);
 				}
 			}
 		}
@@ -305,12 +321,13 @@ public class ChartHelper {
 			List<ParsedCell> valueList = chartSeries.getValueList();
 			for (int i = 0; i < categoryList.size(); i++) {
 				try {
-					String sCategory = getParsedCellValue(categoryList
-							.get(i));
+					String sCategory = getParsedCellValue(
+							categoryList.get(i));
 					String sValue = getParsedCellValue(valueList.get(i));
 					dataset.setValue(sCategory, Double.parseDouble(sValue));
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					LOG.log(Level.FINE, "error in creatPieDataset : "
+							+ ex.getLocalizedMessage(), ex);
 				}
 			}
 		}
@@ -327,9 +344,7 @@ public class ChartHelper {
 	 */
 	private String getPieTitle(final ChartData chartData) {
 		for (ChartSeries chartSeries : chartData.getSeriesList()) {
-			String seriesLabel = getParsedCellValue(chartSeries
-					.getSeriesLabel());
-			return seriesLabel;
+			return getParsedCellValue(chartSeries.getSeriesLabel());
 		}
 		return "";
 
@@ -398,7 +413,7 @@ public class ChartHelper {
 				true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupStyle(chart, chartData);
 
@@ -424,7 +439,7 @@ public class ChartHelper {
 				orientation, true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupStyle(chart, chartData);
 
@@ -450,7 +465,7 @@ public class ChartHelper {
 				orientation, true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupStyle(chart, chartData);
 
@@ -483,7 +498,7 @@ public class ChartHelper {
 				orientation, true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupBarStyle(chart, chartData);
 
@@ -516,7 +531,7 @@ public class ChartHelper {
 				orientation, true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupBarStyle(chart, chartData);
 
@@ -540,7 +555,7 @@ public class ChartHelper {
 				true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupPieStyle(chart, chartData);
 
@@ -564,7 +579,7 @@ public class ChartHelper {
 				true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupPieStyle(chart, chartData);
 
@@ -597,7 +612,7 @@ public class ChartHelper {
 				orientation, true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupBarStyle(chart, chartData);
 
@@ -630,7 +645,7 @@ public class ChartHelper {
 				orientation, true, // include legend
 				false, // tooltips
 				false // urls
-				);
+		);
 
 		setupBarStyle(chart, chartData);
 
@@ -654,21 +669,21 @@ public class ChartHelper {
 		List<ChartSeries> seriesList = chartData.getSeriesList();
 		BasicStroke bLine = new BasicStroke(2.0f);
 		for (int i = 0; i < seriesList.size(); i++) {
-			Color cColor = ColorUtility.xssfClrToClr(seriesList.get(i)
-					.getSeriesColor().getXssfColor());
+			Color cColor = ColorUtility.xssfClrToClr(
+					seriesList.get(i).getSeriesColor().getXssfColor());
 			plot.getRenderer().setSeriesPaint(i, cColor);
 			plot.getRenderer().setSeriesStroke(i, bLine);
 		}
-		plot.setBackgroundPaint(ColorUtility.xssfClrToClr(chartData
-				.getBgColor().getXssfColor()));
+		plot.setBackgroundPaint(ColorUtility
+				.xssfClrToClr(chartData.getBgColor().getXssfColor()));
 
 		// below are modifications for default setting in excel chart
 		// to-do: need read setting from xml in future
 		plot.setOutlineVisible(false);
 		plot.setRangeGridlinesVisible(true);
 		plot.setRangeGridlinePaint(Color.BLACK);
-		plot.setRangeGridlineStroke(new BasicStroke(
-				TieConstants.DEFAULT_BASIC_STROKE));
+		plot.setRangeGridlineStroke(
+				new BasicStroke(TieConstants.DEFAULT_BASIC_STROKE));
 		plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 		chart.setBackgroundPaint(Color.WHITE);
 		LegendTitle legend = chart.getLegend();
@@ -698,28 +713,29 @@ public class ChartHelper {
 			List<XColor> valueColorList = chartSeries.getValueColorList();
 			for (int index = 0; index < categoryList.size(); index++) {
 				try {
-					String sCategory = getParsedCellValue(categoryList
-							.get(index));
-					Color cColor = ColorUtility.xssfClrToClr(valueColorList
-							.get(index).getXssfColor());
+					String sCategory = getParsedCellValue(
+							categoryList.get(index));
+					Color cColor = ColorUtility.xssfClrToClr(
+							valueColorList.get(index).getXssfColor());
 					plot.setSectionPaint(sCategory, cColor);
 					plot.setSectionOutlineStroke(sCategory, bLine);
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					LOG.log(Level.FINE, "SetupPieStyle error = "
+							+ ex.getLocalizedMessage(), ex);
 				}
 			}
 
 		}
-		plot.setBackgroundPaint(ColorUtility.xssfClrToClr(chartData
-				.getBgColor().getXssfColor()));
+		plot.setBackgroundPaint(ColorUtility
+				.xssfClrToClr(chartData.getBgColor().getXssfColor()));
 
 		// below are modifications for default setting in excel chart
 		// to-do: need read setting from xml in future
 
 		plot.setOutlineVisible(false);
-		plot.setLegendItemShape(new Rectangle(
-				TieConstants.DEFAULT_LEGENT_ITEM_SHAPE_WIDTH,
-				TieConstants.DEFAULT_LEGENT_ITEM_SHAPE_HEIGHT));
+		plot.setLegendItemShape(
+				new Rectangle(TieConstants.DEFAULT_LEGENT_ITEM_SHAPE_WIDTH,
+						TieConstants.DEFAULT_LEGENT_ITEM_SHAPE_HEIGHT));
 		chart.setBackgroundPaint(Color.WHITE);
 		LegendTitle legend = chart.getLegend();
 		legend.setPosition(RectangleEdge.RIGHT);
@@ -740,13 +756,12 @@ public class ChartHelper {
 			final ChartData chartData) {
 		setupStyle(chart, chartData);
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
-		// ((BarRenderer) plot.getRenderer()).setBarPainter(new
-		// StandardBarPainter());
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setBarPainter(new StandardBarPainter());
 		renderer.setItemMargin(TieConstants.DEFAULT_BAR_STYLE_ITEM_MARGIN);
 
-		plot.setForegroundAlpha(TieConstants.DEFAULT_BARSTYLE_FOREGROUND_ALPHA);
+		plot.setForegroundAlpha(
+				TieConstants.DEFAULT_BARSTYLE_FOREGROUND_ALPHA);
 	}
 
 	/**
@@ -768,8 +783,8 @@ public class ChartHelper {
 		XSSFRichTextString chartTitle = chart.getTitle();
 		CTChart ctChart = chart.getCTChart();
 		ChartType chartType = ChartUtility.getChartType(ctChart);
-		chartData.setBgColor(ColorUtility.getBgColor(ctChart.getPlotArea(),
-				themeTable));
+		chartData.setBgColor(
+				ColorUtility.getBgColor(ctChart.getPlotArea(), themeTable));
 		LOG.fine("initChartDataFromXSSFChart chart id = " + chartId
 				+ " title = " + chartTitle + " chart type = " + chartType);
 
@@ -780,11 +795,11 @@ public class ChartHelper {
 		chartData.setType(chartType);
 
 		List<CTCatAx> ctCatAxList = ctChart.getPlotArea().getCatAxList();
-		if ((ctCatAxList != null) && (ctCatAxList.size() > 0)) {
+		if ((ctCatAxList != null) && (!ctCatAxList.isEmpty())) {
 			chartData.setCatAx(new ChartAxis(ctCatAxList.get(0)));
 		}
 		List<CTValAx> ctValAxList = ctChart.getPlotArea().getValAxList();
-		if ((ctValAxList != null) && (ctValAxList.size() > 0)) {
+		if ((ctValAxList != null) && (!ctValAxList.isEmpty())) {
 			chartData.setValAx(new ChartAxis(ctValAxList.get(0)));
 		}
 
@@ -824,8 +839,6 @@ public class ChartHelper {
 			setUpChartData(chartData, ctChart, themeTable, ctObj);
 		}
 
-		// XSSFChartLegend legend = chart.getOrCreateLegend();
-		// System.out.println("******* legend = "+ legend);
 		return chartData;
 	}
 
@@ -851,11 +864,10 @@ public class ChartHelper {
 						.getTwoCellAnchorList();
 				for (int j = 0; j < alist.size(); j++) {
 					CTTwoCellAnchor ctanchor = alist.get(j);
-					String chartId = sheet.getSheetName()
-							+ "!"
-							+ getAnchorAssociateChartId(ctanchor
-									.getGraphicFrame().getGraphic()
-									.getGraphicData().getDomNode());
+					String chartId = sheet.getSheetName() + "!"
+							+ getAnchorAssociateChartId(
+									ctanchor.getGraphicFrame().getGraphic()
+											.getGraphicData().getDomNode());
 					if (chartId != null) {
 						int dx1 = (int) ctanchor.getFrom().getColOff();
 						int dy1 = (int) ctanchor.getFrom().getRowOff();
@@ -878,40 +890,6 @@ public class ChartHelper {
 	}
 
 	/**
-	 * get anchor information from draw.xml.
-	 *
-	 * @param parentNode
-	 *            the parent node
-	 * @return clientAnchor which include row/col and dx information.
-	 */
-	// private XSSFClientAnchor getClientAnchorFromCTDrawing(final CTDrawing
-	// ctDrawing) {
-	//
-	// if ((ctDrawing != null) && (ctDrawing.sizeOfTwoCellAnchorArray() > 0)) {
-	// List<CTTwoCellAnchor> alist = ctDrawing.getTwoCellAnchorList();
-	// for (int j = 0; j < alist.size(); j++) {
-	// CTTwoCellAnchor ctanchor = alist.get(j);
-	// String chartId = getAnchorAssociateChartId(ctanchor
-	// .getGraphicFrame().getGraphic().getGraphicData()
-	// .getDomNode());
-	// if (chartId != null) {
-	// int dx1 = (int) ctanchor.getFrom().getColOff();
-	// int dy1 = (int) ctanchor.getFrom().getRowOff();
-	// int dx2 = (int) ctanchor.getTo().getColOff();
-	// int dy2 = (int) ctanchor.getTo().getRowOff();
-	// int col1 = ctanchor.getFrom().getCol();
-	// int row1 = ctanchor.getFrom().getRow();
-	// int col2 = ctanchor.getTo().getCol();
-	// int row2 = ctanchor.getTo().getRow();
-	// return new XSSFClientAnchor(dx1, dy1, dx2, dy2, col1, row1,
-	// col2, row2);
-	// }
-	// }
-	// }
-	// return null;
-	// }
-
-	/**
 	 * Navigate through xml node to get the chartId. This is a workaround as
 	 * there's no direct method in the api.
 	 * 
@@ -924,12 +902,12 @@ public class ChartHelper {
 		for (int i = 0; i < childNodes.getLength(); i++) {
 			Node childNode = childNodes.item(i);
 			if ((childNode != null)
-					&& (childNode.getNodeName().equalsIgnoreCase("c:chart"))
+					&& ("c:chart".equalsIgnoreCase(childNode.getNodeName()))
 					&& (childNode.hasAttributes())) {
 				NamedNodeMap attrs = childNode.getAttributes();
 				for (int j = 0; j < attrs.getLength(); j++) {
 					Attr attribute = (Attr) attrs.item(j);
-					if (attribute.getName().equalsIgnoreCase("r:id")) {
+					if ("r:id".equalsIgnoreCase(attribute.getName())) {
 						return attribute.getValue();
 					}
 				}
@@ -961,9 +939,12 @@ public class ChartHelper {
 					cir.setSeriesStroke(seriesIndex, stroke); // series line
 																// style
 				} catch (Exception e) {
-					LOG.severe("Error setting style '" + style
-							+ "' for series '" + seriesIndex
-							+ "' of chart '" + chart + "': " + e);
+					LOG.log(Level.SEVERE,
+							"Error setting style '" + style
+									+ "' for series '" + seriesIndex
+									+ "' of chart '" + chart + "': "
+									+ e.getLocalizedMessage(),
+							e);
 				}
 			} else if (plot instanceof XYPlot) {
 				XYPlot xyPlot = chart.getXYPlot();
@@ -972,9 +953,12 @@ public class ChartHelper {
 					xyir.setSeriesStroke(seriesIndex, stroke); // series line
 																// style
 				} catch (Exception e) {
-					LOG.severe("Error setting style '" + style
-							+ "' for series '" + seriesIndex
-							+ "' of chart '" + chart + "': " + e);
+					LOG.log(Level.SEVERE,
+							"Error setting style '" + style
+									+ "' for series '" + seriesIndex
+									+ "' of chart '" + chart + "': "
+									+ e.getLocalizedMessage(),
+							e);
 				}
 			} else {
 				LOG.fine("setSeriesColor() unsupported plot: " + plot);

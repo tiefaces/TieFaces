@@ -36,6 +36,13 @@ import org.tiefaces.components.websheet.configuration.ShiftFormulaRef;
  */
 public final class ShiftFormulaUtility {
 
+
+	/** The row wrapping mask. */
+	// only support xlsx
+	private static int rowWrappingMask = SpreadsheetVersion.EXCEL2007
+			.getLastRowIndex();
+	
+	
 	/**
 	 * hide constructor.
 	 */
@@ -43,10 +50,6 @@ public final class ShiftFormulaUtility {
 		// not called
 	}
 
-	/** The row wrapping mask. */
-	// only support xlsx
-	private static int rowWrappingMask = SpreadsheetVersion.EXCEL2007
-			.getLastRowIndex();
 
 	/**
 	 * Convert shared formulas.
@@ -60,15 +63,14 @@ public final class ShiftFormulaUtility {
 	public static Ptg[] convertSharedFormulas(final Ptg[] ptgs,
 			final ShiftFormulaRef shiftFormulaRef) {
 
-		List<Ptg> newPtgList = new ArrayList<Ptg>();
-		Object ptg = null;
+		List<Ptg> newPtgList = new ArrayList<>();
+		Object ptg;
 		for (int k = 0; k < ptgs.length; ++k) {
 			ptg = ptgs[k];
 			newPtgList.addAll(Arrays.asList(convertPtg(ptgs, k,
 					shiftFormulaRef, ptg)));
 		}
 
-		// String [] stockArr = stockList.toArray(new String[stockList.size()]);
 		return newPtgList.toArray(new Ptg[newPtgList.size()]);
 	}
 
@@ -88,10 +90,9 @@ public final class ShiftFormulaUtility {
 			if (!(ptg instanceof Ref3DPxg) && !(ptg instanceof Ref3DPtg)) {
 				rCode = ((RefPtgBase) ptg).getRow();
 			}
-		} else if (ptg instanceof AreaPtgBase) {
-			if (!(ptg instanceof Area3DPxg) && !(ptg instanceof Area3DPtg)) {
+		} else if (ptg instanceof AreaPtgBase && !(ptg instanceof Area3DPxg) && !(ptg instanceof Area3DPtg)) {
 				rCode = ((AreaPtgBase) ptg).getFirstRow();
-			}
+	
 		}
 
 		return rCode;
@@ -128,7 +129,7 @@ public final class ShiftFormulaUtility {
 			List<Row> rowlist =
 					getRowsList(currentRow, shiftFormulaRef
 							.getCurrentRowsMappingList());
-			if ((rowlist == null) || (rowlist.size() == 0)) {
+			if ((rowlist == null) || (rowlist.isEmpty())) {
 				// no need change ptg
 				return singlePtg(ptg, originalOperandClass, -1);
 			} else {
@@ -218,7 +219,7 @@ public final class ShiftFormulaUtility {
 					first = current;
 				} else {
 					if (all == null) {
-						all = new ArrayList<Row>();
+						all = new ArrayList<>();
 						all.addAll(first);
 					}
 					for (Row row : current) {
@@ -264,11 +265,10 @@ public final class ShiftFormulaUtility {
 				return new3dpxg;
 			} else {
 				RefPtgBase refPtgBase = (RefPtgBase) ptg;
-				RefPtgBase newRefPtg =
-						new RefPtg(newRow.getRowNum(), refPtgBase
+				return 	new RefPtg(newRow.getRowNum(), refPtgBase
 								.getColumn(), refPtgBase.isRowRelative(),
 								refPtgBase.isColRelative());
-				return newRefPtg;
+				
 			}
 		} else {
 			if (ptg instanceof Area3DPxg) {
@@ -294,8 +294,7 @@ public final class ShiftFormulaUtility {
 				AreaPtgBase areaPtgBase = (AreaPtgBase) ptg;
 				int shiftRow =
 						newRow.getRowNum() - areaPtgBase.getFirstRow();
-				AreaPtgBase newAreaPtg =
-						new AreaPtg(areaPtgBase.getFirstRow() + shiftRow,
+				return new AreaPtg(areaPtgBase.getFirstRow() + shiftRow,
 								areaPtgBase.getLastRow() + shiftRow,
 								areaPtgBase.getFirstColumn(), areaPtgBase
 										.getLastColumn(), areaPtgBase
@@ -303,7 +302,6 @@ public final class ShiftFormulaUtility {
 										.isLastRowRelative(), areaPtgBase
 										.isFirstColRelative(), areaPtgBase
 										.isLastColRelative());
-				return newAreaPtg;
 			}
 		}
 
@@ -398,7 +396,7 @@ public final class ShiftFormulaUtility {
 				new3dpxg.setLastSheetName(ref3dPxg.getLastSheetName());
 				newPtg[i * unitSize] = new3dpxg;
 			} else {
-				RefPtgBase refPtgBase = (RefPtgBase) refPtg;
+				RefPtgBase refPtgBase =  refPtg;
 				newPtg[i * unitSize] =
 						new RefPtg(row.getRowNum(), refPtgBase.getColumn(),
 								refPtgBase.isRowRelative(), refPtgBase

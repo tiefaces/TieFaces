@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 TieFaces.
+ * Licensed under MIT
+ */
 
 package org.tiefaces.common;
 
@@ -27,6 +31,7 @@ public class PostConstructApplicationEventListener
 	 * @return true.
 	 * 
 	 */
+	@Override
 	public final boolean isListenerForSource(final Object source) {
 		return true;
 	}
@@ -36,6 +41,7 @@ public class PostConstructApplicationEventListener
 	 * @param event systemevent.
 	 * @throws AbortProcessingException abort process exception.
 	 */
+	@Override
 	public final void processEvent(final SystemEvent event)
 			throws AbortProcessingException {
 

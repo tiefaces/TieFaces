@@ -32,12 +32,12 @@
 	<properties>
 		<javase.version>1.7</javase.version>
 		<javaee.version>7.0</javaee.version>
-		
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>${javase.version}</maven.compiler.source>
 		<maven.compiler.target>${javase.version}</maven.compiler.target>
-		
+
 	</properties>
 
 	<developers>
@@ -48,11 +48,11 @@
 		</developer>
 	</developers>
 
-  <scm>
-    <connection>scm:git:git://github.com/tiefaces/TieFaces.git</connection>
-    <developerConnection>scm:git:ssh://github.com:tiefaces/TieFaces.git</developerConnection>
-    <url>https://github.com/tiefaces/TieFaces.git</url>
-  </scm>
+	<scm>
+		<connection>scm:git:git://github.com/tiefaces/TieFaces.git</connection>
+		<developerConnection>scm:git:ssh://github.com:tiefaces/TieFaces.git</developerConnection>
+		<url>https://github.com/tiefaces/TieFaces.git</url>
+	</scm>
 
 	<dependencies>
 		<dependency>
@@ -103,6 +103,13 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 
@@ -120,27 +127,27 @@
 
 
 	<build>
-	<sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>tests</testSourceDirectory>	
-	
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <excludes>
-          <exclude>org/*.*</exclude>
-        </excludes>
-      </resource>	
-     </resources> 	
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>tests</testSourceDirectory>
 
-    <testResources>
-      <testResource>
-        <directory>tests</directory>
-        <excludes>
-          <exclude>org/*.*</exclude>
-        </excludes>
-      </testResource>
-    </testResources>
-         
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>org/*.*</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>tests</directory>
+				<excludes>
+					<exclude>org/*.*</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
+
 		<plugins>
 
 			<plugin>
@@ -198,9 +205,9 @@
 			</plugin>
 
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-jar-plugin</artifactId>
-			    <version>2.4</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -208,27 +215,32 @@
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
 					</archive>
-				</configuration>			    
+				</configuration>
 			</plugin>
-			
+
 			<plugin>
-    				<groupId>org.eluder.coveralls</groupId>
-    				<artifactId>coveralls-maven-plugin</artifactId>
-    				<version>4.3.0</version>
-			</plugin>	
-		<plugin>
-    			<groupId>org.jacoco</groupId>
-    			<artifactId>jacoco-maven-plugin</artifactId>
-    			<version>0.7.8</version>
-    			<executions>
-        			<execution>
-            				<id>prepare-agent</id>
-            				<goals>
-               					 <goal>prepare-agent</goal>
-            				</goals>
-        			</execution>
-    			</executions>
-		</plugin>			
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>4.3.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.8</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.0.2</version>
+			</plugin>
 
 		</plugins>
 	</build>

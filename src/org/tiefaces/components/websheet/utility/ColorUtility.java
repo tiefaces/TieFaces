@@ -6,6 +6,7 @@
 package org.tiefaces.components.websheet.utility;
 
 import java.awt.Color;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.xssf.model.ThemesTable;
@@ -25,16 +26,7 @@ import org.tiefaces.components.websheet.dataobjects.XColor;
  */
 public final class ColorUtility {
 
-	/**
-	 * prevent initialize.
-	 */
-	private ColorUtility() {
-		// not called
-	}
 
-	/** logger. */
-	private static final Logger LOG = Logger.getLogger(ColorUtility.class
-			.getName());
 
 	/** one million. */
 	private static final double MILLION_NUMBERS = 100000.00;
@@ -45,6 +37,17 @@ public final class ColorUtility {
 	/** max rgb color. */
 	private static final short RGB8BITS = 256;
 
+	/** logger. */
+	private static final Logger LOG = Logger.getLogger(ColorUtility.class
+			.getName());
+	
+	/**
+	 * prevent initialize.
+	 */
+	private ColorUtility() {
+		// not called
+	}
+	
 	/**
 	 * retrieve background color for plot area.
 	 * 
@@ -62,7 +65,7 @@ public final class ColorUtility {
 		try {
 			colorFill = ctPlot.getSpPr().getSolidFill();
 		} catch (Exception ex) {
-			LOG.finest("No entry in bgcolor for solidFill");
+			LOG.log(Level.FINE, "No entry in bgcolor for solidFill", ex);
 		}
 		// if there's no solidFill, then use white color
 		if (colorFill != null) {
@@ -106,7 +109,7 @@ public final class ColorUtility {
 		}
 
 		double tint = preTint;
-		if (tint == 0) {
+		if (tint == 0.0) {
 			// no preTint
 			if (lumOff > 0) {
 				tint = (lumOff / MILLION_NUMBERS);
@@ -174,17 +177,17 @@ public final class ColorUtility {
 					try {
 						lumOff = ctsColor.getLumOffArray(0).getVal();
 					} catch (Exception ex) {
-						LOG.finest("No lumOff entry");
+						LOG.log(Level.FINE, "No lumOff entry", ex);
 					}
 					try {
 						lumMod = ctsColor.getLumModArray(0).getVal();
 					} catch (Exception ex) {
-						LOG.finest("No lumMod entry");
+						LOG.log(Level.FINE, "No lumMod entry", ex);
 					}
 					try {
 						alphaInt = ctsColor.getAlphaArray(0).getVal();
 					} catch (Exception ex) {
-						LOG.finest("No alpha entry");
+						LOG.log(Level.FINE, "No alpha entry", ex);
 					}
 				}
 				return assembleXcolor(bcolor, preTint, lumOff, lumMod,
@@ -210,8 +213,8 @@ public final class ColorUtility {
 			byte[] rgb = ctrColor.getVal();
 			bcolor = new XSSFColor(rgb);
 		} catch (Exception ex) {
-			LOG.severe("Cannot get rgb color error = "
-					+ ex.getLocalizedMessage());
+			LOG.log(Level.SEVERE, "Cannot get rgb color error = "
+					+ ex.getLocalizedMessage(), ex);
 			return null;
 		}
 		int lumOff = 0;
@@ -220,17 +223,17 @@ public final class ColorUtility {
 		try {
 			lumOff = ctrColor.getLumOffArray(0).getVal();
 		} catch (Exception ex) {
-			LOG.finest("No lumOff entry");
+			LOG.log(Level.FINE, "No lumOff entry", ex);
 		}
 		try {
 			lumMod = ctrColor.getLumModArray(0).getVal();
 		} catch (Exception ex) {
-			LOG.finest("No lumMod entry");
+			LOG.log(Level.FINE, "No lumMod entry", ex);
 		}
 		try {
 			alphaStr = ctrColor.getAlphaArray(0).getVal();
 		} catch (Exception ex) {
-			LOG.finest("No alpha entry");
+			LOG.log(Level.FINE, "No alpha entry", ex);
 		}
 		return assembleXcolor(bcolor, 0, lumOff, lumMod, alphaStr);
 	}
@@ -261,7 +264,7 @@ public final class ColorUtility {
 				colorFill = ctSpPr.getSolidFill();
 			}
 		} catch (Exception ex) {
-			LOG.finest("No entry for solidFill");
+			LOG.log(Level.FINE, "No entry for solidFill", ex);
 		}
 		// if there's no solidFill, then use automaticFill color
 		if (colorFill != null) {
@@ -314,8 +317,8 @@ public final class ColorUtility {
 	 */
 	private static double getAutomaticTint(final int index) {
 
-		final double[] idxArray = { 0, 0.25, 0.5, -0.25, -0.5, 0.1, 0.3,
-				-0.1, -0.3 };
+		final double[] idxArray =
+				{ 0, 0.25, 0.5, -0.25, -0.5, 0.1, 0.3, -0.1, -0.3 };
 		int i = index / AUTOCOLORSIZE;
 		if (i >= idxArray.length) {
 			return 0;
@@ -346,9 +349,10 @@ public final class ColorUtility {
 
 	private static int getThemeIndexFromName(final String idxName) {
 
-		final String[] idxArray = { "bg1", "tx1", "bg2", "tx2", "accent1",
-				"accent2", "accent3", "accent4", "accent5", "accent6",
-				"hlink", "folHlink" };
+		final String[] idxArray =
+				{ "bg1", "tx1", "bg2", "tx2", "accent1", "accent2",
+						"accent3", "accent4", "accent5", "accent6",
+						"hlink", "folHlink" };
 		try {
 			for (int i = 0; i < idxArray.length; i++) {
 				if (idxArray[i].equalsIgnoreCase(idxName)) {
@@ -356,7 +360,8 @@ public final class ColorUtility {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.SEVERE, "error in getThemeIndexFromName :"
+					+ ex.getLocalizedMessage(), ex);
 		}
 
 		return -1;
@@ -369,7 +374,8 @@ public final class ColorUtility {
 	 *            xssf color.
 	 * @return triple lets.
 	 */
-	public static short[] getTripletFromXSSFColor(final XSSFColor xssfColor) {
+	public static short[]
+			getTripletFromXSSFColor(final XSSFColor xssfColor) {
 
 		short[] rgbfix = { RGB8BITS, RGB8BITS, RGB8BITS };
 		if (xssfColor != null) {
@@ -379,12 +385,12 @@ public final class ColorUtility {
 			}
 			// Bytes are signed, so values of 128+ are negative!
 			// 0: red, 1: green, 2: blue
-			rgbfix[0] = (short) ((rgb[0] < 0) ? (rgb[0] + RGB8BITS)
-					: rgb[0]);
-			rgbfix[1] = (short) ((rgb[1] < 0) ? (rgb[1] + RGB8BITS)
-					: rgb[1]);
-			rgbfix[2] = (short) ((rgb[2] < 0) ? (rgb[2] + RGB8BITS)
-					: rgb[2]);
+			rgbfix[0] =
+					(short) ((rgb[0] < 0) ? (rgb[0] + RGB8BITS) : rgb[0]);
+			rgbfix[1] =
+					(short) ((rgb[1] < 0) ? (rgb[1] + RGB8BITS) : rgb[1]);
+			rgbfix[2] =
+					(short) ((rgb[2] < 0) ? (rgb[2] + RGB8BITS) : rgb[2]);
 		}
 		return rgbfix;
 	}

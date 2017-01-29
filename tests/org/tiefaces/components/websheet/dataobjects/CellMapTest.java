@@ -26,12 +26,11 @@ import org.tiefaces.components.websheet.TieWebSheetBean;
  */
 public class CellMapTest {
 
-
 	CellMap cellMap = new CellMap(new TieWebSheetBean());
-	
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#size()}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#size()}.
 	 */
 	@Test
 	public final void testSize() throws Exception {
@@ -39,7 +38,8 @@ public class CellMapTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#isEmpty()}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#isEmpty()}.
 	 */
 	@Test
 	public final void testIsEmpty() throws Exception {
@@ -47,7 +47,9 @@ public class CellMapTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#containsKey(java.lang.Object)}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#containsKey(java.lang.Object)}
+	 * .
 	 */
 	@Test
 	public final void testContainsKey() throws Exception {
@@ -55,7 +57,9 @@ public class CellMapTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#containsValue(java.lang.Object)}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#containsValue(java.lang.Object)}
+	 * .
 	 */
 	@Test
 	public final void testContainsValue() throws Exception {
@@ -63,16 +67,18 @@ public class CellMapTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#remove(java.lang.Object)}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#remove(java.lang.Object)}
+	 * .
 	 */
 	@Test
 	public final void testRemove() throws Exception {
 		assertNull(cellMap.remove("any"));
 	}
 
-
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#keySet()}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#keySet()}.
 	 */
 	@Test
 	public final void testKeySet() throws Exception {
@@ -80,7 +86,8 @@ public class CellMapTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#values()}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#values()}.
 	 */
 	@Test
 	public final void testValues() throws Exception {
@@ -88,7 +95,8 @@ public class CellMapTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#entrySet()}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#entrySet()}.
 	 */
 	@Test
 	public final void testEntrySet() throws Exception {
@@ -96,52 +104,63 @@ public class CellMapTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#get(java.lang.Object)}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#get(java.lang.Object)}
+	 * .
 	 */
 	@Test
 	public final void testGetChart() throws Exception {
-		
+
 		TieWebSheetBean bean = new TieWebSheetBean();
 		bean.init();
-		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("resources/sheet/linecharts1.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);		
+		InputStream stream =
+				this.getClass().getClassLoader().getResourceAsStream(
+						"resources/sheet/linecharts1.xlsx");
+		assertEquals(bean.loadWebSheet(stream), 1);
 		String chartViewId = (String) bean.getCellsMap().get("7:0:chart");
 		assertFalse(chartViewId.isEmpty());
-		
+
 	}
 
 	@Test
 	public final void testGet() throws Exception {
-		
+
 		TieWebSheetBean bean = new TieWebSheetBean();
 		bean.init();
-		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("resources/sheet/PRICELISTINPUTVALIDATION.xlsx");
+		InputStream stream =
+				this.getClass().getClassLoader().getResourceAsStream(
+						"resources/sheet/PRICELISTINPUTVALIDATION.xlsx");
 		List<Item> itemList = new ArrayList<Item>();
 		itemList.add(new Item());
-		Map<String, Object> context = new HashMap<String, Object>();
-        context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream,context), 1);		
-		assertEquals(bean.getCellsMap().get("0:0"),"Sale Price Report");
-		assertEquals(bean.getCellsMap().get("2:1"),"Item Number");
-		
+		HashMap<String, Object> context = new HashMap<String, Object>();
+		context.put("items", itemList);
+		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(bean.getCellsMap().get("0:0"), "Sale Price Report");
+		assertEquals(bean.getCellsMap().get("2:1"), "Item Number");
+
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.dataobjects.CellMap#put(java.lang.Object, java.lang.Object)}.
+	 * Test method for
+	 * {@link org.tiefaces.components.websheet.dataobjects.CellMap#put(java.lang.Object, java.lang.Object)}
+	 * .
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public final void testPut() throws Exception {
 		TieWebSheetBean bean = new TieWebSheetBean();
 		bean.init();
-		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("resources/sheet/PRICELISTINPUTVALIDATION.xlsx");
+		InputStream stream =
+				this.getClass().getClassLoader().getResourceAsStream(
+						"resources/sheet/PRICELISTINPUTVALIDATION.xlsx");
 		List<Item> itemList = new ArrayList<Item>();
 		itemList.add(new Item());
-		Map<String, Object> context = new HashMap<String, Object>();
-        context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream,context), 1);		
-		assertEquals((String) bean.getCellsMap().put("4:1","test item"),"test item");
-		assertEquals(bean.getCellsMap().get("4:1"),"test item");
+		HashMap<String, Object> context = new HashMap<String, Object>();
+		context.put("items", itemList);
+		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals((String) bean.getCellsMap().put("4:1", "test item"),
+				"test item");
+		assertEquals(bean.getCellsMap().get("4:1"), "test item");
 	}
 
 }

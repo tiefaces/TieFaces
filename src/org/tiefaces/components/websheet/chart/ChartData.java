@@ -4,9 +4,9 @@
  */
 package org.tiefaces.components.websheet.chart;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -27,7 +27,6 @@ import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
  *
  */
 public class ChartData {
-
 
 	/** id. */
 	private String id;
@@ -54,8 +53,9 @@ public class ChartData {
 	private List<ChartSeries> seriesList;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			ChartData.class.getName());
+	private static final Logger LOG = Logger
+			.getLogger(ChartData.class.getName());
+
 	/**
 	 * get category list.
 	 * 
@@ -71,7 +71,8 @@ public class ChartData {
 	 * @param pcategoryList
 	 *            category list.
 	 */
-	public final void setCategoryList(final List<ParsedCell> pcategoryList) {
+	public final void setCategoryList(
+			final List<ParsedCell> pcategoryList) {
 		this.categoryList = pcategoryList;
 	}
 
@@ -121,16 +122,16 @@ public class ChartData {
 	 */
 	public final void buildCategoryList(final CTAxDataSource ctAxDs) {
 
-		List<ParsedCell> cells = new ArrayList<ParsedCell>();
+		List<ParsedCell> cells = new ArrayList<>();
 		try {
 			String fullRangeName = ctAxDs.getStrRef().getF();
 			String sheetName = TieWebSheetUtility
 					.getSheetNameFromFullCellRefName(fullRangeName);
-			CellRangeAddress region = CellRangeAddress
-					.valueOf(TieWebSheetUtility
-							.removeSheetNameFromFullCellRefName(fullRangeName));
-			for (int row = region.getFirstRow(); 
-					row <= region.getLastRow(); row++) {
+			CellRangeAddress region = CellRangeAddress.valueOf(
+					TieWebSheetUtility.removeSheetNameFromFullCellRefName(
+							fullRangeName));
+			for (int row = region.getFirstRow(); row <= region
+					.getLastRow(); row++) {
 				for (int col = region.getFirstColumn(); col <= region
 						.getLastColumn(); col++) {
 					cells.add(new ParsedCell(sheetName, row, col));
@@ -140,7 +141,7 @@ public class ChartData {
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.FINE, "failed in buildCategoryList", ex);
 		}
 		this.setCategoryList(cells);
 	}
@@ -159,25 +160,26 @@ public class ChartData {
 	public final void buildSeriesList(final List bsers,
 			final ThemesTable themeTable, final ChartObject ctObj) {
 
-		List<ChartSeries> lseriesList = new ArrayList<ChartSeries>();
+		List<ChartSeries> lseriesList = new ArrayList<>();
 		try {
 			for (int index = 0; index < bsers.size(); index++) {
 				Object ctObjSer = bsers.get(index);
 				ChartSeries ctSer = new ChartSeries();
-				ctSer.setSeriesLabel(new ParsedCell(ctObj
-						.getSeriesLabelFromCTSer(ctObjSer)));
+				ctSer.setSeriesLabel(new ParsedCell(
+						ctObj.getSeriesLabelFromCTSer(ctObjSer)));
 				ctSer.setSeriesColor(ColorUtility.geColorFromSpPr(index,
 						ctObj.getShapePropertiesFromCTSer(ctObjSer),
 						themeTable, ctObj.isLineColor()));
-				List<ParsedCell> cells = new ArrayList<ParsedCell>();
+				List<ParsedCell> cells = new ArrayList<>();
 				String fullRangeName = (ctObj
 						.getCTNumDataSourceFromCTSer(ctObjSer)).getNumRef()
-						.getF();
+								.getF();
 				String sheetName = TieWebSheetUtility
 						.getSheetNameFromFullCellRefName(fullRangeName);
 				CellRangeAddress region = CellRangeAddress
 						.valueOf(TieWebSheetUtility
-						.removeSheetNameFromFullCellRefName(fullRangeName));
+								.removeSheetNameFromFullCellRefName(
+										fullRangeName));
 				for (int row = region.getFirstRow(); row <= region
 						.getLastRow(); row++) {
 					for (int col = region.getFirstColumn(); col <= region
@@ -195,7 +197,7 @@ public class ChartData {
 				lseriesList.add(ctSer);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.log(Level.FINE, "failed in buildSerialList", ex);
 		}
 		this.setSeriesList(lseriesList);
 	}
@@ -216,9 +218,9 @@ public class ChartData {
 	private List<XColor> getColorListFromDPTWithValueList(
 			final List<CTDPt> dptList, final List<ParsedCell> cells,
 			final ThemesTable themeTable, final ChartObject ctObj) {
-
+		List<XColor> colors = new ArrayList<>();
 		if ((dptList != null) && (cells != null)) {
-			List<XColor> colors = new ArrayList<XColor>();
+
 			for (int index = 0; index < cells.size(); index++) {
 				CTDPt dpt = getDPtFromListWithIndex(dptList, index);
 				CTShapeProperties ctSpPr = null;
@@ -228,9 +230,8 @@ public class ChartData {
 				colors.add(ColorUtility.geColorFromSpPr(index, ctSpPr,
 						themeTable, ctObj.isLineColor()));
 			}
-			return colors;
 		}
-		return null;
+		return colors;
 
 	}
 
@@ -258,6 +259,7 @@ public class ChartData {
 
 	/**
 	 * get id.
+	 * 
 	 * @return id.
 	 */
 	public final String getId() {
@@ -266,7 +268,9 @@ public class ChartData {
 
 	/**
 	 * set id.
-	 * @param pid id.
+	 * 
+	 * @param pid
+	 *            id.
 	 */
 	public final void setId(final String pid) {
 		id = pid;
@@ -274,6 +278,7 @@ public class ChartData {
 
 	/**
 	 * get title.
+	 * 
 	 * @return title.
 	 */
 	public final String getTitle() {
@@ -282,7 +287,9 @@ public class ChartData {
 
 	/**
 	 * set title.
-	 * @param ptitle title.
+	 * 
+	 * @param ptitle
+	 *            title.
 	 */
 	public final void setTitle(final String ptitle) {
 		title = ptitle;
@@ -290,6 +297,7 @@ public class ChartData {
 
 	/**
 	 * get type.
+	 * 
 	 * @return type.
 	 */
 	public final ChartType getType() {
@@ -298,7 +306,9 @@ public class ChartData {
 
 	/**
 	 * set chart type.
-	 * @param ptype type.
+	 * 
+	 * @param ptype
+	 *            type.
 	 */
 	public final void setType(final ChartType ptype) {
 		type = ptype;
@@ -306,6 +316,7 @@ public class ChartData {
 
 	/**
 	 * get cat ax.
+	 * 
 	 * @return chartaxis.
 	 */
 	public final ChartAxis getCatAx() {
@@ -314,7 +325,9 @@ public class ChartData {
 
 	/**
 	 * set catax.
-	 * @param pcatAx catax.
+	 * 
+	 * @param pcatAx
+	 *            catax.
 	 */
 	public final void setCatAx(final ChartAxis pcatAx) {
 		this.catAx = pcatAx;
@@ -322,6 +335,7 @@ public class ChartData {
 
 	/**
 	 * get valax.
+	 * 
 	 * @return chartaxis.
 	 */
 	public final ChartAxis getValAx() {
@@ -330,7 +344,9 @@ public class ChartData {
 
 	/**
 	 * set valax.
-	 * @param pvalAx valax.
+	 * 
+	 * @param pvalAx
+	 *            valax.
 	 */
 	public final void setValAx(final ChartAxis pvalAx) {
 		this.valAx = pvalAx;

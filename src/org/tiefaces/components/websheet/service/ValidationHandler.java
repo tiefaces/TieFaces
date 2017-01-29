@@ -7,6 +7,7 @@ package org.tiefaces.components.websheet.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
@@ -75,9 +76,10 @@ public class ValidationHandler {
 		cell.setInvalid(newStatus);
 		if ((oldStatus != newStatus)
 				&& (parent.getWebFormClientId() != null)) {
-			RequestContext.getCurrentInstance().update(
-					parent.getWebFormClientId() + ":" + (irow - topRow)
-							+ ":group" + (icol - leftCol));
+			RequestContext.getCurrentInstance()
+					.update(parent.getWebFormClientId() + ":"
+							+ (irow - topRow) + ":group"
+							+ (icol - leftCol));
 		}
 
 	}
@@ -101,16 +103,14 @@ public class ValidationHandler {
 		int topRow = parent.getCurrentTopRow();
 		int leftCol = parent.getCurrentLeftColumn();
 
-		FacesCell cell =
-				CellUtility.getFacesCellFromBodyRow(row - topRow, col
-						- leftCol, parent.getBodyRows());
+		FacesCell cell = CellUtility.getFacesCellFromBodyRow(row, col,
+				parent.getBodyRows(), topRow, leftCol);
 		if (cell == null) {
 			return;
 		}
 
-		Cell poiCell =
-				parent.getCellHelper().getPoiCellWithRowColFromCurrentPage(
-						row, col);
+		Cell poiCell = parent.getCellHelper()
+				.getPoiCellWithRowColFromCurrentPage(row, col);
 		boolean oldStatus = cell.isInvalid();
 
 		String value = CellUtility.getCellValueWithoutFormat(poiCell);
@@ -129,33 +129,33 @@ public class ValidationHandler {
 			return;
 		}
 
-		SheetConfiguration sheetConfig =
-				parent.getSheetConfigMap().get(parent.getCurrentTabName());
-		List<CellFormAttributes> cellAttributes =
-				CellUtility.findCellValidateAttributes(
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
+				.get(parent.getCurrentTabName());
+		List<CellFormAttributes> cellAttributes = CellUtility
+				.findCellValidateAttributes(
 						parent.getCellAttributesMap()
-								.getCellValidateAttributes(), poiCell, row,
-						topRow);
+								.getCellValidateAttributes(),
+						poiCell, row, topRow);
 		if (cellAttributes != null) {
-			Sheet sheet1 =
-					parent.getWb().getSheet(sheetConfig.getSheetName());
+			Sheet sheet1 = parent.getWb()
+					.getSheet(sheetConfig.getSheetName());
 			for (CellFormAttributes attr : cellAttributes) {
-				boolean pass =
-						doValidation(value, attr, poiCell.getRowIndex(),
-								sheet1);
+				boolean pass = doValidation(value, attr,
+						poiCell.getRowIndex(), sheet1);
 				if (!pass) {
 					String errmsg = attr.getMessage();
 					if (errmsg == null) {
 						errmsg = TieConstants.DEFALT_MSG_INVALID_INPUT;
 					}
 					cell.setErrormsg(errmsg);
-					refreshAfterStatusChanged(false, true, row, topRow,
-							col, leftCol, cell);
-					FacesMessage msg =
-							new FacesMessage(FacesMessage.SEVERITY_ERROR,
-									errmsg, errmsg);
-					LOG.severe("Web sheet validationHandler validate failed = "
-							+ errmsg + "; row =" + row + " col= " + col);
+					refreshAfterStatusChanged(false, true, row, topRow, col,
+							leftCol, cell);
+					FacesMessage msg = new FacesMessage(
+							FacesMessage.SEVERITY_ERROR, errmsg, errmsg);
+					LOG.log(Level.FINE,
+							"Web sheet validationHandler validate failed = "
+									+ errmsg + "; row =" + row + " col= "
+									+ col);
 					throw new ValidatorException(msg);
 				}
 
@@ -184,13 +184,12 @@ public class ValidationHandler {
 	private boolean doValidation(final Object value,
 			final CellFormAttributes attr, final int rowIndex,
 			final Sheet sheet) throws ValidatorException {
-		boolean pass = true;
+		boolean pass;
 
 		String attrValue = attr.getValue();
 		attrValue = attrValue.replace("$value", value.toString() + "");
-		attrValue =
-				CellUtility.replaceExpressionWithCellValue(attrValue,
-						rowIndex, sheet);
+		attrValue = CellUtility.replaceExpressionWithCellValue(attrValue,
+				rowIndex, sheet);
 		pass = parent.getCellHelper().evalBoolExpression(attrValue);
 		return pass;
 
@@ -206,15 +205,17 @@ public class ValidationHandler {
 	public final boolean validateCell(final UIComponent target) {
 
 		try {
-			int[] rowcol =
-					CellUtility.getRowColFromComponentAttributes(target);
+			int[] rowcol = CellUtility
+					.getRowColFromComponentAttributes(target);
 			int row = rowcol[0];
 			int col = rowcol[1];
 			validateWithRowColInCurrentPage(row, col, true);
 		} catch (ValidatorException ex) {
 			// use log.debug because mostly they are expected
-			LOG.severe("Web Form ValidationHandler validateCell failed error = "
-					+ ex.getLocalizedMessage());
+			LOG.log(Level.SEVERE,
+					"Web Form ValidationHandler validateCell failed error = "
+							+ ex.getLocalizedMessage(),
+					ex);
 			return false;
 		}
 		return true;
@@ -230,17 +231,20 @@ public class ValidationHandler {
 		boolean passEmptyCheck = true;
 
 		try {
-			Map<String, Object> viewMap =
-					FacesContext.getCurrentInstance().getViewRoot()
-							.getViewMap();
-			Boolean fullvalidation =
-					(Boolean) viewMap.get("fullValidation");
-			if ((fullvalidation != null) && (fullvalidation)) {
-				passEmptyCheck = false;
+			if (FacesContext.getCurrentInstance() != null) {
+				Map<String, Object> viewMap = FacesContext
+						.getCurrentInstance().getViewRoot().getViewMap();
+				Boolean fullvalidation = (Boolean) viewMap
+						.get("fullValidation");
+				if ((fullvalidation != null) && (fullvalidation)) {
+					passEmptyCheck = false;
+				}
 			}
 		} catch (Exception ex) {
-			LOG.fine("cannot get fullValidation from view map. error = "
-					+ ex.getMessage());
+			LOG.log(Level.SEVERE,
+					"cannot get fullValidation from view map. error = "
+							+ ex.getMessage(),
+					ex);
 		}
 
 		int top = parent.getCurrentTopRow();
@@ -263,8 +267,8 @@ public class ValidationHandler {
 	 */
 	public final boolean validateRowInCurrentPage(final int irow,
 			final boolean passEmptyCheck) {
-		SheetConfiguration sheetConfig =
-				parent.getSheetConfigMap().get(parent.getCurrentTabName());
+		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
+				.get(parent.getCurrentTabName());
 		return this.validateRow(irow, passEmptyCheck, sheetConfig);
 	}
 
@@ -275,14 +279,16 @@ public class ValidationHandler {
 	 *            the pass empty check
 	 * @return the string
 	 */
-	public final String findFirstInvalidSheet(final boolean passEmptyCheck) {
+	public final String findFirstInvalidSheet(
+			final boolean passEmptyCheck) {
 		for (Map.Entry<String, SheetConfiguration> entry : parent
 				.getSheetConfigMap().entrySet()) {
 			SheetConfiguration sheetConfig = entry.getValue();
 			String tabName = entry.getKey();
 			int topRow = sheetConfig.getBodyCellRange().getTopRow();
 			for (int irow = 0; irow < parent.getBodyRows().size(); irow++) {
-				if (!validateRow(irow + topRow, passEmptyCheck, sheetConfig)) {
+				if (!validateRow(irow + topRow, passEmptyCheck,
+						sheetConfig)) {
 					return tabName;
 				}
 			}
@@ -307,8 +313,8 @@ public class ValidationHandler {
 		boolean pass = true;
 		if (sheetConfig != null) {
 			int top = sheetConfig.getBodyCellRange().getTopRow();
-			List<FacesCell> cellRow =
-					parent.getBodyRows().get(irow - top).getCells();
+			List<FacesCell> cellRow = parent.getBodyRows().get(irow - top)
+					.getCells();
 			for (int index = 0; index < cellRow.size(); index++) {
 				try {
 					FacesCell fcell = cellRow.get(index);
@@ -318,6 +324,8 @@ public class ValidationHandler {
 								passEmptyCheck);
 					}
 				} catch (ValidatorException ex) {
+					LOG.log(Level.SEVERE, "failed validateRow error = "
+							+ ex.getLocalizedMessage(), ex);
 					pass = false;
 				}
 			}
