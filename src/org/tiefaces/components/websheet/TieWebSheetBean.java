@@ -43,7 +43,6 @@ import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.chart.ChartData;
 import org.tiefaces.components.websheet.chart.ChartHelper;
 import org.tiefaces.components.websheet.chart.ChartsData;
-import org.tiefaces.components.websheet.configuration.CellControlsHelper;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CachedCells;
@@ -55,10 +54,11 @@ import org.tiefaces.components.websheet.dataobjects.FacesRow;
 import org.tiefaces.components.websheet.dataobjects.HeaderCell;
 import org.tiefaces.components.websheet.dataobjects.SerialWorkbook;
 import org.tiefaces.components.websheet.service.CellHelper;
-import org.tiefaces.components.websheet.service.CellUtility;
 import org.tiefaces.components.websheet.service.PicturesHelper;
 import org.tiefaces.components.websheet.service.ValidationHandler;
 import org.tiefaces.components.websheet.service.WebSheetLoader;
+import org.tiefaces.components.websheet.utility.CellControlsUtility;
+import org.tiefaces.components.websheet.utility.CellUtility;
 
 /**
  * Main class for web sheet.
@@ -1092,7 +1092,7 @@ public class TieWebSheetBean extends TieWebSheetView implements
 				CellUtility.getFacesCellFromBodyRow(row, col, this
 						.getBodyRows(), this.getCurrentTopRow(), this
 						.getCurrentLeftColumn());
-		CellControlsHelper.populateAttributes(component, fcell, this
+		CellControlsUtility.populateAttributes(component, fcell, this
 				.getCellDefaultControl());
 	}
 

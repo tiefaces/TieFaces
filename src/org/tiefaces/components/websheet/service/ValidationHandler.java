@@ -23,6 +23,7 @@ import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
+import org.tiefaces.components.websheet.utility.CellUtility;
 
 /**
  * The Class ValidationHandler.

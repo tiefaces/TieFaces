@@ -12,10 +12,13 @@ import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.configuration.ConfigRangeAttrs;
-import org.tiefaces.components.websheet.configuration.ConfigurationHelper;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.MapObject;
+import org.tiefaces.components.websheet.utility.CellUtility;
+import org.tiefaces.components.websheet.utility.CommandUtility;
+import org.tiefaces.components.websheet.utility.ConfigurationUtility;
+import org.tiefaces.components.websheet.utility.SaveAttrsUtility;
 
 /**
  * Helper class for web sheet cells.
@@ -61,17 +64,17 @@ public class CellHelper {
 	public final void saveDataInContext(final Cell poiCell,
 			final String strValue) {
 
-		String saveAttrList = ConfigurationHelper
+		String saveAttrList = SaveAttrsUtility
 				.getSaveAttrListFromRow(poiCell.getRow());
 		if (saveAttrList != null) {
-			String saveAttr = ConfigurationHelper.getSaveAttrFromList(
+			String saveAttr = SaveAttrsUtility.getSaveAttrFromList(
 					poiCell.getColumnIndex(), saveAttrList);
 			if (saveAttr != null) {
-				String fullName = ConfigurationHelper
+				String fullName = ConfigurationUtility
 						.getFullNameFromRow(poiCell.getRow());
 				if (fullName != null) {
 					restoreDataContext(fullName);
-					ConfigurationHelper.saveDataToObjectInContext(
+					SaveAttrsUtility.saveDataToObjectInContext(
 							parent.getDataContext(), saveAttr, strValue,
 							parent.getExpEngine());
 				}
@@ -133,7 +136,7 @@ public class CellHelper {
 	 * @return true (express is true) false ( express is false or invalid).
 	 */
 	public final boolean evalBoolExpression(final String pscript) {
-		return CellUtility.evalBoolExpression(parent.getExpEngine(),
+		return CommandUtility.evalBoolExpression(parent.getExpEngine(),
 				pscript);
 	}
 

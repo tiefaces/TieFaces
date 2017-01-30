@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.tiefaces.components.websheet.configuration.CellControlsHelper;
+import org.tiefaces.components.websheet.utility.CellControlsUtility;
 
 /**
  * Get chart Axis infomation from Excel xml.
@@ -21,7 +21,7 @@ public class ChartAxis  {
 
 	/** logger. */
 	private static final Logger LOG = Logger.getLogger(
-			CellControlsHelper.class.getName());
+			CellControlsUtility.class.getName());
 	
 	/** position. */
 	private String position;

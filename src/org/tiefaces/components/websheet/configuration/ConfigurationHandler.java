@@ -30,8 +30,10 @@ import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.CellRange;
-import org.tiefaces.components.websheet.service.CellUtility;
-import org.tiefaces.components.websheet.service.ParserUtility;
+import org.tiefaces.components.websheet.utility.CellUtility;
+import org.tiefaces.components.websheet.utility.ConfigurationUtility;
+import org.tiefaces.components.websheet.utility.ParserUtility;
+import org.tiefaces.components.websheet.utility.SaveAttrsUtility;
 import org.tiefaces.components.websheet.utility.WebSheetUtility;
 
 /**
@@ -315,7 +317,7 @@ public class ConfigurationHandler {
 					row = sheet.createRow(index);
 				}
 				if (hasEachCommand) {
-					ConfigurationHelper.setOriginalRowNumInHiddenColumn(row,
+					ConfigurationUtility.setOriginalRowNumInHiddenColumn(row,
 							index);
 				}
 
@@ -438,7 +440,7 @@ public class ConfigurationHandler {
 		if (parent.isSkipConfiguration()) {
 			return;
 		}
-		ConfigurationHelper.setSaveAttrsForSheet(sheet, minRowNum,
+		SaveAttrsUtility.setSaveAttrsForSheet(sheet, minRowNum,
 				maxRowNum);
 
 	}

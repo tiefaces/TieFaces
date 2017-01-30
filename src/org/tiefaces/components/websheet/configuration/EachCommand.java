@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.tiefaces.components.websheet.utility.CommandUtility;
+import org.tiefaces.components.websheet.utility.ConfigurationUtility;
+
 /**
  * Each command represent the repeat area which typically using a group of data.
  * i.e. tie:each(items="department.staff" var="employee" length="1"
@@ -201,7 +204,7 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			final List<RowsMapping> currentRowsMappingList) {
 
 		fullName = fullName + ":" + this.getCommandName();
-		Collection itemsCollection = ConfigurationHelper
+		Collection itemsCollection = ConfigurationUtility
 				.transformToCollectionObject(configBuildRef.getEngine(),
 						items, context);
 
@@ -241,14 +244,14 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			}
 			RowsMapping unitRowsMapping = new RowsMapping();
 			context.put(var, obj);
-			if (selectEngine != null && !ConfigurationHelper
+			if (selectEngine != null && !ConfigurationUtility
 					.isConditionTrue(selectEngine, context)) {
 				context.remove(var);
 				continue;
 			}
-			ConfigurationHelper.insertEachTemplate(this.getConfigRange(),
+			CommandUtility.insertEachTemplate(this.getConfigRange(),
 					configBuildRef, index, insertPosition, unitRowsMapping);
-			ConfigRange currentRange = ConfigurationHelper
+			ConfigRange currentRange = ConfigurationUtility
 					.buildCurrentRange(this.getConfigRange(),
 							configBuildRef.getSheet(), insertPosition);
 			currentRowsMappingList.add(unitRowsMapping);

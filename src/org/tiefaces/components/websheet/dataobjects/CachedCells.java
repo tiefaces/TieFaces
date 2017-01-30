@@ -11,9 +11,8 @@ import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.service.CellUtility;
+import org.tiefaces.components.websheet.utility.CellUtility;
 
 /**
  * Use to cache formula cells. The purpose is to compare current cell with
@@ -35,7 +34,7 @@ public class CachedCells implements Serializable {
 			CachedCells.class.getName());
 
 	/** The cached map. */
-	private Map<Cell, FormulaMapping> cachedMap = new HashMap<Cell, FormulaMapping>();
+	private HashMap<Cell, FormulaMapping> cachedMap = new HashMap<>();
 
 	/** The parent. */
 	private TieWebSheetBean parent = null;
@@ -66,8 +65,6 @@ public class CachedCells implements Serializable {
 		// Cell.CELL_TYPE_FORMULA
 		if ((cell != null) && ((formula == null)
 				|| (cell.getCellTypeEnum() == formula))) {
-			// String refName = TieWebSheetUtility.getFullCellRefName(sheet1,
-			// cell);
 			String value = CellUtility.getCellValueWithFormat(cell,
 					parent.getFormulaEvaluator(),
 					parent.getDataFormatter());
@@ -133,32 +130,27 @@ public class CachedCells implements Serializable {
 
 	/**
 	 * Checks if is value changed.
-	 *
-	 * @param sheet1
-	 *            the sheet 1
 	 * @param cell
 	 *            the cell
+	 *
 	 * @return true, if is value changed
 	 */
-	public final boolean isValueChanged(final Sheet sheet1, final Cell cell) {
+	public final boolean isValueChanged(final Cell cell) {
 		String newValue = CellUtility.getCellValueWithFormat(cell,
 				parent.getFormulaEvaluator(), parent.getDataFormatter());
-		return isValueChanged(sheet1, cell, newValue);
+		return isValueChanged(cell, newValue);
 	}
 
 	/**
 	 * Checks if is value changed.
-	 *
-	 * @param sheet1
-	 *            the sheet 1
 	 * @param cell
 	 *            the cell
 	 * @param pnewValue
 	 *            the new value
+	 *
 	 * @return true, if is value changed
 	 */
-	public final boolean isValueChanged(final Sheet sheet1, final Cell cell,
-			final String pnewValue) {
+	public final boolean isValueChanged(final Cell cell, final String pnewValue) {
 		Map<Cell, FormulaMapping> map = cachedMap;
 		String oldValue = map.get(cell).getValue();
 		String newValue = pnewValue;

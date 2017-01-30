@@ -19,7 +19,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.tiefaces.common.TieConstants;
-import org.tiefaces.components.websheet.service.ShiftFormulaUtility;
+import org.tiefaces.components.websheet.utility.ConfigurationUtility;
+import org.tiefaces.components.websheet.utility.ShiftFormulaUtility;
 
 /**
  * Form command. i.e. tie:form(name="departments" length="9" header="0"
@@ -309,7 +310,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 
 		RowsMapping unitRowsMapping = new RowsMapping();
 		for (Integer index : configBuildRef.getWatchList()) {
-			if (ConfigurationHelper.isStaticRow(this.getConfigRange(),
+			if (ConfigurationUtility.isStaticRow(this.getConfigRange(),
 					index)) {
 				unitRowsMapping.addRow(index,
 						configBuildRef.getSheet().getRow(index));

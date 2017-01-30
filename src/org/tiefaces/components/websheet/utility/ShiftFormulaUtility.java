@@ -2,7 +2,7 @@
  * Copyright 2015 TieFaces.
  * Licensed under MIT
  */
-package org.tiefaces.components.websheet.service;
+package org.tiefaces.components.websheet.utility;
 
 import java.util.ArrayList;
 import java.util.Arrays;

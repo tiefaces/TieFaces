@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
+import org.tiefaces.components.websheet.utility.PicturesUtility;
 
 /**
  * The Class PicturesHelper.

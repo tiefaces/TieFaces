@@ -9,13 +9,22 @@ import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.ThemesTable;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.tiefaces.common.FacesUtility;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 
 /**
@@ -393,5 +402,48 @@ public final class ColorUtility {
 					(short) ((rgb[2] < 0) ? (rgb[2] + RGB8BITS) : rgb[2]);
 		}
 		return rgbfix;
+	}
+
+	/**
+	 * Gets the bg color from cell.
+	 *
+	 * @param wb
+	 *            the wb
+	 * @param poiCell
+	 *            the poi cell
+	 * @param cellStyle
+	 *            the cell style
+	 * @return the bg color from cell
+	 */
+	static String getBgColorFromCell(final Workbook wb,
+			final Cell poiCell, final CellStyle cellStyle) {
+	
+		String style = "";
+		if (poiCell instanceof HSSFCell) {
+			int bkColorIndex = cellStyle.getFillForegroundColor();
+			HSSFColor color = HSSFColor.getIndexHash().get(bkColorIndex);
+			if (color != null) {
+				// correct color for customPalette
+				HSSFPalette palette = ((HSSFWorkbook) wb)
+						.getCustomPalette();
+				HSSFColor color2 = palette.getColor(bkColorIndex);
+				if (!color.getHexString()
+						.equalsIgnoreCase(color2.getHexString())) {
+					color = color2;
+				}
+				style = "background-color:rgb("
+						+ FacesUtility.strJoin(color.getTriplet(), ",")
+						+ ");";
+			}
+		} else if (poiCell instanceof XSSFCell) {
+			XSSFColor color = ((XSSFCell) poiCell).getCellStyle()
+					.getFillForegroundColorColor();
+			if (color != null) {
+				style = "background-color:rgb(" + FacesUtility.strJoin(
+						getTripletFromXSSFColor(color), ",")
+						+ ");";
+			}
+		}
+		return style;
 	}
 }

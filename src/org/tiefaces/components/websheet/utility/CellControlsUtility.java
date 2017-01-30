@@ -2,7 +2,7 @@
  * Copyright 2015 TieFaces.
  * Licensed under MIT
  */
-package org.tiefaces.components.websheet.configuration;
+package org.tiefaces.components.websheet.utility;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -23,11 +23,11 @@ import org.tiefaces.components.websheet.dataobjects.FacesCell;
  * @author JASON JIANG.
  *
  */
-public final class CellControlsHelper {
+public final class CellControlsUtility {
 
 	/** logger. */
 	private static final Logger LOG = Logger
-			.getLogger(CellControlsHelper.class.getName());
+			.getLogger(CellControlsUtility.class.getName());
 
 	/** list of supported components. */
 	private static List<String> supportComponents = Arrays.asList(
@@ -46,7 +46,7 @@ public final class CellControlsHelper {
 	/**
 	 * hide constructor.
 	 */
-	private CellControlsHelper() {
+	private CellControlsUtility() {
 		// not called
 	}
 

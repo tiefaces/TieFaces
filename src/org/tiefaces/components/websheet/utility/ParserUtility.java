@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package org.tiefaces.components.websheet.service;
+package org.tiefaces.components.websheet.utility;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

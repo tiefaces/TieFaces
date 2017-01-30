@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package org.tiefaces.components.websheet.service;
+package org.tiefaces.components.websheet.utility;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,36 +15,22 @@ import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.tiefaces.common.FacesUtility;
 import org.tiefaces.common.TieConstants;
-import org.tiefaces.components.websheet.configuration.ConfigurationHelper;
-import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
-import org.tiefaces.components.websheet.utility.ColorUtility;
-import org.tiefaces.components.websheet.utility.WebSheetUtility;
 
 /**
  * Helper class for web sheet cells.
@@ -55,7 +41,7 @@ import org.tiefaces.components.websheet.utility.WebSheetUtility;
 public final class CellUtility {
 
 	/** logger. */
-	private static final Logger LOG = Logger
+	static final Logger LOG = Logger
 			.getLogger(CellUtility.class.getName());
 
 	/**
@@ -100,7 +86,7 @@ public final class CellUtility {
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE,
 					"Web Form WebFormHelper getCellValue Error row = "
-							+ poiCell.getRowIndex() + " col = "
+							+ poiCell.getRowIndex() + " column = "
 							+ poiCell.getColumnIndex() + " error = "
 							+ e.getLocalizedMessage()
 							+ "; Change return result to blank",
@@ -207,67 +193,67 @@ public final class CellUtility {
 			if (value.length() == 0) {
 				c.setCellType(CellType.BLANK);
 			} else if (WebSheetUtility.isNumeric(value)) {
-				double val = Double.parseDouble(
-						value.replace(Character.toString(','), ""));
-				c.setCellType(CellType.NUMERIC);
-				c.setCellValue(val);
+				setCellValueNumber(c, value);
 			} else if (WebSheetUtility.isDate(value)) {
-				String date = WebSheetUtility.parseDate(value);
-				c.setCellType(CellType.STRING);
-				c.setCellValue(date);
+				setCellValueDate(c, value);
+			} else if (c.getCellTypeEnum() == CellType.BOOLEAN) {
+					setCellValueBoolean(c, value);
 			} else {
-				if (c.getCellTypeEnum() == CellType.BOOLEAN) {
-					if ("Y".equalsIgnoreCase(value)) {
-						c.setCellValue(true);
-					} else {
-						c.setCellValue(false);
-					}
-				} else {
-					c.setCellType(CellType.STRING);
-					c.setCellValue(value);
-				}
+					setCellValueString(c, value);
 			}
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, " error in setCellValue of CellUtility = "
 					+ e.getLocalizedMessage(), e);
-			c.setCellType(CellType.STRING);
-			c.setCellValue(value);
+			setCellValueString(c, value);
 		}
-		LOG.fine(" set cell value row = " + c.getRowIndex() + " col = "
+		LOG.fine(" set cell value row = " + c.getRowIndex() + " columnIndex = "
 				+ c.getColumnIndex() + " value = " + value + " cellType = "
 				+ c.getCellTypeEnum());
 		return c;
 	}
 
 	/**
-	 * evaluate boolean express.
-	 *
-	 * @param expEngine
-	 *            expression engine.
-	 * @param pscript
-	 *            script.
-	 * @return true (express is true) false ( express is false or invalid).
+	 * @param c
+	 * @param value
 	 */
-	public static boolean evalBoolExpression(
-			final ExpressionEngine expEngine, final String pscript) {
-		Object result = null;
-		String script = "( " + pscript + " )";
-		script = script.toUpperCase().replace("AND", "&&");
-		script = script.toUpperCase().replace("OR", "||");
-		try {
-			result = expEngine.evaluate(script);
-		} catch (Exception e) {
-			LOG.log(Level.SEVERE,
-					"WebForm WebFormHelper evalBoolExpression script = "
-							+ script + "; error = "
-							+ e.getLocalizedMessage(),
-					e);
-		}
-		if (result != null) {
-			return ((Boolean) result).booleanValue();
+	private static void setCellValueString(final Cell c,
+			final String value) {
+		c.setCellType(CellType.STRING);
+		c.setCellValue(value);
+	}
+
+	/**
+	 * @param c
+	 * @param value
+	 */
+	private static void setCellValueBoolean(final Cell c,
+			final String value) {
+		if ("Y".equalsIgnoreCase(value)||"Yes".equalsIgnoreCase(value)||"True".equalsIgnoreCase(value)) {
+			c.setCellValue(true);
 		} else {
-			return false;
+			c.setCellValue(false);
 		}
+	}
+
+	/**
+	 * @param c
+	 * @param value
+	 */
+	private static void setCellValueDate(final Cell c, final String value) {
+		String date = WebSheetUtility.parseDate(value);
+		setCellValueString(c, date);
+	}
+
+	/**
+	 * @param c
+	 * @param value
+	 */
+	private static void setCellValueNumber(final Cell c,
+			final String value) {
+		double val = Double.parseDouble(
+				value.replace(Character.toString(','), ""));
+		c.setCellType(CellType.NUMERIC);
+		c.setCellValue(val);
 	}
 
 	/**
@@ -359,7 +345,7 @@ public final class CellUtility {
 			copyCell(destSheet, sourceRow, newRow, i, checkLock);
 		}
 		if (setHiddenColumn) {
-			ConfigurationHelper.setOriginalRowNumInHiddenColumn(newRow,
+			ConfigurationUtility.setOriginalRowNumInHiddenColumn(newRow,
 					sourceRow.getRowNum());
 		}
 		return;
@@ -393,25 +379,24 @@ public final class CellUtility {
 			return null;
 		}
 		Cell newCell = newRow.createCell(cellIndex);
-		Workbook wb = destSheet.getWorkbook();
-		// Copy style from old cell and apply to new cell
-		CellStyle newCellStyle = wb.createCellStyle();
-		newCellStyle.cloneStyleFrom(sourceCell.getCellStyle());
-		newCell.setCellStyle(newCellStyle);
+		copyCellSetStyle(destSheet, sourceCell,
+				newCell);
 
-		// If there is a cell comment, copy
-		if (sourceCell.getCellComment() != null) {
-			newCell.setCellComment(sourceCell.getCellComment());
-		}
+		copyCellSetValue(sourceCell, newCell, checkLock);
 
-		// If there is a cell hyperlink, copy
-		if (sourceCell.getHyperlink() != null) {
-			newCell.setHyperlink(sourceCell.getHyperlink());
-		}
+		return newCell;
+	}
 
-		// Set the cell data type
-		newCell.setCellType(sourceCell.getCellTypeEnum());
-
+	/**
+	 * set cell value.
+	 * @param sourceCell source cell.
+	 * @param newCell new cell. 
+	 * @param checkLock check lock flag.
+	 */
+	private static void copyCellSetValue(Cell sourceCell, Cell newCell,
+			final boolean checkLock) {
+		
+		CellStyle newCellStyle = newCell.getCellStyle();
 		// Set the cell data value
 		switch (sourceCell.getCellTypeEnum()) {
 		case BOOLEAN:
@@ -443,8 +428,47 @@ public final class CellUtility {
 			}
 			break;
 		}
+	}
 
-		return newCell;
+	/**
+	 * set up cell style.
+	 * @param destSheet dest sheet.
+	 * @param sourceCell source cell. 
+	 * @param newCell new cell.
+	 */
+	private static void copyCellSetStyle(final Sheet destSheet,
+			Cell sourceCell, Cell newCell) {
+		CellStyle newCellStyle = getCellStyleFromSourceCell(destSheet,
+				sourceCell);
+		newCell.setCellStyle(newCellStyle);
+
+		// If there is a cell comment, copy
+		if (sourceCell.getCellComment() != null) {
+			newCell.setCellComment(sourceCell.getCellComment());
+		}
+
+		// If there is a cell hyperlink, copy
+		if (sourceCell.getHyperlink() != null) {
+			newCell.setHyperlink(sourceCell.getHyperlink());
+		}
+
+		// Set the cell data type
+		newCell.setCellType(sourceCell.getCellTypeEnum());
+	}
+
+	/**
+	 * create cell style from source cell.
+	 * @param destSheet dest sheet.
+	 * @param sourceCell source cell.
+	 * @return cell style.
+	 */
+	private static CellStyle getCellStyleFromSourceCell(
+			final Sheet destSheet, Cell sourceCell) {
+		Workbook wb = destSheet.getWorkbook();
+		// Copy style from old cell and apply to new cell
+		CellStyle newCellStyle = wb.createCellStyle();
+		newCellStyle.cloneStyleFrom(sourceCell.getCellStyle());
+		return newCellStyle;
 	}
 
 
@@ -622,22 +646,32 @@ public final class CellUtility {
 
 			CellRangeAddress caddress = sheet1.getMergedRegion(i);
 			if (caddress != null) {
-				for (int col = caddress.getFirstColumn(); col <= caddress
-						.getLastColumn(); col++) {
-					for (int row = caddress.getFirstRow(); row <= caddress
-							.getLastRow(); row++) {
-						if ((col == caddress.getFirstColumn())
-								&& (row == caddress.getFirstRow())) {
-							continue;
-						}
-						skipCellList.add(CellUtility
-								.getCellIndexNumberKey(col, row));
-					}
-				}
+				addSkipCellToListInTheRegion(skipCellList, caddress);
 			}
 		}
 		LOG.fine("skipCellList = " + skipCellList);
 		return skipCellList;
+	}
+
+	/**
+	 * Add skipped cell into the list of a region.
+	 * @param skipCellList list.
+	 * @param caddress region.
+	 */
+	private static void addSkipCellToListInTheRegion(
+			List<String> skipCellList, CellRangeAddress caddress) {
+		for (int col = caddress.getFirstColumn(); col <= caddress
+				.getLastColumn(); col++) {
+			for (int row = caddress.getFirstRow(); row <= caddress
+					.getLastRow(); row++) {
+				if ((col == caddress.getFirstColumn())
+						&& (row == caddress.getFirstRow())) {
+					continue;
+				}
+				skipCellList.add(CellUtility
+						.getCellIndexNumberKey(col, row));
+			}
+		}
 	}
 
 	/**
@@ -699,7 +733,7 @@ public final class CellUtility {
 
 		setupControlAttributes(originRowIndex, fcell, poiCell, sheetConfig,
 				cellAttributesMap);
-		fcell.setHasSaveAttr(ConfigurationHelper
+		fcell.setHasSaveAttr(SaveAttrsUtility
 				.isHasSaveAttr(poiCell.getColumnIndex(), saveAttrs));
 
 	}
@@ -735,7 +769,7 @@ public final class CellUtility {
 		if (commentMap != null) {
 			String comment = commentMap.get(skey);
 			if (comment != null) {
-				ConfigurationHelper.createCellComment(poiCell, comment,
+				CommandUtility.createCellComment(poiCell, comment,
 						sheetConfig.getFinalCommentMap());
 			}
 		}
@@ -755,540 +789,6 @@ public final class CellUtility {
 	}
 
 	/**
-	 * Gets the row style.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param poiCell
-	 *            the poi cell
-	 * @param inputType
-	 *            the input type
-	 * @param rowHeight
-	 *            the row height
-	 * @return the row style
-	 */
-	public static String getRowStyle(final Workbook wb, final Cell poiCell,
-			final String inputType, final float rowHeight) {
-
-		CellStyle cellStyle = poiCell.getCellStyle();
-		if (cellStyle != null) {
-			short fontIdx = cellStyle.getFontIndex();
-			Font font = wb.getFontAt(fontIdx);
-			float maxHeight = rowHeight;
-			if (!inputType.isEmpty()) {
-				maxHeight = Math.min(font.getFontHeightInPoints() + 8f,
-						rowHeight);
-			}
-			return "height:" + WebSheetUtility.pointsToPixels(maxHeight)
-					+ "px;";
-		}
-		return "";
-	}
-
-	/**
-	 * Gets the cell font style.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param poiCell
-	 *            the poi cell
-	 * @return the cell font style
-	 */
-	public static String getCellFontStyle(final Workbook wb,
-			final Cell poiCell) {
-
-		CellStyle cellStyle = poiCell.getCellStyle();
-		StringBuilder webStyle = new StringBuilder();
-		if (cellStyle != null) {
-			short fontIdx = cellStyle.getFontIndex();
-			Font font = wb.getFontAt(fontIdx);
-			if (font.getItalic()) {
-				webStyle.append("font-style: italic;");
-			}
-			webStyle.append(
-					"font-size: " + font.getFontHeightInPoints() + "pt;");
-			if (font.getBold()) {
-				webStyle.append("font-weight: bold;");
-			}
-			String decoration = "";
-			if (font.getUnderline() != 0) {
-				decoration += " underline";
-			}
-			if (font.getStrikeout()) {
-				decoration += " line-through";
-			}
-			if (decoration.length() > 0) {
-				webStyle.append("text-decoration:" + decoration + ";");
-			}
-			short[] rgbfix = { TieConstants.RGB_MAX, TieConstants.RGB_MAX,
-					TieConstants.RGB_MAX };
-			if (font instanceof HSSFFont) {
-				HSSFColor color = ((HSSFFont) font)
-						.getHSSFColor((HSSFWorkbook) wb);
-				if (color != null) {
-					rgbfix = color.getTriplet();
-				}
-			} else if (font instanceof XSSFFont) {
-				XSSFColor color = ((XSSFFont) font).getXSSFColor();
-				if (color != null) {
-					rgbfix = ColorUtility.getTripletFromXSSFColor(color);
-				}
-			}
-			if (rgbfix[0] != TieConstants.RGB_MAX) {
-				webStyle.append("color:rgb("
-						+ FacesUtility.strJoin(rgbfix, ",") + ");");
-			}
-
-		}
-		return webStyle.toString();
-
-	}
-
-	/**
-	 * Gets the cell style.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param poiCell
-	 *            the poi cell
-	 * @param inputType
-	 *            the input type
-	 * @return the cell style
-	 */
-	public static String getCellStyle(final Workbook wb, final Cell poiCell,
-			final String inputType) {
-
-		CellStyle cellStyle = poiCell.getCellStyle();
-		StringBuilder webStyle = new StringBuilder();
-		if (cellStyle != null) {
-			if (!inputType.isEmpty()) {
-				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(getVerticalAlignmentFromCell(cellStyle));
-			}
-
-			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
-		}
-		return webStyle.toString();
-
-	}
-
-	/**
-	 * Gets the column style.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param fcell
-	 *            the fcell
-	 * @param poiCell
-	 *            the poi cell
-	 * @param rowHeight
-	 *            the row height
-	 * @return the column style
-	 */
-	public static String getColumnStyle(final Workbook wb,
-			final FacesCell fcell, final Cell poiCell,
-			final float rowHeight) {
-
-		String inputType = fcell.getInputType();
-		CellStyle cellStyle = poiCell.getCellStyle();
-		StringBuilder webStyle = new StringBuilder();
-		if (cellStyle != null) {
-			if (fcell.isContainPic() || fcell.isContainChart()) {
-				webStyle.append("vertical-align: top;");
-			} else {
-				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(getVerticalAlignmentFromCell(cellStyle));
-			}
-			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
-			webStyle.append(getRowStyle(wb, poiCell, inputType, rowHeight));
-		} else {
-			webStyle.append(getAlignmentFromCellType(poiCell));
-		}
-		return webStyle.toString();
-
-	}
-
-	/**
-	 * Gets the alignment from cell.
-	 *
-	 * @param poiCell
-	 *            the poi cell
-	 * @param cellStyle
-	 *            the cell style
-	 * @return the alignment from cell
-	 */
-	private static String getAlignmentFromCell(final Cell poiCell,
-			final CellStyle cellStyle) {
-
-		String style = "";
-		switch (cellStyle.getAlignmentEnum()) {
-		case LEFT:
-			style = TieConstants.TEXT_ALIGN_LEFT;
-			break;
-		case RIGHT:
-			style = TieConstants.TEXT_ALIGN_RIGHT;
-			break;
-		case CENTER:
-			style = TieConstants.TEXT_ALIGN_CENTER;
-			break;
-		case GENERAL:
-			style = getAlignmentFromCellType(poiCell);
-			break;
-		default:
-			break;
-		}
-		return style;
-	}
-
-	/**
-	 * Gets the vertical alignment from cell.
-	 * 
-	 * @param cellStyle
-	 *            the cell style
-	 *
-	 * @return the vertical alignment from cell
-	 */
-	private static String getVerticalAlignmentFromCell(
-			final CellStyle cellStyle) {
-
-		String style = "";
-		switch (cellStyle.getVerticalAlignmentEnum()) {
-		case TOP:
-			style = TieConstants.VERTICAL_ALIGN_TOP;
-			break;
-		case CENTER:
-			style = TieConstants.VERTICAL_ALIGN_CENTER;
-			break;
-		case BOTTOM:
-			style = TieConstants.VERTICAL_ALIGN_BOTTOM;
-			break;
-		default:
-			break;
-		}
-		return style;
-	}
-
-	/**
-	 * Gets the bg color from cell.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param poiCell
-	 *            the poi cell
-	 * @param cellStyle
-	 *            the cell style
-	 * @return the bg color from cell
-	 */
-	private static String getBgColorFromCell(final Workbook wb,
-			final Cell poiCell, final CellStyle cellStyle) {
-
-		String style = "";
-		if (poiCell instanceof HSSFCell) {
-			int bkColorIndex = cellStyle.getFillForegroundColor();
-			HSSFColor color = HSSFColor.getIndexHash().get(bkColorIndex);
-			if (color != null) {
-				// correct color for customPalette
-				HSSFPalette palette = ((HSSFWorkbook) wb)
-						.getCustomPalette();
-				HSSFColor color2 = palette.getColor(bkColorIndex);
-				if (!color.getHexString()
-						.equalsIgnoreCase(color2.getHexString())) {
-					color = color2;
-				}
-				style = "background-color:rgb("
-						+ FacesUtility.strJoin(color.getTriplet(), ",")
-						+ ");";
-			}
-		} else if (poiCell instanceof XSSFCell) {
-			XSSFColor color = ((XSSFCell) poiCell).getCellStyle()
-					.getFillForegroundColorColor();
-			if (color != null) {
-				style = "background-color:rgb(" + FacesUtility.strJoin(
-						ColorUtility.getTripletFromXSSFColor(color), ",")
-						+ ");";
-			}
-		}
-		return style;
-	}
-
-	// additionalWidth is to calculate extra width outside spreadsheet for
-	// layout purpose
-	/**
-	 * Calc total width.
-	 *
-	 * @param sheet1
-	 *            the sheet 1
-	 * @param firstCol
-	 *            the first col
-	 * @param lastCol
-	 *            the last col
-	 * @param additionalWidth
-	 *            the additional width
-	 * @return the int
-	 */
-	// e.g. lineNumberColumnWidth and addRowColumnWidth
-	public static int calcTotalWidth(final Sheet sheet1, final int firstCol,
-			final int lastCol, final int additionalWidth) {
-
-		int totalWidth = additionalWidth;
-		for (int i = firstCol; i <= lastCol; i++) {
-			totalWidth += sheet1.getColumnWidth(i);
-		}
-		return totalWidth;
-	}
-
-	/**
-	 * Calc total height.
-	 *
-	 * @param sheet1
-	 *            the sheet 1
-	 * @param firstRow
-	 *            the first row
-	 * @param lastRow
-	 *            the last row
-	 * @param additionalHeight
-	 *            the additional height
-	 * @return the int
-	 */
-	public static int calcTotalHeight(final Sheet sheet1,
-			final int firstRow, final int lastRow,
-			final int additionalHeight) {
-
-		int totalHeight = additionalHeight;
-		for (int i = firstRow; i <= lastRow; i++) {
-
-			totalHeight += sheet1.getRow(i).getHeight();
-		}
-		return totalHeight;
-	}
-
-	/**
-	 * Setup cell style.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param fcell
-	 *            the fcell
-	 * @param poiCell
-	 *            the poi cell
-	 * @param rowHeight
-	 *            the row height
-	 */
-	public static void setupCellStyle(final Workbook wb, final FacesCell fcell,
-			final Cell poiCell, final float rowHeight) {
-
-		CellStyle cellStyle = poiCell.getCellStyle();
-		if ((cellStyle != null) && (!cellStyle.getLocked())) {
-			// not locked
-			if (fcell.getInputType().isEmpty()) {
-				fcell.setInputType(getInputTypeFromCellType(poiCell));
-			}
-			if (fcell.getControl().isEmpty()
-					&& (!fcell.getInputType().isEmpty())) {
-				fcell.setControl("text");
-			}
-			setInputStyleBaseOnInputType(fcell, poiCell);
-
-		}
-		String webStyle = getCellStyle(wb, poiCell, fcell.getInputType())
-				+ getCellFontStyle(wb, poiCell)
-				+ getRowStyle(wb, poiCell, fcell.getInputType(), rowHeight);
-		fcell.setStyle(webStyle);
-		fcell.setColumnStyle(getColumnStyle(wb, fcell, poiCell, rowHeight));
-	}
-
-	/**
-	 * set up Input Style parameter for input number component which need those
-	 * parameters to make it work. e.g. symbol, symbol position, decimal places.
-	 * 
-	 * @param fcell
-	 *            faces cell
-	 * @param poiCell
-	 *            poi cell
-	 */
-	private static void setInputStyleBaseOnInputType(final FacesCell fcell,
-			final Cell poiCell) {
-
-		if ((fcell == null) || fcell.getInputType().isEmpty()) {
-			return;
-		}
-
-		switch (fcell.getInputType()) {
-		case TieConstants.CELL_INPUT_TYPE_PERCENTAGE:
-			fcell.setSymbol("%");
-			fcell.setSymbolPosition("p");
-			fcell.setDecimalPlaces(getDecimalPlacesFromFormat(poiCell));
-			break;
-
-		case TieConstants.CELL_INPUT_TYPE_INTEGER:
-			fcell.setDecimalPlaces((short) 0);
-			break;
-
-		case TieConstants.CELL_INPUT_TYPE_DOUBLE:
-			fcell.setDecimalPlaces(getDecimalPlacesFromFormat(poiCell));
-			fcell.setSymbol(getSymbolFromFormat(poiCell));
-			fcell.setSymbolPosition(getSymbolPositionFromFormat(poiCell));
-			break;
-		default:
-			break;
-		}
-
-	}
-
-	/**
-	 * Gets the alignment from cell type.
-	 *
-	 * @param poiCell
-	 *            the poi cell
-	 * @return the alignment from cell type
-	 */
-	private static String getAlignmentFromCellType(final Cell poiCell) {
-
-		switch (poiCell.getCellTypeEnum()) {
-		case FORMULA:
-		case NUMERIC:
-			return "text-align: right;";
-		default:
-			return "";
-		}
-
-	}
-
-	/**
-	 * Gets the input type from cell type.
-	 *
-	 * @param cell
-	 *            the cell
-	 * @return the input type from cell type
-	 */
-	private static String getInputTypeFromCellType(final Cell cell) {
-
-		String inputType = TieConstants.CELL_INPUT_TYPE_TEXT;
-		if (cell.getCellTypeEnum() == CellType.NUMERIC) {
-			inputType = TieConstants.CELL_INPUT_TYPE_DOUBLE;
-		}
-		CellStyle style = cell.getCellStyle();
-		if (style != null) {
-			int formatIndex = style.getDataFormat();
-			String formatString = style.getDataFormatString();
-			if (DateUtil.isADateFormat(formatIndex, formatString)) {
-				inputType = TieConstants.CELL_INPUT_TYPE_DATE;
-			} else {
-				if (isAPercentageCell(formatString)) {
-					inputType = TieConstants.CELL_INPUT_TYPE_PERCENTAGE;
-				}
-			}
-		}
-		return inputType;
-	}
-
-	/**
-	 * Check weather the cell is percentage formatted.
-	 *
-	 * @param formatString
-	 *            the format string
-	 * @return true if it's percentage formatted
-	 */
-	private static boolean isAPercentageCell(final String formatString) {
-
-		if (formatString == null) {
-			return false;
-		}
-		return formatString.indexOf('%') >= 0;
-
-	}
-
-	/**
-	 * get decimal places from format string e.g. 0.00 will return 2
-	 *
-	 * @param cell
-	 *            the cell
-	 * @return decimal places of the formatted string
-	 */
-	private static short getDecimalPlacesFromFormat(final Cell cell) {
-		CellStyle style = cell.getCellStyle();
-		if (style == null) {
-			return 0;
-		}
-		String formatString = style.getDataFormatString();
-		if (formatString == null) {
-			return 0;
-		}
-		int ipos = formatString.indexOf('.');
-		if (ipos < 0) {
-			return 0;
-		}
-		short counter = 0;
-		for (int i = ipos + 1; i < formatString.length(); i++) {
-			if (formatString.charAt(i) == '0') {
-				counter++;
-			} else {
-				break;
-			}
-		}
-		return counter;
-	}
-
-	/**
-	 * get symbol from format string e.g. [$CAD] #,##0.00 will return CAD. While
-	 * $#,##0.00 will return $
-	 *
-	 * @param cell
-	 *            the cell
-	 * @return symbol of the formatted string
-	 */
-	private static String getSymbolFromFormat(final Cell cell) {
-		CellStyle style = cell.getCellStyle();
-		if (style == null) {
-			return null;
-		}
-		String formatString = style.getDataFormatString();
-		if (formatString == null) {
-			return null;
-		}
-		if (formatString.indexOf(TieConstants.CELL_ADDR_PRE_FIX) < 0) {
-			return null;
-		}
-		int ipos = formatString.indexOf("[$");
-		if (ipos < 0) {
-			// only $ found, then return default dollar symbol
-			return "$";
-		}
-		// return specified dollar symbol
-		return formatString.substring(ipos + 2,
-				formatString.indexOf(']', ipos));
-	}
-
-	/**
-	 * get symbol position from format string e.g. [$CAD] #,##0.00 will return
-	 * p. While #,##0.00 $ will return s
-	 *
-	 * @param cell
-	 *            the cell
-	 * @return symbol position of the formatted string
-	 */
-	private static String getSymbolPositionFromFormat(final Cell cell) {
-		CellStyle style = cell.getCellStyle();
-		if (style == null) {
-			return "p";
-		}
-		String formatString = style.getDataFormatString();
-		if (formatString == null) {
-			return "p";
-		}
-		int symbolpos = formatString.indexOf('$');
-		int numberpos = formatString.indexOf('#');
-		if (numberpos < 0) {
-			numberpos = formatString.indexOf('0');
-		}
-		if (symbolpos < numberpos) {
-			return "p";
-		} else {
-			return "s";
-		}
-	}
-
-	/**
 	 * Gets the row col from component attributes.
 	 *
 	 * @param target
@@ -1302,7 +802,9 @@ public final class CellUtility {
 		int colIndex = (Integer) target.getAttributes().get("data-column");
 		LOG.fine("getRowColFromComponentAttributes rowindex = " + rowIndex
 				+ " colindex = " + colIndex);
-		int[] list = { rowIndex, colIndex };
+		int[] list = new int[2];
+		list[0]=rowIndex;
+		list[1]=colIndex;
 		return list;
 	}
 

@@ -3,7 +3,7 @@
  * Licensed under MIT
  */
 
-package org.tiefaces.components.websheet.service;
+package org.tiefaces.components.websheet.utility;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +32,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import org.tiefaces.components.websheet.dataobjects.AnchorSize;
-import org.tiefaces.components.websheet.utility.WebSheetUtility;
 
 /**
  * The Class PicturesHelper.

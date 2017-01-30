@@ -18,6 +18,8 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
 import org.tiefaces.components.websheet.dataobjects.SerialCellAddress;
+import org.tiefaces.components.websheet.utility.CommandUtility;
+import org.tiefaces.components.websheet.utility.ConfigurationUtility;
 
 /**
  * Simple class for area range. Also include nested command list. Note: command
@@ -333,7 +335,7 @@ public class ConfigRange {
 	 *            the index map
 	 */
 	public final void indexCommandRange(final Map<String, Command> indexMap) {
-		ConfigurationHelper.indexCommandRange(this, indexMap);
+		CommandUtility.indexCommandRange(this, indexMap);
 	}
 
 	/**
@@ -366,7 +368,7 @@ public class ConfigRange {
 		// keep rowsMappingList as current as no change
 		// allRowsMappingList = child + current
 
-		List<RowsMapping> allRowsMappingList = ConfigurationHelper
+		List<RowsMapping> allRowsMappingList = ConfigurationUtility
 				.findChildRowsMappingFromShiftMap(fullName,
 						configBuildRef.getShiftMap());
 		allRowsMappingList.addAll(rowsMappingList);
@@ -377,16 +379,16 @@ public class ConfigRange {
 		for (int i = atRow; i < lastRowPlus; i++) {
 			Row row = configBuildRef.getSheet().getRow(i);
 			if ((row != null)
-					&& ConfigurationHelper.isStaticRowRef(this, row)) {
+					&& ConfigurationUtility.isStaticRowRef(this, row)) {
 				for (Cell cell : row) {
 					try {
-						ConfigurationHelper.evaluate(context, cell,
+						CommandUtility.evaluate(context, cell,
 								configBuildRef.getEngine());
 						if (cell.getCellTypeEnum() == CellType.FORMULA) {
 							// rebuild formula if necessary for dynamic row
 							String originFormula = cell.getCellFormula();
 							shiftFormulaRef.setFormulaChanged(0);
-							ConfigurationHelper
+							ConfigurationUtility
 									.buildCellFormulaForShiftedRows(
 											configBuildRef.getSheet(),
 											configBuildRef.getWbWrapper(),
@@ -405,7 +407,7 @@ public class ConfigRange {
 								+ ex.getLocalizedMessage(), ex);
 					}
 				}
-				ConfigurationHelper.setFullNameInHiddenColumn(row, fullName);
+				ConfigurationUtility.setFullNameInHiddenColumn(row, fullName);
 			}
 		}
 	}

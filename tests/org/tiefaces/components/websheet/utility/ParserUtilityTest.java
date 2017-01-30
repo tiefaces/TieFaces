@@ -1,4 +1,4 @@
-package org.tiefaces.components.websheet.service;
+package org.tiefaces.components.websheet.utility;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
+import org.tiefaces.components.websheet.utility.ParserUtility;
 
 /**
  * 

@@ -19,7 +19,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.service.CellUtility;
+import org.tiefaces.components.websheet.utility.CellUtility;
 
 /**
  * Cell Map is actually a virtual map which don't hold any data. Instead it
