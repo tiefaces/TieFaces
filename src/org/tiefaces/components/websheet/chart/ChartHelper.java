@@ -45,7 +45,7 @@ import org.tiefaces.components.websheet.dataobjects.XColor;
 import org.tiefaces.components.websheet.service.CellUtility;
 import org.tiefaces.components.websheet.service.PicturesUtility;
 import org.tiefaces.components.websheet.utility.ColorUtility;
-import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
+import org.tiefaces.components.websheet.utility.WebSheetUtility;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
@@ -880,7 +880,7 @@ public class ChartHelper {
 						anchortMap.put(chartId, new XSSFClientAnchor(dx1,
 								dy1, dx2, dy2, col1, row1, col2, row2));
 						positionMap.put(
-								TieWebSheetUtility.getFullCellRefName(
+								WebSheetUtility.getFullCellRefName(
 										sheet.getSheetName(), row1, col1),
 								chartId);
 					}

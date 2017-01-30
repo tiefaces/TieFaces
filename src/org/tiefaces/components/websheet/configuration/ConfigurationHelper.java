@@ -28,7 +28,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.tiefaces.common.TieConstants;
-import org.tiefaces.components.websheet.service.CellHelper;
 import org.tiefaces.components.websheet.service.CellUtility;
 import org.tiefaces.components.websheet.service.ShiftFormulaUtility;
 import org.tiefaces.exception.EvaluationException;
@@ -38,6 +37,10 @@ import org.tiefaces.exception.EvaluationException;
  */
 public final class ConfigurationHelper {
 
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(ConfigurationHelper.class.getName());
+
 	/**
 	 * hide constructor.
 	 */
@@ -45,9 +48,6 @@ public final class ConfigurationHelper {
 		// not called
 	}
 
-	/** logger. */
-	private static final Logger LOG = Logger
-			.getLogger(ConfigurationHelper.class.getName());
 
 	/**
 	 * Evaluate.
@@ -58,13 +58,10 @@ public final class ConfigurationHelper {
 	 *            the cell
 	 * @param engine
 	 *            the engine
-	 * @param cellHelper
-	 *            the cell helper
 	 */
 	public static void evaluate(final Map<String, Object> context,
-			final Cell cell, final ExpressionEngine engine,
-			final CellHelper cellHelper) {
-		Object evaluationResult = null;
+			final Cell cell, final ExpressionEngine engine) {
+		Object evaluationResult;
 		if ((cell != null) && (cell.getCellTypeEnum() == CellType.STRING)) {
 			String strValue = cell.getStringCellValue();
 			if (isUserFormula(strValue)) {
@@ -389,16 +386,13 @@ public final class ConfigurationHelper {
 	 *            the config build ref
 	 * @param rowIndex
 	 *            the row index
-	 * @param sheetConfig
-	 *            the sheet config
 	 * @param dataContext
 	 *            the data context
 	 * @return the int
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static int addRow(final ConfigBuildRef configBuildRef,
-			final int rowIndex, final SheetConfiguration sheetConfig,
-			final Map<String, Object> dataContext) {
+			final int rowIndex, final Map<String, Object> dataContext) {
 		String fullName = getFullNameFromRow(
 				configBuildRef.getSheet().getRow(rowIndex));
 		if (fullName == null) {
@@ -434,8 +428,8 @@ public final class ConfigurationHelper {
 							configBuildRef.getEngine(),
 							eachCommand.getItems(), dataContext);
 					lastCollectionIndex = prepareCollectionDataInContext(
-							varparts, configBuildRef, eachCommand,
-							lastCollection, dataContext);
+							varparts, eachCommand, lastCollection,
+							dataContext);
 				}
 			}
 			if (lastCollectionIndex < 0) {
@@ -556,8 +550,6 @@ public final class ConfigurationHelper {
 	 *
 	 * @param varparts
 	 *            the varparts
-	 * @param configBuildRef
-	 *            the config build ref
 	 * @param eachCommand
 	 *            the each command
 	 * @param collection
@@ -568,9 +560,8 @@ public final class ConfigurationHelper {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static int prepareCollectionDataInContext(
-			final String[] varparts, final ConfigBuildRef configBuildRef,
-			final EachCommand eachCommand, final Collection collection,
-			final Map<String, Object> dataContext) {
+			final String[] varparts, final EachCommand eachCommand,
+			final Collection collection, final Map<String, Object> dataContext) {
 		if (varparts.length == TieConstants.DEFAULT_COMMAND_PART_LENGTH) {
 			int collectionIndex = Integer.parseInt(varparts[2]);
 			Object obj = findItemInCollection(collection, collectionIndex);
@@ -828,7 +819,7 @@ public final class ConfigurationHelper {
 		for (Row row : sheet) {
 			int rowIndex = row.getRowNum();
 			if ((rowIndex >= minRowNum) && (rowIndex <= maxRowNum)) {
-				StringBuffer saveAttr = new StringBuffer();
+				StringBuilder saveAttr = new StringBuilder();
 				for (Cell cell : row) {
 					String sAttr = ConfigurationHelper.parseSaveAttr(cell);
 					if (!sAttr.isEmpty()) {
@@ -1016,9 +1007,8 @@ public final class ConfigurationHelper {
 		}
 		Sheet srcSheet = wb.getSheet(copyName);
 		if (index > 0) {
-			CellUtility.copyRows(sheet.getWorkbook(),
-					configBuildRef.getWbWrapper(), srcSheet, sheet,
-					srcStartRow, srcEndRow, insertPosition, false, true);
+			CellUtility.copyRows(srcSheet, sheet, srcStartRow,
+					srcEndRow, insertPosition, false, true);
 		}
 
 		for (int rowIndex = srcStartRow; rowIndex <= srcEndRow; rowIndex++) {

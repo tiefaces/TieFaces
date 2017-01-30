@@ -135,7 +135,7 @@ public class ValidationHandler {
 				.findCellValidateAttributes(
 						parent.getCellAttributesMap()
 								.getCellValidateAttributes(),
-						poiCell, row, topRow);
+						poiCell);
 		if (cellAttributes != null) {
 			Sheet sheet1 = parent.getWb()
 					.getSheet(sheetConfig.getSheetName());

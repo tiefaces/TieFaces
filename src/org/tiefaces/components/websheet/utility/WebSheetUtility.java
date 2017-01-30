@@ -29,12 +29,12 @@ import java.util.regex.Pattern;
 /**
  * The Class TieWebSheetUtility.
  */
-public final class TieWebSheetUtility {
+public final class WebSheetUtility {
 
 	
 	/** logger. */
 	private static final Logger LOG = Logger
-			.getLogger(TieWebSheetUtility.class.getName());
+			.getLogger(WebSheetUtility.class.getName());
 	
 	// Each cell conatins a fixed number of co-ordinate points; this number
 	// does not vary with row height or column width or with font. These two
@@ -75,7 +75,7 @@ public final class TieWebSheetUtility {
 	public static final int UNIT_OFFSET_LENGTH = 7;
 
 	/** The Constant UNIT_OFFSET_MAP. */
-	public static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73, 109,
+	static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73, 109,
 			146, 182, 219 };
 
 	/** The Constant EXCEL_ROW_HEIGHT_FACTOR. */
@@ -87,15 +87,6 @@ public final class TieWebSheetUtility {
 	/** The Constant EMU_PER_POINTS. */
 	public static final int EMU_PER_POINTS = 12700;
 	
-	/*
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	 * * * * * * class Helper * * * * * * * * * * * * * * * * * * * * * * * * *
-	 * * * * * * * * * * * * * * * * * * Helper methods and miscellaneous tools
-	 * for Extension of Apache POI * * * * * * * * * * * * * * * * * * * * * * *
-	 * * * * * * * * * * * * * * * * * * * * To do: [ ] work on date handling [
-	 * ] work on CSV parsing to further generalize [ ] String < - > Date * * * *
-	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	 */
 
 	/** The Constant DATE_REGEX_4_DIGIT_YEAR. */
 	private static final String DATE_REGEX_4_DIGIT_YEAR = "("
@@ -122,7 +113,7 @@ public final class TieWebSheetUtility {
 	/**
 	 * hide constructor.
 	 */
-	private TieWebSheetUtility() {
+	private WebSheetUtility() {
 		// not called
 	}
 
@@ -135,17 +126,17 @@ public final class TieWebSheetUtility {
 	 * @return the string
 	 */
 	public static String getExcelColumnName(final int pnumber) {
-		String converted = "";
+		StringBuilder converted =  new StringBuilder();
 		// Repeatedly divide the number by 26 and convert the
 		// remainder into the appropriate letter.
 		int number = pnumber;
 		while (number >= 0) {
 			int remainder = number % TieConstants.EXCEL_LETTER_NUMBERS;
-			converted = (char) (remainder + 'A') + converted;
+			converted.insert(0, (char) (remainder + 'A'));
 			number = (number / TieConstants.EXCEL_LETTER_NUMBERS) - 1;
 		}
 
-		return converted;
+		return converted.toString();
 	}
 
 	/**
@@ -200,7 +191,7 @@ public final class TieWebSheetUtility {
 	public static String getSheetNameFromFullCellRefName(
 			final String fullName) {
 		if ((fullName != null) && (fullName.contains("!"))) {
-			return fullName.substring(0, fullName.indexOf("!"));
+			return fullName.substring(0, fullName.indexOf('!'));
 		}
 		return null;
 	}
@@ -439,6 +430,7 @@ public final class TieWebSheetUtility {
 	 * @return true, if is numeric
 	 */
 	public static boolean isNumeric(final String str) {
+				
 		String s = str;
 		if (s.startsWith("-")) {
 			s = s.substring(1);
@@ -575,7 +567,9 @@ public final class TieWebSheetUtility {
 				CTSheetDimension dimension =
 						xsheet.getCTWorksheet().getDimension();
 				String sheetDimensions = dimension.getRef();
-				if (sheetDimensions.indexOf(':') > 0) {
+				if (sheetDimensions.indexOf(':') < 0) {
+					return -1;
+				} else {
 					return CellRangeAddress.valueOf(sheetDimensions)
 							.getLastColumn();
 				}

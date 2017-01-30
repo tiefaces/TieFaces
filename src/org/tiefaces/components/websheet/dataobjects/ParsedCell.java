@@ -7,7 +7,7 @@ package org.tiefaces.components.websheet.dataobjects;
 import java.io.Serializable;
 
 import org.apache.poi.ss.util.CellReference;
-import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
+import org.tiefaces.components.websheet.utility.WebSheetUtility;
 
 /**
  * The Class ParsedCell.
@@ -54,9 +54,9 @@ public class ParsedCell implements Serializable {
 	public ParsedCell(final String fullName) {
 		super();
 		try {
-			this.sheetName = TieWebSheetUtility
+			this.sheetName = WebSheetUtility
 					.getSheetNameFromFullCellRefName(fullName);
-			String cellrefName = TieWebSheetUtility
+			String cellrefName = WebSheetUtility
 					.removeSheetNameFromFullCellRefName(fullName);
 			CellReference ref = new CellReference(cellrefName);
 			this.row = ref.getRow();

@@ -18,7 +18,7 @@ import org.tiefaces.components.websheet.chart.objects.ChartObject;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 import org.tiefaces.components.websheet.utility.ColorUtility;
-import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
+import org.tiefaces.components.websheet.utility.WebSheetUtility;
 
 /**
  * Chart Data class.
@@ -125,10 +125,10 @@ public class ChartData {
 		List<ParsedCell> cells = new ArrayList<>();
 		try {
 			String fullRangeName = ctAxDs.getStrRef().getF();
-			String sheetName = TieWebSheetUtility
+			String sheetName = WebSheetUtility
 					.getSheetNameFromFullCellRefName(fullRangeName);
 			CellRangeAddress region = CellRangeAddress.valueOf(
-					TieWebSheetUtility.removeSheetNameFromFullCellRefName(
+					WebSheetUtility.removeSheetNameFromFullCellRefName(
 							fullRangeName));
 			for (int row = region.getFirstRow(); row <= region
 					.getLastRow(); row++) {
@@ -174,10 +174,10 @@ public class ChartData {
 				String fullRangeName = (ctObj
 						.getCTNumDataSourceFromCTSer(ctObjSer)).getNumRef()
 								.getF();
-				String sheetName = TieWebSheetUtility
+				String sheetName = WebSheetUtility
 						.getSheetNameFromFullCellRefName(fullRangeName);
 				CellRangeAddress region = CellRangeAddress
-						.valueOf(TieWebSheetUtility
+						.valueOf(WebSheetUtility
 								.removeSheetNameFromFullCellRefName(
 										fullRangeName));
 				for (int row = region.getFirstRow(); row <= region

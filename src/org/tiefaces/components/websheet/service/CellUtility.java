@@ -33,7 +33,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.tiefaces.common.FacesUtility;
 import org.tiefaces.common.TieConstants;
@@ -45,7 +44,7 @@ import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
 import org.tiefaces.components.websheet.utility.ColorUtility;
-import org.tiefaces.components.websheet.utility.TieWebSheetUtility;
+import org.tiefaces.components.websheet.utility.WebSheetUtility;
 
 /**
  * Helper class for web sheet cells.
@@ -207,13 +206,13 @@ public final class CellUtility {
 		try {
 			if (value.length() == 0) {
 				c.setCellType(CellType.BLANK);
-			} else if (TieWebSheetUtility.isNumeric(value)) {
+			} else if (WebSheetUtility.isNumeric(value)) {
 				double val = Double.parseDouble(
 						value.replace(Character.toString(','), ""));
 				c.setCellType(CellType.NUMERIC);
 				c.setCellValue(val);
-			} else if (TieWebSheetUtility.isDate(value)) {
-				String date = TieWebSheetUtility.parseDate(value);
+			} else if (WebSheetUtility.isDate(value)) {
+				String date = WebSheetUtility.parseDate(value);
 				c.setCellType(CellType.STRING);
 				c.setCellValue(date);
 			} else {
@@ -272,39 +271,7 @@ public final class CellUtility {
 	}
 
 	/**
-	 * Inserts a existing row into a new row, will automatically push down any
-	 * existing rows. Copy is done cell by cell and supports, and the command
-	 * tries to copy all properties available (style, merged cells,
-	 * values,etc...)
-	 *
-	 * @param wb
-	 *            workbook.
-	 * @param wbWrapper
-	 *            the wb wrapper
-	 * @param srcSheet
-	 *            the src sheet
-	 * @param destSheet
-	 *            the dest sheet
-	 * @param srcRow
-	 *            the src row
-	 * @param destRow
-	 *            the dest row
-	 */
-	public static void copyRow(final Workbook wb,
-			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
-			final Sheet destSheet, final int srcRow, final int destRow) {
-
-		copyRows(wb, wbWrapper, srcSheet, destSheet, srcRow, srcRow,
-				destRow, true, false);
-	}
-
-	/**
 	 * Copy rows.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param wbWrapper
-	 *            the wb wrapper
 	 * @param srcSheet
 	 *            the src sheet
 	 * @param destSheet
@@ -319,9 +286,10 @@ public final class CellUtility {
 	 *            the check lock
 	 * @param setHiddenColumn
 	 *            the set hidden column
+	 * @param wb
+	 *            the wb
 	 */
-	public static void copyRows(final Workbook wb,
-			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
+	public static void copyRows(final Sheet srcSheet,
 			final Sheet destSheet, final int srcRowStart,
 			final int srcRowEnd, final int destRow, final boolean checkLock,
 			final boolean setHiddenColumn) {
@@ -333,9 +301,8 @@ public final class CellUtility {
 		destSheet.shiftRows(destRow, destSheet.getLastRowNum(), length,
 				true, false);
 		for (int i = 0; i < length; i++) {
-			copySingleRow(wb, wbWrapper, srcSheet, destSheet,
-					srcRowStart + i, destRow + i, checkLock,
-					setHiddenColumn);
+			copySingleRow(srcSheet, destSheet, srcRowStart + i, destRow + i,
+					checkLock, setHiddenColumn);
 		}
 		// If there are are any merged regions in the source row, copy to new
 		// row
@@ -359,11 +326,6 @@ public final class CellUtility {
 
 	/**
 	 * Copy single row.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param wbWrapper
-	 *            the wb wrapper
 	 * @param srcSheet
 	 *            the src sheet
 	 * @param destSheet
@@ -376,12 +338,13 @@ public final class CellUtility {
 	 *            the check lock
 	 * @param setHiddenColumn
 	 *            the set hidden column
+	 * @param wb
+	 *            the wb
 	 */
-	private static void copySingleRow(final Workbook wb,
-			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
-			final Sheet destSheet, final int sourceRowNum,
-			final int destinationRowNum, final boolean checkLock,
-			final boolean setHiddenColumn) {
+	private static void copySingleRow(
+			final Sheet srcSheet, final Sheet destSheet,
+			final int sourceRowNum, final int destinationRowNum,
+			final boolean checkLock, final boolean setHiddenColumn) {
 		// Get the source / new row
 		Row newRow = destSheet.getRow(destinationRowNum);
 		Row sourceRow = srcSheet.getRow(sourceRowNum);
@@ -393,11 +356,7 @@ public final class CellUtility {
 		// Loop through source columns to add to new row
 		for (int i = 0; i < sourceRow.getLastCellNum(); i++) {
 			// Grab a copy of the old/new cell
-			Cell oldCell = sourceRow.getCell(i);
-			Cell newCell = newRow.createCell(i);
-
-			copyCell(wb, wbWrapper, srcSheet, destSheet, sourceRow, newRow,
-					oldCell, newCell, checkLock);
+			copyCell(destSheet, sourceRow, newRow, i, checkLock);
 		}
 		if (setHiddenColumn) {
 			ConfigurationHelper.setOriginalRowNumInHiddenColumn(newRow,
@@ -409,37 +368,32 @@ public final class CellUtility {
 
 	/**
 	 * Copy cell.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param wbWrapper
-	 *            the wb wrapper
-	 * @param srcSheet
-	 *            the src sheet
 	 * @param destSheet
 	 *            the dest sheet
 	 * @param sourceRow
 	 *            the source row
 	 * @param newRow
 	 *            the new row
+	 * @param checkLock
+	 *            the check lock
+	 * @param wb
+	 *            the wb
 	 * @param sourceCell
 	 *            the source cell
 	 * @param newCell
 	 *            the new cell
-	 * @param checkLock
-	 *            the check lock
 	 * @return the int
 	 */
-	public static int copyCell(final Workbook wb,
-			final XSSFEvaluationWorkbook wbWrapper, final Sheet srcSheet,
-			final Sheet destSheet, final Row sourceRow, final Row newRow,
-			final Cell sourceCell, Cell newCell, final boolean checkLock) {
+	public static Cell copyCell(final Sheet destSheet,
+			final Row sourceRow, final Row newRow,
+			final int cellIndex, final boolean checkLock) {
 		// If the old cell is null jump to next cell
+		Cell sourceCell = sourceRow.getCell(cellIndex);
 		if (sourceCell == null) {
-			newCell = null;
-			return -1;
+			return null;
 		}
-
+		Cell newCell = newRow.createCell(cellIndex);
+		Workbook wb = destSheet.getWorkbook();
 		// Copy style from old cell and apply to new cell
 		CellStyle newCellStyle = wb.createCellStyle();
 		newCellStyle.cloneStyleFrom(sourceCell.getCellStyle());
@@ -490,73 +444,11 @@ public final class CellUtility {
 			break;
 		}
 
-		return 1;
+		return newCell;
 	}
 
-	/**
-	 * Return cell attributes with offset. This is used for repeat row which use
-	 * same attribute for a group rows.
-	 * 
-	 * @param sheetConfig
-	 *            sheet configuration.
-	 * @param cell
-	 *            cell.
-	 * @param initRows
-	 *            initial and actual row size of the group.
-	 * @param bodyTopRow
-	 *            top row.
-	 * @param repeatZone
-	 *            ture ( in the repeat zone) false ( not in the repeat zone).
-	 * @return list of the attributes.
-	 */
-	private static List<CellFormAttributes> findCellAttributesWithOffset(
-			final SheetConfiguration sheetConfig, final Cell cell,
-			final int initRows, final int bodyTopRow,
-			final boolean repeatZone) {
-		Map<String, List<CellFormAttributes>> map = sheetConfig
-				.getCellFormAttributes();
 
-		String key = findCellAddressWithOffset(cell, initRows, bodyTopRow,
-				repeatZone);
-		List<CellFormAttributes> result = map.get(key);
-		if ((result == null) && repeatZone) {
-			key = TieConstants.CELL_ADDR_PRE_FIX + TieWebSheetUtility
-					.getExcelColumnName(cell.getColumnIndex());
-			result = map.get(key);
-		}
-		return result;
 
-	}
-
-	/**
-	 * Find cell address with offset.
-	 *
-	 * @param cell
-	 *            the cell
-	 * @param initRows
-	 *            the init rows
-	 * @param bodyTopRow
-	 *            the body top row
-	 * @param repeatZone
-	 *            the repeat zone
-	 * @return the string
-	 */
-	private static String findCellAddressWithOffset(final Cell cell,
-			final int initRows, final int bodyTopRow,
-			final boolean repeatZone) {
-
-		String key;
-		String columnLetter = TieWebSheetUtility
-				.getExcelColumnName(cell.getColumnIndex());
-
-		if (repeatZone) {
-			key = getCellIndexLetterKey(columnLetter, bodyTopRow + 1);
-		} else {
-			key = getCellIndexLetterKey(columnLetter,
-					cell.getRowIndex() - initRows + 1 + 1);
-		}
-		return key;
-	}
 
 	/**
 	 * return cell index number key. e.g. $0$0 for A1 cell.
@@ -617,7 +509,7 @@ public final class CellUtility {
 	public static String getCellIndexLetterKey(final int columnIndex,
 			final int rowIndex) {
 		return TieConstants.CELL_ADDR_PRE_FIX
-				+ TieWebSheetUtility.getExcelColumnName(columnIndex)
+				+ WebSheetUtility.getExcelColumnName(columnIndex)
 				+ TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
 	}
 
@@ -628,15 +520,11 @@ public final class CellUtility {
 	 *            validateMaps.
 	 * @param cell
 	 *            cell.
-	 * @param row
-	 *            row.
-	 * @param bodyTopRow
-	 *            bodytoprow.
 	 * @return list.
 	 */
 	public static List<CellFormAttributes> findCellValidateAttributes(
 			final Map<String, List<CellFormAttributes>> validateMaps,
-			final Cell cell, final int row, final int bodyTopRow) {
+			final Cell cell) {
 		String key = ParserUtility.getAttributeKeyInMapByCell(cell);
 		return validateMaps.get(key);
 	}
@@ -684,7 +572,7 @@ public final class CellUtility {
 				tempStr = findStr;
 			}
 			replaceStr = getCellValueWithoutFormat(
-					TieWebSheetUtility.getCellByReference(tempStr, sheet));
+					WebSheetUtility.getCellByReference(tempStr, sheet));
 			if (replaceStr == null) {
 				replaceStr = "";
 			}
@@ -891,7 +779,7 @@ public final class CellUtility {
 				maxHeight = Math.min(font.getFontHeightInPoints() + 8f,
 						rowHeight);
 			}
-			return "height:" + TieWebSheetUtility.pointsToPixels(maxHeight)
+			return "height:" + WebSheetUtility.pointsToPixels(maxHeight)
 					+ "px;";
 		}
 		return "";
@@ -904,15 +792,10 @@ public final class CellUtility {
 	 *            the wb
 	 * @param poiCell
 	 *            the poi cell
-	 * @param inputType
-	 *            the input type
-	 * @param rowHeight
-	 *            the row height
 	 * @return the cell font style
 	 */
 	public static String getCellFontStyle(final Workbook wb,
-			final Cell poiCell, final String inputType,
-			final float rowHeight) {
+			final Cell poiCell) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		StringBuilder webStyle = new StringBuilder();
@@ -980,8 +863,7 @@ public final class CellUtility {
 		if (cellStyle != null) {
 			if (!inputType.isEmpty()) {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(
-						getVerticalAlignmentFromCell(poiCell, cellStyle));
+				webStyle.append(getVerticalAlignmentFromCell(cellStyle));
 			}
 
 			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
@@ -1015,8 +897,7 @@ public final class CellUtility {
 				webStyle.append("vertical-align: top;");
 			} else {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
-				webStyle.append(
-						getVerticalAlignmentFromCell(poiCell, cellStyle));
+				webStyle.append(getVerticalAlignmentFromCell(cellStyle));
 			}
 			webStyle.append(getBgColorFromCell(wb, poiCell, cellStyle));
 			webStyle.append(getRowStyle(wb, poiCell, inputType, rowHeight));
@@ -1061,14 +942,13 @@ public final class CellUtility {
 
 	/**
 	 * Gets the vertical alignment from cell.
-	 *
-	 * @param poiCell
-	 *            the poi cell
+	 * 
 	 * @param cellStyle
 	 *            the cell style
+	 *
 	 * @return the vertical alignment from cell
 	 */
-	private static String getVerticalAlignmentFromCell(final Cell poiCell,
+	private static String getVerticalAlignmentFromCell(
 			final CellStyle cellStyle) {
 
 		String style = "";
@@ -1187,8 +1067,6 @@ public final class CellUtility {
 	 *
 	 * @param wb
 	 *            the wb
-	 * @param sheet1
-	 *            the sheet 1
 	 * @param fcell
 	 *            the fcell
 	 * @param poiCell
@@ -1196,9 +1074,8 @@ public final class CellUtility {
 	 * @param rowHeight
 	 *            the row height
 	 */
-	public static void setupCellStyle(final Workbook wb, final Sheet sheet1,
-			final FacesCell fcell, final Cell poiCell,
-			final float rowHeight) {
+	public static void setupCellStyle(final Workbook wb, final FacesCell fcell,
+			final Cell poiCell, final float rowHeight) {
 
 		CellStyle cellStyle = poiCell.getCellStyle();
 		if ((cellStyle != null) && (!cellStyle.getLocked())) {
@@ -1214,8 +1091,7 @@ public final class CellUtility {
 
 		}
 		String webStyle = getCellStyle(wb, poiCell, fcell.getInputType())
-				+ getCellFontStyle(wb, poiCell, fcell.getInputType(),
-						rowHeight)
+				+ getCellFontStyle(wb, poiCell)
 				+ getRowStyle(wb, poiCell, fcell.getInputType(), rowHeight);
 		fcell.setStyle(webStyle);
 		fcell.setColumnStyle(getColumnStyle(wb, fcell, poiCell, rowHeight));
@@ -1318,7 +1194,7 @@ public final class CellUtility {
 		if (formatString == null) {
 			return false;
 		}
-		return (formatString.indexOf('%') >= 0);
+		return formatString.indexOf('%') >= 0;
 
 	}
 

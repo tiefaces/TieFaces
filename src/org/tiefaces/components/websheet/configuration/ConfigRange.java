@@ -381,8 +381,7 @@ public class ConfigRange {
 				for (Cell cell : row) {
 					try {
 						ConfigurationHelper.evaluate(context, cell,
-								configBuildRef.getEngine(),
-								configBuildRef.getCellHelper());
+								configBuildRef.getEngine());
 						if (cell.getCellTypeEnum() == CellType.FORMULA) {
 							// rebuild formula if necessary for dynamic row
 							String originFormula = cell.getCellFormula();
