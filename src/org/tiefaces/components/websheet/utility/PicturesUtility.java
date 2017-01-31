@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -49,7 +49,6 @@ public final class PicturesUtility {
 		// not called
 	}
 
-
 	/**
 	 * Gets the pictrues map.
 	 *
@@ -65,8 +64,10 @@ public final class PicturesUtility {
 				return getXSSFPictruesMap((XSSFWorkbook) wb);
 			}
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE,"Web Form getPictruesMap Error Exception = "
-					+ e.getLocalizedMessage(), e);
+			LOG.log(Level.SEVERE,
+					"Web Form getPictruesMap Error Exception = "
+							+ e.getLocalizedMessage(),
+					e);
 		}
 		return null;
 	}
@@ -83,28 +84,26 @@ public final class PicturesUtility {
 
 		Map<String, Picture> picMap = new HashMap<>();
 		List<HSSFPictureData> pictures = wb.getAllPictures();
-		if (!pictures.isEmpty()) {
-			for (int i = 0; i < wb.getNumberOfSheets(); i++) {
-				HSSFSheet sheet = wb.getSheetAt(i);
-				for (HSSFShape shape : sheet.getDrawingPatriarch()
-						.getChildren()) {
-					HSSFClientAnchor anchor =
-							(HSSFClientAnchor) shape.getAnchor();
-					if (shape instanceof HSSFPicture) {
-						HSSFPicture pic = (HSSFPicture) shape;
-						String picIndex =
-								WebSheetUtility.getFullCellRefName(sheet
-										.getSheetName(), anchor.getCol1(),
-										anchor.getRow1());
-						picMap.put(picIndex, pic);
-					}
+		if (pictures.isEmpty()) {
+			return null;
+		}
+		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+			HSSFSheet sheet = wb.getSheetAt(i);
+			for (HSSFShape shape : sheet.getDrawingPatriarch()
+					.getChildren()) {
+				HSSFClientAnchor anchor = (HSSFClientAnchor) shape
+						.getAnchor();
+				if (shape instanceof HSSFPicture) {
+					HSSFPicture pic = (HSSFPicture) shape;
+					String picIndex = WebSheetUtility.getFullCellRefName(
+							sheet.getSheetName(), anchor.getCol1(),
+							anchor.getRow1());
+					picMap.put(picIndex, pic);
 				}
 			}
-			LOG.fine(" getHSSFPicturesMap = " + picMap);
-			return picMap;
 		}
-
-		return null;
+		LOG.fine(" getHSSFPicturesMap = " + picMap);
+		return picMap;
 
 	}
 
@@ -120,37 +119,47 @@ public final class PicturesUtility {
 		Map<String, Picture> picMap = new HashMap<String, Picture>();
 
 		List<XSSFPictureData> pictures = wb.getAllPictures();
-		if (!pictures.isEmpty()) {
-			for (int i = 0; i < wb.getNumberOfSheets(); i++) {
-				XSSFSheet sheet = wb.getSheetAt(i);
+		if (pictures.isEmpty()) {
+			return null;
+		}
+		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+			XSSFSheet sheet = wb.getSheetAt(i);
 
-				for (POIXMLDocumentPart dr : sheet.getRelations()) {
-					if (dr instanceof XSSFDrawing) {
-						XSSFDrawing drawing = (XSSFDrawing) dr;
-						List<XSSFShape> shapes = drawing.getShapes();
-						for (XSSFShape shape : shapes) {
-							if (shape instanceof XSSFPicture) {
-								XSSFPicture pic = (XSSFPicture) shape;
-								XSSFClientAnchor anchor =
-										pic.getPreferredSize();
-								CTMarker ctMarker = anchor.getFrom();
-								String picIndex =
-										WebSheetUtility
-												.getFullCellRefName(sheet
-														.getSheetName(),
-														ctMarker.getCol(),
-														ctMarker.getRow());
-								picMap.put(picIndex, pic);
-							}
-						}
-					}
+			for (POIXMLDocumentPart dr : sheet.getRelations()) {
+				indexPictureInMap(picMap, sheet, dr);
+			}
+		}
+
+		return picMap;
+
+	}
+
+	/**
+	 * save pciture in map with index.
+	 * @param picMap pciture map.
+	 * @param sheet sheet. 
+	 * @param dr documentme part.
+	 */
+	private static void indexPictureInMap(Map<String, Picture> picMap,
+			XSSFSheet sheet, POIXMLDocumentPart dr) {
+		if (dr instanceof XSSFDrawing) {
+			XSSFDrawing drawing = (XSSFDrawing) dr;
+			List<XSSFShape> shapes = drawing.getShapes();
+			for (XSSFShape shape : shapes) {
+				if (shape instanceof XSSFPicture) {
+					XSSFPicture pic = (XSSFPicture) shape;
+					XSSFClientAnchor anchor = pic
+							.getPreferredSize();
+					CTMarker ctMarker = anchor.getFrom();
+					String picIndex = WebSheetUtility
+							.getFullCellRefName(
+									sheet.getSheetName(),
+									ctMarker.getCol(),
+									ctMarker.getRow());
+					picMap.put(picIndex, pic);
 				}
 			}
-
-			return picMap;
 		}
-		return null;
-
 	}
 
 	/**
@@ -167,11 +176,9 @@ public final class PicturesUtility {
 
 		ClientAnchor anchor = pic.getPreferredSize();
 		AnchorSize anchorSize = getAnchorSize(sheet1, anchor);
-		return
-				"PADDING-LEFT:" + anchorSize.getLeft() + "px;PADDING-TOP:"
-						+ anchorSize.getTop() + "px;width:"
-						+ anchorSize.getWidth() + "px; height:"
-						+ anchorSize.getHeight() + "px;";
+		return "PADDING-LEFT:" + anchorSize.getLeft() + "px;PADDING-TOP:"
+				+ anchorSize.getTop() + "px;width:" + anchorSize.getWidth()
+				+ "px; height:" + anchorSize.getHeight() + "px;";
 
 	}
 
@@ -186,19 +193,17 @@ public final class PicturesUtility {
 	 *            the anchors map
 	 * @return the string
 	 */
-	public static String
-			generateChartStyle(final Sheet sheet1, final String chartId,
-					final Map<String, ClientAnchor> anchorsMap) {
+	public static String generateChartStyle(final Sheet sheet1,
+			final String chartId,
+			final Map<String, ClientAnchor> anchorsMap) {
 
 		ClientAnchor anchor = anchorsMap.get(chartId);
 		if (anchor != null) {
 			AnchorSize anchorSize = getAnchorSize(sheet1, anchor);
-			return
-					"PADDING-LEFT:" + anchorSize.getLeft()
-							+ "px;PADDING-TOP:" + anchorSize.getTop()
-							+ "px;width:" + anchorSize.getWidth()
-							+ "px; height:" + anchorSize.getHeight()
-							+ "px;";
+			return "PADDING-LEFT:" + anchorSize.getLeft()
+					+ "px;PADDING-TOP:" + anchorSize.getTop() + "px;width:"
+					+ anchorSize.getWidth() + "px; height:"
+					+ anchorSize.getHeight() + "px;";
 
 		}
 		return "";
@@ -224,58 +229,46 @@ public final class PicturesUtility {
 		int bottom = 0;
 
 		if (sheet1 instanceof HSSFSheet) {
-			left =
-					WebSheetUtility
-							.widthUnits2Pixel(sheet1.getColumnWidth(anchor
-									.getCol1())
-									* anchor.getDx1() / WebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS);
+			left = WebSheetUtility.widthUnits2Pixel(sheet1
+					.getColumnWidth(anchor.getCol1()) * anchor.getDx1()
+					/ WebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS);
 			if (sheet1.getRow(anchor.getRow1()) != null) {
-				top =
-						WebSheetUtility
-								.pointsToPixels(sheet1.getRow(
-										anchor.getRow1())
-										.getHeightInPoints()
-										* anchor.getDy1() / WebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS);
+				top = WebSheetUtility.pointsToPixels(sheet1
+						.getRow(anchor.getRow1()).getHeightInPoints()
+						* anchor.getDy1()
+						/ WebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS);
 			}
-			right =
-					WebSheetUtility
-							.widthUnits2Pixel(sheet1.getColumnWidth(anchor
-									.getCol2())
-									* anchor.getDx2() / WebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS);
+			right = WebSheetUtility.widthUnits2Pixel(sheet1
+					.getColumnWidth(anchor.getCol2()) * anchor.getDx2()
+					/ WebSheetUtility.TOTAL_COLUMN_COORDINATE_POSITIONS);
 			if (sheet1.getRow(anchor.getRow2()) != null) {
-				bottom =
-						WebSheetUtility
-								.pointsToPixels(sheet1.getRow(
-										anchor.getRow2())
-										.getHeightInPoints()
-										* anchor.getDy2() / WebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS);
+				bottom = WebSheetUtility.pointsToPixels(sheet1
+						.getRow(anchor.getRow2()).getHeightInPoints()
+						* anchor.getDy2()
+						/ WebSheetUtility.TOTAL_ROW_COORDINATE_POSITIONS);
 			}
 		} else if (sheet1 instanceof XSSFSheet) {
-			left =
-					WebSheetUtility.widthUnits2Pixel(WebSheetUtility
-							.millimetres2WidthUnits(anchor.getDx1()
-									/ WebSheetUtility.EMU_PER_MM));
-			top =
-					WebSheetUtility
-							.pointsToPixels(anchor.getDy1() / WebSheetUtility.EMU_PER_POINTS);
-			right =
-					WebSheetUtility.widthUnits2Pixel(WebSheetUtility
-							.millimetres2WidthUnits(anchor.getDx2()
-									/ WebSheetUtility.EMU_PER_MM));
-			bottom =
-					WebSheetUtility
-							.pointsToPixels(anchor.getDy2() / WebSheetUtility.EMU_PER_POINTS);
+			left = WebSheetUtility.widthUnits2Pixel(WebSheetUtility
+					.millimetres2WidthUnits((double) anchor.getDx1()
+							/ WebSheetUtility.EMU_PER_MM));
+			top = WebSheetUtility.pointsToPixels((double) anchor.getDy1()
+					/ WebSheetUtility.EMU_PER_POINTS);
+			right = WebSheetUtility.widthUnits2Pixel(WebSheetUtility
+					.millimetres2WidthUnits((double) anchor.getDx2()
+							/ WebSheetUtility.EMU_PER_MM));
+			bottom = WebSheetUtility.pointsToPixels((double) anchor.getDy2()
+					/ WebSheetUtility.EMU_PER_POINTS);
 		}
 
 		for (short col = anchor.getCol1(); col < anchor.getCol2(); col++) {
 			picWidth += sheet1.getColumnWidthInPixels(col);
 		}
-		for (int rowindex = anchor.getRow1(); rowindex < anchor.getRow2(); rowindex++) {
+		for (int rowindex = anchor.getRow1(); rowindex < anchor
+				.getRow2(); rowindex++) {
 			Row row = sheet1.getRow(rowindex);
 			if (row != null) {
-				picHeight +=
-						WebSheetUtility.pointsToPixels(row
-								.getHeightInPoints());
+				picHeight += WebSheetUtility
+						.pointsToPixels(row.getHeightInPoints());
 			}
 		}
 		picWidth += right - left;

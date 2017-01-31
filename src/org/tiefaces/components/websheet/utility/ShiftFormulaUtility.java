@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.utility;
@@ -36,20 +36,17 @@ import org.tiefaces.components.websheet.configuration.ShiftFormulaRef;
  */
 public final class ShiftFormulaUtility {
 
-
 	/** The row wrapping mask. */
 	// only support xlsx
 	private static int rowWrappingMask = SpreadsheetVersion.EXCEL2007
 			.getLastRowIndex();
-	
-	
+
 	/**
 	 * hide constructor.
 	 */
 	private ShiftFormulaUtility() {
 		// not called
 	}
-
 
 	/**
 	 * Convert shared formulas.
@@ -67,8 +64,8 @@ public final class ShiftFormulaUtility {
 		Object ptg;
 		for (int k = 0; k < ptgs.length; ++k) {
 			ptg = ptgs[k];
-			newPtgList.addAll(Arrays.asList(convertPtg(ptgs, k,
-					shiftFormulaRef, ptg)));
+			newPtgList.addAll(Arrays
+					.asList(convertPtg(ptgs, k, shiftFormulaRef, ptg)));
 		}
 
 		return newPtgList.toArray(new Ptg[newPtgList.size()]);
@@ -90,9 +87,10 @@ public final class ShiftFormulaUtility {
 			if (!(ptg instanceof Ref3DPxg) && !(ptg instanceof Ref3DPtg)) {
 				rCode = ((RefPtgBase) ptg).getRow();
 			}
-		} else if (ptg instanceof AreaPtgBase && !(ptg instanceof Area3DPxg) && !(ptg instanceof Area3DPtg)) {
-				rCode = ((AreaPtgBase) ptg).getFirstRow();
-	
+		} else if (ptg instanceof AreaPtgBase && !(ptg instanceof Area3DPxg)
+				&& !(ptg instanceof Area3DPtg)) {
+			rCode = ((AreaPtgBase) ptg).getFirstRow();
+
 		}
 
 		return rCode;
@@ -114,8 +112,6 @@ public final class ShiftFormulaUtility {
 	private static Ptg[] convertPtg(final Ptg[] ptgs, final int position,
 			final ShiftFormulaRef shiftFormulaRef, final Object ptg) {
 
-		// SharedFormula sharedFormula.convertSharedFormulas(sharedFormulaPtg,
-		// 0, 1);
 		byte originalOperandClass = -1;
 
 		if (!((Ptg) ptg).isBaseToken()) {
@@ -126,45 +122,57 @@ public final class ShiftFormulaUtility {
 		currentRow = getFirstSupportedRowNumFromPtg(ptg);
 		if ((currentRow >= 0)
 				&& shiftFormulaRef.getWatchList().contains(currentRow)) {
-			List<Row> rowlist =
-					getRowsList(currentRow, shiftFormulaRef
-							.getCurrentRowsMappingList());
-			if ((rowlist == null) || (rowlist.isEmpty())) {
-				// no need change ptg
-				return singlePtg(ptg, originalOperandClass, -1);
-			} else {
-				shiftFormulaRef.setFormulaChanged(1);
-				// one to one or has no round brackets
-				if ((rowlist.size() == 1)
-						|| ((position + 1) >= ptgs.length)
-						|| !(ptgs[position + 1] instanceof ParenthesisPtg)) {
-					// change ptg one to one
-					// return changed ptg
-					return singlePtg(fixupRefRelativeRowOneToOne(ptg,
-							rowlist.get(0)), originalOperandClass, -1);
-				} else {
-					shiftFormulaRef.setFormulaChanged(rowlist.size());
-					return fixupRefRelativeRowOneToMany(ptg,
-							originalOperandClass, rowlist, ptgs, position);
-				}
-			}
+			return convertPtgForWatchList(ptgs, position, shiftFormulaRef,
+					ptg, originalOperandClass, currentRow);
 
-		} else {
-			// no need change ptg
-			if ((ptg instanceof AttrPtg)
-					&& (shiftFormulaRef.getFormulaChanged() > 1)) {
-				AttrPtg newPtg = (AttrPtg) ptg;
-				if (newPtg.isSum()) {
-					FuncVarPtg fptg =
-							FuncVarPtg.create("sum", shiftFormulaRef
-									.getFormulaChanged());
-					return singlePtg(fptg, fptg.getPtgClass(),
-							shiftFormulaRef.getFormulaChanged());
-				}
-			}
-			return singlePtg(ptg, originalOperandClass, shiftFormulaRef
-					.getFormulaChanged());
 		}
+		// no need change ptg
+		if ((ptg instanceof AttrPtg)
+				&& (shiftFormulaRef.getFormulaChanged() > 1)) {
+			AttrPtg newPtg = (AttrPtg) ptg;
+			if (newPtg.isSum()) {
+				FuncVarPtg fptg = FuncVarPtg.create("sum",
+						shiftFormulaRef.getFormulaChanged());
+				return singlePtg(fptg, fptg.getPtgClass(),
+						shiftFormulaRef.getFormulaChanged());
+			}
+		}
+		return singlePtg(ptg, originalOperandClass,
+				shiftFormulaRef.getFormulaChanged());
+
+	}
+
+	/**
+	 * @param ptgs
+	 * @param position
+	 * @param shiftFormulaRef
+	 * @param ptg
+	 * @param originalOperandClass
+	 * @param currentRow
+	 * @return
+	 */
+	private static Ptg[] convertPtgForWatchList(final Ptg[] ptgs,
+			final int position, final ShiftFormulaRef shiftFormulaRef,
+			final Object ptg, byte originalOperandClass, int currentRow) {
+		List<Row> rowlist = getRowsList(currentRow,
+				shiftFormulaRef.getCurrentRowsMappingList());
+		if ((rowlist == null) || (rowlist.isEmpty())) {
+			// no need change ptg
+			return singlePtg(ptg, originalOperandClass, -1);
+		}
+		shiftFormulaRef.setFormulaChanged(1);
+		// one to one or has no round brackets
+		if ((rowlist.size() == 1) || ((position + 1) >= ptgs.length)
+				|| !(ptgs[position + 1] instanceof ParenthesisPtg)) {
+			// change ptg one to one
+			// return changed ptg
+			return singlePtg(
+					fixupRefRelativeRowOneToOne(ptg, rowlist.get(0)),
+					originalOperandClass, -1);
+		}
+		shiftFormulaRef.setFormulaChanged(rowlist.size());
+		return fixupRefRelativeRowOneToMany(ptg, originalOperandClass,
+				rowlist, ptgs, position);
 	}
 
 	/**
@@ -188,9 +196,8 @@ public final class ShiftFormulaUtility {
 			FuncVarPtg fptg = (FuncVarPtg) ptg;
 			if ((formulaChanged > 0)
 					&& (fptg.getNumberOfOperands() != formulaChanged)) {
-				ptg =
-						FuncVarPtg.create(((FuncVarPtg) ptg).getName(),
-								formulaChanged);
+				ptg = FuncVarPtg.create(((FuncVarPtg) ptg).getName(),
+						formulaChanged);
 			}
 		}
 		newPtg[0] = (Ptg) ptg;
@@ -208,33 +215,42 @@ public final class ShiftFormulaUtility {
 	 */
 	private static List<Row> getRowsList(final int currentRow,
 			final List<RowsMapping> currentRowsMappingList) {
-		List<Row> first = null;
 		List<Row> all = null;
-		int count = 0;
+		int size = currentRowsMappingList.size();
 		for (RowsMapping rowsmapping : currentRowsMappingList) {
 			List<Row> current = rowsmapping.get(currentRow);
 			if (current != null) {
-				count++;
-				if (count == 1) {
-					first = current;
-				} else {
-					if (all == null) {
-						all = new ArrayList<>();
-						all.addAll(first);
-					}
-					for (Row row : current) {
-						if (!all.contains(row)) {
-							all.addAll(current);
-						}
-					}
+				if (size == 1) {
+					return current;
+				}
+				all = assembleRowsListFromRowsMapping(all, current);
+			}
+		}
+		return all;
+	}
+
+	/**
+	 * assemble rowslist from rowsmapping.
+	 * 
+	 * @param all
+	 *            list all rows.
+	 * @param current
+	 *            current row list.
+	 * @return
+	 */
+	private static List<Row> assembleRowsListFromRowsMapping(List<Row> all,
+			List<Row> current) {
+		if (all == null) {
+			all = new ArrayList<>();
+			all.addAll(current);
+		} else {
+			for (Row row : current) {
+				if (!all.contains(row)) {
+					all.addAll(current);
 				}
 			}
 		}
-		if (count <= 1) {
-			return first;
-		} else {
-			return all;
-		}
+		return all;
 	}
 
 	/**
@@ -251,13 +267,13 @@ public final class ShiftFormulaUtility {
 		if (ptg instanceof RefPtgBase) {
 			if (ptg instanceof Ref3DPxg) {
 				Ref3DPxg ref3dPxg = (Ref3DPxg) ptg;
-				Ref3DPxg new3dpxg =
-						new Ref3DPxg(ref3dPxg.getExternalWorkbookNumber(),
-								new SheetIdentifier(null,
-										new NameIdentifier(ref3dPxg
-												.getSheetName(), false)),
-								new CellReference(newRow.getRowNum(),
-										ref3dPxg.getColumn()));
+				Ref3DPxg new3dpxg = new Ref3DPxg(
+						ref3dPxg.getExternalWorkbookNumber(),
+						new SheetIdentifier(null,
+								new NameIdentifier(ref3dPxg.getSheetName(),
+										false)),
+						new CellReference(newRow.getRowNum(),
+								ref3dPxg.getColumn()));
 				new3dpxg.setClass(ref3dPxg.getPtgClass());
 				new3dpxg.setColRelative(ref3dPxg.isColRelative());
 				new3dpxg.setRowRelative(ref3dPxg.isRowRelative());
@@ -265,43 +281,44 @@ public final class ShiftFormulaUtility {
 				return new3dpxg;
 			} else {
 				RefPtgBase refPtgBase = (RefPtgBase) ptg;
-				return 	new RefPtg(newRow.getRowNum(), refPtgBase
-								.getColumn(), refPtgBase.isRowRelative(),
-								refPtgBase.isColRelative());
-				
+				return new RefPtg(newRow.getRowNum(),
+						refPtgBase.getColumn(), refPtgBase.isRowRelative(),
+						refPtgBase.isColRelative());
+
 			}
 		} else {
 			if (ptg instanceof Area3DPxg) {
 				Area3DPxg area3dPxg = (Area3DPxg) ptg;
-				Area3DPxg new3dpxg =
-						new Area3DPxg(
-								area3dPxg.getExternalWorkbookNumber(),
-								new SheetIdentifier(null,
-										new NameIdentifier(area3dPxg
-												.getSheetName(), false)),
-								area3dPxg.format2DRefAsString());
+				Area3DPxg new3dpxg = new Area3DPxg(
+						area3dPxg.getExternalWorkbookNumber(),
+						new SheetIdentifier(null,
+								new NameIdentifier(area3dPxg.getSheetName(),
+										false)),
+						area3dPxg.format2DRefAsString());
 				new3dpxg.setClass(area3dPxg.getPtgClass());
-				new3dpxg.setFirstColRelative(area3dPxg.isFirstColRelative());
+				new3dpxg.setFirstColRelative(
+						area3dPxg.isFirstColRelative());
 				new3dpxg.setLastColRelative(area3dPxg.isLastColRelative());
 				int shiftRow = newRow.getRowNum() - area3dPxg.getFirstRow();
 				new3dpxg.setFirstRow(area3dPxg.getFirstRow() + shiftRow);
 				new3dpxg.setLastRow(area3dPxg.getLastRow() + shiftRow);
-				new3dpxg.setFirstRowRelative(area3dPxg.isFirstRowRelative());
+				new3dpxg.setFirstRowRelative(
+						area3dPxg.isFirstRowRelative());
 				new3dpxg.setLastRowRelative(area3dPxg.isLastRowRelative());
 				new3dpxg.setLastSheetName(area3dPxg.getLastSheetName());
 				return new3dpxg;
 			} else {
 				AreaPtgBase areaPtgBase = (AreaPtgBase) ptg;
-				int shiftRow =
-						newRow.getRowNum() - areaPtgBase.getFirstRow();
+				int shiftRow = newRow.getRowNum()
+						- areaPtgBase.getFirstRow();
 				return new AreaPtg(areaPtgBase.getFirstRow() + shiftRow,
-								areaPtgBase.getLastRow() + shiftRow,
-								areaPtgBase.getFirstColumn(), areaPtgBase
-										.getLastColumn(), areaPtgBase
-										.isFirstRowRelative(), areaPtgBase
-										.isLastRowRelative(), areaPtgBase
-										.isFirstColRelative(), areaPtgBase
-										.isLastColRelative());
+						areaPtgBase.getLastRow() + shiftRow,
+						areaPtgBase.getFirstColumn(),
+						areaPtgBase.getLastColumn(),
+						areaPtgBase.isFirstRowRelative(),
+						areaPtgBase.isLastRowRelative(),
+						areaPtgBase.isFirstColRelative(),
+						areaPtgBase.isLastColRelative());
 			}
 		}
 
@@ -383,24 +400,23 @@ public final class ShiftFormulaUtility {
 			Row row = rowList.get(i);
 			if (refPtg instanceof Ref3DPxg) {
 				Ref3DPxg ref3dPxg = (Ref3DPxg) refPtg;
-				Ref3DPxg new3dpxg =
-						new Ref3DPxg(ref3dPxg.getExternalWorkbookNumber(),
-								new SheetIdentifier(null,
-										new NameIdentifier(ref3dPxg
-												.getSheetName(), false)),
-								new CellReference(row.getRowNum(), ref3dPxg
-										.getColumn()));
+				Ref3DPxg new3dpxg = new Ref3DPxg(
+						ref3dPxg.getExternalWorkbookNumber(),
+						new SheetIdentifier(null,
+								new NameIdentifier(ref3dPxg.getSheetName(),
+										false)),
+						new CellReference(row.getRowNum(),
+								ref3dPxg.getColumn()));
 				new3dpxg.setClass(originalOperandClass);
 				new3dpxg.setColRelative(ref3dPxg.isColRelative());
 				new3dpxg.setRowRelative(ref3dPxg.isRowRelative());
 				new3dpxg.setLastSheetName(ref3dPxg.getLastSheetName());
 				newPtg[i * unitSize] = new3dpxg;
 			} else {
-				RefPtgBase refPtgBase =  refPtg;
-				newPtg[i * unitSize] =
-						new RefPtg(row.getRowNum(), refPtgBase.getColumn(),
-								refPtgBase.isRowRelative(), refPtgBase
-										.isColRelative());
+				RefPtgBase refPtgBase = refPtg;
+				newPtg[i * unitSize] = new RefPtg(row.getRowNum(),
+						refPtgBase.getColumn(), refPtgBase.isRowRelative(),
+						refPtgBase.isColRelative());
 			}
 			if ((unitSize == 2) && (i < (rowList.size() - 1))) {
 				newPtg[i * unitSize + 1] = ParenthesisPtg.instance;
@@ -432,33 +448,33 @@ public final class ShiftFormulaUtility {
 			int shiftRow = row.getRowNum() - originFirstRow;
 			if (ptg instanceof Area3DPxg) {
 				Area3DPxg area3dPxg = (Area3DPxg) ptg;
-				Area3DPxg new3dpxg =
-						new Area3DPxg(
-								area3dPxg.getExternalWorkbookNumber(),
-								new SheetIdentifier(null,
-										new NameIdentifier(area3dPxg
-												.getSheetName(), false)),
-								area3dPxg.format2DRefAsString());
+				Area3DPxg new3dpxg = new Area3DPxg(
+						area3dPxg.getExternalWorkbookNumber(),
+						new SheetIdentifier(null,
+								new NameIdentifier(area3dPxg.getSheetName(),
+										false)),
+						area3dPxg.format2DRefAsString());
 				new3dpxg.setClass(originalOperandClass);
-				new3dpxg.setFirstColRelative(area3dPxg.isFirstColRelative());
+				new3dpxg.setFirstColRelative(
+						area3dPxg.isFirstColRelative());
 				new3dpxg.setLastColRelative(area3dPxg.isLastColRelative());
 				new3dpxg.setFirstRow(originFirstRow + shiftRow);
 				new3dpxg.setLastRow(originLastRow + shiftRow);
-				new3dpxg.setFirstRowRelative(area3dPxg.isFirstRowRelative());
+				new3dpxg.setFirstRowRelative(
+						area3dPxg.isFirstRowRelative());
 				new3dpxg.setLastRowRelative(area3dPxg.isLastRowRelative());
 				new3dpxg.setLastSheetName(area3dPxg.getLastSheetName());
 				newPtg[i * unitSize] = new3dpxg;
 			} else {
 				AreaPtgBase areaPtgBase = (AreaPtgBase) ptg;
-				newPtg[i * unitSize] =
-						new AreaPtg(originFirstRow + shiftRow,
-								originLastRow + shiftRow, areaPtgBase
-										.getFirstColumn(), areaPtgBase
-										.getLastColumn(), areaPtgBase
-										.isFirstRowRelative(), areaPtgBase
-										.isLastRowRelative(), areaPtgBase
-										.isFirstColRelative(), areaPtgBase
-										.isLastColRelative());
+				newPtg[i * unitSize] = new AreaPtg(
+						originFirstRow + shiftRow, originLastRow + shiftRow,
+						areaPtgBase.getFirstColumn(),
+						areaPtgBase.getLastColumn(),
+						areaPtgBase.isFirstRowRelative(),
+						areaPtgBase.isLastRowRelative(),
+						areaPtgBase.isFirstColRelative(),
+						areaPtgBase.isLastColRelative());
 
 			}
 			if (i < (rowList.size() - 1)) {

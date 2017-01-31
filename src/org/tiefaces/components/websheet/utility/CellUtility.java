@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -41,8 +41,7 @@ import org.tiefaces.components.websheet.dataobjects.FacesRow;
 public final class CellUtility {
 
 	/** logger. */
-	static final Logger LOG = Logger
-			.getLogger(CellUtility.class.getName());
+	static final Logger LOG = Logger.getLogger(CellUtility.class.getName());
 
 	/**
 	 * Instantiates a new cell helper.
@@ -62,6 +61,7 @@ public final class CellUtility {
 	 *            data formatter.
 	 * @return cell string value with format.
 	 */
+	@SuppressWarnings("deprecation")
 	public static String getCellValueWithFormat(final Cell poiCell,
 			final FormulaEvaluator formulaEvaluator,
 			final DataFormatter dataFormatter) {
@@ -106,6 +106,7 @@ public final class CellUtility {
 	 *            cell.
 	 * @return String cell value.
 	 */
+	@SuppressWarnings("deprecation")
 	public static String getCellValueWithoutFormat(final Cell poiCell) {
 
 		if (poiCell == null) {
@@ -182,11 +183,12 @@ public final class CellUtility {
 	 * Set cell value with giving String value.
 	 * 
 	 * @param c
-	 *            cell.
+	 *            cell. 
 	 * @param value
 	 *            giving value.
 	 * @return cell.
 	 */
+	@SuppressWarnings("deprecation")
 	public static Cell setCellValue(final Cell c, final String value) {
 
 		try {
@@ -197,18 +199,18 @@ public final class CellUtility {
 			} else if (WebSheetUtility.isDate(value)) {
 				setCellValueDate(c, value);
 			} else if (c.getCellTypeEnum() == CellType.BOOLEAN) {
-					setCellValueBoolean(c, value);
+				setCellValueBoolean(c, value);
 			} else {
-					setCellValueString(c, value);
+				setCellValueString(c, value);
 			}
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, " error in setCellValue of CellUtility = "
 					+ e.getLocalizedMessage(), e);
 			setCellValueString(c, value);
 		}
-		LOG.fine(" set cell value row = " + c.getRowIndex() + " columnIndex = "
-				+ c.getColumnIndex() + " value = " + value + " cellType = "
-				+ c.getCellTypeEnum());
+		LOG.fine(" set cell value row = " + c.getRowIndex()
+				+ " columnIndex = " + c.getColumnIndex() + " value = "
+				+ value + " cellType = " + c.getCellTypeEnum());
 		return c;
 	}
 
@@ -228,7 +230,8 @@ public final class CellUtility {
 	 */
 	private static void setCellValueBoolean(final Cell c,
 			final String value) {
-		if ("Y".equalsIgnoreCase(value)||"Yes".equalsIgnoreCase(value)||"True".equalsIgnoreCase(value)) {
+		if ("Y".equalsIgnoreCase(value) || "Yes".equalsIgnoreCase(value)
+				|| "True".equalsIgnoreCase(value)) {
 			c.setCellValue(true);
 		} else {
 			c.setCellValue(false);
@@ -250,14 +253,15 @@ public final class CellUtility {
 	 */
 	private static void setCellValueNumber(final Cell c,
 			final String value) {
-		double val = Double.parseDouble(
-				value.replace(Character.toString(','), ""));
+		double val = Double
+				.parseDouble(value.replace(Character.toString(','), ""));
 		c.setCellType(CellType.NUMERIC);
 		c.setCellValue(val);
 	}
 
 	/**
 	 * Copy rows.
+	 * 
 	 * @param srcSheet
 	 *            the src sheet
 	 * @param destSheet
@@ -275,10 +279,9 @@ public final class CellUtility {
 	 * @param wb
 	 *            the wb
 	 */
-	public static void copyRows(final Sheet srcSheet,
-			final Sheet destSheet, final int srcRowStart,
-			final int srcRowEnd, final int destRow, final boolean checkLock,
-			final boolean setHiddenColumn) {
+	public static void copyRows(final Sheet srcSheet, final Sheet destSheet,
+			final int srcRowStart, final int srcRowEnd, final int destRow,
+			final boolean checkLock, final boolean setHiddenColumn) {
 
 		int length = srcRowEnd - srcRowStart + 1;
 		if (length <= 0) {
@@ -312,6 +315,7 @@ public final class CellUtility {
 
 	/**
 	 * Copy single row.
+	 * 
 	 * @param srcSheet
 	 *            the src sheet
 	 * @param destSheet
@@ -327,10 +331,10 @@ public final class CellUtility {
 	 * @param wb
 	 *            the wb
 	 */
-	private static void copySingleRow(
-			final Sheet srcSheet, final Sheet destSheet,
-			final int sourceRowNum, final int destinationRowNum,
-			final boolean checkLock, final boolean setHiddenColumn) {
+	private static void copySingleRow(final Sheet srcSheet,
+			final Sheet destSheet, final int sourceRowNum,
+			final int destinationRowNum, final boolean checkLock,
+			final boolean setHiddenColumn) {
 		// Get the source / new row
 		Row newRow = destSheet.getRow(destinationRowNum);
 		Row sourceRow = srcSheet.getRow(sourceRowNum);
@@ -354,6 +358,7 @@ public final class CellUtility {
 
 	/**
 	 * Copy cell.
+	 * 
 	 * @param destSheet
 	 *            the dest sheet
 	 * @param sourceRow
@@ -370,72 +375,117 @@ public final class CellUtility {
 	 *            the new cell
 	 * @return the int
 	 */
-	public static Cell copyCell(final Sheet destSheet,
-			final Row sourceRow, final Row newRow,
-			final int cellIndex, final boolean checkLock) {
+	public static Cell copyCell(final Sheet destSheet, final Row sourceRow,
+			final Row newRow, final int cellIndex,
+			final boolean checkLock) {
 		// If the old cell is null jump to next cell
 		Cell sourceCell = sourceRow.getCell(cellIndex);
 		if (sourceCell == null) {
 			return null;
 		}
 		Cell newCell = newRow.createCell(cellIndex);
-		copyCellSetStyle(destSheet, sourceCell,
-				newCell);
-
-		copyCellSetValue(sourceCell, newCell, checkLock);
+		try {
+			copyCellSetStyle(destSheet, sourceCell, newCell);
+			copyCellSetValue(sourceCell, newCell, checkLock);
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE,
+					"copy cell set error = " + ex.getLocalizedMessage(),
+					ex);
+		}
 
 		return newCell;
 	}
 
 	/**
 	 * set cell value.
-	 * @param sourceCell source cell.
-	 * @param newCell new cell. 
-	 * @param checkLock check lock flag.
+	 * 
+	 * @param sourceCell
+	 *            source cell.
+	 * @param newCell
+	 *            new cell.
+	 * @param checkLock
+	 *            check lock flag.
 	 */
 	private static void copyCellSetValue(Cell sourceCell, Cell newCell,
 			final boolean checkLock) {
-		
+
 		CellStyle newCellStyle = newCell.getCellStyle();
-		// Set the cell data value
-		switch (sourceCell.getCellTypeEnum()) {
-		case BOOLEAN:
-			if ((!checkLock) || newCellStyle.getLocked()) {
-				newCell.setCellValue(sourceCell.getBooleanCellValue());
-			}
-			break;
-		case ERROR:
-			if ((!checkLock) || newCellStyle.getLocked()) {
-				newCell.setCellErrorValue(sourceCell.getErrorCellValue());
-			}
-			break;
-		case FORMULA:
-			newCell.setCellFormula(sourceCell.getCellFormula());
-			break;
-		case NUMERIC:
-			if ((!checkLock) || newCellStyle.getLocked()) {
-				newCell.setCellValue(sourceCell.getNumericCellValue());
-			}
-			break;
-		case STRING:
-			if ((!checkLock) || newCellStyle.getLocked()) {
-				newCell.setCellValue(sourceCell.getRichStringCellValue());
-			}
-			break;
-		default:
-			if ((!checkLock) || newCellStyle.getLocked()) {
-				newCell.setCellValue(sourceCell.getStringCellValue());
-			}
-			break;
-		}
+		String name = sourceCell.getCellTypeEnum().toString();
+		CellValueType e = Enum.valueOf(CellValueType.class, name);
+		e.setCellValue(newCell, sourceCell, checkLock, newCellStyle);
 	}
+
+	public enum CellValueType {
+		STRING {
+			@Override
+			public void setCellValue(Cell newCell, Cell sourceCell,
+					boolean checkLock, CellStyle newCellStyle) {
+				if ((!checkLock) || newCellStyle.getLocked()) {
+					newCell.setCellValue(
+							sourceCell.getRichStringCellValue());
+				}
+			}
+		},
+		BOOLEAN {
+			@Override
+			public void setCellValue(Cell newCell, Cell sourceCell,
+					boolean checkLock, CellStyle newCellStyle) {
+				if ((!checkLock) || newCellStyle.getLocked()) {
+					newCell.setCellValue(sourceCell.getBooleanCellValue());
+				}
+			}
+		},
+		NUMERIC {
+			@Override
+			public void setCellValue(Cell newCell, Cell sourceCell,
+					boolean checkLock, CellStyle newCellStyle) {
+				if ((!checkLock) || newCellStyle.getLocked()) {
+					newCell.setCellValue(sourceCell.getNumericCellValue());
+				}
+			}
+		},
+		FORMULA {
+			@Override
+			public void setCellValue(Cell newCell, Cell sourceCell,
+					boolean checkLock, CellStyle newCellStyle) {
+				newCell.setCellFormula(sourceCell.getCellFormula());
+			}
+		},
+		ERROR {
+			@Override
+			public void setCellValue(Cell newCell, Cell sourceCell,
+					boolean checkLock, CellStyle newCellStyle) {
+				if ((!checkLock) || newCellStyle.getLocked()) {
+					newCell.setCellErrorValue(
+							sourceCell.getErrorCellValue());
+				}
+			}
+		},
+		BLANK {
+			@Override
+			public void setCellValue(Cell newCell, Cell sourceCell,
+					boolean checkLock, CellStyle newCellStyle) {
+				newCell.setCellType(CellType.BLANK);
+			}
+		};
+		public abstract void setCellValue(final Cell newCell,
+				final Cell sourceCell, final boolean checkLock,
+				final CellStyle newCellStyle);
+
+	}
+
 
 	/**
 	 * set up cell style.
-	 * @param destSheet dest sheet.
-	 * @param sourceCell source cell. 
-	 * @param newCell new cell.
+	 * 
+	 * @param destSheet
+	 *            dest sheet.
+	 * @param sourceCell
+	 *            source cell.
+	 * @param newCell
+	 *            new cell.
 	 */
+	@SuppressWarnings("deprecation")
 	private static void copyCellSetStyle(final Sheet destSheet,
 			Cell sourceCell, Cell newCell) {
 		CellStyle newCellStyle = getCellStyleFromSourceCell(destSheet,
@@ -458,8 +508,11 @@ public final class CellUtility {
 
 	/**
 	 * create cell style from source cell.
-	 * @param destSheet dest sheet.
-	 * @param sourceCell source cell.
+	 * 
+	 * @param destSheet
+	 *            dest sheet.
+	 * @param sourceCell
+	 *            source cell.
 	 * @return cell style.
 	 */
 	private static CellStyle getCellStyleFromSourceCell(
@@ -470,9 +523,6 @@ public final class CellUtility {
 		newCellStyle.cloneStyleFrom(sourceCell.getCellStyle());
 		return newCellStyle;
 	}
-
-
-
 
 	/**
 	 * return cell index number key. e.g. $0$0 for A1 cell.
@@ -655,8 +705,11 @@ public final class CellUtility {
 
 	/**
 	 * Add skipped cell into the list of a region.
-	 * @param skipCellList list.
-	 * @param caddress region.
+	 * 
+	 * @param skipCellList
+	 *            list.
+	 * @param caddress
+	 *            region.
 	 */
 	private static void addSkipCellToListInTheRegion(
 			List<String> skipCellList, CellRangeAddress caddress) {
@@ -668,8 +721,8 @@ public final class CellUtility {
 						&& (row == caddress.getFirstRow())) {
 					continue;
 				}
-				skipCellList.add(CellUtility
-						.getCellIndexNumberKey(col, row));
+				skipCellList
+						.add(CellUtility.getCellIndexNumberKey(col, row));
 			}
 		}
 	}
@@ -803,8 +856,8 @@ public final class CellUtility {
 		LOG.fine("getRowColFromComponentAttributes rowindex = " + rowIndex
 				+ " colindex = " + colIndex);
 		int[] list = new int[2];
-		list[0]=rowIndex;
-		list[1]=colIndex;
+		list[0] = rowIndex;
+		list[1] = colIndex;
 		return list;
 	}
 

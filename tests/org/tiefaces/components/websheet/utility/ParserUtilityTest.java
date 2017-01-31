@@ -161,6 +161,16 @@ public class ParserUtilityTest {
 		assertEquals(attrs.get(0).getValue(), "Male;Female");
 		assertEquals(attrs.get(1).getType(), "itemValues");
 		assertEquals(attrs.get(1).getValue(), "M;F");
+		
+		
+	    String controlAttrs = " symbol=\" years\" symbolPosition=\"s\" minValue=\"0\" maxValue=\"999\" decimalPlaces=\"0\"  ";
+	    List<CellFormAttributes> clist = new ArrayList<CellFormAttributes>();
+	    
+	    ParserUtility.parseInputAttributes(clist, controlAttrs);        
+	    CellFormAttributes cattr = clist.get(0);
+	    assertEquals("symbol", cattr.getType());
+	    assertEquals(" years", cattr.getValue());
+	    		
 
 	}
 	

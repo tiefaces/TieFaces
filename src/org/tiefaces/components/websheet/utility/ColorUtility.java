@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -35,8 +35,6 @@ import org.tiefaces.components.websheet.dataobjects.XColor;
  */
 public final class ColorUtility {
 
-
-
 	/** one million. */
 	private static final double MILLION_NUMBERS = 100000.00;
 	/** default automatic color numbers. */
@@ -47,16 +45,16 @@ public final class ColorUtility {
 	private static final short RGB8BITS = 256;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(ColorUtility.class
-			.getName());
-	
+	private static final Logger LOG = Logger
+			.getLogger(ColorUtility.class.getName());
+
 	/**
 	 * prevent initialize.
 	 */
 	private ColorUtility() {
 		// not called
 	}
-	
+
 	/**
 	 * retrieve background color for plot area.
 	 * 
@@ -86,7 +84,7 @@ public final class ColorUtility {
 				CTSRgbColor ctrColor = colorFill.getSrgbClr();
 				if (ctrColor != null) {
 					LOG.fine("get background color from rgb");
-					return getXColorFromRgbClr(ctrColor, themeTable);
+					return getXColorFromRgbClr(ctrColor);
 				}
 			}
 		}
@@ -118,7 +116,7 @@ public final class ColorUtility {
 		}
 
 		double tint = preTint;
-		if (tint == 0.0) {
+		if (Double.compare(tint, 0)  == 0) {
 			// no preTint
 			if (lumOff > 0) {
 				tint = (lumOff / MILLION_NUMBERS);
@@ -176,34 +174,34 @@ public final class ColorUtility {
 			final double preTint, final CTSchemeColor ctsColor,
 			final ThemesTable themeTable) {
 		int colorIndex = getThemeIndexFromName(colorSchema);
-		if (colorIndex >= 0) {
-			XSSFColor bcolor = themeTable.getThemeColor(colorIndex);
-			if (bcolor != null) {
-				int lumOff = 0;
-				int lumMod = 0;
-				int alphaInt = 0;
-				if (ctsColor != null) {
-					try {
-						lumOff = ctsColor.getLumOffArray(0).getVal();
-					} catch (Exception ex) {
-						LOG.log(Level.FINE, "No lumOff entry", ex);
-					}
-					try {
-						lumMod = ctsColor.getLumModArray(0).getVal();
-					} catch (Exception ex) {
-						LOG.log(Level.FINE, "No lumMod entry", ex);
-					}
-					try {
-						alphaInt = ctsColor.getAlphaArray(0).getVal();
-					} catch (Exception ex) {
-						LOG.log(Level.FINE, "No alpha entry", ex);
-					}
-				}
-				return assembleXcolor(bcolor, preTint, lumOff, lumMod,
-						alphaInt);
+		if (colorIndex < 0) {
+			return null;
+		}
+		XSSFColor bcolor = themeTable.getThemeColor(colorIndex);
+		if (bcolor == null) {
+			return null;
+		}
+		int lumOff = 0;
+		int lumMod = 0;
+		int alphaInt = 0;
+		if (ctsColor != null) {
+			try {
+				lumOff = ctsColor.getLumOffArray(0).getVal();
+			} catch (Exception ex) {
+				LOG.log(Level.FINE, "No lumOff entry", ex);
+			}
+			try {
+				lumMod = ctsColor.getLumModArray(0).getVal();
+			} catch (Exception ex) {
+				LOG.log(Level.FINE, "No lumMod entry", ex);
+			}
+			try {
+				alphaInt = ctsColor.getAlphaArray(0).getVal();
+			} catch (Exception ex) {
+				LOG.log(Level.FINE, "No alpha entry", ex);
 			}
 		}
-		return null;
+		return assembleXcolor(bcolor, preTint, lumOff, lumMod, alphaInt);
 	}
 
 	/**
@@ -211,12 +209,9 @@ public final class ColorUtility {
 	 * 
 	 * @param ctrColor
 	 *            ctsRgbColor
-	 * @param themeTable
-	 *            themeTable
 	 * @return xcolor
 	 */
-	private static XColor getXColorFromRgbClr(final CTSRgbColor ctrColor,
-			final ThemesTable themeTable) {
+	private static XColor getXColorFromRgbClr(final CTSRgbColor ctrColor) {
 		XSSFColor bcolor = null;
 		try {
 			byte[] rgb = ctrColor.getVal();
@@ -283,7 +278,7 @@ public final class ColorUtility {
 			} else {
 				CTSRgbColor ctrColor = colorFill.getSrgbClr();
 				if (ctrColor != null) {
-					return getXColorFromRgbClr(ctrColor, themeTable);
+					return getXColorFromRgbClr(ctrColor);
 				}
 			}
 		}
@@ -326,8 +321,8 @@ public final class ColorUtility {
 	 */
 	private static double getAutomaticTint(final int index) {
 
-		final double[] idxArray =
-				{ 0, 0.25, 0.5, -0.25, -0.5, 0.1, 0.3, -0.1, -0.3 };
+		final double[] idxArray = { 0, 0.25, 0.5, -0.25, -0.5, 0.1, 0.3,
+				-0.1, -0.3 };
 		int i = index / AUTOCOLORSIZE;
 		if (i >= idxArray.length) {
 			return 0;
@@ -358,10 +353,9 @@ public final class ColorUtility {
 
 	private static int getThemeIndexFromName(final String idxName) {
 
-		final String[] idxArray =
-				{ "bg1", "tx1", "bg2", "tx2", "accent1", "accent2",
-						"accent3", "accent4", "accent5", "accent6",
-						"hlink", "folHlink" };
+		final String[] idxArray = { "bg1", "tx1", "bg2", "tx2", "accent1",
+				"accent2", "accent3", "accent4", "accent5", "accent6",
+				"hlink", "folHlink" };
 		try {
 			for (int i = 0; i < idxArray.length; i++) {
 				if (idxArray[i].equalsIgnoreCase(idxName)) {
@@ -383,23 +377,23 @@ public final class ColorUtility {
 	 *            xssf color.
 	 * @return triple lets.
 	 */
-	public static short[]
-			getTripletFromXSSFColor(final XSSFColor xssfColor) {
+	public static short[] getTripletFromXSSFColor(
+			final XSSFColor xssfColor) {
 
 		short[] rgbfix = { RGB8BITS, RGB8BITS, RGB8BITS };
 		if (xssfColor != null) {
-			byte[] rgb = xssfColor.getRGBWithTint(); // getRgbWithTint();
+			byte[] rgb = xssfColor.getRGBWithTint();
 			if (rgb == null) {
 				rgb = xssfColor.getRGB();
 			}
 			// Bytes are signed, so values of 128+ are negative!
 			// 0: red, 1: green, 2: blue
-			rgbfix[0] =
-					(short) ((rgb[0] < 0) ? (rgb[0] + RGB8BITS) : rgb[0]);
-			rgbfix[1] =
-					(short) ((rgb[1] < 0) ? (rgb[1] + RGB8BITS) : rgb[1]);
-			rgbfix[2] =
-					(short) ((rgb[2] < 0) ? (rgb[2] + RGB8BITS) : rgb[2]);
+			rgbfix[0] = (short) ((rgb[0] < 0) ? (rgb[0] + RGB8BITS)
+					: rgb[0]);
+			rgbfix[1] = (short) ((rgb[1] < 0) ? (rgb[1] + RGB8BITS)
+					: rgb[1]);
+			rgbfix[2] = (short) ((rgb[2] < 0) ? (rgb[2] + RGB8BITS)
+					: rgb[2]);
 		}
 		return rgbfix;
 	}
@@ -415,9 +409,9 @@ public final class ColorUtility {
 	 *            the cell style
 	 * @return the bg color from cell
 	 */
-	static String getBgColorFromCell(final Workbook wb,
-			final Cell poiCell, final CellStyle cellStyle) {
-	
+	static String getBgColorFromCell(final Workbook wb, final Cell poiCell,
+			final CellStyle cellStyle) {
+
 		String style = "";
 		if (poiCell instanceof HSSFCell) {
 			int bkColorIndex = cellStyle.getFillForegroundColor();
@@ -440,8 +434,7 @@ public final class ColorUtility {
 					.getFillForegroundColorColor();
 			if (color != null) {
 				style = "background-color:rgb(" + FacesUtility.strJoin(
-						getTripletFromXSSFColor(color), ",")
-						+ ");";
+						getTripletFromXSSFColor(color), ",") + ");";
 			}
 		}
 		return style;

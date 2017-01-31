@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -123,17 +123,16 @@ public final class ParserUtility {
 		if ((newComment == null) || (newComment.isEmpty())) {
 			return;
 		}
-		int widgetStart =
-				newComment.indexOf(TieConstants.METHOD_WIDGET_PREFIX);
+		int widgetStart = newComment
+				.indexOf(TieConstants.METHOD_WIDGET_PREFIX);
 		int elStart = newComment.indexOf(TieConstants.EL_START_BRACKET);
 		if ((widgetStart < 0) || (widgetStart >= elStart)) {
 			return;
 		}
 
-		String type =
-				newComment.substring(widgetStart
-						+ TieConstants.METHOD_WIDGET_PREFIX.length(),
-						elStart);
+		String type = newComment.substring(
+				widgetStart + TieConstants.METHOD_WIDGET_PREFIX.length(),
+				elStart);
 
 		String values = getStringBetweenBracket(newComment);
 		if (values == null) {
@@ -143,10 +142,10 @@ public final class ParserUtility {
 		String key = getAttributeKeyInMapByCell(cell);
 		// one cell only has one control widget
 		cellAttributesMap.getCellInputType().put(key, type);
-		List<CellFormAttributes> inputs =
-				cellAttributesMap.getCellInputAttributes().get(key);
+		List<CellFormAttributes> inputs = cellAttributesMap
+				.getCellInputAttributes().get(key);
 		if (inputs == null) {
-			inputs = new ArrayList<CellFormAttributes>();
+			inputs = new ArrayList<>();
 			cellAttributesMap.getCellInputAttributes().put(key, inputs);
 		}
 		parseInputAttributes(inputs, values);
@@ -168,10 +167,8 @@ public final class ParserUtility {
 			return null;
 		}
 		// map's key is sheetName!$columnIndex$rowIndex
-		String key =
-				cell.getSheet().getSheetName() + "!"
-						+ CellUtility.getCellIndexNumberKey(cell);
-		return key;
+		return cell.getSheet().getSheetName() + "!"
+				+ CellUtility.getCellIndexNumberKey(cell);
 
 	}
 
@@ -202,10 +199,10 @@ public final class ParserUtility {
 		}
 		// map's key is sheetName!$columnIndex$rowIndex
 		String key = getAttributeKeyInMapByCell(cell);
-		List<CellFormAttributes> attrs =
-				cellAttributesMap.getCellValidateAttributes().get(key);
+		List<CellFormAttributes> attrs = cellAttributesMap
+				.getCellValidateAttributes().get(key);
 		if (attrs == null) {
-			attrs = new ArrayList<CellFormAttributes>();
+			attrs = new ArrayList<>();
 			cellAttributesMap.getCellValidateAttributes().put(key, attrs);
 		}
 		parseValidateAttributes(attrs, values);
@@ -242,18 +239,18 @@ public final class ParserUtility {
 	 */
 	public static Map<String, String> parseCommandAttributes(
 			final String attrString) {
-		Map<String, String> attrMap = new LinkedHashMap<String, String>();
-		Matcher attrMatcher =
-				TieConstants.ATTR_REGEX_PATTERN.matcher(attrString);
+		Map<String, String> attrMap = new LinkedHashMap<>();
+		Matcher attrMatcher = TieConstants.ATTR_REGEX_PATTERN
+				.matcher(attrString);
 		while (attrMatcher.find()) {
 			String attrData = attrMatcher.group();
-			int attrNameEndIndex = attrData.indexOf("=");
-			String attrName =
-					attrData.substring(0, attrNameEndIndex).trim();
-			String attrValuePart =
-					attrData.substring(attrNameEndIndex + 1).trim();
-			String attrValue =
-					attrValuePart.substring(1, attrValuePart.length() - 1);
+			int attrNameEndIndex = attrData.indexOf('=');
+			String attrName = attrData.substring(0, attrNameEndIndex)
+					.trim();
+			String attrValuePart = attrData.substring(attrNameEndIndex + 1)
+					.trim();
+			String attrValue = attrValuePart.substring(1,
+					attrValuePart.length() - 1);
 			attrMap.put(attrName, attrValue);
 		}
 		return attrMap;
@@ -267,19 +264,17 @@ public final class ParserUtility {
 	 * @param controlAttrs
 	 *            control attrs.
 	 */
-	public static void
-			parseInputAttributes(final List<CellFormAttributes> clist,
-					final String controlAttrs) {
+	public static void parseInputAttributes(
+			final List<CellFormAttributes> clist,
+			final String controlAttrs) {
 		// only one type control allowed for one cell.
 		clist.clear();
 		if (controlAttrs != null) {
-			String[] cattrs =
-					controlAttrs.split(
-							TieConstants.SPLIT_SPACE_SEPERATE_ATTRS_REGX,
-							-1);
+			String[] cattrs = controlAttrs.split(
+					TieConstants.SPLIT_SPACE_SEPERATE_ATTRS_REGX, -1);
 			for (String cattr : cattrs) {
 				String[] details = splitByEualSign(cattr);
-				if ((details != null) && (details.length > 1)) {
+				if (details.length > 1) {
 					CellFormAttributes attr = new CellFormAttributes();
 					attr.setType(details[0].trim());
 					attr.setValue(details[1].replaceAll("\"", ""));
@@ -297,36 +292,40 @@ public final class ParserUtility {
 	 * @param controlAttrs
 	 *            control attrs.
 	 */
-	public static void
-			parseValidateAttributes(final List<CellFormAttributes> clist,
-					final String controlAttrs) {
+	public static void parseValidateAttributes(
+			final List<CellFormAttributes> clist,
+			final String controlAttrs) {
 		// one cell could have multiple validation rules.
-		if (controlAttrs != null) {
-			String[] cattrs =
-					controlAttrs.split(
-							TieConstants.SPLIT_SPACE_SEPERATE_ATTRS_REGX,
-							-1);
+		if (controlAttrs == null) {
+			return;
+		}
+		String[] cattrs = controlAttrs
+				.split(TieConstants.SPLIT_SPACE_SEPERATE_ATTRS_REGX, -1);
 
-			String rule = null;
-			String errorMsg = null;
-			for (String cattr : cattrs) {
+		CellFormAttributes attr = new CellFormAttributes();
+		for (String cattr : cattrs) {
+			extractValidationAttributes(attr, cattr);
+		}
+		if ((attr.getValue() != null) && (!attr.getValue().isEmpty())) {
+			clist.add(attr);
+		}
+	}
 
-				String[] details = splitByEualSign(cattr);
-				if ((details != null) && (details.length > 1)) {
-					if (details[0]
-							.equalsIgnoreCase(TieConstants.VALIDATION_RULE_TAG)) {
-						rule = details[1].replaceAll("\"", "");
-					} else if (details[0]
-							.equalsIgnoreCase(TieConstants.VALIDATION_ERROR_MSG_TAG)) {
-						errorMsg = details[1].replaceAll("\"", "");
-					}
-				}
-			}
-			if ((rule != null) && (!rule.isEmpty())) {
-				CellFormAttributes attr = new CellFormAttributes();
-				attr.setValue(rule);
-				attr.setMessage(errorMsg);
-				clist.add(attr);
+	/**
+	 *  extractValidationAttributes.
+	 * @param attr attribute holder.
+	 * @param cattr input attributes.
+	 */
+	private static void extractValidationAttributes(
+			CellFormAttributes attr, String cattr) {
+		String[] details = splitByEualSign(cattr);
+		if (details.length > 1) {
+			if (details[0].equalsIgnoreCase(
+					TieConstants.VALIDATION_RULE_TAG)) {
+				attr.setValue(details[1].replaceAll("\"", ""));
+			} else if (details[0].equalsIgnoreCase(
+					TieConstants.VALIDATION_ERROR_MSG_TAG)) {
+				attr.setMessage(details[1].replaceAll("\"", ""));
 			}
 		}
 	}
@@ -339,9 +338,9 @@ public final class ParserUtility {
 	 * @return splitted string array.
 	 */
 	private static String[] splitByEualSign(final String attrData) {
-		int attrNameEndIndex = attrData.indexOf("=");
+		int attrNameEndIndex = attrData.indexOf('=');
 		if (attrNameEndIndex < 0) {
-			return null;
+			return new String[0];
 		}
 		String attrName = attrData.substring(0, attrNameEndIndex).trim();
 		String attrValue = attrData.substring(attrNameEndIndex + 1).trim();
@@ -379,17 +378,17 @@ public final class ParserUtility {
 			if (attrKey.equalsIgnoreCase(TieConstants.SELECT_ITEM_VALUES)) {
 				selectValues = attr.getValue().split(";");
 			}
-			if (attrKey
-					.equalsIgnoreCase(TieConstants.DEFAULT_SELECT_ITEM_LABEL)) {
+			if (attrKey.equalsIgnoreCase(
+					TieConstants.DEFAULT_SELECT_ITEM_LABEL)) {
 				defaultSelectLabel = attr.getValue();
 			}
-			if (attrKey
-					.equalsIgnoreCase(TieConstants.DEFAULT_SELECT_ITEM_VALUE)) {
+			if (attrKey.equalsIgnoreCase(
+					TieConstants.DEFAULT_SELECT_ITEM_VALUE)) {
 				defaultSelectValue = attr.getValue();
 			}
 			if (type.equalsIgnoreCase(TieConstants.WIDGET_CALENDAR)
-					&& attrKey
-							.equalsIgnoreCase(TieConstants.WIDGET_ATTR_PATTERN)) {
+					&& attrKey.equalsIgnoreCase(
+							TieConstants.WIDGET_ATTR_PATTERN)) {
 				defaultDatePattern = attr.getValue();
 			}
 		}
@@ -399,11 +398,10 @@ public final class ParserUtility {
 					|| (selectValues.length != selectLabels.length)) {
 				selectValues = selectLabels;
 			}
-			Map<String, String> smap =
-					cellAttributesMap.getCellSelectItemsAttributes().get(
-							key);
+			Map<String, String> smap = cellAttributesMap
+					.getCellSelectItemsAttributes().get(key);
 			if (smap == null) {
-				smap = new LinkedHashMap<String, String>();
+				smap = new LinkedHashMap<>();
 			}
 			smap.clear();
 			if (defaultSelectLabel != null) {
@@ -429,9 +427,8 @@ public final class ParserUtility {
 	 * @return default date pattern.
 	 */
 	private static String getDefaultDatePattern() {
-		DateFormat formatter =
-				DateFormat.getDateInstance(DateFormat.SHORT, Locale
-						.getDefault());
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT,
+				Locale.getDefault());
 		return ((SimpleDateFormat) formatter).toLocalizedPattern();
 	}
 
@@ -459,13 +456,12 @@ public final class ParserUtility {
 			if (!normalComment) {
 				// not normal comment. e.g. ${... or $init{... or
 				// key = $ or key = $init
-				commentKey =
-						newComment.substring(0, newComment
-								.indexOf(TieConstants.EL_START_BRACKET));
+				commentKey = newComment.substring(0,
+						newComment.indexOf(TieConstants.EL_START_BRACKET));
 			}
 			Map<String, String> map = sheetCommentMap.get(commentKey);
 			if (map == null) {
-				map = new HashMap<String, String>();
+				map = new HashMap<>();
 			}
 			// inner map's key is sheetName!$columnIndex$rowIndex
 			map.put(cellKey, newComment);

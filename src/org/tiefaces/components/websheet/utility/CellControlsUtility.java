@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.utility;
@@ -37,12 +37,107 @@ public final class CellControlsUtility {
 	 * array list for possible parameter's type.
 	 */
 
-	@SuppressWarnings("rawtypes")
-	private static Class[] paraMatchArray = { String.class, boolean.class,
-			Boolean.class, int.class, Integer.class, long.class, Long.class,
-			float.class, Float.class, double.class, Double.class,
-			byte.class, Byte.class, short.class, Short.class };
 
+	public enum AttributesType {
+	    STRING (String.class) {
+			@Override
+			public Object parseValue(String value) {
+				return value;
+			}
+		},
+	    BOOLEAN (Boolean.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Boolean.parseBoolean(value);
+			}
+		},
+	    BOOLEANTYPE (boolean.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Boolean.parseBoolean(value);
+			}
+		},
+	    INTEGER    (Integer.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Integer.parseInt(value);
+			}
+		},
+	    INTEGERTYPE (int.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Integer.parseInt(value);
+			}
+		},
+	    LONG  (Long.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Long.parseLong(value);
+			}
+		},
+	    LONGTYPE (long.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Long.parseLong(value);
+			}
+		},
+	    FLOAT(Float.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Float.parseFloat(value);
+			}
+		},
+	    FLOATTYPE (float.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Float.parseFloat(value);
+			}
+		},
+	    DOUBLE    (Double.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Double.parseDouble(value);
+			}
+		},
+	    DOUBLETYPE (double.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Double.parseDouble(value);
+			}
+		},
+	    BYTE  (Byte.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Byte.parseByte(value);
+			}
+		},
+	    BYTETYPE  (byte.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Byte.parseByte(value);
+			}
+		},
+	    SHORT  (Short.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Short.parseShort(value);
+			}
+		},
+	    SHORTTYPE  (short.class) {
+			@Override
+			public Object parseValue(String value) {
+				return Short.parseShort(value);
+			}
+		};
+
+
+	    private final Class clazz;   // class name
+	    
+	    AttributesType(Class pclazz) {
+	        this.clazz = pclazz;
+	    }	
+		public abstract Object parseValue(String value);	    
+	}
 	/**
 	 * hide constructor.
 	 */
@@ -119,21 +214,21 @@ public final class CellControlsUtility {
 	 *            method name.
 	 * @return index of paraMatchArray if mached. otherwise return -1.
 	 */
-	private static int matchParaMeterOfMethod(final Object obj,
+	private static AttributesType matchParaMeterOfMethod(final Object obj,
 			final String methodName) {
 
-		for (int i = 0; i < paraMatchArray.length; i++) {
+		for (AttributesType attr : AttributesType.values()) {
 			try {
 				obj.getClass().getMethod(methodName,
-						new Class[] { paraMatchArray[i] });
-				return i;
+						new Class[] { attr.clazz });
+				return attr;
 
 			} catch (Exception ex) {
 				LOG.log(Level.FINE, " error in matchParaMeterOfMethod = "
 						+ ex.getLocalizedMessage(), ex);
 			}
 		}
-		return -1;
+		return null;
 	}
 
 	/**
@@ -146,33 +241,11 @@ public final class CellControlsUtility {
 	 * @return object according to class.
 	 */
 	@SuppressWarnings("rawtypes")
-	static Object convertToObject(final Class clazz,
+	static Object convertToObject(AttributesType attr,
 			final String value) {
-		if (String.class == clazz) {
-			return value;
-		}
-		if (Boolean.class == clazz || Boolean.TYPE == clazz) {
-			return Boolean.parseBoolean(value);
-		}
-		if (Byte.class == clazz || Byte.TYPE == clazz) {
-			return Byte.parseByte(value);
-		}
-		if (Short.class == clazz || Short.TYPE == clazz) {
-			return Short.parseShort(value);
-		}
-		if (Integer.class == clazz || Integer.TYPE == clazz) {
-			return Integer.parseInt(value);
-		}
-		if (Long.class == clazz || Long.TYPE == clazz) {
-			return Long.parseLong(value);
-		}
-		if (Float.class == clazz || Float.TYPE == clazz) {
-			return Float.parseFloat(value);
-		}
-		if (Double.class == clazz || Double.TYPE == clazz) {
-			return Double.parseDouble(value);
-		}
-		return value;
+		
+		return attr.parseValue(value);
+
 	}
 
 	/**
@@ -196,12 +269,12 @@ public final class CellControlsUtility {
 			String methodName = "set"
 					+ Character.toUpperCase(propertyName.charAt(0))
 					+ propertyName.substring(1);
-			int parameterType = matchParaMeterOfMethod(obj, methodName);
-			if (parameterType > -1) {
+			AttributesType parameterType = matchParaMeterOfMethod(obj, methodName);
+			if (parameterType != null) {
 				Method method = obj.getClass().getMethod(methodName,
-						new Class[] { paraMatchArray[parameterType] });
+						new Class[] { parameterType.clazz });
 				method.invoke(obj, convertToObject(
-						paraMatchArray[parameterType], propertyValue));
+						parameterType, propertyValue));
 			}
 		} catch (Exception e) {
 			String msg = "failed to set property '" + propertyName
