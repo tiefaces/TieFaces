@@ -2,10 +2,12 @@
  * Copyright 2015 TieFaces.
  * Licensed under MIT
  */
-package org.tiefaces.components.websheet.dataobjects;
+package org.tiefaces.components.websheet.serializable;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +15,7 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 
 /**
  * serialize workbook.
@@ -23,8 +26,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class SerialWorkbook implements Serializable {
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(SerialWorkbook.class
-			.getName());
+	private static final Logger LOG = Logger
+			.getLogger(SerialWorkbook.class.getName());
 
 	/**
 	 * serial id.
@@ -36,6 +39,17 @@ public class SerialWorkbook implements Serializable {
 	 */
 	private transient Workbook wb;
 
+	/** hold configuration for each sheet. */
+	private Map<String, SheetConfiguration> sheetConfigMap;
+
+	/**
+	 * 
+	 */
+	public SerialWorkbook() {
+		super();
+		LOG.log(Level.INFO, "serialworkbook constructor");
+	}
+
 	/**
 	 * save the workbook before serialize.
 	 * 
@@ -46,7 +60,10 @@ public class SerialWorkbook implements Serializable {
 	 */
 	private void writeObject(final java.io.ObjectOutputStream out)
 			throws IOException {
+		LOG.log(Level.INFO, "serialworkbook start default write objects");
+		out.defaultWriteObject();
 		if (wb != null) {
+			LOG.log(Level.INFO, "serialworkbook start workbook write");
 			wb.write(out);
 		}
 	}
@@ -62,15 +79,17 @@ public class SerialWorkbook implements Serializable {
 	private void readObject(final java.io.ObjectInputStream in)
 			throws IOException {
 		try {
+			LOG.log(Level.INFO,
+					"serialworkbook start default read objects");
+			in.defaultReadObject();
+			LOG.log(Level.INFO, "serialworkbook start create woorkbook");
 			wb = WorkbookFactory.create(in);
-		} catch (EncryptedDocumentException e) {
+		} catch (EncryptedDocumentException | InvalidFormatException
+				| ClassNotFoundException e) {
 			LOG.log(Level.SEVERE,
 					" error in readObject of serialWorkbook : "
-							+ e.getLocalizedMessage(), e);
-		} catch (InvalidFormatException e) {
-			LOG.log(Level.SEVERE,
-					" error in readObject of serialWorkbook : "
-							+ e.getLocalizedMessage(), e);
+							+ e.getLocalizedMessage(),
+					e);
 		}
 	}
 
@@ -91,6 +110,35 @@ public class SerialWorkbook implements Serializable {
 	 */
 	public final void setWb(final Workbook pwb) {
 		this.wb = pwb;
+	}
+
+	/**
+	 * @return the sheetConfigMap
+	 */
+	public final Map<String, SheetConfiguration> getSheetConfigMap() {
+		return sheetConfigMap;
+	}
+
+	/**
+	 * @param psheetConfigMap
+	 *            the sheetConfigMap to set
+	 */
+	public void setSheetConfigMap(
+			final Map<String, SheetConfiguration> psheetConfigMap) {
+		this.sheetConfigMap = psheetConfigMap;
+	}
+
+	/**
+	 * recover the cell reference to the sheet.
+	 * 
+	 * @param wb
+	 *            workbook.
+	 */
+	public void recover() {
+		Map<String, SheetConfiguration> map = this.getSheetConfigMap();
+		for (Entry<String, SheetConfiguration> entry : map.entrySet()) {
+			entry.getValue().recover(this.getWb());
+		}
 	}
 
 }

@@ -5,15 +5,22 @@
 
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
+import java.util.NavigableMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.CellRange;
+import org.tiefaces.components.websheet.serializable.SerialCellMap;
+import org.tiefaces.components.websheet.serializable.SerialWorkbook;
 
 /**
  * Configuration object hold all the attributes defined in Configuration tab
@@ -50,7 +57,6 @@ public class SheetConfiguration implements Serializable {
 	private String formPageTypeId; // corresponds to formPageType of
 
 	/** The form page id. */
-	// configuration tab
 	private String formPageId; // runtime holder
 
 	/** The form fiscal year. */
@@ -96,25 +102,16 @@ public class SheetConfiguration implements Serializable {
 	private FormCommand formCommand;
 
 	/** The shift map. */
-	private TreeMap<String, ConfigRangeAttrs> shiftMap;
+	private NavigableMap<String, ConfigRangeAttrs> shiftMap;
 
 	/** The command index map. */
-	private Map<String, Command> commandIndexMap;
+	private HashMap<String, Command> commandIndexMap;
 
 	/** The collection obj name map. */
 	private Map<String, String> collectionObjNameMap;
 
 	/** The watch list. */
 	private List<Integer> watchList;
-
-	/**
-	 * due to poi bug. cannot set comment during evaluate cell time. have to
-	 * output comments following sequence. i.e. row by row. hold comments for
-	 * the final sheet config form.
-	 * 
-	 * key is cell. value is the comments.
-	 */
-	private Map<Cell, String> finalCommentMap = new HashMap<Cell, String>();
 
 	/** The saved rows before. */
 	private int savedRowsBefore = 0; // Saved Rows before repeat row
@@ -127,7 +124,28 @@ public class SheetConfiguration implements Serializable {
 									// hide the sheet.
 
 	/** The cached origin formulas. */
-	private HashMap<Cell, String> cachedOriginFormulas = new HashMap<Cell, String>();
+	private SerialCellMap serialCachedCells = new SerialCellMap();
+
+	/**
+	 * due to poi bug. cannot set comment during evaluate cell time. have to
+	 * output comments following sequence. i.e. row by row. hold comments for
+	 * the final sheet config form.
+	 * 
+	 * key is cell. value is the comments.
+	 */
+	private SerialCellMap serialFinalCommentMap = new SerialCellMap();
+
+	/** logger. */
+	private static final Logger LOG = Logger
+			.getLogger(SerialWorkbook.class.getName());
+
+	/**
+	 * 
+	 */
+	public SheetConfiguration() {
+		super();
+		LOG.info("Sheet Configuration constructor");
+	}
 
 	/**
 	 * Gets the sheet name.
@@ -534,7 +552,7 @@ public class SheetConfiguration implements Serializable {
 	 *
 	 * @return the shift map
 	 */
-	public final TreeMap<String, ConfigRangeAttrs> getShiftMap() {
+	public final NavigableMap<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
 
@@ -545,7 +563,7 @@ public class SheetConfiguration implements Serializable {
 	 *            the shift map
 	 */
 	public final void setShiftMap(
-			final TreeMap<String, ConfigRangeAttrs> pshiftMap) {
+			final NavigableMap<String, ConfigRangeAttrs> pshiftMap) {
 		this.shiftMap = pshiftMap;
 	}
 
@@ -566,7 +584,7 @@ public class SheetConfiguration implements Serializable {
 	 */
 	public final void setCommandIndexMap(
 			final Map<String, Command> pcommandIndexMap) {
-		this.commandIndexMap = pcommandIndexMap;
+		this.commandIndexMap = (HashMap) pcommandIndexMap;
 	}
 
 	/**
@@ -635,19 +653,15 @@ public class SheetConfiguration implements Serializable {
 	 *
 	 * @return the cached origin formulas
 	 */
-	public final Map<Cell, String> getCachedOriginFormulas() {
-		return cachedOriginFormulas;
+	public final Map<Cell, String> getCachedCells() {
+		return serialCachedCells.getMap();
 	}
 
 	/**
-	 * Sets the cached origin formulas.
-	 *
-	 * @param pcachedOriginFormulas
-	 *            the cached origin formulas
+	 * @return the serialCachedCells
 	 */
-	public final void setCachedOriginFormulas(
-			final Map<Cell, String> pcachedOriginFormulas) {
-		this.cachedOriginFormulas = (HashMap<Cell, String>) pcachedOriginFormulas;
+	public final SerialCellMap getSerialCachedCells() {
+		return serialCachedCells;
 	}
 
 	/**
@@ -656,7 +670,40 @@ public class SheetConfiguration implements Serializable {
 	 * @return the final comment map
 	 */
 	public final Map<Cell, String> getFinalCommentMap() {
-		return finalCommentMap;
+		return serialFinalCommentMap.getMap();
+	}
+
+	/**
+	 * @return the serialFinalCommentMap
+	 */
+	public final SerialCellMap getSerialFinalCommentMap() {
+		return serialFinalCommentMap;
+	}
+
+	/**
+	 * recover the cell reference to the sheet.
+	 * 
+	 * @param wb
+	 *            workbook.
+	 */
+	public void recover(final Workbook wb) {
+		Sheet sheet = wb.getSheet(this.sheetName);
+		this.getSerialCachedCells().recover(sheet);
+		this.getSerialFinalCommentMap().recover(sheet);
+		this.getFormCommand().recover(sheet);
+		if (this.getShiftMap() != null) {
+			for (Map.Entry<String, ConfigRangeAttrs> entry : this
+					.getShiftMap().entrySet()) {
+				entry.getValue().recover(sheet);
+			}
+		}
+		if (this.getCommandIndexMap() != null) {
+			for (Map.Entry<String, Command> entry : this
+					.getCommandIndexMap().entrySet()) {
+				entry.getValue().recover(sheet);
+			}
+		}
+
 	}
 
 	/**
@@ -700,9 +747,63 @@ public class SheetConfiguration implements Serializable {
 		sb.append(",");
 		sb.append("cellFormAttributes = " + cellFormAttributes);
 		sb.append(",");
-		sb.append("hidden = " + hidden);
+		sb.append("formWidth = " + formWidth);
+		sb.append(",");
+		sb.append("cachedOriginFormulas = " + serialCachedCells);
+		sb.append(",");
+		sb.append("finalCommentMap = " + serialFinalCommentMap);
+		sb.append(",");
+		sb.append("formCommand = " + formCommand);
+		sb.append(",");
+		sb.append("shiftMap = " + shiftMap);
+		sb.append(",");
+		sb.append("commandIndexMap = " + commandIndexMap);
+		sb.append(",");
+		sb.append("collectionObjNameMap = " + collectionObjNameMap);
+		sb.append(",");
+		sb.append("watchList = " + watchList);
+		sb.append(",");
+		sb.append("savedRowsBefore = " + savedRowsBefore);
+		sb.append(",");
+		sb.append("savedRowsAfter = " + savedRowsAfter);
 		sb.append("}");
 		return sb.toString();
+	}
+
+	/**
+	 * serialize.
+	 * 
+	 * @param out
+	 *            outputstream.
+	 * @throws IOException
+	 *             io exception.
+	 */
+	private void writeObject(final java.io.ObjectOutputStream out)
+			throws IOException {
+		LOG.log(Level.INFO, "sheetconfiguration default write objects");
+		out.defaultWriteObject();
+	}
+
+	/**
+	 * load the workbook from saving.
+	 * 
+	 * @param in
+	 *            inputstream.
+	 * @throws IOException
+	 *             io exception.
+	 */
+	private void readObject(final java.io.ObjectInputStream in)
+			throws IOException {
+		try {
+
+			LOG.log(Level.INFO, "sheetconfiguration default read objects");
+			in.defaultReadObject();
+		} catch (EncryptedDocumentException | ClassNotFoundException e) {
+			LOG.log(Level.SEVERE,
+					" error in readObject of serialWorkbook : "
+							+ e.getLocalizedMessage(),
+					e);
+		}
 	}
 
 }

@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +16,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.CellAddress;
-import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
-import org.tiefaces.components.websheet.dataobjects.SerialCellAddress;
+import org.tiefaces.components.websheet.serializable.SerialCellAddress;
 import org.tiefaces.components.websheet.utility.CommandUtility;
 import org.tiefaces.components.websheet.utility.ConfigurationUtility;
 
@@ -35,12 +34,17 @@ import org.tiefaces.components.websheet.utility.ConfigurationUtility;
  * @author Jason Jiang
  *
  */
-public class ConfigRange {
+public class ConfigRange implements Serializable {
+
+	/**
+	 * serialid.
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			ConfigRange.class.getName());
-	
+	private static final Logger LOG = Logger
+			.getLogger(ConfigRange.class.getName());
+
 	/** The attrs. */
 	private ConfigRangeAttrs attrs = new ConfigRangeAttrs(false);
 
@@ -103,13 +107,15 @@ public class ConfigRange {
 	 */
 	public final void shiftRowRef(final Sheet sheet, final int shiftnum) {
 		try {
-			this.setFirstRowRef(
-					sheet.getRow(attrs.getFirstRowAddr().getRow() + shiftnum)
-							.getCell(attrs.getFirstRowAddr().getColumn(),
-									MissingCellPolicy.CREATE_NULL_AS_BLANK),
+			this.setFirstRowRef(sheet
+					.getRow(attrs.getFirstRowAddr().getRow() + shiftnum)
+					.getCell(attrs.getFirstRowAddr().getColumn(),
+							MissingCellPolicy.CREATE_NULL_AS_BLANK),
 					false);
-			this.setLastRowPlusRef(sheet, attrs.getLastRowPlusAddr().getColumn(),
-					attrs.getLastRowPlusAddr().getRow() + shiftnum - 1, false);
+			this.setLastRowPlusRef(sheet,
+					attrs.getLastRowPlusAddr().getColumn(),
+					attrs.getLastRowPlusAddr().getRow() + shiftnum - 1,
+					false);
 
 			if (commandList != null) {
 				for (ConfigCommand command : commandList) {
@@ -118,7 +124,8 @@ public class ConfigRange {
 			}
 
 		} catch (Exception ex) {
-			LOG.log(Level.SEVERE,"shiftRowRef error =" + ex.getLocalizedMessage(), ex);
+			LOG.log(Level.SEVERE,
+					"shiftRowRef error =" + ex.getLocalizedMessage(), ex);
 		}
 	}
 
@@ -212,7 +219,8 @@ public class ConfigRange {
 	 * @param pFirstRowAddr
 	 *            the new first row addr
 	 */
-	public final void setFirstRowAddr(final SerialCellAddress pFirstRowAddr) {
+	public final void setFirstRowAddr(
+			final SerialCellAddress pFirstRowAddr) {
 		this.attrs.setFirstRowAddr(pFirstRowAddr);
 	}
 
@@ -325,7 +333,6 @@ public class ConfigRange {
 		return this.getLastRowPlusRef().getRowIndex()
 				- this.getFirstRowRef().getRowIndex();
 
-
 	}
 
 	/**
@@ -334,7 +341,8 @@ public class ConfigRange {
 	 * @param indexMap
 	 *            the index map
 	 */
-	public final void indexCommandRange(final Map<String, Command> indexMap) {
+	public final void indexCommandRange(
+			final Map<String, Command> indexMap) {
 		CommandUtility.indexCommandRange(this, indexMap);
 	}
 
@@ -362,9 +370,6 @@ public class ConfigRange {
 			return;
 		}
 
-		// copy snapshot of context into shiftmap.
-		snapShotContext(fullName, configBuildRef, context);
-
 		// keep rowsMappingList as current as no change
 		// allRowsMappingList = child + current
 
@@ -377,59 +382,114 @@ public class ConfigRange {
 		ShiftFormulaRef shiftFormulaRef = new ShiftFormulaRef(
 				configBuildRef.getWatchList(), allRowsMappingList);
 		for (int i = atRow; i < lastRowPlus; i++) {
-			Row row = configBuildRef.getSheet().getRow(i);
-			if ((row != null)
-					&& ConfigurationUtility.isStaticRowRef(this, row)) {
-				for (Cell cell : row) {
-					try {
-						CommandUtility.evaluate(context, cell,
-								configBuildRef.getEngine());
-						if (cell.getCellTypeEnum() == CellType.FORMULA) {
-							// rebuild formula if necessary for dynamic row
-							String originFormula = cell.getCellFormula();
-							shiftFormulaRef.setFormulaChanged(0);
-							ConfigurationUtility
-									.buildCellFormulaForShiftedRows(
-											configBuildRef.getSheet(),
-											configBuildRef.getWbWrapper(),
-											shiftFormulaRef, cell,
-											cell.getCellFormula());
-							if (shiftFormulaRef.getFormulaChanged() > 0) {
-								configBuildRef.getCachedCells().put(cell,
-										originFormula);
-							}
-						}
-
-					} catch (Exception ex) {
-						LOG.log(Level.SEVERE,"build cell ( row = "
-								+ cell.getRowIndex() + " column = "
-								+ cell.getColumnIndex() + " error = "
-								+ ex.getLocalizedMessage(), ex);
-					}
-				}
-				ConfigurationUtility.setFullNameInHiddenColumn(row, fullName);
-			}
+			buildCellsForRow(configBuildRef.getSheet().getRow(i), fullName, context, configBuildRef,
+					shiftFormulaRef);
 		}
 	}
 
 	/**
-	 * snap shot the current context objects. those object will be used for save
-	 * data.
-	 * 
+	 * @param row
 	 * @param fullName
-	 *            full name.
-	 * @param configBuildRef
-	 *            config build reference object.
 	 * @param context
-	 *            context.
+	 * @param configBuildRef
+	 * @param shiftFormulaRef
 	 */
-	private void snapShotContext(final String fullName,
+	private void buildCellsForRow(Row row, final String fullName,
+			final Map<String, Object> context,
 			final ConfigBuildRef configBuildRef,
-			final Map<String, Object> context) {
-		ConfigRangeAttrs lattrs = configBuildRef.getShiftMap().get(fullName);
-		if ((lattrs != null) && (lattrs.getContextSnap() == null)) {
-			lattrs.setContextSnap(new MapSnapShot(context));
+			ShiftFormulaRef shiftFormulaRef) {
+		if ((row == null) || !ConfigurationUtility.isStaticRowRef(this, row)) {
+			return;
+		}	
+		for (Cell cell : row) {
+			buildSingleCell(cell, context, configBuildRef, shiftFormulaRef);
 		}
+		ConfigurationUtility.setFullNameInHiddenColumn(row,
+				fullName);
+	}
+
+	/**
+	 * @param cell
+	 * @param context
+	 * @param configBuildRef
+	 * @param shiftFormulaRef
+	 */
+	private void buildSingleCell(Cell cell,
+			final Map<String, Object> context,
+			final ConfigBuildRef configBuildRef,
+			ShiftFormulaRef shiftFormulaRef) {
+		try {
+			CommandUtility.evaluate(context, cell,
+					configBuildRef.getEngine());
+			if (cell.getCellTypeEnum() == CellType.FORMULA) {
+				// rebuild formula if necessary for dynamic row
+				String originFormula = cell.getCellFormula();
+				shiftFormulaRef.setFormulaChanged(0);
+				ConfigurationUtility
+						.buildCellFormulaForShiftedRows(
+								configBuildRef.getSheet(),
+								configBuildRef.getWbWrapper(),
+								shiftFormulaRef, cell,
+								cell.getCellFormula());
+				if (shiftFormulaRef.getFormulaChanged() > 0) {
+					configBuildRef.getCachedCells().put(cell,
+							originFormula);
+				}
+			}
+
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "build cell ( row = "
+					+ cell.getRowIndex() + " column = "
+					+ cell.getColumnIndex() + " error = "
+					+ ex.getLocalizedMessage(), ex);
+		}
+	}
+
+	/**
+	 * recover by using it's address.
+	 * 
+	 * @param sheet
+	 *            sheet.
+	 */
+	public final void recover(final Sheet sheet) {
+
+		this.getAttrs().recover(sheet);
+		if (this.commandList != null) {
+			for (ConfigCommand command : this.commandList) {
+				command.recover(sheet);
+			}
+		}
+
+	}
+
+	/**
+	 * Obtain a human readable representation.
+	 * 
+	 * @return String Human readable label
+	 */
+	@Override
+	public final String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append("FirstRowRef = " + this.getFirstRowRef());
+		sb.append(",");
+		sb.append("FirstRowAddr = " + this.getFirstRowAddr());
+		sb.append(",");
+		sb.append("LastRowPlusRef = " + this.getLastRowPlusRef());
+		sb.append(",");
+		sb.append("LastRowPlusAddr = " + this.getLastRowPlusAddr());
+		sb.append(",");
+		sb.append("LastCellCreated = " + this.isLastCellCreated());
+		if (this.commandList != null) {
+			sb.append("[");
+			for (ConfigCommand command : this.commandList) {
+				sb.append("command = " + command);
+				sb.append(",");
+			}
+			sb.append("]");
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 
 }

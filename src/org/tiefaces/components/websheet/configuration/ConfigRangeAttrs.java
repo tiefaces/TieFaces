@@ -5,11 +5,10 @@
 package org.tiefaces.components.websheet.configuration;
 
 import java.io.Serializable;
-
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.CellAddress;
-import org.tiefaces.components.websheet.dataobjects.MapSnapShot;
-import org.tiefaces.components.websheet.dataobjects.SerialCellAddress;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.tiefaces.components.websheet.serializable.SerialCell;
+import org.tiefaces.components.websheet.serializable.SerialCellAddress;
 
 /**
  * The Class ConfigRangeAttrs.
@@ -19,10 +18,11 @@ public class ConfigRangeAttrs implements Serializable {
 	 * serialVersionUID.
 	 */
 	private static final long serialVersionUID = -6331060203032223425L;
+
 	/** first cell. */
-	private Cell firstRowRef;
+	private SerialCell serialFirstRowRef;
 	/** last cell. */
-	private Cell lastRowPlusRef;
+	private SerialCell serialLastRowPlusRef;
 	/** first cell address. This used to calculate relative address. */
 	private SerialCellAddress firstRowAddr;
 	/** last cell address. This used to calculate relative address. */
@@ -38,9 +38,6 @@ public class ConfigRangeAttrs implements Serializable {
 
 	/** The unit rows mapping. */
 	private RowsMapping unitRowsMapping = null;
-
-	/** The context snap. */
-	private MapSnapShot contextSnap = null;
 
 	/**
 	 * Instantiates a new config range attrs.
@@ -58,7 +55,17 @@ public class ConfigRangeAttrs implements Serializable {
 	 * @return the first row ref
 	 */
 	public final Cell getFirstRowRef() {
-		return firstRowRef;
+		return serialFirstRowRef.getCell();
+	}
+
+	/**
+	 * @return the serialFirstRowRef
+	 */
+	public final SerialCell getSerialFirstRowRef() {
+		if (this.serialFirstRowRef == null) {
+			this.serialFirstRowRef = new SerialCell();
+		}
+		return serialFirstRowRef;
 	}
 
 	/**
@@ -68,7 +75,7 @@ public class ConfigRangeAttrs implements Serializable {
 	 *            the new first row ref
 	 */
 	public final void setFirstRowRef(final Cell pfirstRowRef) {
-		this.firstRowRef = pfirstRowRef;
+		this.getSerialFirstRowRef().setCell(pfirstRowRef);
 	}
 
 	/**
@@ -77,7 +84,17 @@ public class ConfigRangeAttrs implements Serializable {
 	 * @return the last row plus ref
 	 */
 	public final Cell getLastRowPlusRef() {
-		return lastRowPlusRef;
+		return serialLastRowPlusRef.getCell();
+	}
+
+	/**
+	 * @return the serialLastRowPlusRef
+	 */
+	public final SerialCell getSerialLastRowPlusRef() {
+		if (this.serialLastRowPlusRef == null) {
+			this.serialLastRowPlusRef = new SerialCell();
+		}
+		return serialLastRowPlusRef;
 	}
 
 	/**
@@ -87,7 +104,7 @@ public class ConfigRangeAttrs implements Serializable {
 	 *            the new last row plus ref
 	 */
 	public final void setLastRowPlusRef(final Cell plastRowPlusRef) {
-		this.lastRowPlusRef = plastRowPlusRef;
+		this.getSerialLastRowPlusRef().setCell(plastRowPlusRef);
 	}
 
 	/**
@@ -105,7 +122,8 @@ public class ConfigRangeAttrs implements Serializable {
 	 * @param pfirstRowAddr
 	 *            the new first row addr
 	 */
-	public final void setFirstRowAddr(final SerialCellAddress pfirstRowAddr) {
+	public final void setFirstRowAddr(
+			final SerialCellAddress pfirstRowAddr) {
 		this.firstRowAddr = pfirstRowAddr;
 	}
 
@@ -124,7 +142,8 @@ public class ConfigRangeAttrs implements Serializable {
 	 * @param plastRowPlusAddr
 	 *            the new last row plus addr
 	 */
-	public final void setLastRowPlusAddr(final SerialCellAddress plastRowPlusAddr) {
+	public final void setLastRowPlusAddr(
+			final SerialCellAddress plastRowPlusAddr) {
 		this.lastRowPlusAddr = plastRowPlusAddr;
 	}
 
@@ -200,27 +219,25 @@ public class ConfigRangeAttrs implements Serializable {
 	 * @param punitRowsMapping
 	 *            the new unit rows mapping
 	 */
-	public final void setUnitRowsMapping(final RowsMapping punitRowsMapping) {
+	public final void setUnitRowsMapping(
+			final RowsMapping punitRowsMapping) {
 		this.unitRowsMapping = punitRowsMapping;
 	}
 
-	/**
-	 * Gets the context snap.
-	 *
-	 * @return the context snap
-	 */
-	public final MapSnapShot getContextSnap() {
-		return contextSnap;
-	}
 
 	/**
-	 * Sets the context snap.
-	 *
-	 * @param pcontextSnap
-	 *            the new context snap
+	 * recover by using it's address.
+	 * 
+	 * @param sheet
+	 *            sheet.
 	 */
-	public final void setContextSnap(final MapSnapShot pcontextSnap) {
-		this.contextSnap = pcontextSnap;
+	public final void recover(final Sheet sheet) {
+
+		this.getSerialFirstRowRef().recover(sheet);
+		this.getSerialLastRowPlusRef().recover(sheet);
+		if (this.getUnitRowsMapping() != null) {
+			this.getUnitRowsMapping().recover(sheet);
+		}
 	}
 
 }

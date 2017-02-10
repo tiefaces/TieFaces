@@ -64,42 +64,62 @@ public class PicturesHelper {
 	public final void setupFacesCellPictureCharts(final Sheet sheet1,
 			final FacesCell fcell, final String fId) {
 		if (parent.getPicturesMap() != null) {
-			try {
-				Picture pic =  parent.getPicturesMap().get(fId);
-				if (pic != null) {
-					LOG.fine(" pic dimension = " + pic.getImageDimension()
-							+ " perfersize = " + pic.getPreferredSize());
-					fcell.setContainPic(true);
-					fcell.setPictureId(fId);
-					fcell.setPictureStyle(PicturesUtility
-							.generatePictureStyle(sheet1, pic));
-				}
-			} catch (Exception ex) {
-				LOG.log(Level.SEVERE, "setupFacesCell Picture error = "
-						+ ex.getMessage(), ex);
-			}
+			setupFacesCellPicture(sheet1, fcell, fId);
 		}
-		if (parent.getChartsMap() != null) {
-			try {
-				String chartId = parent.getChartPositionMap().get(fId);
-				if (chartId != null) {
-					BufferedImage img =
-							 parent.getChartsMap().get(
-									chartId);
-					if (img != null) {
-						LOG.fine(" pic dimension width = " + img.getWidth()
-								+ " height = " + img.getHeight());
-						fcell.setContainChart(true);
-						fcell.setChartId(chartId);
-						fcell.setChartStyle(PicturesUtility
-								.generateChartStyle(sheet1, chartId, parent
-										.getChartAnchorsMap()));
-					}
+		if (parent.getCharsData().getChartsMap() != null) {
+			setupFacesCellCharts(sheet1, fcell, fId);
+		}
+	}
+
+	/**
+	 * @param sheet1
+	 * @param fcell
+	 * @param fId
+	 */
+	private void setupFacesCellCharts(final Sheet sheet1,
+			final FacesCell fcell, final String fId) {
+		try {
+			String chartId = parent.getCharsData().getChartPositionMap().get(fId);
+			if (chartId != null) {
+				BufferedImage img =
+						 parent.getCharsData().getChartsMap().get(
+								chartId);
+				if (img != null) {
+					LOG.fine(" pic dimension width = " + img.getWidth()
+							+ " height = " + img.getHeight());
+					fcell.setContainChart(true);
+					fcell.setChartId(chartId);
+					fcell.setChartStyle(PicturesUtility
+							.generateChartStyle(sheet1, chartId, parent
+									.getCharsData().getChartAnchorsMap()));
 				}
-			} catch (Exception ex) {
-				LOG.log(Level.SEVERE, "setupFacesCell Charts error = "
-						+ ex.getMessage(), ex);
 			}
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "setupFacesCell Charts error = "
+					+ ex.getMessage(), ex);
+		}
+	}
+
+	/**
+	 * @param sheet1
+	 * @param fcell
+	 * @param fId
+	 */
+	private void setupFacesCellPicture(final Sheet sheet1,
+			final FacesCell fcell, final String fId) {
+		try {
+			Picture pic =  parent.getPicturesMap().get(fId);
+			if (pic != null) {
+				LOG.fine(" pic dimension = " + pic.getImageDimension()
+						+ " perfersize = " + pic.getPreferredSize());
+				fcell.setContainPic(true);
+				fcell.setPictureId(fId);
+				fcell.setPictureStyle(PicturesUtility
+						.generatePictureStyle(sheet1, pic));
+			}
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "setupFacesCell Picture error = "
+					+ ex.getMessage(), ex);
 		}
 	}
 

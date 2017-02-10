@@ -27,6 +27,7 @@ import org.tiefaces.components.websheet.configuration.EachCommand;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.RowsMapping;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
+import org.tiefaces.components.websheet.dataobjects.CollectionObject;
 import org.tiefaces.exception.EvaluationException;
 
 /**
@@ -69,39 +70,23 @@ public final class CommandUtility {
 			return -1;
 		}
 	
-		Collection lastCollection = null;
-		int lastCollectionIndex = -1;
-		EachCommand eachCommand = null;
 		// replace the lastCollection.
 		// since here's add one row.
 		// Then we should insert one empty object in the list.
 		// The collection must be a list to support add/delete function.
 		// and the object must support empty constructor.
+
+				
 		try {
-			// prepare collection data in context.
-			// must loop through the full name which may have multiple
-			// layer.
-			// i.e. E.department.1:E.employee.0
-			// need prepare department.1 and employee.0
-			for (int i = 0; i < parts.length; i++) {
-				String part = parts[i];
-				if (part.startsWith(
-						TieConstants.EACH_COMMAND_FULL_NAME_PREFIX)) {
-					String[] varparts = part.split("\\.");
-					eachCommand = CommandUtility.getEachCommandFromPartsName(
-							configBuildRef, varparts);
-					lastCollection = ConfigurationUtility.transformToCollectionObject(
-							configBuildRef.getEngine(),
-							eachCommand.getItems(), dataContext);
-					lastCollectionIndex = CommandUtility.prepareCollectionDataInContext(
-							varparts, lastCollection, dataContext);
-				}
-			}
+			CollectionObject collect = configBuildRef.getCellHelper().restoreDataContext(fullName);		
+			
+			Collection lastCollection = collect.getLastCollection();
+			int lastCollectionIndex = collect.getLastCollectionIndex();
+			EachCommand eachCommand = collect.getEachCommand();
 			if (lastCollectionIndex < 0) {
 				// no each command in the loop.
 				return 0;
 			}
-	
 			String unitFullName = CommandUtility.insertEmptyObjectInContext(fullName,
 					lastCollection, eachCommand, lastCollectionIndex,
 					dataContext);
@@ -140,7 +125,6 @@ public final class CommandUtility {
 			ConfigurationUtility.reBuildUpperLevelFormula(configBuildRef, fullName);
 			ConfigurationUtility.increaseUpperLevelFinalLength(configBuildRef.getShiftMap(),
 					fullName, length);
-			insertPosition += length;
 			currentRowsMappingList.remove(unitRowsMapping);
 			dataContext.remove(eachCommand.getVar());
 	
@@ -162,10 +146,10 @@ public final class CommandUtility {
 	 *            the varparts
 	 * @return the each command from parts name
 	 */
-	private static EachCommand getEachCommandFromPartsName(
-			final ConfigBuildRef configBuildRef, final String[] varparts) {
+	public static EachCommand getEachCommandFromPartsName(
+			final Map<String, Command>  commandIndexMap, final String[] varparts) {
 		if (varparts.length == TieConstants.DEFAULT_COMMAND_PART_LENGTH) {
-			return (EachCommand) configBuildRef.getCommandIndexMap()
+			return (EachCommand) commandIndexMap
 					.get(TieConstants.EACH_COMMAND_FULL_NAME_PREFIX
 							+ varparts[1]);
 		}
@@ -226,7 +210,8 @@ public final class CommandUtility {
 	 * @return the int
 	 */
 	@SuppressWarnings("rawtypes")
-	private static int prepareCollectionDataInContext(
+	public
+	static int prepareCollectionDataInContext(
 			final String[] varparts, final Collection collection,
 			final Map<String, Object> dataContext) {
 		if (varparts.length == TieConstants.DEFAULT_COMMAND_PART_LENGTH) {
@@ -340,6 +325,7 @@ public final class CommandUtility {
 	 * @param engine
 	 *            the engine
 	 */
+	@SuppressWarnings("deprecation")
 	public static void evaluate(final Map<String, Object> context,
 			final Cell cell, final ExpressionEngine engine) {
 		if ((cell != null) && (cell.getCellTypeEnum() == CellType.STRING)) {

@@ -12,13 +12,6 @@ import java.util.regex.Pattern;
  */
 public final class TieConstants {
 
-	/**
-	 * hide constructor.
-	 */
-	private TieConstants() {
-		// not called
-	}
-
 	/** The Constant COMPONENT_ID. */
 	public static final String COMPONENT_ID = "websheettable";
 
@@ -234,10 +227,10 @@ public final class TieConstants {
 	/** The Constant hiddenOriginRowNumber. = AML */
 	public static final int HIDDEN_ORIGIN_ROW_NUMBER_COLUMN = 1025;
 
-	/** The Constant hiddenFullNameColumn. */
+	/** The Constant hiddenFullNameColumn. = AMM */
 	public static final int HIDDEN_FULL_NAME_COLUMN = 1026;
 
-	/** The Constant hiddenSaveObjectsColumn. */
+	/** The Constant hiddenSaveObjectsColumn. = AMN */
 	public static final int HIDDEN_SAVE_OBJECTS_COLUMN = 1027;
 
 	/** The Constant cellMapKeyChart. */
@@ -325,4 +318,12 @@ public final class TieConstants {
 	public static final String VERTICAL_ALIGN_CENTER =
 			"vertical-align: middle;";
 
+	/**
+	 * hide constructor.
+	 */
+	private TieConstants() {
+		// not called
+	}
+
+	
 }

@@ -5,6 +5,8 @@
 package org.tiefaces.components.websheet;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Current collections for websheet bean.
@@ -18,7 +20,9 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	 */
 	private static final long serialVersionUID = -4330466518786654088L;
 	/** current data context name. */
-	private String currentDataContextName;
+	private transient String currentDataContextName;
+	/** current data context name list. */
+	private transient List<String> currentDataContextNameList;
 	/** current tab name of display sheet. */
 	private String currentTabName;
 	/** current top row of display sheet. */
@@ -27,24 +31,59 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	private int currentLeftColumn;
 
 	/**
+	 * Gets the current data context name list.
+	 *
+	 * @return the currentDataContextNameList
+	 */
+	public final List<String> getCurrentDataContextNameList() {
+		if (currentDataContextNameList==null) {
+			currentDataContextNameList = new ArrayList<>();
+		}
+		return currentDataContextNameList;
+	}
+
+	/**
+	 * @param currentDataContextNameList the currentDataContextNameList to set
+	 */
+	public final void setCurrentDataContextNameList(
+			List<String> currentDataContextNameList) {
+		this.currentDataContextNameList = currentDataContextNameList;
+	}
+
+
+
+
+	/**
 	 * Gets the current data context name.
 	 *
 	 * @return the currentDataContextName
 	 */
 	public final String getCurrentDataContextName() {
+		if (currentDataContextName==null) {
+			StringBuilder sb = new StringBuilder();
+			List<String> list = this.getCurrentDataContextNameList();
+			for (int i=0; i< list.size(); i++ ) {
+				if (i>0) {
+					sb.append(":"+list.get(i));
+				} else {
+					sb.append(list.get(i));
+				}
+			}
+			this.setCurrentDataContextName(sb.toString());
+		}
 		return currentDataContextName;
 	}
+	
+	
+	
 
 	/**
-	 * Sets the current data context name.
-	 *
-	 * @param pcurrentDataContextName
-	 *            the currentDataContextName to set
+	 * @param currentDataContextName the currentDataContextName to set
 	 */
-	public final void setCurrentDataContextName(
-			final String pcurrentDataContextName) {
-		this.currentDataContextName = pcurrentDataContextName;
+	public final void setCurrentDataContextName(String currentDataContextName) {
+		this.currentDataContextName = currentDataContextName;
 	}
+
 
 	/**
 	 * Gets the current tab name.

@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.configuration;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +17,13 @@ import org.apache.poi.ss.usermodel.Sheet;
  *
  */
 
-public abstract class ConfigCommand implements Command {
+public abstract class ConfigCommand implements Command, Serializable {
+	
+	/**
+	 * serialid.
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/** logger. */
 	private static final Logger LOG = Logger.getLogger(
 			ConfigCommand.class.getName());
@@ -261,4 +268,18 @@ public abstract class ConfigCommand implements Command {
 		this.finalLength = populatedLength;
 	}
 
+	
+	/**
+	 * recover  by using it's address.
+	 * 
+	 * @param sheet
+	 *            sheet.
+	 */
+	@Override
+	public final void recover(final Sheet sheet) {
+
+		this.getConfigRange().recover(sheet);
+
+	}	
+			
 }

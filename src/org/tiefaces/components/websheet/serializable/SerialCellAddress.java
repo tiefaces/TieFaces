@@ -3,14 +3,11 @@
  * Licensed under MIT
  */
 
-package org.tiefaces.components.websheet.dataobjects;
+package org.tiefaces.components.websheet.serializable;
 
 import java.io.Serializable;
-import java.util.Locale;
-
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellReference;
+
 /**
  * Serial Cell Address.
  * @author Jason Jiang
@@ -23,11 +20,6 @@ public class SerialCellAddress implements Serializable {
 	 */
 	private static final long serialVersionUID = 1764470854644006400L;
 
-	/**
-	 * constructor.
-	 */
-	public SerialCellAddress() {
-	}
 
 	/**
 	 * row index.
@@ -60,7 +52,10 @@ public class SerialCellAddress implements Serializable {
 	 *            the Cell to get the location of
 	 */
 	public SerialCellAddress(final Cell cell) {
-		this(cell.getRowIndex(), cell.getColumnIndex());
+		if (cell != null) {
+			this.row = cell.getRowIndex();
+			this.col = cell.getColumnIndex();
+		}
 	}
 
 	/**
@@ -81,4 +76,20 @@ public class SerialCellAddress implements Serializable {
 		return col;
 	}
 
+	/**
+	 * Obtain a human readable representation.
+	 * 
+	 * @return String Human readable label
+	 */
+	@Override
+	public final String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		sb.append("row = " + this.row);
+		sb.append(",");
+		sb.append("col = " + this.col);
+		sb.append("}");
+		return sb.toString();
+	}	
+	
 }

@@ -8,7 +8,6 @@ package org.tiefaces.components.websheet.service;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -364,17 +363,17 @@ public class WebSheetLoader implements Serializable {
 		parent.setDataFormatter(null);
 		parent.setSheetConfigMap(null);
 		parent.setTabs(null);
-		parent.setDataContext(null);
+		parent.getSerialDataContext().setDataContext(null);
 		parent.setPicturesMap(null);
 		parent.setHeaderRows(null);
 		parent.setBodyRows(null);
 		parent.setWb(null);
 		parent.getHeaderRows().clear();
 		parent.getBodyRows().clear();
-		parent.getChartsMap().clear();
-		parent.getChartDataMap().clear();
-		parent.getChartAnchorsMap().clear();
-		parent.getChartPositionMap().clear();
+		parent.getCharsData().getChartsMap().clear();
+		parent.getCharsData().getChartDataMap().clear();
+		parent.getCharsData().getChartAnchorsMap().clear();
+		parent.getCharsData().getChartPositionMap().clear();
 		parent.getCellAttributesMap().clear();
 	}
 
@@ -388,7 +387,7 @@ public class WebSheetLoader implements Serializable {
 	 * @return the int
 	 */
 	public final int loadWorkbook(final InputStream fis,
-			final HashMap<String, Object> dataContext) {
+			final Map<String, Object> dataContext) {
 
 		try {
 			Workbook wb = WorkbookFactory.create(fis);
@@ -413,7 +412,7 @@ public class WebSheetLoader implements Serializable {
 	 * @return the int
 	 */
 	public final int loadWorkbook(final Workbook wb,
-			final HashMap<String, Object> dataContext) {
+			final Map<String, Object> dataContext) {
 
 		try {
 			clearWorkbook();
@@ -424,7 +423,7 @@ public class WebSheetLoader implements Serializable {
 				return -1;
 			}
 			parent.setWb(wb);
-			parent.setDataContext(dataContext);
+			parent.getSerialDataContext().setDataContext(dataContext);
 			parent.setSheetConfigMap(
 					new ConfigurationHandler(parent).buildConfiguration());
 			parent.reCalcMaxColCounts();
@@ -469,7 +468,7 @@ public class WebSheetLoader implements Serializable {
 	 */
 	private void loadData() {
 
-		if (parent.getDataContext() == null) {
+		if (parent.getSerialDataContext().getDataContext() == null) {
 			// no data objects available.
 			return;
 		}
@@ -481,13 +480,13 @@ public class WebSheetLoader implements Serializable {
 					parent.getWbWrapper(),
 					parent.getWb().getSheet(sheetConfig.getSheetName()),
 					parent.getExpEngine(), parent.getCellHelper(),
-					sheetConfig.getCachedOriginFormulas(),
+					sheetConfig.getCachedCells(),
 					parent.getCellAttributesMap(),
 					sheetConfig.getFinalCommentMap());
 			int length = sheetConfig.getFormCommand().buildAt(null,
 					configBuildRef,
 					sheetConfig.getFormCommand().getTopRow(),
-					parent.getDataContext(), currentRowsMappingList);
+					parent.getSerialDataContext().getDataContext(), currentRowsMappingList);
 			sheetConfig.setShiftMap(configBuildRef.getShiftMap());
 			sheetConfig.setCollectionObjNameMap(
 					configBuildRef.getCollectionObjNameMap());
@@ -535,7 +534,7 @@ public class WebSheetLoader implements Serializable {
 		if (parent.getWebFormTabView() != null) {
 			parent.getWebFormTabView().setActiveIndex(tabIndex);
 		}
-		parent.setCurrentTabName(tabName);
+		parent.getCurrent().setCurrentTabName(tabName);
 		String sheetName = parent.getSheetConfigMap().get(tabName)
 				.getSheetName();
 		Sheet sheet1 = parent.getWb().getSheet(sheetName);
@@ -561,6 +560,7 @@ public class WebSheetLoader implements Serializable {
 		createDynamicColumns(tabName);
 		// reset datatable current page to 1
 		setDataTablePage(0);
+		parent.getCurrent().setCurrentDataContextName(null);
 		saveObjs();
 		if ((RequestContext.getCurrentInstance() != null)
 				&& (parent.getClientId() != null)) {
@@ -595,7 +595,7 @@ public class WebSheetLoader implements Serializable {
 			if (FacesContext.getCurrentInstance() != null) {
 				Map<String, Object> viewMap = FacesContext
 						.getCurrentInstance().getViewRoot().getViewMap();
-				viewMap.put("currentTabName", parent.getCurrentTabName());
+				viewMap.put("currentTabName", parent.getCurrent().getCurrentTabName());
 				viewMap.put("fullValidation", parent.getFullValidation());
 				LOG.fine("saveobjs in viewMap = " + viewMap);
 			}
@@ -624,10 +624,9 @@ public class WebSheetLoader implements Serializable {
 	 *            the allow add
 	 */
 	private void setupRowInfo(final FacesRow facesRow, final Sheet sheet1,
-			final Row row, final int rowIndex, final boolean repeatZone,
+			final Row row, final int rowIndex,
 			final boolean allowAdd) {
 
-		facesRow.setRepeatZone(repeatZone);
 		facesRow.setAllowAdd(allowAdd);
 		if (row != null) {
 			facesRow.setRendered(!row.getZeroHeight());
@@ -671,13 +670,13 @@ public class WebSheetLoader implements Serializable {
 		for (int i = top; i <= bottom; i++) {
 
 			parent.getBodyRows()
-					.add(assembleFacesBodyRow(i, sheet1, false, left, right,
+					.add(assembleFacesBodyRow(i, sheet1, left, right,
 							sheetConfig, cellRangeMap, skippedRegionCells));
 
 		}
 		sheetConfig.setBodyPopulated(true);
-		parent.setCurrentTopRow(top);
-		parent.setCurrentLeftColumn(left);
+		parent.getCurrent().setCurrentTopRow(top);
+		parent.getCurrent().setCurrentLeftColumn(left);
 		LOG.fine("Web Form loading bodyRows = " + parent.getBodyRows());
 	}
 
@@ -703,14 +702,14 @@ public class WebSheetLoader implements Serializable {
 	 * @return the faces row
 	 */
 	private FacesRow assembleFacesBodyRow(final int rowIndex,
-			final Sheet sheet1, final boolean repeatZone, final int left,
+			final Sheet sheet1, final int left,
 			final int right, final SheetConfiguration sheetConfig,
 			final Map<String, CellRangeAddress> cellRangeMap,
 			final List<String> skippedRegionCells) {
 
 		FacesRow facesRow = new FacesRow(rowIndex);
 		Row row = sheet1.getRow(rowIndex);
-		setupRowInfo(facesRow, sheet1, row, rowIndex, repeatZone,
+		setupRowInfo(facesRow, sheet1, row, rowIndex,
 				CommandUtility.isRowAllowAdd(row, sheetConfig));
 		String saveAttrList = SaveAttrsUtility
 				.getSaveAttrListFromRow(row);
@@ -786,7 +785,7 @@ public class WebSheetLoader implements Serializable {
 	 *            the fcell
 	 */
 	public final void refreshCachedCell(final String tblName, final int i,
-			final int index, final Sheet sheet1, final Cell cell,
+			final int index, final Cell cell,
 			final FacesCell fcell) {
 
 		if ((cell != null) && (cell.getCellTypeEnum() == CellType.FORMULA)
@@ -843,12 +842,12 @@ public class WebSheetLoader implements Serializable {
 	public final void addRepeatRow(final int rowIndex) {
 
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
-				.get(parent.getCurrentTabName());
+				.get(parent.getCurrent().getCurrentTabName());
 		Sheet sheet = parent.getWb().getSheet(sheetConfig.getSheetName());
 		ConfigBuildRef configBuildRef = new ConfigBuildRef(
 				parent.getWbWrapper(), sheet, parent.getExpEngine(),
 				parent.getCellHelper(),
-				sheetConfig.getCachedOriginFormulas(),
+				sheetConfig.getCachedCells(),
 				parent.getCellAttributesMap(),
 				sheetConfig.getFinalCommentMap());
 		// set add mode
@@ -859,7 +858,7 @@ public class WebSheetLoader implements Serializable {
 		configBuildRef.setShiftMap(sheetConfig.getShiftMap());
 		configBuildRef.setWatchList(sheetConfig.getWatchList());
 		int length = CommandUtility.addRow(configBuildRef, rowIndex,
-				parent.getDataContext());
+				parent.getSerialDataContext().getDataContext());
 		if ((length <= 0) && (FacesContext.getCurrentInstance() != null)) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -897,7 +896,7 @@ public class WebSheetLoader implements Serializable {
 		for (int irow = insertPosition; irow < (insertPosition
 				+ length); irow++) {
 			parent.getBodyRows().add(irow - top,
-					assembleFacesBodyRow(irow, sheet, true, left, right,
+					assembleFacesBodyRow(irow, sheet, left, right,
 							sheetConfig, cellRangeMap, skippedRegionCells));
 		}
 		for (int irow = insertPosition + length - top; irow < parent
@@ -914,7 +913,7 @@ public class WebSheetLoader implements Serializable {
 	 *            the row index
 	 */
 	public final void deleteRepeatRow(final int rowIndex) {
-		String tabName = parent.getCurrentTabName();
+		String tabName = parent.getCurrent().getCurrentTabName();
 		String sheetName = parent.getSheetConfigMap().get(tabName)
 				.getSheetName();
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
@@ -952,6 +951,9 @@ public class WebSheetLoader implements Serializable {
 	 */
 	public void setUnsavedStatus(RequestContext requestContext,
 			Boolean statusFlag) {
+		
+		// in client js should have setUnsavedState method 
+		requestContext.execute("setUnsavedState(" + statusFlag + ")");
 
 	}
 

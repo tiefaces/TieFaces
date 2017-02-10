@@ -406,6 +406,7 @@ public final class CellUtility {
 	 * @param checkLock
 	 *            check lock flag.
 	 */
+	@SuppressWarnings("deprecation")
 	private static void copyCellSetValue(Cell sourceCell, Cell newCell,
 			final boolean checkLock) {
 

@@ -188,6 +188,8 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 		sb.append("header length = " + this.getHeaderLength());
 		sb.append(",");
 		sb.append("footer length = " + this.getFooterLength());
+		sb.append(",");
+		sb.append("ConfigRange = " + this.getConfigRange());
 		sb.append("}");
 		return sb.toString();
 
@@ -208,7 +210,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	private List<Integer> buildFormWatchList(
 			final XSSFEvaluationWorkbook wbWrapper, final Sheet sheet) {
 
-		List<Integer> watchList = new ArrayList<Integer>();
+		List<Integer> watchList = new ArrayList<>();
 
 		ConfigRange cRange = this.getConfigRange();
 		List<ConfigCommand> commandList = cRange.getCommandList();
@@ -222,43 +224,15 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 			lastStaticRow = this.getTopRow();
 		}
 
-		Workbook wb = sheet.getWorkbook();
+		int sheetIndex =  sheet.getWorkbook().getSheetIndex(sheet);
 
 		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
 			Row row = sheet.getRow(i);
 			for (Cell cell : row) {
 				if (cell.getCellTypeEnum() == CellType.FORMULA) {
 
-					String formula = cell.getCellFormula();
-
-					Ptg[] ptgs = FormulaParser.parse(formula, wbWrapper,
-							FormulaType.CELL, wb.getSheetIndex(sheet));
-
-					for (int k = 0; k < ptgs.length; k++) {
-						Object ptg = ptgs[k];
-						// For area formula, only first row is watched.
-						// Reason is the lastRow must shift same rows with
-						// firstRow.
-						// Otherwise it's difficult to calculate.
-						// In case some situation cannot fit, then should make
-						// change to the formula.
-						int areaInt = ShiftFormulaUtility
-								.getFirstSupportedRowNumFromPtg(ptg);
-						if (areaInt >= 0) {
-							addToWatchList(sheet, areaInt, lastStaticRow,
-									watchList);
-						}
-					}
-
-					// when insert row, the formula may changed. so here is the
-					// workaround.
-					// change formula to user formula to preserve the row
-					// changes.
-					cell.setCellType(CellType.STRING);
-					cell.setCellValue(
-							TieConstants.USER_FORMULA_PREFIX
-									+ formula
-									+ TieConstants.USER_FORMULA_SUFFIX);
+					buildWatchListForCell(wbWrapper, sheetIndex, cell,
+							watchList, lastStaticRow);
 
 				}
 			}
@@ -266,6 +240,48 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 
 		return watchList;
 
+	}
+
+	/**
+	 * @param wbWrapper
+	 * @param wb
+	 * @param cell
+	 * @param watchList
+	 * @param lastStaticRow
+	 */
+	private void buildWatchListForCell(
+			final XSSFEvaluationWorkbook wbWrapper, final int sheetIndex, Cell cell, List<Integer> watchList,
+			int lastStaticRow) {
+		String formula = cell.getCellFormula();
+
+		Ptg[] ptgs = FormulaParser.parse(formula, wbWrapper,
+				FormulaType.CELL, sheetIndex);
+
+		for (int k = 0; k < ptgs.length; k++) {
+			Object ptg = ptgs[k];
+			// For area formula, only first row is watched.
+			// Reason is the lastRow must shift same rows with
+			// firstRow.
+			// Otherwise it's difficult to calculate.
+			// In case some situation cannot fit, then should make
+			// change to the formula.
+			int areaInt = ShiftFormulaUtility
+					.getFirstSupportedRowNumFromPtg(ptg);
+			if (areaInt >= 0) {
+				addToWatchList(areaInt, lastStaticRow,
+						watchList);
+			}
+		}
+
+		// when insert row, the formula may changed. so here is the
+		// workaround.
+		// change formula to user formula to preserve the row
+		// changes.
+		cell.setCellType(CellType.STRING);
+		cell.setCellValue(
+				TieConstants.USER_FORMULA_PREFIX
+						+ formula
+						+ TieConstants.USER_FORMULA_SUFFIX);
 	}
 
 	/**
@@ -280,7 +296,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	 * @param watchList
 	 *            watch list.
 	 */
-	private void addToWatchList(final Sheet sheet, final int addRow,
+	private void addToWatchList(final int addRow,
 			final int lastStaticRow, final List<Integer> watchList) {
 		if ((addRow > lastStaticRow) && !(watchList.contains(addRow))) {
 			watchList.add(addRow);
@@ -316,7 +332,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 						configBuildRef.getSheet().getRow(index));
 			}
 		}
-		currentRowsMappingList = new ArrayList<RowsMapping>();
+		currentRowsMappingList = new ArrayList<>();
 		currentRowsMappingList.add(unitRowsMapping);
 		this.getConfigRange().getAttrs().setAllowAdd(false);
 		configBuildRef.putShiftAttrs(fullName,

@@ -1,11 +1,13 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.configuration;
 
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Interface for all the command.
@@ -143,5 +145,13 @@ public interface Command {
 	 * @return command name.
 	 */
 	String getCommandName();
+	
+	/**
+	 * Recover.
+	 *
+	 * @param sheet
+	 *            the sheet
+	 */
+	void recover(Sheet sheet);
 
 }

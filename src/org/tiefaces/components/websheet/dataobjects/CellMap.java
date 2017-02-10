@@ -214,7 +214,7 @@ public class CellMap implements Serializable, java.util.Map {
 						.getExternalContext().getSessionMap();
 				if (sessionMap.get(chartViewId) == null) {
 					sessionMap.put(chartViewId,
-							parent.getChartsMap().get(chartId));
+							parent.getCharsData().getChartsMap().get(chartId));
 					LOG.fine("load chart put session map id = "
 							+ chartViewId);
 				}

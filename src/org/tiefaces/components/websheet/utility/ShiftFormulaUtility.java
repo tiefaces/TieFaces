@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.tiefaces.components.websheet.configuration.RowsMapping;
 import org.tiefaces.components.websheet.configuration.ShiftFormulaRef;
+import org.tiefaces.components.websheet.serializable.SerialRow;
 
 /**
  * The Class ShiftFormula.
@@ -154,7 +155,7 @@ public final class ShiftFormulaUtility {
 	private static Ptg[] convertPtgForWatchList(final Ptg[] ptgs,
 			final int position, final ShiftFormulaRef shiftFormulaRef,
 			final Object ptg, byte originalOperandClass, int currentRow) {
-		List<Row> rowlist = getRowsList(currentRow,
+		List<SerialRow> rowlist = getRowsList(currentRow,
 				shiftFormulaRef.getCurrentRowsMappingList());
 		if ((rowlist == null) || (rowlist.isEmpty())) {
 			// no need change ptg
@@ -167,7 +168,7 @@ public final class ShiftFormulaUtility {
 			// change ptg one to one
 			// return changed ptg
 			return singlePtg(
-					fixupRefRelativeRowOneToOne(ptg, rowlist.get(0)),
+					fixupRefRelativeRowOneToOne(ptg, rowlist.get(0).getRow()),
 					originalOperandClass, -1);
 		}
 		shiftFormulaRef.setFormulaChanged(rowlist.size());
@@ -213,12 +214,12 @@ public final class ShiftFormulaUtility {
 	 *            the current rows mapping list
 	 * @return the rows list
 	 */
-	private static List<Row> getRowsList(final int currentRow,
+	private static List<SerialRow> getRowsList(final int currentRow,
 			final List<RowsMapping> currentRowsMappingList) {
-		List<Row> all = null;
+		List<SerialRow> all = null;
 		int size = currentRowsMappingList.size();
 		for (RowsMapping rowsmapping : currentRowsMappingList) {
-			List<Row> current = rowsmapping.get(currentRow);
+			List<SerialRow> current = rowsmapping.get(currentRow);
 			if (current != null) {
 				if (size == 1) {
 					return current;
@@ -238,13 +239,13 @@ public final class ShiftFormulaUtility {
 	 *            current row list.
 	 * @return
 	 */
-	private static List<Row> assembleRowsListFromRowsMapping(List<Row> all,
-			List<Row> current) {
+	private static List<SerialRow> assembleRowsListFromRowsMapping(List<SerialRow> all,
+			List<SerialRow> current) {
 		if (all == null) {
 			all = new ArrayList<>();
 			all.addAll(current);
 		} else {
-			for (Row row : current) {
+			for (SerialRow row : current) {
 				if (!all.contains(row)) {
 					all.addAll(current);
 				}
@@ -345,7 +346,7 @@ public final class ShiftFormulaUtility {
 	 * @return the ptg[]
 	 */
 	protected static Ptg[] fixupRefRelativeRowOneToMany(final Object ptg,
-			final byte originalOperandClass, final List<Row> rowList,
+			final byte originalOperandClass, final List<SerialRow> rowList,
 			final Ptg[] ptgs, final int position) {
 		int size = rowList.size();
 		Ptg[] newPtg = null;
@@ -389,7 +390,7 @@ public final class ShiftFormulaUtility {
 	 *            the include parenthesis
 	 */
 	private static void buildDynamicRowForRefPtgBase(final Object ptg,
-			final byte originalOperandClass, final List<Row> rowList,
+			final byte originalOperandClass, final List<SerialRow> rowList,
 			final Ptg[] newPtg, final boolean includeParenthesis) {
 		RefPtgBase refPtg = (RefPtgBase) ptg;
 		int unitSize = 1;
@@ -397,7 +398,7 @@ public final class ShiftFormulaUtility {
 			unitSize = 2;
 		}
 		for (int i = 0; i < rowList.size(); i++) {
-			Row row = rowList.get(i);
+			Row row = rowList.get(i).getRow();
 			if (refPtg instanceof Ref3DPxg) {
 				Ref3DPxg ref3dPxg = (Ref3DPxg) refPtg;
 				Ref3DPxg new3dpxg = new Ref3DPxg(
@@ -437,14 +438,14 @@ public final class ShiftFormulaUtility {
 	 *            the new ptg
 	 */
 	private static void buildDynamicRowForAreaPtgBase(final Object ptg,
-			final byte originalOperandClass, final List<Row> rowList,
+			final byte originalOperandClass, final List<SerialRow> rowList,
 			final Ptg[] newPtg) {
 		AreaPtgBase areaPtg = (AreaPtgBase) ptg;
 		int originFirstRow = areaPtg.getFirstRow();
 		int originLastRow = areaPtg.getLastRow();
 		int unitSize = 2;
 		for (int i = 0; i < rowList.size(); i++) {
-			Row row = rowList.get(i);
+			Row row = rowList.get(i).getRow();
 			int shiftRow = row.getRowNum() - originFirstRow;
 			if (ptg instanceof Area3DPxg) {
 				Area3DPxg area3dPxg = (Area3DPxg) ptg;

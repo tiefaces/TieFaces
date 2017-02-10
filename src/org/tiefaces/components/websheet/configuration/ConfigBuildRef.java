@@ -7,6 +7,7 @@ package org.tiefaces.components.websheet.configuration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -48,7 +49,7 @@ public class ConfigBuildRef {
 	 * Saved configRange attributes for each full name. String : full name.
 	 * ConfigRangeAttrs : include range (top, bottom) and rows mapping.
 	 */
-	private TreeMap<String, ConfigRangeAttrs> shiftMap;
+	private  NavigableMap<String, ConfigRangeAttrs> shiftMap;
 
 	/**
 	 * Saved formula cells. include original formula and rows mapping for this
@@ -66,12 +67,12 @@ public class ConfigBuildRef {
 	 * (String) - command name. i.e. F.deparments or E.department value
 	 * (Command) - configuration command.
 	 */
-	private Map<String, Command> commandIndexMap = new HashMap<String, Command>();
+	private Map<String, Command> commandIndexMap = new HashMap<>();
 	/**
 	 * used for save the object for create new one. key (String) - var name.
 	 * value (String) - object class name.
 	 */
-	private Map<String, String> collectionObjNameMap = new HashMap<String, String>();
+	private Map<String, String> collectionObjNameMap = new HashMap<>();
 
 	/**
 	 * constructor.
@@ -105,7 +106,7 @@ public class ConfigBuildRef {
 		this.cachedCells = pCachedCells;
 		this.cellAttributesMap = pCellAttributesMap;
 		this.finalCommentMap = pFinalCommentMap;
-		this.shiftMap = new TreeMap<String, ConfigRangeAttrs>();
+		this.shiftMap = new TreeMap<>();
 	}
 
 	/**
@@ -194,7 +195,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the shift map
 	 */
-	public final TreeMap<String, ConfigRangeAttrs> getShiftMap() {
+	public final  NavigableMap<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
 
@@ -205,7 +206,7 @@ public class ConfigBuildRef {
 	 *            the shift map
 	 */
 	public final void setShiftMap(
-			final TreeMap<String, ConfigRangeAttrs> pshiftMap) {
+			final NavigableMap<String, ConfigRangeAttrs> pshiftMap) {
 		this.shiftMap = pshiftMap;
 	}
 

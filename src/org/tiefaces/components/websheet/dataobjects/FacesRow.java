@@ -26,8 +26,6 @@ public class FacesRow implements Serializable {
 	private boolean rendered;
 	/** the row height. */
 	private float rowheight;
-	/** whether the row is repeat. */
-	private boolean repeatZone;
 	/** cells in the row. */
 	private List<FacesCell> cells;
 	
@@ -102,24 +100,6 @@ public class FacesRow implements Serializable {
 		this.rowheight = pRowheight;
 	}
 	
-	/**
-	 * Checks if is repeat zone.
-	 *
-	 * @return true, if is repeat zone
-	 */
-	public final boolean isRepeatZone() {
-		return repeatZone;
-	}
-	
-	/**
-	 * Sets the repeat zone.
-	 *
-	 * @param pRepeatZone
-	 *            the new repeat zone
-	 */
-	public final void setRepeatZone(final boolean pRepeatZone) {
-		this.repeatZone = pRepeatZone;
-	}
 	
 	/**
 	 * Checks if is allow add.

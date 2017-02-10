@@ -301,29 +301,24 @@ public final class ConfigurationUtility {
 		for (int i = startRowIndex; i <= sheet.getLastRowNum(); i++) {
 			Row row = sheet.getRow(i);
 			String fname = getFullNameFromRow(row);
-			if (fname == null) {
-				break;
-			}
-			int sindex = fname.indexOf(searchName);
-			// no search found, then no need to change.
-			if (sindex < 0) {
-				break;
-			}
-			String snum = fname.substring(sindex + searchName.length());
-			int sufindex = snum.indexOf(':');
-			String suffix = "";
-			if (sufindex > 0) {
-				snum = snum.substring(0, sufindex);
-				suffix = ":";
-			}
-			int increaseNum = Integer.parseInt(snum) + 1;
-			String realFullName = fname.substring(sindex);
-			String changeName = fname.replace(searchName + snum + suffix,
-					searchName + increaseNum + suffix);
-			if (changeMap.get(realFullName) == null) {
-				changeMap.put(realFullName, changeName.substring(sindex));
-			}
-			setFullNameInHiddenColumn(row, changeName);
+			if ((fname != null) && (fname.indexOf(searchName) >=0 )){
+				int sindex = fname.indexOf(searchName);
+				String snum = fname.substring(sindex + searchName.length());
+				int sufindex = snum.indexOf(':');
+				String suffix = "";
+				if (sufindex > 0) {
+					snum = snum.substring(0, sufindex);
+					suffix = ":";
+				}
+				int increaseNum = Integer.parseInt(snum) + 1;
+				String realFullName = fname.substring(sindex);
+				String changeName = fname.replace(searchName + snum + suffix,
+						searchName + increaseNum + suffix);
+				if (changeMap.get(realFullName) == null) {
+					changeMap.put(realFullName, changeName.substring(sindex));
+				}
+				setFullNameInHiddenColumn(row, changeName);
+			}	
 		}
 	}
 
@@ -557,5 +552,38 @@ public final class ConfigurationUtility {
 		}
 		return true;
 	}
+
+	/**
+	 * Remove last each command index from full name. e.g. for
+	 * F.departments:E.department.1:E.employee.2 will return
+	 * F.departments:E.department.1:E.employee
+	 * 
+	 * Reason for this is for last layer collection. e.g. E.employee.1 and
+	 * E.employee.2 The E.emloyee is the same. *
+	 * 
+	 * @param fullName
+	 * @return
+	 */
+	public static String getFullDataCollectNameFromFullName(
+			String fullName) {
+		if (fullName == null) {
+			return "";
+		}
+
+		int lastEachCommandPos = fullName
+				.lastIndexOf(TieConstants.EACH_COMMAND_FULL_NAME_PREFIX);
+		if (lastEachCommandPos < 0) {
+			return "";
+		}
+		int lastEachCommandIndexPos = fullName.indexOf('.',
+				lastEachCommandPos
+						+ TieConstants.EACH_COMMAND_FULL_NAME_PREFIX
+								.length());
+		if (lastEachCommandIndexPos < 0) {
+			return fullName;
+		}
+		return fullName.substring(0, lastEachCommandIndexPos);
+	}
+
 
 }

@@ -37,107 +37,107 @@ public final class CellControlsUtility {
 	 * array list for possible parameter's type.
 	 */
 
-
 	public enum AttributesType {
-	    STRING (String.class) {
+		STRING(String.class) {
 			@Override
 			public Object parseValue(String value) {
 				return value;
 			}
 		},
-	    BOOLEAN (Boolean.class) {
+		BOOLEAN(Boolean.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Boolean.parseBoolean(value);
 			}
 		},
-	    BOOLEANTYPE (boolean.class) {
+		BOOLEANTYPE(boolean.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Boolean.parseBoolean(value);
 			}
 		},
-	    INTEGER    (Integer.class) {
+		INTEGER(Integer.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Integer.parseInt(value);
 			}
 		},
-	    INTEGERTYPE (int.class) {
+		INTEGERTYPE(int.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Integer.parseInt(value);
 			}
 		},
-	    LONG  (Long.class) {
+		LONG(Long.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Long.parseLong(value);
 			}
 		},
-	    LONGTYPE (long.class) {
+		LONGTYPE(long.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Long.parseLong(value);
 			}
 		},
-	    FLOAT(Float.class) {
+		FLOAT(Float.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Float.parseFloat(value);
 			}
 		},
-	    FLOATTYPE (float.class) {
+		FLOATTYPE(float.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Float.parseFloat(value);
 			}
 		},
-	    DOUBLE    (Double.class) {
+		DOUBLE(Double.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Double.parseDouble(value);
 			}
 		},
-	    DOUBLETYPE (double.class) {
+		DOUBLETYPE(double.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Double.parseDouble(value);
 			}
 		},
-	    BYTE  (Byte.class) {
+		BYTE(Byte.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Byte.parseByte(value);
 			}
 		},
-	    BYTETYPE  (byte.class) {
+		BYTETYPE(byte.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Byte.parseByte(value);
 			}
 		},
-	    SHORT  (Short.class) {
+		SHORT(Short.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Short.parseShort(value);
 			}
 		},
-	    SHORTTYPE  (short.class) {
+		SHORTTYPE(short.class) {
 			@Override
 			public Object parseValue(String value) {
 				return Short.parseShort(value);
 			}
 		};
 
+		private final Class clazz; // class name
 
-	    private final Class clazz;   // class name
-	    
-	    AttributesType(Class pclazz) {
-	        this.clazz = pclazz;
-	    }	
-		public abstract Object parseValue(String value);	    
+		AttributesType(Class pclazz) {
+			this.clazz = pclazz;
+		}
+
+		public abstract Object parseValue(String value);
 	}
+
 	/**
 	 * hide constructor.
 	 */
@@ -240,10 +240,8 @@ public final class CellControlsUtility {
 	 *            value.
 	 * @return object according to class.
 	 */
-	@SuppressWarnings("rawtypes")
-	static Object convertToObject(AttributesType attr,
-			final String value) {
-		
+	static Object convertToObject(AttributesType attr, final String value) {
+
 		return attr.parseValue(value);
 
 	}
@@ -269,12 +267,13 @@ public final class CellControlsUtility {
 			String methodName = "set"
 					+ Character.toUpperCase(propertyName.charAt(0))
 					+ propertyName.substring(1);
-			AttributesType parameterType = matchParaMeterOfMethod(obj, methodName);
+			AttributesType parameterType = matchParaMeterOfMethod(obj,
+					methodName);
 			if (parameterType != null) {
 				Method method = obj.getClass().getMethod(methodName,
 						new Class[] { parameterType.clazz });
-				method.invoke(obj, convertToObject(
-						parameterType, propertyValue));
+				method.invoke(obj,
+						convertToObject(parameterType, propertyValue));
 			}
 		} catch (Exception e) {
 			String msg = "failed to set property '" + propertyName

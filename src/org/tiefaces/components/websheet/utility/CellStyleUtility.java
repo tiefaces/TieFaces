@@ -5,8 +5,6 @@
 
 package org.tiefaces.components.websheet.utility;
 
-import java.util.logging.Logger;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -25,9 +23,6 @@ import org.tiefaces.components.websheet.dataobjects.FacesCell;
  */
 public final class CellStyleUtility {
 
-	/** logger. */
-	private static final Logger LOG = Logger
-			.getLogger(CellStyleUtility.class.getName());
 
 	/**
 	 * hide constructor.
@@ -394,6 +389,7 @@ public final class CellStyleUtility {
 	 *            the poi cell
 	 * @return the alignment from cell type
 	 */
+	@SuppressWarnings("deprecation")
 	private static String getAlignmentFromCellType(final Cell poiCell) {
 	
 		switch (poiCell.getCellTypeEnum()) {
@@ -413,6 +409,7 @@ public final class CellStyleUtility {
 	 *            the cell
 	 * @return the input type from cell type
 	 */
+	@SuppressWarnings("deprecation")
 	private static String getInputTypeFromCellType(final Cell cell) {
 	
 		String inputType = TieConstants.CELL_INPUT_TYPE_TEXT;

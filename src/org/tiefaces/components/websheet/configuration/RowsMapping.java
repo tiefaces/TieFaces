@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.tiefaces.components.websheet.serializable.SerialRow;
 
 /**
  * The Class RowsMapping.
@@ -20,9 +22,9 @@ public class RowsMapping implements Serializable {
 	/**
 	 * serialVersionUID.
 	 */
-	private static final long serialVersionUID = -2827255600933776496L;
+	private static final long serialVersionUID = 1L;
 	/** The rows map. */
-	private Map<Integer, List<Row>> rowsMap = new HashMap<>();
+	private Map<Integer, List<SerialRow>> rowsMap = new HashMap<>();
 
 	/**
 	 * Instantiates a new rows mapping.
@@ -46,7 +48,7 @@ public class RowsMapping implements Serializable {
 	 *
 	 * @return the rows map
 	 */
-	public final Map<Integer, List<Row>> getRowsMap() {
+	public final Map<Integer, List<SerialRow>> getRowsMap() {
 		return rowsMap;
 	}
 
@@ -58,13 +60,15 @@ public class RowsMapping implements Serializable {
 	 * @param targetRow
 	 *            the target row
 	 */
-	public final void addRow(final Integer sourceRowNum, final Row targetRow) {
-		List<Row> mapRowList = rowsMap.get(sourceRowNum);
+	public final void addRow(final Integer sourceRowNum,
+			final Row targetRow) {
+		List<SerialRow> mapRowList = rowsMap.get(sourceRowNum);
 		if (mapRowList == null) {
 			mapRowList = new ArrayList<>();
 		}
-		if (!mapRowList.contains(targetRow)) {
-			mapRowList.add(targetRow);
+		SerialRow serialTarget = new SerialRow(targetRow, -1);
+		if (!mapRowList.contains(serialTarget)) {
+			mapRowList.add(serialTarget);
 			rowsMap.put(sourceRowNum, mapRowList);
 		}
 	}
@@ -77,10 +81,11 @@ public class RowsMapping implements Serializable {
 	 * @param targetRow
 	 *            the target row
 	 */
-	public final void removeRow(final Integer sourceRowNum, final Row targetRow) {
-		List<Row> mapRowList = rowsMap.get(sourceRowNum);
+	public final void removeRow(final Integer sourceRowNum,
+			final Row targetRow) {
+		List<SerialRow> mapRowList = rowsMap.get(sourceRowNum);
 		if (mapRowList != null) {
-			mapRowList.remove(targetRow);
+			mapRowList.remove(new SerialRow(targetRow, -1));
 			rowsMap.put(sourceRowNum, mapRowList);
 		}
 	}
@@ -92,7 +97,7 @@ public class RowsMapping implements Serializable {
 	 *            the source row num
 	 * @return the list
 	 */
-	public final List<Row> get(final Integer sourceRowNum) {
+	public final List<SerialRow> get(final Integer sourceRowNum) {
 		return rowsMap.get(sourceRowNum);
 	}
 
@@ -103,17 +108,37 @@ public class RowsMapping implements Serializable {
 	 *            the add map
 	 */
 	public final void mergeMap(final RowsMapping addMap) {
-		Map<Integer, List<Row>> map = addMap.getRowsMap();
-		for (Map.Entry<Integer, List<Row>> entry : map.entrySet()) {
-			List<Row> entryRowList = entry.getValue();
+		Map<Integer, List<SerialRow>> map = addMap.getRowsMap();
+		for (Map.Entry<Integer, List<SerialRow>> entry : map.entrySet()) {
+			List<SerialRow> entryRowList = entry.getValue();
 			if ((entryRowList != null) && (!entryRowList.isEmpty())) {
-				for (Row row : entryRowList) {
-					this.addRow(entry.getKey(), row);
+				for (SerialRow row : entryRowList) {
+					this.addRow(entry.getKey(), row.getRow());
 				}
 			}
 		}
 	}
 
+	
+	/**
+	 * recover rows mapping by using it's address.
+	 * 
+	 * @param sheet
+	 *            sheet.
+	 */
+	public final void recover(final Sheet sheet) {
+
+		for (Map.Entry<Integer, List<SerialRow>> entry : this.getRowsMap()
+				.entrySet()) {
+			List<SerialRow> listRow = entry.getValue();
+			for (SerialRow serialRow : listRow) {
+				serialRow.recover(sheet);
+			}
+		}	
+
+	}
+	
+	
 	/**
 	 * Obtain a human readable representation.
 	 * 
@@ -124,10 +149,11 @@ public class RowsMapping implements Serializable {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		for (Map.Entry<Integer, List<Row>> entry : rowsMap.entrySet()) {
+		for (Map.Entry<Integer, List<SerialRow>> entry : this.getRowsMap()
+				.entrySet()) {
 			sb.append(entry.getKey() + "=[");
-			for (Row row : entry.getValue()) {
-				sb.append(row.getRowNum() + ",");
+			for (SerialRow row : entry.getValue()) {
+				sb.append(row.getRow().getRowNum() + ",");
 			}
 			sb.append("], ");
 		}

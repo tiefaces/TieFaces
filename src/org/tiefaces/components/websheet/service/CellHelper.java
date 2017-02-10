@@ -10,11 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.configuration.ConfigRangeAttrs;
-import org.tiefaces.components.websheet.configuration.SheetConfiguration;
+import org.tiefaces.components.websheet.dataobjects.CollectionObject;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
-import org.tiefaces.components.websheet.dataobjects.MapObject;
 import org.tiefaces.components.websheet.utility.CellUtility;
 import org.tiefaces.components.websheet.utility.CommandUtility;
 import org.tiefaces.components.websheet.utility.ConfigurationUtility;
@@ -75,41 +74,15 @@ public class CellHelper {
 				if (fullName != null) {
 					restoreDataContext(fullName);
 					SaveAttrsUtility.saveDataToObjectInContext(
-							parent.getDataContext(), saveAttr, strValue,
+							parent.getSerialDataContext().getDataContext(), saveAttr, strValue,
 							parent.getExpEngine());
 				}
 			}
 		}
 	}
+	
+	
 
-	/**
-	 * Restore data context.
-	 *
-	 * @param fullName
-	 *            the full name
-	 */
-	public final void restoreDataContext(final String fullName) {
-
-		String currentDataContext = parent.getCurrentDataContextName();
-		if ((currentDataContext != null)
-				&& (currentDataContext.equalsIgnoreCase(fullName))) {
-			return;
-		}
-		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
-				.get(parent.getCurrentTabName());
-		ConfigRangeAttrs attrs = sheetConfig.getShiftMap().get(fullName);
-		if ((attrs != null) && (attrs.getContextSnap() != null)) {
-			List<MapObject> mapList = attrs.getContextSnap().getSnapList();
-			if (mapList != null) {
-				for (MapObject mObj : mapList) {
-					parent.getDataContext().put((String) mObj.getKey(),
-							mObj.getValue());
-				}
-			}
-		}
-		parent.setCurrentDataContextName(fullName);
-
-	}
 
 	/**
 	 * recalc whole workbook.
@@ -189,12 +162,102 @@ public class CellHelper {
 	public final FacesCell getFacesCellWithRowColFromCurrentPage(
 			final int rowIndex, final int colIndex) {
 		if (parent.getBodyRows() != null) {
-			int top = parent.getCurrentTopRow();
-			int left = parent.getCurrentLeftColumn();
+			int top = parent.getCurrent().getCurrentTopRow();
+			int left = parent.getCurrent().getCurrentLeftColumn();
 			return parent.getBodyRows().get(rowIndex - top).getCells()
 					.get(colIndex - left);
 		}
 		return null;
 	}
 
+	/**
+	 * Restore data context.
+	 *
+	 * @param fullName
+	 *            the full name
+	 */
+	public final CollectionObject restoreDataContext(
+			final String fullName) {
+
+		CollectionObject collect = new CollectionObject();
+		
+		String[] parts = fullName.split(":");
+		
+		if (!isNeedRestore(fullName, parts)) {
+			return collect;
+		}
+
+		boolean stopSkip = false;
+		List<String> list = parent.getCurrent().getCurrentDataContextNameList();
+		int listSize = list.size();
+
+		// prepare collection data in context.
+		// must loop through the full name which may have multiple
+		// layer.
+		// i.e. E.department.1:E.employee.0
+		// need prepare department.1 and employee.0
+
+		for (int i = 0; i < parts.length; i++) {
+			String part = parts[i];
+			boolean skip = false;
+			if ((!stopSkip) && (i<listSize)) {
+				String listPart = list.get(i);
+				if (part.equalsIgnoreCase(listPart)) {
+					skip = true;
+				}
+			}
+			if (!skip) {
+				stopSkip = true;
+				startRestoreDataContext(collect, part);
+			}	
+		}
+		if (stopSkip) {
+			parent.getCurrent().setCurrentDataContextName(fullName);
+		}	
+
+		return collect;
+	}
+
+	/**
+	 * @param fullName
+	 * @param collect
+	 * @return
+	 */
+	private boolean isNeedRestore(final String fullName,String[] parts) {
+		if (fullName == null) {
+			return false;
+		}
+		if ((parent.getCurrent().getCurrentDataContextName() != null)
+				&& (parent.getCurrent().getCurrentDataContextName().toLowerCase().startsWith(fullName.toLowerCase()))) {
+			return false;
+		}
+
+		if ((parts == null)||(parts.length<=1)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @param collect
+	 * @param part
+	 */
+	private void startRestoreDataContext(CollectionObject collect,
+			String part) {
+		if (part.startsWith(
+				TieConstants.EACH_COMMAND_FULL_NAME_PREFIX)) {
+			String[] varparts = part.split("\\.");
+			collect.setEachCommand(CommandUtility.getEachCommandFromPartsName(
+					parent.getCurrentSheetConfig().getCommandIndexMap(), varparts));
+			collect.setLastCollection(ConfigurationUtility
+					.transformToCollectionObject(parent.getExpEngine(),
+							collect.getEachCommand().getItems(),
+							parent.getSerialDataContext().getDataContext()));
+			collect.setLastCollectionIndex(
+					CommandUtility.prepareCollectionDataInContext(
+							varparts, collect.getLastCollection(),
+							parent.getSerialDataContext().getDataContext()));
+		}
+	}
+	
 }

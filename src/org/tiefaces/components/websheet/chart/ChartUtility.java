@@ -24,6 +24,25 @@ import org.tiefaces.common.AppUtils;
  */
 public final class ChartUtility {
 
+	
+	/** Line style: line. */
+	public static final String STYLE_LINE = "line";
+	/** Line style: dashed. */
+	public static final String STYLE_DASH = "dash";
+	/** Line style: dotted. */
+	public static final String STYLE_DOT = "dot";
+	/** STROKE_DEFAULT_LINE_WIDTH. */
+	public static final float STROKE_DEFAULT_LINE_WIDTH = 0.2f;
+	/** STROKE_DEFAULT_DASH_WIDTH. */
+	public static final float STROKE_DEFAULT_DASH_WIDTH = 5.0f;
+	/** STROKE_MITER_LIMIT_STYLE_DOT. */
+	public static final float STROKE_MITER_LIMIT_STYLE_DOT = 2.0f;
+	/** STROKE_MITER_LIMIT_STYLE_DASH. */
+	public static final float STROKE_MITER_LIMIT_STYLE_DASH = 10.0f;
+	/** STROKE_DEFAULT_DASHPHASE. */
+	public static final float STROKE_DEFAULT_DASHPHASE = 0.0f;
+	
+	
 	/**
 	 * hide constructor.
 	 */
@@ -163,22 +182,6 @@ public final class ChartUtility {
 		return null;
 	}
 
-	/** Line style: line. */
-	public static final String STYLE_LINE = "line";
-	/** Line style: dashed. */
-	public static final String STYLE_DASH = "dash";
-	/** Line style: dotted. */
-	public static final String STYLE_DOT = "dot";
-	/** STROKE_DEFAULT_LINE_WIDTH. */
-	public static final float STROKE_DEFAULT_LINE_WIDTH = 0.2f;
-	/** STROKE_DEFAULT_DASH_WIDTH. */
-	public static final float STROKE_DEFAULT_DASH_WIDTH = 5.0f;
-	/** STROKE_MITER_LIMIT_STYLE_DOT. */
-	public static final float STROKE_MITER_LIMIT_STYLE_DOT = 2.0f;
-	/** STROKE_MITER_LIMIT_STYLE_DASH. */
-	public static final float STROKE_MITER_LIMIT_STYLE_DASH = 10.0f;
-	/** STROKE_DEFAULT_DASHPHASE. */
-	public static final float STROKE_DEFAULT_DASHPHASE = 0.0f;
 
 	/**
 	 * Convert style string to stroke object.

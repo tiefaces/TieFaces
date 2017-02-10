@@ -83,9 +83,6 @@ public class ChartHelper {
 			.getLogger(ChartHelper.class.getName());
 
 	/**
-	 * Constructor. Pass in websheet bean, So this helper can access related
-	 * instance class.
-	 * 
 	 * @param pParent
 	 *            parent websheet bean
 	 */
@@ -187,10 +184,10 @@ public class ChartHelper {
 	private void initXSSFChartsMap(final XSSFWorkbook wb) {
 
 		initAnchorsMap(wb);
-		Map<String, ClientAnchor> anchorMap = parent.getChartAnchorsMap();
+		Map<String, ClientAnchor> anchorMap = parent.getCharsData().getChartAnchorsMap();
 
-		Map<String, BufferedImage> chartMap = parent.getChartsMap();
-		Map<String, ChartData> chartDataMap = parent.getChartDataMap();
+		Map<String, BufferedImage> chartMap = parent.getCharsData().getChartsMap();
+		Map<String, ChartData> chartDataMap = parent.getCharsData().getChartDataMap();
 		chartMap.clear();
 		chartDataMap.clear();
 
@@ -212,7 +209,6 @@ public class ChartHelper {
 
 	/**
 	 * Generate single XSSF chart.
-	 *
 	 * @param chart
 	 *            the chart
 	 * @param chartId
@@ -239,11 +235,13 @@ public class ChartHelper {
 						chart);
 				chartDataMap.put(chartId, chartData);
 				JFreeChart jchart = createChart(chartData);
-				AnchorSize anchorSize = PicturesUtility.getAnchorSize(sheet,
-						anchor);
-				BufferedImage img = jchart.createBufferedImage(
-						anchorSize.getWidth(), anchorSize.getHeight());
-				chartMap.put(chartId, img);
+				if (jchart!=null) {
+					AnchorSize anchorSize = PicturesUtility.getAnchorSize(sheet,
+							anchor);
+					BufferedImage img = jchart.createBufferedImage(
+							anchorSize.getWidth(), anchorSize.getHeight());
+					chartMap.put(chartId, img);
+				}
 			}
 		}
 	}
@@ -275,7 +273,6 @@ public class ChartHelper {
 
 	/**
 	 * create default category dataset for JfreeChart with giving chartData.
-	 * 
 	 * @param chartData
 	 *            contain information gathered from excel chart object.
 	 * @return DefaultCategoryDataset for jfreechart.
@@ -308,7 +305,6 @@ public class ChartHelper {
 
 	/**
 	 * create default category dataset for JfreeChart with giving chartData.
-	 * 
 	 * @param chartData
 	 *            contain information gathered from excel chart object.
 	 * @return DefaultCategoryDataset for jfreechart.
@@ -803,8 +799,22 @@ public class ChartHelper {
 			chartData.setValAx(new ChartAxis(ctValAxList.get(0)));
 		}
 
-		ChartObject ctObj = null;
+		ChartObject ctObj = createChartObjByType(chartType);
 
+		if (ctObj != null) {
+			setUpChartData(chartData, ctChart, themeTable, ctObj);
+		}
+
+		return chartData;
+	}
+
+	/**
+	 * @param chartType
+	 * @param ctObj
+	 * @return
+	 */
+	private ChartObject createChartObjByType(ChartType chartType) {
+		ChartObject ctObj=null; 		
 		switch (chartType) {
 		case Area:
 		case AreaStacked:
@@ -834,12 +844,7 @@ public class ChartHelper {
 		default:
 			break;
 		}
-
-		if (ctObj != null) {
-			setUpChartData(chartData, ctChart, themeTable, ctObj);
-		}
-
-		return chartData;
+		return ctObj;
 	}
 
 	/**
@@ -851,40 +856,51 @@ public class ChartHelper {
 	 */
 	private void initXSSFAnchorsMap(final XSSFWorkbook wb) {
 
-		Map<String, ClientAnchor> anchortMap = parent.getChartAnchorsMap();
-		Map<String, String> positionMap = parent.getChartPositionMap();
+		Map<String, ClientAnchor> anchortMap = parent.getCharsData().getChartAnchorsMap();
+		Map<String, String> positionMap = parent.getCharsData().getChartPositionMap();
 		anchortMap.clear();
 		positionMap.clear();
 		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
-			XSSFSheet sheet = wb.getSheetAt(i);
-			XSSFDrawing drawing = sheet.createDrawingPatriarch();
-			CTDrawing ctDrawing = drawing.getCTDrawing();
-			if (ctDrawing.sizeOfTwoCellAnchorArray() > 0) {
-				List<CTTwoCellAnchor> alist = ctDrawing
-						.getTwoCellAnchorList();
-				for (int j = 0; j < alist.size(); j++) {
-					CTTwoCellAnchor ctanchor = alist.get(j);
-					String chartId = sheet.getSheetName() + "!"
-							+ getAnchorAssociateChartId(
-									ctanchor.getGraphicFrame().getGraphic()
-											.getGraphicData().getDomNode());
-					if (chartId != null) {
-						int dx1 = (int) ctanchor.getFrom().getColOff();
-						int dy1 = (int) ctanchor.getFrom().getRowOff();
-						int dx2 = (int) ctanchor.getTo().getColOff();
-						int dy2 = (int) ctanchor.getTo().getRowOff();
-						int col1 = ctanchor.getFrom().getCol();
-						int row1 = ctanchor.getFrom().getRow();
-						int col2 = ctanchor.getTo().getCol();
-						int row2 = ctanchor.getTo().getRow();
-						anchortMap.put(chartId, new XSSFClientAnchor(dx1,
-								dy1, dx2, dy2, col1, row1, col2, row2));
-						positionMap.put(
-								WebSheetUtility.getFullCellRefName(
-										sheet.getSheetName(), row1, col1),
-								chartId);
-					}
-				}
+			initXSSFAnchorsMapForSheet(anchortMap, positionMap, wb.getSheetAt(i));
+		}
+	}
+
+	/**
+	 * @param anchortMap
+	 * @param positionMap
+	 * @param sheet
+	 */
+	private void initXSSFAnchorsMapForSheet(
+			Map<String, ClientAnchor> anchortMap,
+			Map<String, String> positionMap, XSSFSheet sheet) {
+		XSSFDrawing drawing = sheet.createDrawingPatriarch();
+		CTDrawing ctDrawing = drawing.getCTDrawing();
+		if (ctDrawing.sizeOfTwoCellAnchorArray() <= 0) {
+			return;
+		}	
+		List<CTTwoCellAnchor> alist = ctDrawing
+				.getTwoCellAnchorList();
+		for (int j = 0; j < alist.size(); j++) {
+			CTTwoCellAnchor ctanchor = alist.get(j);
+			String chartId = sheet.getSheetName() + "!"
+					+ getAnchorAssociateChartId(
+							ctanchor.getGraphicFrame().getGraphic()
+									.getGraphicData().getDomNode());
+			if (chartId != null) {
+				int dx1 = (int) ctanchor.getFrom().getColOff();
+				int dy1 = (int) ctanchor.getFrom().getRowOff();
+				int dx2 = (int) ctanchor.getTo().getColOff();
+				int dy2 = (int) ctanchor.getTo().getRowOff();
+				int col1 = ctanchor.getFrom().getCol();
+				int row1 = ctanchor.getFrom().getRow();
+				int col2 = ctanchor.getTo().getCol();
+				int row2 = ctanchor.getTo().getRow();
+				anchortMap.put(chartId, new XSSFClientAnchor(dx1,
+						dy1, dx2, dy2, col1, row1, col2, row2));
+				positionMap.put(
+						WebSheetUtility.getFullCellRefName(
+								sheet.getSheetName(), row1, col1),
+						chartId);
 			}
 		}
 	}
@@ -904,13 +920,23 @@ public class ChartHelper {
 			if ((childNode != null)
 					&& ("c:chart".equalsIgnoreCase(childNode.getNodeName()))
 					&& (childNode.hasAttributes())) {
-				NamedNodeMap attrs = childNode.getAttributes();
-				for (int j = 0; j < attrs.getLength(); j++) {
-					Attr attribute = (Attr) attrs.item(j);
-					if ("r:id".equalsIgnoreCase(attribute.getName())) {
-						return attribute.getValue();
-					}
+				String rId= getChartIdFromChildNodeAttributes(childNode.getAttributes());
+				if (rId != null) {
+					return rId;
 				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param attrs
+	 */
+	private String getChartIdFromChildNodeAttributes(NamedNodeMap attrs) {
+		for (int j = 0; j < attrs.getLength(); j++) {
+			Attr attribute = (Attr) attrs.item(j);
+			if ("r:id".equalsIgnoreCase(attribute.getName())) {
+				return attribute.getValue();
 			}
 		}
 		return null;

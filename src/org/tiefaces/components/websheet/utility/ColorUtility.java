@@ -119,7 +119,7 @@ public final class ColorUtility {
 		if (Double.compare(tint, 0)  == 0) {
 			// no preTint
 			if (lumOff > 0) {
-				tint = (lumOff / MILLION_NUMBERS);
+				tint = lumOff / MILLION_NUMBERS;
 			} else {
 				if (lumMod > 0) {
 					tint = -1 * (lumMod / MILLION_NUMBERS);
