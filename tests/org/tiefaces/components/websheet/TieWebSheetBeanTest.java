@@ -223,7 +223,7 @@ public class TieWebSheetBeanTest {
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
 
-			assertEquals(entry.getValue().getType(), ChartType.Pie);
+			assertEquals(entry.getValue().getType(), ChartType.PIE);
 		}
 	}
 
@@ -243,7 +243,7 @@ public class TieWebSheetBeanTest {
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
 
-			assertEquals(entry.getValue().getType(), ChartType.Pie3D);
+			assertEquals(entry.getValue().getType(), ChartType.PIE3D);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart.objects;
@@ -23,6 +23,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
  */
 public class PieChart implements ChartObject {
 
+	/** empty list. */
+	private List<CTPieSer> emptySerlist = new ArrayList<>();
+
+	/** empty list. */
+	private List<CTDPt> emptyDptlist = new ArrayList<>();
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -49,7 +55,7 @@ public class PieChart implements ChartObject {
 		if (ctObjChart instanceof CTPieChart) {
 			return ((CTPieChart) ctObjChart).getSerList();
 		}
-		return null;
+		return this.getEmptySerlist();
 	}
 
 	/*
@@ -131,7 +137,7 @@ public class PieChart implements ChartObject {
 			}
 			return dptList;
 		}
-		return null;
+		return this.getEmptyDptlist();
 	}
 
 	/*
@@ -144,5 +150,21 @@ public class PieChart implements ChartObject {
 	public final boolean isLineColor() {
 		return false;
 	}
+
+	/**
+	 * @return the emptySerlist
+	 */
+	public final List<CTPieSer> getEmptySerlist() {
+		return emptySerlist;
+	}
+
+	/**
+	 * @return the emptyDptlist
+	 */
+	public final List<CTDPt> getEmptyDptlist() {
+		return emptyDptlist;
+	}
+	
+	
 
 }

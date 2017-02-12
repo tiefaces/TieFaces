@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart;
@@ -11,49 +11,49 @@ package org.tiefaces.components.websheet.chart;
  */
 public enum ChartType {
 	/** area. */
-	Area("Area"),
+	AREA("Area"),
 	/** area stacked. */
-	AreaStacked("AreaStacked"),
+	AREASTACKED("AreaStacked"),
 	/** bar 3d. */
-	Bar3D("Bar3D"),
+	BAR3D("Bar3D"),
 	/** bar 3d stacked. */
-	Bar3DStacked("Bar3DStacked"),
+	BAR3DSTACKED("Bar3DStacked"),
 	/** column 3d. */
-	Column3D("Column3D"),
+	COLUMN3D("Column3D"),
 	/** column 3d stacked. */
-	Column3DStacked("Column3DStacked"),
+	COLUMN3DSTACKED("Column3DStacked"),
 	/** bar. */
-	Bar("Bar"),
+	BAR("Bar"),
 	/** bar stacked. */
-	BarStacked("BarStacked"),
+	BARSTACKED("BarStacked"),
 	/** column. */
-	Column("Column"),
+	COLUMN("Column"),
 	/** column stacked. */
-	ColumnStacked("ColumnStacked"),
+	COLUMNSTACKED("ColumnStacked"),
 	/** bubble. */
-	Bubble("Bubble"),
+	BUBBLE("Bubble"),
 	/** dough nut. */
-	Doughnut("Doughnut"),
+	DOUGHNUT("Doughnut"),
 	/** line 3d. */
-	Line3D("Line3D"),
+	LINE3D("Line3D"),
 	/** line. */
-	Line("Line"),
+	LINE("Line"),
 	/** of pie. */
-	OfPie("OfPie"),
+	OFPIE("OfPie"),
 	/** pie 3d. */
-	Pie3D("Pie3D"),
+	PIE3D("Pie3D"),
 	/** pie. */
-	Pie("Pie"),
+	PIE("Pie"),
 	/** radar. */
-	Radar("Radar"),
+	RADAR("Radar"),
 	/** scatter. */
-	Scatter("Scatter"),
+	SCATTER("Scatter"),
 	/** stock. */
-	Stock("Stock"),
+	STOCK("Stock"),
 	/** surface 3d. */
-	Surface3D("Surface3D"),
+	SURFACE3D("Surface3D"),
 	/** surface. */
-	Surface("Surface");
+	SURFACE("Surface");
 	
 	/**
 	 * string.

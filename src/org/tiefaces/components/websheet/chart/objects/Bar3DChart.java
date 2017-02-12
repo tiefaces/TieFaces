@@ -1,11 +1,10 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart.objects;
 
 import java.util.List;
-
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBar3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 
@@ -17,6 +16,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
  */
 public class Bar3DChart extends BarChart {
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -43,7 +43,9 @@ public class Bar3DChart extends BarChart {
 		if (ctObjChart instanceof CTBar3DChart) {
 			return ((CTBar3DChart) ctObjChart).getSerList();
 		}
-		return null;
+		return this.getEmptySerlist();
 	}
 
+
+	
 }

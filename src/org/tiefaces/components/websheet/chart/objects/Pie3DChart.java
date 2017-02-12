@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart.objects;
@@ -43,7 +43,7 @@ public class Pie3DChart extends PieChart {
 		if (ctObjChart instanceof CTPie3DChart) {
 			return ((CTPie3DChart) ctObjChart).getSerList();
 		}
-		return null;
+		return this.getEmptySerlist();
 	}
 
 }

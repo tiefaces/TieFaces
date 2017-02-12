@@ -1,9 +1,10 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
@@ -21,6 +22,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
  *
  */
 public class LineChart implements ChartObject {
+
+	/** empty list. */
+	private List<CTDPt> emptyDptlist = new ArrayList<>();
+	
+	/** empty list. */
+	private List<CTLineSer> emptyLinelist = new ArrayList<>();
 
 	/*
 	 * (non-Javadoc)
@@ -48,7 +55,7 @@ public class LineChart implements ChartObject {
 		if (ctObjChart instanceof CTLineChart) {
 			return ((CTLineChart) ctObjChart).getSerList();
 		}
-		return null;
+		return emptyLinelist;
 	}
 
 	/*
@@ -121,8 +128,9 @@ public class LineChart implements ChartObject {
 	 */
 	@Override
 	public final List<CTDPt> getDPtListFromCTSer(final Object ctObjSer) {
-		return null;
+		return emptyDptlist;
 	}
+
 
 	/*
 	 * (non-Javadoc)

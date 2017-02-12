@@ -1,10 +1,9 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.dataobjects;
 
-import java.io.Serializable;
 
 import org.apache.poi.xssf.usermodel.XSSFColor;
 

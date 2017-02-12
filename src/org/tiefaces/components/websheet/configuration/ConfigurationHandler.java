@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -91,7 +91,7 @@ public class ConfigurationHandler {
 		// in buildsheet, it's possible to add sheets in workbook.
 		// so cache the sheetname first here.
 		List<String> sheetNames = new ArrayList<>();
-		String sname = null;
+		String sname;
 		for (int i = 0; i < parent.getWb().getNumberOfSheets(); i++) {
 			sname = parent.getWb().getSheetName(i);
 			if (!sname.startsWith(
@@ -249,7 +249,16 @@ public class ConfigurationHandler {
 		return col;
 	}
 
-	/** new implement of configuration with setting in comments. */
+	/**
+	 * new implement of configuration with setting in comments.
+	 *
+	 * @param sheet
+	 *            the sheet
+	 * @param sheetConfigMap
+	 *            the sheet config map
+	 * @param cellAttributesMap
+	 *            the cell attributes map
+	 */
 
 	/**
 	 * build a sheet for configuration map.
@@ -454,42 +463,60 @@ public class ConfigurationHandler {
 	 */
 	private void matchParentCommand(final List<ConfigCommand> commandList) {
 
-		if (commandList != null) {
+		if (commandList == null) {
+			return;
+		}	
 			for (int i = 0; i < commandList.size(); i++) {
 				ConfigCommand child = commandList.get(i);
 				if (!child.getCommandTypeName()
 						.equalsIgnoreCase(TieConstants.COMMAND_FORM)) {
-					int matchIndex = -1;
-					ConfigRange matchRange = null;
-					for (int j = 0; j < commandList.size(); j++) {
-						if (j != i) {
-							Command commandParent = commandList.get(j);
-							if (!commandParent.getCommandTypeName()
-									.equalsIgnoreCase(
-											TieConstants.COMMAND_FORM)
-									&& WebSheetUtility.insideRange(
-											child.getConfigRange(),
-											commandParent.getConfigRange())
-									&& ((matchRange == null)
-											|| (WebSheetUtility.insideRange(
-													commandParent
-															.getConfigRange(),
-													matchRange)))) {
-								matchRange = commandParent.getConfigRange();
-								matchIndex = j;
-							}
-						}
-
-					}
-					if (matchIndex >= 0) {
-						commandList.get(matchIndex).getConfigRange()
-								.addCommand(child);
-						child.setParentFound(true);
-					}
+					setParentForChildCommand(commandList, i, child);
 				}
 			}
 		}
+
+	/**
+	 * Sets the parent for child command.
+	 *
+	 * @param commandList
+	 *            the command list
+	 * @param i
+	 *            the i
+	 * @param child
+	 *            the child
+	 */
+	private void setParentForChildCommand(
+			final List<ConfigCommand> commandList, final int i,
+			final ConfigCommand child) {
+		int matchIndex = -1;
+		ConfigRange matchRange = null;
+		for (int j = 0; j < commandList.size(); j++) {
+			if (j != i) {
+				Command commandParent = commandList.get(j);
+				if (!commandParent.getCommandTypeName()
+						.equalsIgnoreCase(
+								TieConstants.COMMAND_FORM)
+						&& WebSheetUtility.insideRange(
+								child.getConfigRange(),
+								commandParent.getConfigRange())
+						&& ((matchRange == null)
+								|| (WebSheetUtility.insideRange(
+										commandParent
+												.getConfigRange(),
+										matchRange)))) {
+					matchRange = commandParent.getConfigRange();
+					matchIndex = j;
+				}
+			}
+
+		}
+		if (matchIndex >= 0) {
+			commandList.get(matchIndex).getConfigRange()
+					.addCommand(child);
+			child.setParentFound(true);
+		}
 	}
+	
 
 	/**
 	 * check whether contain each command in the list.
@@ -532,17 +559,34 @@ public class ConfigurationHandler {
 			if (!command.getCommandTypeName()
 					.equalsIgnoreCase(TieConstants.COMMAND_FORM)
 					&& (!command.isParentFound())) {
-				for (String formname : formList) {
-					SheetConfiguration sheetConfig = sheetConfigMap
-							.get(formname);
-					if (WebSheetUtility.insideRange(
-							command.getConfigRange(), sheetConfig
-									.getFormCommand().getConfigRange())) {
-						sheetConfig.getFormCommand().getConfigRange()
-								.addCommand(command);
-						break;
-					}
-				}
+				matchCommandToSheetConfigForm(sheetConfigMap, formList,
+						command);
+			}
+		}
+	}
+
+	/**
+	 * Match command to sheet config form.
+	 *
+	 * @param sheetConfigMap
+	 *            the sheet config map
+	 * @param formList
+	 *            the form list
+	 * @param command
+	 *            the command
+	 */
+	private void matchCommandToSheetConfigForm(
+			final Map<String, SheetConfiguration> sheetConfigMap,
+			final List<String> formList, final ConfigCommand command) {
+		for (String formname : formList) {
+			SheetConfiguration sheetConfig = sheetConfigMap
+					.get(formname);
+			if (WebSheetUtility.insideRange(
+					command.getConfigRange(), sheetConfig
+							.getFormCommand().getConfigRange())) {
+				sheetConfig.getFormCommand().getConfigRange()
+						.addCommand(command);
+				break;
 			}
 		}
 	}

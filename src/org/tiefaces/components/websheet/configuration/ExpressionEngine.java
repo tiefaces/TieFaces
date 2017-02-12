@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.configuration;
@@ -61,22 +61,13 @@ public class ExpressionEngine {
 		jExpression = jexl.createExpression(pExpression);
 	}
 
-	/**
-	 * constructor.
-	 */
 
-	/**
-	 * constructor.
-	 * 
-	 * @param jexlContext
-	 *            jcontext. public ExpressionEngine(final JexlContext
-	 *            jexlContext) { jContext = jexlContext; }
-	 */
 
 	/**
 	 * constructor.
 	 */
 	public ExpressionEngine() {
+		super();
 	}
 
 	/**

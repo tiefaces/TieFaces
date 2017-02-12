@@ -1,11 +1,10 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart;
 
 import java.awt.image.BufferedImage;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,11 +32,6 @@ public class ChartsData  {
 	 */
 	private Map<String, String> chartPositionMap;
 
-	/**
-	 * constructor.
-	 */
-	public ChartsData() {
-	}
 
 	/**
 	 * return chartdatamap.
@@ -46,7 +40,7 @@ public class ChartsData  {
 	 */
 	public final Map<String, ChartData> getChartDataMap() {
 		if (this.chartDataMap == null) {
-			this.chartDataMap = new HashMap<String, ChartData>();
+			this.chartDataMap = new HashMap<>();
 		}
 		return chartDataMap;
 	}
@@ -59,7 +53,7 @@ public class ChartsData  {
 
 	public final Map<String, BufferedImage> getChartsMap() {
 		if (this.chartsMap == null) {
-			this.chartsMap = new HashMap<String, BufferedImage>();
+			this.chartsMap = new HashMap<>();
 		}		
 		
 		return chartsMap;
@@ -73,7 +67,7 @@ public class ChartsData  {
 
 	public final Map<String, ClientAnchor> getChartAnchorsMap() {
 		if (this.chartAnchorsMap == null) {
-			this.chartAnchorsMap = new HashMap<String, ClientAnchor>();
+			this.chartAnchorsMap = new HashMap<>();
 		}
 		
 		return chartAnchorsMap;
@@ -86,7 +80,7 @@ public class ChartsData  {
 	 */
 	public final Map<String, String> getChartPositionMap() {
 		if (this.chartPositionMap == null) {
-			this.chartPositionMap = new HashMap<String, String>();
+			this.chartPositionMap = new HashMap<>();
 		}
 		
 		return chartPositionMap;

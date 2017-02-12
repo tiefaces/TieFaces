@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart;
@@ -67,9 +67,9 @@ public final class ChartUtility {
 			int grouping = areas.get(0).getGrouping().getVal().intValue();
 			switch (grouping) {
 			case STGrouping.INT_STACKED:
-				return ChartType.AreaStacked;
+				return ChartType.AREASTACKED;
 			default:
-				return ChartType.Area;
+				return ChartType.AREA;
 			}
 		}
 
@@ -81,17 +81,17 @@ public final class ChartUtility {
 			case STBarDir.INT_BAR:
 				switch (grouping) {
 				case STBarGrouping.INT_STACKED:
-					return ChartType.Bar3DStacked;
+					return ChartType.BAR3DSTACKED;
 				default:
-					return ChartType.Bar3D;
+					return ChartType.BAR3D;
 				}
 			default:
 			case STBarDir.INT_COL:
 				switch (grouping) {
 				case STBarGrouping.INT_STACKED:
-					return ChartType.Column3DStacked;
+					return ChartType.COLUMN3DSTACKED;
 				default:
-					return ChartType.Column3D;
+					return ChartType.COLUMN3D;
 				}
 			}
 		}
@@ -104,79 +104,79 @@ public final class ChartUtility {
 			case STBarDir.INT_BAR:
 				switch (grouping) {
 				case STBarGrouping.INT_STACKED:
-					return ChartType.BarStacked;
+					return ChartType.BARSTACKED;
 				default:
-					return ChartType.Bar;
+					return ChartType.BAR;
 				}
 			default:
 			case STBarDir.INT_COL:
 				switch (grouping) {
 				case STBarGrouping.INT_STACKED:
-					return ChartType.ColumnStacked;
+					return ChartType.COLUMNSTACKED;
 				default:
-					return ChartType.Column;
+					return ChartType.COLUMN;
 				}
 			}
 		}
 
 		// Bubble
 		if (!AppUtils.emptyList((List) plotArea.getBubbleChartList())) {
-			return ChartType.Bubble;
+			return ChartType.BUBBLE;
 		}
 
 		// Doughnut
 		if (!AppUtils.emptyList((List) plotArea.getDoughnutChartList())) {
-			return ChartType.Doughnut;
+			return ChartType.DOUGHNUT;
 		}
 
 		// Line3D
 		if (!AppUtils.emptyList((List) plotArea.getLine3DChartList())) {
-			return ChartType.Line3D;
+			return ChartType.LINE3D;
 		}
 
 		// Line
 		if (!AppUtils.emptyList((List) plotArea.getLineChartList())) {
-			return ChartType.Line;
+			return ChartType.LINE;
 		}
 
 		// OfPie
 		if (!AppUtils.emptyList((List) plotArea.getOfPieChartList())) {
-			return ChartType.OfPie;
+			return ChartType.OFPIE;
 		}
 
 		// Pie3D
 		if (!AppUtils.emptyList((List) plotArea.getPie3DChartList())) {
-			return ChartType.Pie3D;
+			return ChartType.PIE3D;
 		}
 
 		// Pie
 		if (!AppUtils.emptyList((List) plotArea.getPieChartList())) {
-			return ChartType.Pie;
+			return ChartType.PIE;
 		}
 
 		// Radar
 		if (!AppUtils.emptyList((List) plotArea.getRadarChartList())) {
-			return ChartType.Radar;
+			return ChartType.RADAR;
 		}
 
 		// Scatter
 		if (!AppUtils.emptyList((List) plotArea.getScatterChartList())) {
-			return ChartType.Scatter;
+			return ChartType.SCATTER;
 		}
 
 		// Stock
 		if (!AppUtils.emptyList((List) plotArea.getStockChartList())) {
-			return ChartType.Stock;
+			return ChartType.STOCK;
 		}
 
 		// Surface3D
 		if (!AppUtils.emptyList((List) plotArea.getSurface3DChartList())) {
-			return ChartType.Surface3D;
+			return ChartType.SURFACE3D;
 		}
 
 		// Surface
 		if (!AppUtils.emptyList((List) plotArea.getSurfaceChartList())) {
-			return ChartType.Surface;
+			return ChartType.SURFACE;
 		}
 
 		return null;

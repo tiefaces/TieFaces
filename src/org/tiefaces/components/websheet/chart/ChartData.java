@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart;
@@ -164,42 +164,62 @@ public class ChartData {
 		try {
 			for (int index = 0; index < bsers.size(); index++) {
 				Object ctObjSer = bsers.get(index);
-				ChartSeries ctSer = new ChartSeries();
-				ctSer.setSeriesLabel(new ParsedCell(
-						ctObj.getSeriesLabelFromCTSer(ctObjSer)));
-				ctSer.setSeriesColor(ColorUtility.geColorFromSpPr(index,
-						ctObj.getShapePropertiesFromCTSer(ctObjSer),
-						themeTable, ctObj.isLineColor()));
-				List<ParsedCell> cells = new ArrayList<>();
-				String fullRangeName = (ctObj
-						.getCTNumDataSourceFromCTSer(ctObjSer)).getNumRef()
-								.getF();
-				String sheetName = WebSheetUtility
-						.getSheetNameFromFullCellRefName(fullRangeName);
-				CellRangeAddress region = CellRangeAddress
-						.valueOf(WebSheetUtility
-								.removeSheetNameFromFullCellRefName(
-										fullRangeName));
-				for (int row = region.getFirstRow(); row <= region
-						.getLastRow(); row++) {
-					for (int col = region.getFirstColumn(); col <= region
-							.getLastColumn(); col++) {
-						cells.add(new ParsedCell(sheetName, row, col));
-						LOG.fine(" add serial value sheetName = "
-								+ sheetName + " row = " + row + " col = "
-								+ col);
-					}
-				}
-				ctSer.setValueList(cells);
-				ctSer.setValueColorList(getColorListFromDPTWithValueList(
-						ctObj.getDPtListFromCTSer(ctObjSer), cells,
-						themeTable, ctObj));
+				ChartSeries ctSer = buildChartSeriesInList(themeTable,
+						ctObj, ctObjSer, index);
 				lseriesList.add(ctSer);
 			}
 		} catch (Exception ex) {
 			LOG.log(Level.FINE, "failed in buildSerialList", ex);
 		}
 		this.setSeriesList(lseriesList);
+	}
+
+	/**
+	 * Builds the chart series in list.
+	 *
+	 * @param themeTable
+	 *            the theme table
+	 * @param ctObj
+	 *            the ct obj
+	 * @param ctObjSer
+	 *            the ct obj ser
+	 * @param index
+	 *            the index
+	 * @return the chart series
+	 */
+	private ChartSeries buildChartSeriesInList(final ThemesTable themeTable,
+			final ChartObject ctObj, final Object ctObjSer, final int index) {
+		ChartSeries ctSer = new ChartSeries();
+		ctSer.setSeriesLabel(new ParsedCell(
+				ctObj.getSeriesLabelFromCTSer(ctObjSer)));
+		ctSer.setSeriesColor(ColorUtility.geColorFromSpPr(index,
+				ctObj.getShapePropertiesFromCTSer(ctObjSer),
+				themeTable, ctObj.isLineColor()));
+		List<ParsedCell> cells = new ArrayList<>();
+		String fullRangeName = (ctObj
+				.getCTNumDataSourceFromCTSer(ctObjSer)).getNumRef()
+						.getF();
+		String sheetName = WebSheetUtility
+				.getSheetNameFromFullCellRefName(fullRangeName);
+		CellRangeAddress region = CellRangeAddress
+				.valueOf(WebSheetUtility
+						.removeSheetNameFromFullCellRefName(
+								fullRangeName));
+		for (int row = region.getFirstRow(); row <= region
+				.getLastRow(); row++) {
+			for (int col = region.getFirstColumn(); col <= region
+					.getLastColumn(); col++) {
+				cells.add(new ParsedCell(sheetName, row, col));
+				LOG.fine(" add serial value sheetName = "
+						+ sheetName + " row = " + row + " col = "
+						+ col);
+			}
+		}
+		ctSer.setValueList(cells);
+		ctSer.setValueColorList(getColorListFromDPTWithValueList(
+				ctObj.getDPtListFromCTSer(ctObjSer), cells,
+				themeTable, ctObj));
+		return ctSer;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.configuration;
@@ -24,6 +24,24 @@ public class ShiftFormulaRef {
 
 	/** The formula changed. */
 	private int formulaChanged = 0;
+	
+	/**
+	 * Instantiates a new shift formula ref.
+	 *
+	 * @param pwatchList
+	 *            the watch list
+	 * @param pcurrentRowsMappingList
+	 *            the current rows mapping list
+	 */
+	public ShiftFormulaRef(final List<Integer> pwatchList,
+			final List<RowsMapping> pcurrentRowsMappingList) {
+		super();
+		this.watchList = pwatchList;
+		this.currentRowsMappingList = pcurrentRowsMappingList;
+	}
+	
+	
+	
 
 	/**
 	 * Gets the watch list.
@@ -83,20 +101,6 @@ public class ShiftFormulaRef {
 		this.formulaChanged = pformulaChanged;
 	}
 
-	/**
-	 * Instantiates a new shift formula ref.
-	 *
-	 * @param pwatchList
-	 *            the watch list
-	 * @param pcurrentRowsMappingList
-	 *            the current rows mapping list
-	 */
-	public ShiftFormulaRef(final List<Integer> pwatchList,
-			final List<RowsMapping> pcurrentRowsMappingList) {
-		super();
-		this.watchList = pwatchList;
-		this.currentRowsMappingList = pcurrentRowsMappingList;
-	}
 
 	/**
 	 * Obtain a human readable representation.

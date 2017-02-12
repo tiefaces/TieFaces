@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -317,6 +317,9 @@ public final class TieConstants {
 	/** The Constant VERTICAL_ALIGN_CENTER. */
 	public static final String VERTICAL_ALIGN_CENTER =
 			"vertical-align: middle;";
+	
+	/** The Constant FULL_VALIDATION. */
+	public static final String FULL_VALIDATION = "fullValidation";
 
 	/**
 	 * hide constructor.

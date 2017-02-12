@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.exception;
@@ -19,7 +19,6 @@ public class EvaluationException extends RuntimeException {
 	 */
 	public EvaluationException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -37,7 +36,6 @@ public class EvaluationException extends RuntimeException {
 	public EvaluationException(final String message, final Throwable cause,
 			final boolean enableSuppression, final boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -50,7 +48,6 @@ public class EvaluationException extends RuntimeException {
 	 */
 	public EvaluationException(final String message, final Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -61,7 +58,6 @@ public class EvaluationException extends RuntimeException {
 	 */
 	public EvaluationException(final String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -72,7 +68,6 @@ public class EvaluationException extends RuntimeException {
 	 */
 	public EvaluationException(final Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
  

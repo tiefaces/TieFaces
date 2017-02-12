@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -357,31 +357,31 @@ public class ChartHelper {
 	private JFreeChart createChart(final ChartData chartData) {
 
 		switch (chartData.getType()) {
-		case Area:
+		case AREA:
 			return createAreaChart(chartData);
-		case AreaStacked:
+		case AREASTACKED:
 			return createStackedAreaChart(chartData);
-		case Line:
+		case LINE:
 			return createLineChart(chartData);
-		case Column:
+		case COLUMN:
 			return createBarChart(chartData, true);
-		case ColumnStacked:
+		case COLUMNSTACKED:
 			return createStackedBarChart(chartData, true);
-		case Column3D:
+		case COLUMN3D:
 			return createBarChart3D(chartData, true);
-		case Column3DStacked:
+		case COLUMN3DSTACKED:
 			return createStackedBarChart3D(chartData, true);
-		case Bar:
+		case BAR:
 			return createBarChart(chartData, false);
-		case Bar3D:
+		case BAR3D:
 			return createBarChart3D(chartData, false);
-		case BarStacked:
+		case BARSTACKED:
 			return createStackedBarChart(chartData, false);
-		case Bar3DStacked:
+		case BAR3DSTACKED:
 			return createStackedBarChart3D(chartData, false);
-		case Pie:
+		case PIE:
 			return createPieChart(chartData);
-		case Pie3D:
+		case PIE3D:
 			return createPie3DChart(chartData);
 		default:
 			break;
@@ -816,29 +816,29 @@ public class ChartHelper {
 	private ChartObject createChartObjByType(ChartType chartType) {
 		ChartObject ctObj=null; 		
 		switch (chartType) {
-		case Area:
-		case AreaStacked:
+		case AREA:
+		case AREASTACKED:
 			ctObj = new AreaChart();
 			break;
-		case Line:
+		case LINE:
 			ctObj = new LineChart();
 			break;
-		case Column:
-		case ColumnStacked:
-		case Bar:
-		case BarStacked:
+		case COLUMN:
+		case COLUMNSTACKED:
+		case BAR:
+		case BARSTACKED:
 			ctObj = new BarChart();
 			break;
-		case Column3D:
-		case Column3DStacked:
-		case Bar3D:
-		case Bar3DStacked:
+		case COLUMN3D:
+		case COLUMN3DSTACKED:
+		case BAR3D:
+		case BAR3DSTACKED:
 			ctObj = new Bar3DChart();
 			break;
-		case Pie:
+		case PIE:
 			ctObj = new PieChart();
 			break;
-		case Pie3D:
+		case PIE3D:
 			ctObj = new Pie3DChart();
 			break;
 		default:

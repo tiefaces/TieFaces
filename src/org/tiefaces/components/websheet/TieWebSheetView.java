@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -18,17 +18,56 @@ import org.tiefaces.common.TieConstants;
  *
  */
 public class TieWebSheetView {
-
+	
 	/**
-	 * empty constructor.
+	 * tab type.
 	 */
-	public TieWebSheetView() {
-	}
-
+	private String tabType;
+	
 	/**
 	 * tabs.
 	 */
 	private List<TabModel> tabs;
+
+	/**
+	 * web form tab view.
+	 */
+	private TabView webFormTabView = null;
+
+	/**
+	 * tab style.
+	 */
+	private String tabStyle;
+
+	/** maxrowsperpage. */
+	private Integer maxRowsPerPage = TieConstants.DEFAULT_MAX_ROWS_PER_PAGE;
+	
+	/**
+	 * tabwidth style.
+	 */
+	private String tableWidthStyle = TieConstants.DEFAULT_TABLE_WIDTH_STYLE;
+
+	/** line number column width. */
+	private int lineNumberColumnWidth 
+	= TieConstants.DEFAULT_LINENUMBER_COLUMN_WIDTH;
+	/** add row column width. */
+	private int addRowColumnWidth = TieConstants.DEFAULT_ADDROW_COLUMN_WIDTH;
+	/** line number column width style. */
+	private String lineNumberColumnWidthStyle = "";
+	/** add row column width style. */
+	private String addRowColumnWidthStyle = "";	
+	/** allow add row in body. */
+	private boolean bodyAllowAddRows;	
+	/** show line number in web gui. */
+	private boolean showLineNumber = false;
+	
+	/**
+	 * empty constructor.
+	 */
+	public TieWebSheetView() {
+		super();
+	}
+
 
 	/**
 	 * get tabs.
@@ -123,10 +162,6 @@ public class TieWebSheetView {
 		}
 	}
 
-	/**
-	 * web form tab view.
-	 */
-	private TabView webFormTabView = null;
 
 	/**
 	 * get web form tab view.
@@ -147,10 +182,6 @@ public class TieWebSheetView {
 		this.webFormTabView = pwebFormTabView;
 	}
 
-	/**
-	 * tab type.
-	 */
-	private String tabType;
 
 	/**
 	 * get tab type.
@@ -171,10 +202,6 @@ public class TieWebSheetView {
 		return tabType;
 	}
 
-	/**
-	 * tab style.
-	 */
-	private String tabStyle;
 
 	/**
 	 * get tab style.
@@ -185,10 +212,9 @@ public class TieWebSheetView {
 
 		tabStyle = TieConstants.TAB_STYLE_VISIBLE;
 		int sheetId = webFormTabView.getActiveIndex();
-		if (sheetId >= 0) {
-			if (sheetId < tabs.size()) {
+		if ((sheetId >= 0) && (sheetId < tabs.size())) {
 				tabStyle = TieConstants.TAB_STYLE_INVISIBLE;
-			}
+			
 		}
 
 		return tabStyle;
@@ -204,8 +230,7 @@ public class TieWebSheetView {
 		this.tabType = ptabType;
 	}
 
-	/** maxrowsperpage. */
-	private Integer maxRowsPerPage = TieConstants.DEFAULT_MAX_ROWS_PER_PAGE;
+
 
 	/**
 	 * get maxrowsperpage.
@@ -226,10 +251,7 @@ public class TieWebSheetView {
 		this.maxRowsPerPage = pmaxRowsPerPage;
 	}
 
-	/**
-	 * tabwidth style.
-	 */
-	private String tableWidthStyle = TieConstants.DEFAULT_TABLE_WIDTH_STYLE;
+
 
 	/**
 	 * get table width style.
@@ -250,15 +272,7 @@ public class TieWebSheetView {
 		this.tableWidthStyle = ptableWidthStyle;
 	}
 
-	/** line number column width. */
-	private int lineNumberColumnWidth 
-	= TieConstants.DEFAULT_LINENUMBER_COLUMN_WIDTH;
-	/** add row column width. */
-	private int addRowColumnWidth = TieConstants.DEFAULT_ADDROW_COLUMN_WIDTH;
-	/** line number column width style. */
-	private String lineNumberColumnWidthStyle = "";
-	/** add row column width style. */
-	private String addRowColumnWidthStyle = "";
+
 
 	/**
 	 * get line number column width.
@@ -338,8 +352,7 @@ public class TieWebSheetView {
 		this.addRowColumnWidthStyle = addWidthStyle;
 	}
 
-	/** allow add row in body. */
-	private boolean bodyAllowAddRows;
+
 
 	/**
 	 * is allow add row.
@@ -360,8 +373,7 @@ public class TieWebSheetView {
 		this.bodyAllowAddRows = pbodyAllowAddRows;
 	}
 
-	/** show line number in web gui. */
-	private boolean showLineNumber = false;
+
 
 	/**
 	 * is show line number.

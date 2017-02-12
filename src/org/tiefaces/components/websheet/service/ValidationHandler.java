@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 
@@ -254,7 +254,7 @@ public class ValidationHandler {
 				Map<String, Object> viewMap = FacesContext
 						.getCurrentInstance().getViewRoot().getViewMap();
 				Boolean fullvalidation = (Boolean) viewMap
-						.get("fullValidation");
+						.get(TieConstants.FULL_VALIDATION);
 				if ((fullvalidation != null) && (fullvalidation)) {
 					passEmptyCheck = false;
 				}
@@ -443,9 +443,9 @@ public class ValidationHandler {
 					FacesContext.getCurrentInstance().getViewRoot()
 							.getViewMap();
 			if (viewMap != null) {
-				Boolean flag = (Boolean) viewMap.get("fullValidation");
+				Boolean flag = (Boolean) viewMap.get(TieConstants.FULL_VALIDATION);
 				if ((flag == null) || (!flag.equals(fullflag))) {
-					viewMap.put("fullValidation", fullflag);
+					viewMap.put(TieConstants.FULL_VALIDATION, fullflag);
 				}
 			}
 		}	

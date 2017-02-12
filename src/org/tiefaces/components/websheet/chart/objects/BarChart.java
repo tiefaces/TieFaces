@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 TieFaces.
+ * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
 package org.tiefaces.components.websheet.chart.objects;
@@ -143,4 +143,14 @@ public class BarChart implements ChartObject {
 		return false;
 	}
 
+
+	/**
+	 * @return the emptySerlist
+	 */
+	public final List<CTBarSer> getEmptySerlist() {
+		return emptySerlist;
+	}
+
+	
+	
 }
