@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 import org.apache.poi.ss.util.CellReference;
 import org.tiefaces.components.websheet.utility.WebSheetUtility;
+import org.tiefaces.exception.CellFullNameException;
 
 /**
  * The Class ParsedCell.
@@ -62,9 +63,9 @@ public class ParsedCell implements Serializable {
 			this.row = ref.getRow();
 			this.col = ref.getCol();
 		} catch (Exception ex) {
-			throw new RuntimeException("Cannot parse fullname " + fullName
+			throw new CellFullNameException("Cannot parse fullname " + fullName
 					+ " to ParsedCell. Error = "
-					+ ex.getLocalizedMessage());
+					+ ex.getLocalizedMessage(), ex);
 		}
 	}
 

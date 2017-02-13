@@ -312,7 +312,6 @@ public class ConfigRange implements Serializable {
 			final ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
 			final List<RowsMapping> currentRowsMappingList) {
-		LOG.fine("build xls sheet at row : " + atRow);
 
 		if (commandList != null) {
 			for (int i = 0; i < commandList.size(); i++) {

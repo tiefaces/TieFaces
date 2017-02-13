@@ -35,6 +35,7 @@ public class ValidationHandler {
 
 	/** The parent. */
 	private TieWebSheetBean parent = null;
+	
 
 	/** logger. */
 	private static final Logger LOG = Logger
@@ -97,7 +98,7 @@ public class ValidationHandler {
 	 */
 	public void validateWithRowColInCurrentPage(final int row,
 			final int col, final boolean passEmptyCheck)
-			throws ValidatorException {
+			{
 
 		int topRow = parent.getCurrent().getCurrentTopRow();
 		int leftCol = parent.getCurrent().getCurrentLeftColumn();
@@ -118,9 +119,6 @@ public class ValidationHandler {
 		} else {
 			value = value.trim();
 		}
-
-		LOG.fine("validationwithrowcolincurrentpage row = " + row
-				+ " col = " + col + " value = " + value);
 
 		if (passEmptyCheck && value.isEmpty()) {
 			refreshAfterStatusChanged(oldStatus, false, row - topRow, col - leftCol, cell);
@@ -178,10 +176,6 @@ public class ValidationHandler {
 				refreshAfterStatusChanged(false, true, formRow,  formCol, cell);
 				FacesMessage msg = new FacesMessage(
 						FacesMessage.SEVERITY_ERROR, errmsg, errmsg);
-				LOG.log(Level.FINE,
-						"Web sheet validationHandler validate failed = "
-								+ errmsg + "; form row =" + formRow + " form col= "
-								+ formCol);
 				throw new ValidatorException(msg);
 			}
 
@@ -205,7 +199,7 @@ public class ValidationHandler {
 	 */
 	private boolean doValidation(final Object value,
 			final CellFormAttributes attr, final int rowIndex,
-			final Sheet sheet) throws ValidatorException {
+			final Sheet sheet) {
 		boolean pass;
 
 		String attrValue = attr.getValue();

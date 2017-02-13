@@ -39,14 +39,6 @@ import org.tiefaces.components.websheet.utility.WebSheetUtility;
 /**
  * Handler class for configuration setting.
  * 
- * (1). Below are old way for configuration Basically configuration are dived
- * into two parts: 1. form level 2. attributes level. attrCol is the first
- * column which indicate the attributes level starting setting attrCol into
- * variable just for easy extend the form level range attribute column starting
- * index private int attrCol = 9;
- * 
- * (2). Later on introduced new way which are defined in comments. ---- still
- * working on
  * 
  * @author Jason Jiang
  *
@@ -105,7 +97,6 @@ public class ConfigurationHandler {
 			buildSheet(sheet, sheetConfigMap,
 					parent.getCellAttributesMap());
 		}
-		LOG.fine("buildConfiguration map = " + sheetConfigMap);
 		return sheetConfigMap;
 
 	}
@@ -149,8 +140,6 @@ public class ConfigurationHandler {
 		if (maxRow < lastRow) {
 			lastRow = maxRow;
 		}
-		LOG.fine("form tabName = " + formName + " maxRow = " + maxRow);
-
 		// header range row set to 0 while column set to first column to
 		// max
 		// column (FF) e.g. $A$0 : $FF$0
@@ -637,61 +626,87 @@ public class ConfigurationHandler {
 		Comment comment = cell.getCellComment();
 		String text = comment.getString().getString();
 		String[] commentLines = text.split("\\n");
-		String newComment = null;
+		StringBuilder newComment = new StringBuilder();
 		boolean changed = false;
 		for (String commentLine : commentLines) {
 			String line = commentLine.trim();
 			if (ParserUtility.isCommandString(line)) {
-				int nameEndIndex = line.indexOf(TieConstants.ATTR_PREFIX,
-						TieConstants.COMMAND_PREFIX.length());
-				if (nameEndIndex < 0) {
-					String errMsg = "Failed to parse command line [" + line
-							+ "]. Expected '" + TieConstants.ATTR_PREFIX
-							+ "' symbol.";
-					LOG.severe(errMsg);
-					throw new IllegalStateException(errMsg);
-				}
-				String commandName = line
-						.substring(TieConstants.COMMAND_PREFIX.length(),
-								nameEndIndex)
-						.trim();
-				Map<String, String> attrMap = buildAttrMap(line,
-						nameEndIndex);
-				ConfigCommand configCommand = createConfigCommand(sheet,
-						cell, sheetRightCol, commandName, attrMap);
-				if (configCommand != null) {
-					cList.add(configCommand);
-				}
+				processCommandLine(sheet, cell, line, cList, sheetRightCol);
 				changed = true;
 			} else if (ParserUtility.isEmptyMethodString(line)
 					|| ParserUtility.isMethodString(line)) {
-				if (ParserUtility.isWidgetMethodString(line)) {
-					ParserUtility.parseWidgetAttributes(cell, line,
-							cellAttributesMap);
-				} else if (ParserUtility.isValidateMethodString(line)) {
-					ParserUtility.parseValidateAttributes(cell, line,
-							cellAttributesMap);
-				} else {
-					moveCommentToMap(cell, line,
-							cellAttributesMap.getTemplateCommentMap(),
-							false);
-				}
+				processMethodLine(cell, line, cellAttributesMap);
 				changed = true;
 			} else {
-				if (newComment == null) {
-					newComment = commentLine;
+				if (newComment.length()>0) {
+					newComment.append("\\n" + commentLine);
+				} else {
+					newComment.append(commentLine);
 				}
-				newComment += "\\n" + commentLine;
 			}
 		}
 		if (!changed) {
-			newComment = text;
-		}
-		moveCommentToMap(cell, newComment,
-				cellAttributesMap.getTemplateCommentMap(), true);
+			moveCommentToMap(cell, text,
+					cellAttributesMap.getTemplateCommentMap(), true);
+		} else {
+			moveCommentToMap(cell, newComment.toString(),
+					cellAttributesMap.getTemplateCommentMap(), true);
+		}	
 		// after saved to map. remove the cell comments.
 		cell.removeCellComment();
 		return cList;
+	}
+
+	/**
+	 * @param cell
+	 * @param line
+	 * @param cellAttributesMap
+	 */
+	private void processMethodLine(final Cell cell, String line,
+			final CellAttributesMap cellAttributesMap) {
+		if (ParserUtility.isWidgetMethodString(line)) {
+			ParserUtility.parseWidgetAttributes(cell, line,
+					cellAttributesMap);
+		} else if (ParserUtility.isValidateMethodString(line)) {
+			ParserUtility.parseValidateAttributes(cell, line,
+					cellAttributesMap);
+		} else {
+			moveCommentToMap(cell, line,
+					cellAttributesMap.getTemplateCommentMap(),
+					false);
+		}
+	}
+
+	/**
+	 * @param sheet
+	 * @param cell
+	 * @param line
+	 * @param cList
+	 * @param sheetRightCol
+	 */
+	private void processCommandLine(final Sheet sheet, final Cell cell,
+			String line, final List<ConfigCommand> cList,
+			final int sheetRightCol) {
+		int nameEndIndex = line.indexOf(TieConstants.ATTR_PREFIX,
+				TieConstants.COMMAND_PREFIX.length());
+		if (nameEndIndex < 0) {
+			String errMsg = "Failed to parse command line [" + line
+					+ "]. Expected '" + TieConstants.ATTR_PREFIX
+					+ "' symbol.";
+			LOG.severe(errMsg);
+			throw new IllegalStateException(errMsg);
+		}
+		String commandName = line
+				.substring(TieConstants.COMMAND_PREFIX.length(),
+						nameEndIndex)
+				.trim();
+		Map<String, String> attrMap = buildAttrMap(line,
+				nameEndIndex);
+		ConfigCommand configCommand = createConfigCommand(sheet,
+				cell, sheetRightCol, commandName, attrMap);
+		if (configCommand != null) {
+			cList.add(configCommand);
+		}
 	}
 
 	/**
@@ -824,8 +839,6 @@ public class ConfigurationHandler {
 		if (maxRow < lastRow) {
 			lastRow = maxRow;
 		}
-		LOG.fine("tabName = " + fcommand.getName() + " maxRow = " + maxRow);
-
 		// header range row set to 0 while column set to first column to
 		// max
 		// column (FF) e.g. $A$0 : $FF$0

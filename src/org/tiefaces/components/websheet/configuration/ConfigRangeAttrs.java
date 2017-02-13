@@ -17,7 +17,7 @@ public class ConfigRangeAttrs implements Serializable {
 	/**
 	 * serialVersionUID.
 	 */
-	private static final long serialVersionUID = -6331060203032223425L;
+	private static final long serialVersionUID = 1L;
 
 	/** first cell. */
 	private SerialCell serialFirstRowRef;

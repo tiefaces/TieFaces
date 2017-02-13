@@ -84,6 +84,7 @@ public class SerialWorkbook implements Serializable {
 			in.defaultReadObject();
 			LOG.log(Level.INFO, "serialworkbook start create woorkbook");
 			wb = WorkbookFactory.create(in);
+			recover();
 		} catch (EncryptedDocumentException | InvalidFormatException
 				| ClassNotFoundException e) {
 			LOG.log(Level.SEVERE,

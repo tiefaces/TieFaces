@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,6 +28,7 @@ import org.tiefaces.components.websheet.dataobjects.AnchorSize;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 import org.tiefaces.components.websheet.utility.CellUtility;
+import org.tiefaces.components.websheet.utility.ChartUtility;
 import org.tiefaces.components.websheet.utility.ColorUtility;
 import org.tiefaces.components.websheet.utility.PicturesUtility;
 import org.jfree.chart.ChartFactory;
@@ -658,14 +660,26 @@ public class ChartHelper {
 			List<XSSFChart> charts = drawing.getCharts();
 			if ((charts != null) && (!charts.isEmpty())) {
 				for (XSSFChart chart : charts) {
-					String chartId = sheet.getSheetName() + "!"
-							+ chart.getPackageRelationship().getId();
-					generateSingleXSSFChart(chart, chartId, sheet,
-							anchorMap, chartMap, chartDataMap);
+					generateSingleXSSFChart(chart,
+							getChartIdFromParent(chart,
+									sheet.getSheetName()),
+							sheet, anchorMap, chartMap, chartDataMap);
 				}
 			}
 		}
 
+	}
+
+	private final String getChartIdFromParent(XSSFChart chart,
+			String sheetName) {
+		if (chart.getParent() != null) {
+			for (RelationPart rp : chart.getParent().getRelationParts()) {
+				if (rp.getDocumentPart() == chart) {
+					return sheetName + "!" + rp.getRelationship().getId();
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -715,7 +729,7 @@ public class ChartHelper {
 			final Map<String, BufferedImage> chartMap,
 			final Map<String, ChartData> chartDataMap) {
 		ClientAnchor anchor;
-		if (chartId != null) {
+		try {
 			anchor = anchorMap.get(chartId);
 			if (anchor != null) {
 				ChartData chartData = ChartUtility
@@ -731,6 +745,9 @@ public class ChartHelper {
 					chartMap.put(chartId, img);
 				}
 			}
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "generate chart for " + chartId
+					+ " error = " + ex.getLocalizedMessage(), ex);
 		}
 	}
 

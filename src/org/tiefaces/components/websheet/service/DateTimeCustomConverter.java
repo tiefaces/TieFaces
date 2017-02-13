@@ -39,7 +39,7 @@ public class DateTimeCustomConverter implements Converter {
 		try {
 			return formatter.parse(value);
 		} catch (Exception e) {
-			throw new ConverterException(e);
+			throw new ConverterException("ConverterException = "+e.getLocalizedMessage(), e);
 		}
 	}
 

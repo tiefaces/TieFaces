@@ -40,7 +40,7 @@ public class SerialWorkbookTest {
 		//SerializationUtils.serialize(swb);
 		SerialWorkbook copy =
 				(SerialWorkbook) SerializationUtils.clone(swb);
-		copy.recover();
+		//copy.recover();
 
 		assertEquals(swb.getWb().getNumberOfSheets(), copy.getWb()
 				.getNumberOfSheets());

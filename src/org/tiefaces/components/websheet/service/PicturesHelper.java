@@ -47,8 +47,8 @@ public class PicturesHelper {
 	 *            the wb
 	 * @return the pictrues map
 	 */
-	public final Map<String, Picture> getPictruesMap(final Workbook wb) {
-		return PicturesUtility.getPictruesMap(wb);
+	public final void getPictruesMap(final Workbook wb, final Map<String, Picture> picMap) {
+		PicturesUtility.getPictruesMap(wb, picMap);
 	}
 
 	/**

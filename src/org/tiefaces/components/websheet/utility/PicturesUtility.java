@@ -5,7 +5,6 @@
 
 package org.tiefaces.components.websheet.utility;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -56,20 +55,14 @@ public final class PicturesUtility {
 	 *            the wb
 	 * @return the pictrues map
 	 */
-	public static Map<String, Picture> getPictruesMap(final Workbook wb) {
-		try {
-			if (wb instanceof HSSFWorkbook) {
-				return getHSSFPictruesMap((HSSFWorkbook) wb);
-			} else if (wb instanceof XSSFWorkbook) {
-				return getXSSFPictruesMap((XSSFWorkbook) wb);
-			}
-		} catch (Exception e) {
-			LOG.log(Level.SEVERE,
-					"Web Form getPictruesMap Error Exception = "
-							+ e.getLocalizedMessage(),
-					e);
+	public static void getPictruesMap(final Workbook wb,
+			final Map<String, Picture> picMap) {
+		if (wb instanceof HSSFWorkbook) {
+			getHSSFPictruesMap((HSSFWorkbook) wb, picMap);
+		} else if (wb instanceof XSSFWorkbook) {
+			getXSSFPictruesMap((XSSFWorkbook) wb, picMap);
 		}
-		return null;
+		return;
 	}
 
 	/**
@@ -79,13 +72,13 @@ public final class PicturesUtility {
 	 *            the wb
 	 * @return the HSSF pictrues map
 	 */
-	private static Map<String, Picture> getHSSFPictruesMap(
-			final HSSFWorkbook wb) {
+	private static void getHSSFPictruesMap(final HSSFWorkbook wb,
+			final Map<String, Picture> picMap) {
 
-		Map<String, Picture> picMap = new HashMap<>();
+		picMap.clear();
 		List<HSSFPictureData> pictures = wb.getAllPictures();
 		if (pictures.isEmpty()) {
-			return null;
+			return;
 		}
 		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 			HSSFSheet sheet = wb.getSheetAt(i);
@@ -102,8 +95,7 @@ public final class PicturesUtility {
 				}
 			}
 		}
-		LOG.fine(" getHSSFPicturesMap = " + picMap);
-		return picMap;
+		return;
 
 	}
 
@@ -114,31 +106,39 @@ public final class PicturesUtility {
 	 *            the wb
 	 * @return the XSSF pictrues map
 	 */
-	private static Map<String, Picture> getXSSFPictruesMap(
-			final XSSFWorkbook wb) {
-		Map<String, Picture> picMap = new HashMap<String, Picture>();
+	private static void getXSSFPictruesMap(final XSSFWorkbook wb,
+			final Map<String, Picture> picMap) {
 
+		picMap.clear();
 		List<XSSFPictureData> pictures = wb.getAllPictures();
 		if (pictures.isEmpty()) {
-			return null;
+			return;
 		}
 		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 			XSSFSheet sheet = wb.getSheetAt(i);
-
 			for (POIXMLDocumentPart dr : sheet.getRelations()) {
-				indexPictureInMap(picMap, sheet, dr);
+				try {
+					indexPictureInMap(picMap, sheet, dr);
+				} catch (Exception ex) {
+					LOG.log(Level.SEVERE, "Load Picture error = "
+							+ ex.getLocalizedMessage(), ex);
+				}
 			}
 		}
 
-		return picMap;
+		return;
 
 	}
 
 	/**
 	 * save pciture in map with index.
-	 * @param picMap pciture map.
-	 * @param sheet sheet. 
-	 * @param dr documentme part.
+	 * 
+	 * @param picMap
+	 *            pciture map.
+	 * @param sheet
+	 *            sheet.
+	 * @param dr
+	 *            documentme part.
 	 */
 	private static void indexPictureInMap(Map<String, Picture> picMap,
 			XSSFSheet sheet, POIXMLDocumentPart dr) {
@@ -148,14 +148,11 @@ public final class PicturesUtility {
 			for (XSSFShape shape : shapes) {
 				if (shape instanceof XSSFPicture) {
 					XSSFPicture pic = (XSSFPicture) shape;
-					XSSFClientAnchor anchor = pic
-							.getPreferredSize();
+					XSSFClientAnchor anchor = pic.getPreferredSize();
 					CTMarker ctMarker = anchor.getFrom();
-					String picIndex = WebSheetUtility
-							.getFullCellRefName(
-									sheet.getSheetName(),
-									ctMarker.getCol(),
-									ctMarker.getRow());
+					String picIndex = WebSheetUtility.getFullCellRefName(
+							sheet.getSheetName(), ctMarker.getCol(),
+							ctMarker.getRow());
 					picMap.put(picIndex, pic);
 				}
 			}

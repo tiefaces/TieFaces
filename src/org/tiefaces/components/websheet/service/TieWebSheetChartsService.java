@@ -75,8 +75,6 @@ public class TieWebSheetChartsService implements Serializable {
 			ImageIO.write(bufferedImg, "png", os);
 			FacesContext.getCurrentInstance().getExternalContext()
 					.getSessionMap().remove(chartId);
-			LOG.fine(" return real chart picture and remove session chartId = "
-					+ chartId);
 			return new DefaultStreamedContent(new ByteArrayInputStream(
 					os.toByteArray()), "image/png");
 		}

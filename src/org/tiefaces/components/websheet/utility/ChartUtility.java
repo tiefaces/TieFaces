@@ -2,7 +2,7 @@
  * Copyright 2017 TieFaces.
  * Licensed under MIT
  */
-package org.tiefaces.components.websheet.chart;
+package org.tiefaces.components.websheet.utility;
 
 import java.awt.BasicStroke;
 import java.util.List;
@@ -24,9 +24,12 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.tiefaces.common.AppUtils;
+import org.tiefaces.components.websheet.chart.ChartAxis;
+import org.tiefaces.components.websheet.chart.ChartData;
+import org.tiefaces.components.websheet.chart.ChartType;
+import org.tiefaces.components.websheet.chart.ChartsData;
 import org.tiefaces.components.websheet.chart.objects.ChartObject;
-import org.tiefaces.components.websheet.utility.ColorUtility;
-import org.tiefaces.components.websheet.utility.WebSheetUtility;
+import org.tiefaces.exception.IllegalChartException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -138,7 +141,7 @@ public final class ChartUtility {
 		CTChart ctChart = chart.getCTChart();
 		ChartType chartType = ChartUtility.getChartType(ctChart);
 		if (chartType == null) {
-			return chartData;
+			throw new IllegalChartException("Unknown chart type");
 		}
 		
 		chartData.setBgColor(
@@ -160,9 +163,11 @@ public final class ChartUtility {
 
 		ChartObject ctObj = chartType.createChartObject();
 
-		if (ctObj != null) {
-			setUpChartData(chartData, ctChart, themeTable, ctObj);
+		if (ctObj == null) {
+			throw new IllegalChartException("Cannot create chart object.");
 		}
+			
+		setUpChartData(chartData, ctChart, themeTable, ctObj);
 
 		return chartData;
 	}

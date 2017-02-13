@@ -135,8 +135,6 @@ public class ChartData {
 				for (int col = region.getFirstColumn(); col <= region
 						.getLastColumn(); col++) {
 					cells.add(new ParsedCell(sheetName, row, col));
-					LOG.fine(" add category sheetName = " + sheetName
-							+ " row = " + row + " col = " + col);
 				}
 			}
 

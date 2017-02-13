@@ -29,10 +29,6 @@ public class CachedCells implements Serializable {
 	 */
 	private static final long serialVersionUID = 916959757743324812L;
 
-	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			CachedCells.class.getName());
-
 	/** The cached map. */
 	private HashMap<Cell, FormulaMapping> cachedMap = new HashMap<>();
 
@@ -47,7 +43,6 @@ public class CachedCells implements Serializable {
 	 */
 	public CachedCells(final TieWebSheetBean pparent) {
 		this.parent = pparent;
-		LOG.fine("CachedCells Constructor");
 	}
 
 	/**
@@ -74,8 +69,6 @@ public class CachedCells implements Serializable {
 			}
 			f.setValue(value);
 			map.put(cell, f);
-			LOG.fine("put cache key= " + cell.getAddress() + " value = "
-					+ value);
 		}
 	}
 
@@ -103,9 +96,6 @@ public class CachedCells implements Serializable {
 					parent.getDataFormatter());
 			f.setValue(value);
 			map.put(cell, f);
-			LOG.fine("put cache key= " + cell.getAddress()
-					+ " origin formula = " + originFormula + " value = "
-					+ value);
 		}
 	}
 
@@ -125,7 +115,6 @@ public class CachedCells implements Serializable {
 	 */
 	public final void clear() {
 		cachedMap.clear();
-		LOG.fine("cache cleared");
 	}
 
 	/**

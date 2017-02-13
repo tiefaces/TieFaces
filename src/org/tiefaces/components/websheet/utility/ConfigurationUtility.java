@@ -42,6 +42,7 @@ public final class ConfigurationUtility {
 	static final Logger LOG = Logger
 			.getLogger(ConfigurationUtility.class.getName());
 
+	
 	/**
 	 * hide constructor.
 	 */

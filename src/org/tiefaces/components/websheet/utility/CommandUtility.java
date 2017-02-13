@@ -183,7 +183,7 @@ public final class CommandUtility {
 			final Collection lastCollection, final EachCommand eachCommand,
 			final int lastCollectionIndex,
 			final Map<String, Object> dataContext)
-			throws EvaluationException, InstantiationException,
+			throws InstantiationException,
 			IllegalAccessException {
 		if (!(lastCollection instanceof List)) {
 			throw new EvaluationException(eachCommand.getVar()

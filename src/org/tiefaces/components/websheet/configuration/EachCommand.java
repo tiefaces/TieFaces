@@ -5,7 +5,6 @@
 package org.tiefaces.components.websheet.configuration;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import org.tiefaces.components.websheet.utility.ConfigurationUtility;
  *
  */
 public class EachCommand extends ConfigCommand  implements Serializable  {
+
 
 	/** logger. */
 	private static final Logger LOG = Logger.getLogger(
@@ -208,15 +208,6 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 				.transformToCollectionObject(configBuildRef.getEngine(),
 						items, context);
 
-		int index = 0;
-		ExpressionEngine selectEngine = null;
-		if (select != null) {
-			selectEngine = new ExpressionEngine(select);
-		}
-
-		int insertPosition = atRow;
-		List<RowsMapping> commandRowsMappingList = new ArrayList<RowsMapping>();
-
 		String objClassName = this.getClassName();
 
 		if (objClassName == null) {
@@ -234,6 +225,41 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			}
 		}
 
+		
+		int insertPosition = buildEachObjects(fullName, configBuildRef,
+				atRow, context, currentRowsMappingList, itemsCollection,
+				objClassName);
+
+		return insertPosition - atRow;
+	}
+
+	/**
+	 * @param fullName
+	 * @param configBuildRef
+	 * @param atRow
+	 * @param context
+	 * @param currentRowsMappingList
+	 * @param itemsCollection
+	 * @param selectEngine
+	 * @param commandRowsMappingList
+	 * @param objClassName
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private int buildEachObjects(String fullName,
+			final ConfigBuildRef configBuildRef, final int atRow,
+			final Map<String, Object> context,
+			final List<RowsMapping> currentRowsMappingList,
+			Collection itemsCollection,
+			String objClassName) {
+		
+		int index = 0;
+		int insertPosition = atRow;
+
+		ExpressionEngine selectEngine = null;
+		if (select != null) {
+			selectEngine = new ExpressionEngine(select);
+		}
 		// loop through each object in the collection
 		for (Object obj : itemsCollection) {
 			// gather and cache object class name which used for add row
@@ -255,7 +281,6 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 					.buildCurrentRange(this.getConfigRange(),
 							configBuildRef.getSheet(), insertPosition);
 			currentRowsMappingList.add(unitRowsMapping);
-			commandRowsMappingList.add(unitRowsMapping);
 
 			String unitFullName = fullName + "." + index;
 			currentRange.getAttrs().setAllowAdd(false);
@@ -276,8 +301,7 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			index++;
 			context.remove(var);
 		}
-
-		return insertPosition - atRow;
+		return insertPosition;
 	}
 
 	/* (non-Javadoc)

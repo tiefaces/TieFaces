@@ -33,6 +33,7 @@ import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.TieWebSheetView.TabModel;
 import org.tiefaces.components.websheet.configuration.ConfigBuildRef;
 import org.tiefaces.components.websheet.configuration.ConfigurationHandler;
+import org.tiefaces.components.websheet.configuration.RangeBuildRef;
 import org.tiefaces.components.websheet.configuration.RowsMapping;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
@@ -97,6 +98,9 @@ public class WebSheetLoader implements Serializable {
 				WebSheetUtility
 						.pixel2WidthUnits(parent.getLineNumberColumnWidth()
 								+ parent.getAddRowColumnWidth()));
+		
+		RangeBuildRef rangeBuildRef = new RangeBuildRef(left, right, totalWidth, sheet1);
+		
 		LOG.fine("totalwidth = " + totalWidth);
 		String formWidthStyle = sheetConfig.getFormWidth();
 		if ((formWidthStyle == null) || (formWidthStyle.isEmpty())) {
@@ -128,16 +132,16 @@ public class WebSheetLoader implements Serializable {
 		if (top < 0) {
 			// this is blank configuration. set column letter as header
 			parent.getHeaderRows().add(loadHeaderRowWithoutConfigurationTab(
-					sheet1, left, right, totalWidth, true));
+					rangeBuildRef, true));
 			// set showlinenumber to true as default
 			parent.setShowLineNumber(true);
 		} else {
 			parent.getHeaderRows().add(loadHeaderRowWithoutConfigurationTab(
-					sheet1, left, right, totalWidth, false));
+					rangeBuildRef, false));
 			for (int i = top; i <= bottom; i++) {
 				parent.getHeaderRows()
 						.add(loadHeaderRowWithConfigurationTab(sheetConfig,
-								sheet1, i, left, right, totalWidth,
+								rangeBuildRef, i,
 								cellRangeMap, skippedRegionCells));
 
 			}
@@ -164,9 +168,12 @@ public class WebSheetLoader implements Serializable {
 	 * @return the list
 	 */
 	private List<HeaderCell> loadHeaderRowWithoutConfigurationTab(
-			final Sheet sheet1, final int firstCol, final int lastCol,
-			final double totalWidth, final boolean rendered) {
+			final RangeBuildRef rangeBuildRef, final boolean rendered) {
 
+		int firstCol = rangeBuildRef.getLeft();
+		int lastCol = rangeBuildRef.getRight();
+		double totalWidth = (double) rangeBuildRef.getTotalWidth();
+		Sheet sheet1 = rangeBuildRef.getSheet();
 		List<HeaderCell> headercells = new ArrayList<>();
 		for (int i = firstCol; i <= lastCol; i++) {
 			if (!sheet1.isColumnHidden(i)) {
@@ -264,12 +271,16 @@ public class WebSheetLoader implements Serializable {
 	 * @return the list
 	 */
 	private List<HeaderCell> loadHeaderRowWithConfigurationTab(
-			final SheetConfiguration sheetConfig, final Sheet sheet1,
-			final int currentRow, final int left, final int right,
-			final double totalWidth,
+			final SheetConfiguration sheetConfig, 
+			final RangeBuildRef rangeBuildRef,
+			final int currentRow, 
 			final Map<String, CellRangeAddress> cellRangeMap,
 			final List<String> skippedRegionCells) {
 
+		Sheet sheet1 = rangeBuildRef.getSheet();
+		int left = rangeBuildRef.getLeft();
+		int right = rangeBuildRef.getRight();
+		double totalWidth = (double) rangeBuildRef.getTotalWidth();
 		Row row = sheet1.getRow(currentRow);
 		List<HeaderCell> headercells = new ArrayList<>();
 		for (int cindex = left; cindex <= right; cindex++) {

@@ -181,8 +181,6 @@ public class CellMap implements Serializable, java.util.Map {
 			if (sessionMap.get(pictureViewId) == null) {
 				sessionMap.put(pictureViewId, parent.getPicturesMap()
 						.get(pictureId).getPictureData());
-				LOG.info("load picture put session map id = "
-						+ pictureViewId);
 			}
 			return pictureViewId;
 		} else {
@@ -215,8 +213,6 @@ public class CellMap implements Serializable, java.util.Map {
 				if (sessionMap.get(chartViewId) == null) {
 					sessionMap.put(chartViewId,
 							parent.getCharsData().getChartsMap().get(chartId));
-					LOG.fine("load chart put session map id = "
-							+ chartViewId);
 				}
 			}
 			return chartViewId;
@@ -256,10 +252,6 @@ public class CellMap implements Serializable, java.util.Map {
 			} else {
 				result = CellUtility.getCellValueWithoutFormat(poiCell);
 			}
-			LOG.fine("Web Form CellMap getCellValue row = "
-					+ mkey.getRowIndex() + " col = " + mkey.getColIndex()
-					+ " format = " + mkey.isFormatted() + " result = "
-					+ result);
 
 		} catch (Exception ex) {
 			LOG.log(Level.SEVERE, "Web Form CellMap get value error="
@@ -292,10 +284,6 @@ public class CellMap implements Serializable, java.util.Map {
 						mkey.getColIndex());
 		String newValue = assembleNewValue(value, facesCell);
 		if (newValue != null && !newValue.equals(oldValue)) {
-			LOG.fine("Web Form CellMap setCellValue Old: " + oldValue
-					+ ", New: " + newValue + ", row =" + mkey.getRowIndex()
-					+ " col =" + mkey.getColIndex() + " inputtype = "
-					+ facesCell.getInputType());
 			CellUtility.setCellValue(poiCell, newValue);
 			if (facesCell.isHasSaveAttr()) {
 				parent.getCellHelper().saveDataInContext(poiCell, newValue);

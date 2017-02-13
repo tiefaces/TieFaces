@@ -78,12 +78,10 @@ public final class ColorUtility {
 		if (colorFill != null) {
 			CTSchemeColor ctsColor = colorFill.getSchemeClr();
 			if (ctsColor != null) {
-				LOG.fine("get background color from scheme");
 				return getXColorFromSchemeClr(ctsColor, themeTable);
 			} else {
 				CTSRgbColor ctrColor = colorFill.getSrgbClr();
 				if (ctrColor != null) {
-					LOG.fine("get background color from rgb");
 					return getXColorFromRgbClr(ctrColor);
 				}
 			}
@@ -305,8 +303,6 @@ public final class ColorUtility {
 		}
 		String schema = AUTOCOLORNAME + reminder;
 		double tint = getAutomaticTint(index);
-		LOG.fine(" getXColor automaic index = " + index + " schema = "
-				+ schema + " tint = " + tint);
 		return getXColorWithSchema(schema, tint, null, themeTable);
 	}
 

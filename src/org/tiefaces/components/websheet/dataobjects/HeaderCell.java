@@ -6,7 +6,6 @@
 package org.tiefaces.components.websheet.dataobjects;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 /**
  * Header cell object used for Primefaces datatable header.
@@ -19,10 +18,6 @@ public class HeaderCell implements Serializable {
 	 * serialVersionUID.
 	 */
 	private static final long serialVersionUID = 1669739622422183590L;
-
-	/** logger. */
-	private static final Logger LOG  = Logger.getLogger(
-			HeaderCell.class.getName());
 	
 	/** The rowspan. */
 	private String rowspan; // cell row span attribute
@@ -75,11 +70,6 @@ public class HeaderCell implements Serializable {
 		this.cellValue = pcellValue;
 		this.rendered = prendered;
 		this.columnRendered = pcolumnRendered;
-		LOG.fine("header cell construction: rowspan = " + prowspan
-				+ " colspan=" + pcolspan + " style=" + pstyle
-				+ " columnStyle=" + pcolumnStyle + " cellValue="
-				+ pcellValue + " rendered = " + prendered
-				+ " columnRendered = " + pcolumnRendered);
 	}
 
 	/**

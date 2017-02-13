@@ -83,7 +83,6 @@ public final class ShiftFormulaUtility {
 	public static int getFirstSupportedRowNumFromPtg(final Object ptg) {
 
 		int rCode = -1;
-
 		if (ptg instanceof RefPtgBase) {
 			if (!(ptg instanceof Ref3DPxg) && !(ptg instanceof Ref3DPtg)) {
 				rCode = ((RefPtgBase) ptg).getRow();

@@ -57,7 +57,7 @@ public class EvaluationException extends RuntimeException {
 	 *            the message
 	 */
 	public EvaluationException(final String message) {
-		super(message);
+		super("Evaluation exception = "+message);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class EvaluationException extends RuntimeException {
 	 *            the cause
 	 */
 	public EvaluationException(final Throwable cause) {
-		super(cause);
+		super("Evaluation exception = "+cause.getLocalizedMessage(), cause);
 	}
 
  

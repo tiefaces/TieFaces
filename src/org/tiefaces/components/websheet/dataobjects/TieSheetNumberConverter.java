@@ -71,8 +71,8 @@ public class TieSheetNumberConverter implements Converter {
 	 * @return the string
 	 */
 	private String fmtNumber(final double d) {
-		if (d == (long) d) {
-			return String.format("%d", (long) d);
+		if (Double.compare(d % 1,0)==0) {
+			return String.format("%d", (int) d);
 		} else {
 			return String.format("%.2f", d);
 		}
