@@ -388,11 +388,18 @@ public class ConfigRange implements Serializable {
 	}
 
 	/**
+	 * Builds the cells for row.
+	 *
 	 * @param row
+	 *            the row
 	 * @param fullName
+	 *            the full name
 	 * @param context
+	 *            the context
 	 * @param configBuildRef
+	 *            the config build ref
 	 * @param shiftFormulaRef
+	 *            the shift formula ref
 	 */
 	private void buildCellsForRow(Row row, final String fullName,
 			final Map<String, Object> context,
@@ -409,10 +416,16 @@ public class ConfigRange implements Serializable {
 	}
 
 	/**
+	 * Builds the single cell.
+	 *
 	 * @param cell
+	 *            the cell
 	 * @param context
+	 *            the context
 	 * @param configBuildRef
+	 *            the config build ref
 	 * @param shiftFormulaRef
+	 *            the shift formula ref
 	 */
 	private void buildSingleCell(Cell cell,
 			final Map<String, Object> context,

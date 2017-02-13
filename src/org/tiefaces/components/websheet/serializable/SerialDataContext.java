@@ -41,7 +41,7 @@ public class SerialDataContext implements Serializable {
 	private String mapToJson;
 	
 	/**
-	 * 
+	 * Instantiates a new serial data context.
 	 */
 	public SerialDataContext() {
 		super();
@@ -94,6 +94,8 @@ public class SerialDataContext implements Serializable {
 	}
 
 	/**
+	 * Gets the data context.
+	 *
 	 * @return the dataContext
 	 */
 	public final Map<String, Object> getDataContext() {
@@ -101,7 +103,10 @@ public class SerialDataContext implements Serializable {
 	}
 
 	/**
-	 * @param dataContext the dataContext to set
+	 * Sets the data context.
+	 *
+	 * @param dataContext
+	 *            the dataContext to set
 	 */
 	public final void setDataContext(Map<String, Object> dataContext) {
 		this.dataContext = dataContext;

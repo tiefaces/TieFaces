@@ -39,7 +39,7 @@ public class DateTimeCustomConverter implements Converter {
 		try {
 			return formatter.parse(value);
 		} catch (Exception e) {
-			throw new ConverterException(e.getLocalizedMessage());
+			throw new ConverterException(e);
 		}
 	}
 
@@ -50,6 +50,7 @@ public class DateTimeCustomConverter implements Converter {
 	 * javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext
 	 * , javax.faces.component.UIComponent, java.lang.Object)
 	 */
+	@Override
 	public final String getAsString(final FacesContext context,
 			final UIComponent component, final Object value) {
 		if (value == null) {
@@ -70,7 +71,7 @@ public class DateTimeCustomConverter implements Converter {
 			return dateFormat.format(value);
 
 		} catch (Exception e) {
-			throw new ConverterException(e.getLocalizedMessage());
+			throw new ConverterException(e);
 		}
 	}
 

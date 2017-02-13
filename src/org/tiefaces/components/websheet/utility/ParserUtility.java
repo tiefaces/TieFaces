@@ -32,6 +32,7 @@ public final class ParserUtility {
 	 * Instantiates a new cell helper.
 	 */
 	private ParserUtility() {
+		// not called.
 	}
 
 	/**

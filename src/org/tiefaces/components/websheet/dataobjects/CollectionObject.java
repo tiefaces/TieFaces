@@ -19,14 +19,19 @@ import org.tiefaces.components.websheet.configuration.EachCommand;
 public class CollectionObject  {
 	
 	
+	/** The last collection. */
 	@SuppressWarnings("rawtypes")
 	private Collection lastCollection;
 	
+	/** The last collection index. */
 	private int lastCollectionIndex = -1;
 	
+	/** The each command. */
 	private EachCommand eachCommand;
 
 	/**
+	 * Gets the last collection.
+	 *
 	 * @return the lastCollection
 	 */
 	@SuppressWarnings("rawtypes")
@@ -35,7 +40,10 @@ public class CollectionObject  {
 	}
 
 	/**
-	 * @param lastCollection the lastCollection to set
+	 * Sets the last collection.
+	 *
+	 * @param lastCollection
+	 *            the lastCollection to set
 	 */
 	@SuppressWarnings("rawtypes")
 	public final void setLastCollection(Collection lastCollection) {
@@ -43,6 +51,8 @@ public class CollectionObject  {
 	}
 
 	/**
+	 * Gets the last collection index.
+	 *
 	 * @return the lastCollectionIndex
 	 */
 	public final int getLastCollectionIndex() {
@@ -50,13 +60,18 @@ public class CollectionObject  {
 	}
 
 	/**
-	 * @param lastCollectionIndex the lastCollectionIndex to set
+	 * Sets the last collection index.
+	 *
+	 * @param lastCollectionIndex
+	 *            the lastCollectionIndex to set
 	 */
 	public final void setLastCollectionIndex(int lastCollectionIndex) {
 		this.lastCollectionIndex = lastCollectionIndex;
 	}
 
 	/**
+	 * Gets the each command.
+	 *
 	 * @return the eachCommand
 	 */
 	public final EachCommand getEachCommand() {
@@ -64,7 +79,10 @@ public class CollectionObject  {
 	}
 
 	/**
-	 * @param eachCommand the eachCommand to set
+	 * Sets the each command.
+	 *
+	 * @param eachCommand
+	 *            the eachCommand to set
 	 */
 	public final void setEachCommand(EachCommand eachCommand) {
 		this.eachCommand = eachCommand;

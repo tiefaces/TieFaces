@@ -39,7 +39,7 @@ public class SerialCellMap implements Serializable {
 	private List<SerialKey> saveList;
 
 	/**
-	 * 
+	 * Instantiates a new serial cell map.
 	 */
 	public SerialCellMap() {
 		super();
@@ -89,6 +89,8 @@ public class SerialCellMap implements Serializable {
 	}
 
 	/**
+	 * Gets the map.
+	 *
 	 * @return the map
 	 */
 	public Map<Cell, String> getMap() {
@@ -99,6 +101,8 @@ public class SerialCellMap implements Serializable {
 	}
 
 	/**
+	 * Sets the map.
+	 *
 	 * @param pmap
 	 *            the map to set
 	 */

@@ -144,13 +144,21 @@ public final class ShiftFormulaUtility {
 	}
 
 	/**
+	 * Convert ptg for watch list.
+	 *
 	 * @param ptgs
+	 *            the ptgs
 	 * @param position
+	 *            the position
 	 * @param shiftFormulaRef
+	 *            the shift formula ref
 	 * @param ptg
+	 *            the ptg
 	 * @param originalOperandClass
+	 *            the original operand class
 	 * @param currentRow
-	 * @return
+	 *            the current row
+	 * @return the ptg[]
 	 */
 	private static Ptg[] convertPtgForWatchList(final Ptg[] ptgs,
 			final int position, final ShiftFormulaRef shiftFormulaRef,
@@ -168,7 +176,8 @@ public final class ShiftFormulaUtility {
 			// change ptg one to one
 			// return changed ptg
 			return singlePtg(
-					fixupRefRelativeRowOneToOne(ptg, rowlist.get(0).getRow()),
+					fixupRefRelativeRowOneToOne(ptg,
+							rowlist.get(0).getRow()),
 					originalOperandClass, -1);
 		}
 		shiftFormulaRef.setFormulaChanged(rowlist.size());
@@ -187,21 +196,22 @@ public final class ShiftFormulaUtility {
 	 *            the formula changed
 	 * @return the ptg[]
 	 */
-	private static Ptg[] singlePtg(Object ptg,
+	private static Ptg[] singlePtg(final Object ptg,
 			final byte originalOperandClass, final int formulaChanged) {
 		Ptg[] newPtg = new Ptg[1];
 		if (originalOperandClass != (-1)) {
 			((Ptg) ptg).setClass(originalOperandClass);
 		}
+		Object ptgAfter = ptg;
 		if (ptg instanceof FuncVarPtg) {
 			FuncVarPtg fptg = (FuncVarPtg) ptg;
 			if ((formulaChanged > 0)
 					&& (fptg.getNumberOfOperands() != formulaChanged)) {
-				ptg = FuncVarPtg.create(((FuncVarPtg) ptg).getName(),
+				ptgAfter = FuncVarPtg.create(((FuncVarPtg) ptg).getName(),
 						formulaChanged);
 			}
 		}
-		newPtg[0] = (Ptg) ptg;
+		newPtg[0] = (Ptg) ptgAfter;
 		return newPtg;
 	}
 
@@ -232,26 +242,28 @@ public final class ShiftFormulaUtility {
 
 	/**
 	 * assemble rowslist from rowsmapping.
-	 * 
+	 *
 	 * @param all
 	 *            list all rows.
 	 * @param current
 	 *            current row list.
-	 * @return
+	 * @return the list
 	 */
-	private static List<SerialRow> assembleRowsListFromRowsMapping(List<SerialRow> all,
-			List<SerialRow> current) {
+	private static List<SerialRow> assembleRowsListFromRowsMapping(
+			final List<SerialRow> all, final List<SerialRow> current) {
+		List<SerialRow> list; 
 		if (all == null) {
-			all = new ArrayList<>();
-			all.addAll(current);
+			list = new ArrayList<>();
+			list.addAll(current);
 		} else {
+			list = all;
 			for (SerialRow row : current) {
 				if (!all.contains(row)) {
-					all.addAll(current);
+					list.add(row);
 				}
 			}
 		}
-		return all;
+		return list;
 	}
 
 	/**

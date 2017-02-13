@@ -43,7 +43,7 @@ public class SerialWorkbook implements Serializable {
 	private Map<String, SheetConfiguration> sheetConfigMap;
 
 	/**
-	 * 
+	 * Instantiates a new serial workbook.
 	 */
 	public SerialWorkbook() {
 		super();
@@ -113,6 +113,8 @@ public class SerialWorkbook implements Serializable {
 	}
 
 	/**
+	 * Gets the sheet config map.
+	 *
 	 * @return the sheetConfigMap
 	 */
 	public final Map<String, SheetConfiguration> getSheetConfigMap() {
@@ -120,6 +122,8 @@ public class SerialWorkbook implements Serializable {
 	}
 
 	/**
+	 * Sets the sheet config map.
+	 *
 	 * @param psheetConfigMap
 	 *            the sheetConfigMap to set
 	 */
@@ -130,9 +134,6 @@ public class SerialWorkbook implements Serializable {
 
 	/**
 	 * recover the cell reference to the sheet.
-	 * 
-	 * @param wb
-	 *            workbook.
 	 */
 	public void recover() {
 		Map<String, SheetConfiguration> map = this.getSheetConfigMap();

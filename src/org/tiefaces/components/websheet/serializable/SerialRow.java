@@ -40,7 +40,7 @@ public class SerialRow implements Serializable {
 	private int rowIndex = -1;
 
 	/**
-	 * 
+	 * Instantiates a new serial row.
 	 */
 	public SerialRow() {
 		this(null);
@@ -109,6 +109,8 @@ public class SerialRow implements Serializable {
 	}
 
 	/**
+	 * Gets the row.
+	 *
 	 * @return the row
 	 */
 	public final Row getRow() {
@@ -116,6 +118,8 @@ public class SerialRow implements Serializable {
 	}
 
 	/**
+	 * Sets the row.
+	 *
 	 * @param prow
 	 *            the row to set
 	 */
@@ -124,6 +128,8 @@ public class SerialRow implements Serializable {
 	}
 
 	/**
+	 * Gets the row index.
+	 *
 	 * @return the rowIndex
 	 */
 	public final int getRowIndex() {
@@ -131,6 +137,8 @@ public class SerialRow implements Serializable {
 	}
 
 	/**
+	 * Sets the row index.
+	 *
 	 * @param prowIndex
 	 *            the rowIndex to set
 	 */
@@ -153,6 +161,9 @@ public class SerialRow implements Serializable {
 
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public final String toString() {
 		StringBuilder sb = new StringBuilder();

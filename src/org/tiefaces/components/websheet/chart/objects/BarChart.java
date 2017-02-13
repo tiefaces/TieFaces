@@ -145,6 +145,8 @@ public class BarChart implements ChartObject {
 
 
 	/**
+	 * Gets the empty serlist.
+	 *
 	 * @return the emptySerlist
 	 */
 	public final List<CTBarSer> getEmptySerlist() {

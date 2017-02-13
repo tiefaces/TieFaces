@@ -290,6 +290,33 @@ public class CellMap implements Serializable, java.util.Map {
 		FacesCell facesCell = parent.getCellHelper()
 				.getFacesCellWithRowColFromCurrentPage(mkey.getRowIndex(),
 						mkey.getColIndex());
+		String newValue = assembleNewValue(value, facesCell);
+		if (newValue != null && !newValue.equals(oldValue)) {
+			LOG.fine("Web Form CellMap setCellValue Old: " + oldValue
+					+ ", New: " + newValue + ", row =" + mkey.getRowIndex()
+					+ " col =" + mkey.getColIndex() + " inputtype = "
+					+ facesCell.getInputType());
+			CellUtility.setCellValue(poiCell, newValue);
+			if (facesCell.isHasSaveAttr()) {
+				parent.getCellHelper().saveDataInContext(poiCell, newValue);
+			}
+			parent.getCellHelper().reCalc();
+		}
+
+		return value;
+	}
+
+	/**
+	 * Assemble new value.
+	 *
+	 * @param value
+	 *            the value
+	 * @param facesCell
+	 *            the faces cell
+	 * @return the string
+	 */
+	private String assembleNewValue(final Object value,
+			final FacesCell facesCell) {
 		String newValue;
 		if ((value instanceof java.util.Date)
 				&& (facesCell.getDatePattern() != null)
@@ -305,18 +332,6 @@ public class CellMap implements Serializable, java.util.Map {
 			// remove "\r" because excel issue
 			newValue = newValue.replace("\r\n", "\n");
 		}
-		if (newValue != null && !newValue.equals(oldValue)) {
-			LOG.fine("Web Form CellMap setCellValue Old: " + oldValue
-					+ ", New: " + newValue + ", row =" + mkey.getRowIndex()
-					+ " col =" + mkey.getColIndex() + " inputtype = "
-					+ facesCell.getInputType());
-			CellUtility.setCellValue(poiCell, newValue);
-			if (facesCell.isHasSaveAttr()) {
-				parent.getCellHelper().saveDataInContext(poiCell, newValue);
-			}
-			parent.getCellHelper().reCalc();
-		}
-
-		return value;
+		return newValue;
 	}
 }

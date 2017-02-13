@@ -140,7 +140,7 @@ public class SheetConfiguration implements Serializable {
 			.getLogger(SerialWorkbook.class.getName());
 
 	/**
-	 * 
+	 * Instantiates a new sheet configuration.
 	 */
 	public SheetConfiguration() {
 		super();
@@ -658,6 +658,8 @@ public class SheetConfiguration implements Serializable {
 	}
 
 	/**
+	 * Gets the serial cached cells.
+	 *
 	 * @return the serialCachedCells
 	 */
 	public final SerialCellMap getSerialCachedCells() {
@@ -674,6 +676,8 @@ public class SheetConfiguration implements Serializable {
 	}
 
 	/**
+	 * Gets the serial final comment map.
+	 *
 	 * @return the serialFinalCommentMap
 	 */
 	public final SerialCellMap getSerialFinalCommentMap() {

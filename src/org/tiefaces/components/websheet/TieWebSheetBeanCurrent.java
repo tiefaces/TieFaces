@@ -43,7 +43,10 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	}
 
 	/**
-	 * @param currentDataContextNameList the currentDataContextNameList to set
+	 * Sets the current data context name list.
+	 *
+	 * @param currentDataContextNameList
+	 *            the currentDataContextNameList to set
 	 */
 	public final void setCurrentDataContextNameList(
 			List<String> currentDataContextNameList) {
@@ -78,7 +81,10 @@ public class TieWebSheetBeanCurrent implements Serializable {
 	
 
 	/**
-	 * @param currentDataContextName the currentDataContextName to set
+	 * Sets the current data context name.
+	 *
+	 * @param currentDataContextName
+	 *            the currentDataContextName to set
 	 */
 	public final void setCurrentDataContextName(String currentDataContextName) {
 		this.currentDataContextName = currentDataContextName;

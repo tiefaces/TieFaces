@@ -133,6 +133,8 @@ public final class ConfigurationUtility {
 	}
 
 	/**
+	 * Setup upper level formula.
+	 *
 	 * @param cell
 	 *            cell.
 	 * @param originFormula
@@ -560,9 +562,10 @@ public final class ConfigurationUtility {
 	 * 
 	 * Reason for this is for last layer collection. e.g. E.employee.1 and
 	 * E.employee.2 The E.emloyee is the same. *
-	 * 
+	 *
 	 * @param fullName
-	 * @return
+	 *            the full name
+	 * @return the full data collect name from full name
 	 */
 	public static String getFullDataCollectNameFromFullName(
 			String fullName) {

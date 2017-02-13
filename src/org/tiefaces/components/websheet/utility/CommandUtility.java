@@ -140,8 +140,8 @@ public final class CommandUtility {
 	/**
 	 * Gets the each command from parts name.
 	 *
-	 * @param configBuildRef
-	 *            the config build ref
+	 * @param commandIndexMap
+	 *            the command index map
 	 * @param varparts
 	 *            the varparts
 	 * @return the each command from parts name
@@ -171,10 +171,12 @@ public final class CommandUtility {
 	 * @param dataContext
 	 *            the data context
 	 * @return the string
-	 * @throws IllegalAccessException
+	 * @throws EvaluationException
+	 *             the evaluation exception
 	 * @throws InstantiationException
-	 * @throws Exception
-	 *             the exception
+	 *             the instantiation exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static String insertEmptyObjectInContext(final String fullName,
@@ -339,6 +341,8 @@ public final class CommandUtility {
 	}
 
 	/**
+	 * Evaluate normal cells.
+	 *
 	 * @param cell
 	 *            cell.
 	 * @param strValue
@@ -362,8 +366,12 @@ public final class CommandUtility {
 	}
 
 	/**
+	 * Evaluate user formula.
+	 *
 	 * @param cell
+	 *            the cell
 	 * @param strValue
+	 *            the str value
 	 */
 	private static void evaluateUserFormula(final Cell cell,
 			String strValue) {

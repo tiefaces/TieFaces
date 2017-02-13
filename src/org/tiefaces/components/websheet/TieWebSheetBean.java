@@ -272,6 +272,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
+	 * Gets the serial data context.
+	 *
 	 * @return the serialDataContext
 	 */
 	public SerialDataContext getSerialDataContext() {
@@ -282,7 +284,10 @@ public class TieWebSheetBean extends TieWebSheetView implements
 	}
 
 	/**
-	 * @param serialDataContext the serialDataContext to set
+	 * Sets the serial data context.
+	 *
+	 * @param serialDataContext
+	 *            the serialDataContext to set
 	 */
 	public void setSerialDataContext(
 			SerialDataContext serialDataContext) {
@@ -383,6 +388,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 
 	
 	/**
+	 * Gets the current.
+	 *
 	 * @return the current
 	 */
 	public TieWebSheetBeanCurrent getCurrent() {
@@ -889,6 +896,8 @@ public class TieWebSheetBean extends TieWebSheetView implements
 
 
 	/**
+	 * Gets the current sheet config.
+	 *
 	 * @return the currentSheetConfig
 	 */
 	public SheetConfiguration getCurrentSheetConfig() {

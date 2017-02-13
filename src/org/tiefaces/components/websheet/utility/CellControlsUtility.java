@@ -38,104 +38,148 @@ public final class CellControlsUtility {
 	 */
 
 	public enum AttributesType {
+		
+		/** The string. */
 		STRING(String.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return value;
 			}
 		},
+		
+		/** The boolean. */
 		BOOLEAN(Boolean.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Boolean.parseBoolean(value);
 			}
 		},
+		
+		/** The booleantype. */
 		BOOLEANTYPE(boolean.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Boolean.parseBoolean(value);
 			}
 		},
+		
+		/** The integer. */
 		INTEGER(Integer.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Integer.parseInt(value);
 			}
 		},
+		
+		/** The integertype. */
 		INTEGERTYPE(int.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Integer.parseInt(value);
 			}
 		},
+		
+		/** The long. */
 		LONG(Long.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Long.parseLong(value);
 			}
 		},
+		
+		/** The longtype. */
 		LONGTYPE(long.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Long.parseLong(value);
 			}
 		},
+		
+		/** The float. */
 		FLOAT(Float.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Float.parseFloat(value);
 			}
 		},
+		
+		/** The floattype. */
 		FLOATTYPE(float.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Float.parseFloat(value);
 			}
 		},
+		
+		/** The double. */
 		DOUBLE(Double.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Double.parseDouble(value);
 			}
 		},
+		
+		/** The doubletype. */
 		DOUBLETYPE(double.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Double.parseDouble(value);
 			}
 		},
+		
+		/** The byte. */
 		BYTE(Byte.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Byte.parseByte(value);
 			}
 		},
+		
+		/** The bytetype. */
 		BYTETYPE(byte.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Byte.parseByte(value);
 			}
 		},
+		
+		/** The short. */
 		SHORT(Short.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Short.parseShort(value);
 			}
 		},
+		
+		/** The shorttype. */
 		SHORTTYPE(short.class) {
 			@Override
-			public Object parseValue(String value) {
+			public Object parseValue(final String value) {
 				return Short.parseShort(value);
 			}
 		};
 
+		/** The clazz. */
 		private final Class clazz; // class name
 
-		AttributesType(Class pclazz) {
+		/**
+		 * Instantiates a new attributes type.
+		 *
+		 * @param pclazz
+		 *            the pclazz
+		 */
+		AttributesType(final Class pclazz) {
 			this.clazz = pclazz;
 		}
 
-		public abstract Object parseValue(String value);
+		/**
+		 * Parses the value.
+		 *
+		 * @param value
+		 *            the value
+		 * @return the object
+		 */
+		public abstract Object parseValue(final String value);
 	}
 
 	/**
@@ -233,9 +277,9 @@ public final class CellControlsUtility {
 
 	/**
 	 * convert object.
-	 * 
-	 * @param clazz
-	 *            object class.
+	 *
+	 * @param attr
+	 *            the attr
 	 * @param value
 	 *            value.
 	 * @return object according to class.

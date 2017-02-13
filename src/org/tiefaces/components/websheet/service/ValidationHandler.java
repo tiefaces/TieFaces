@@ -59,14 +59,10 @@ public class ValidationHandler {
 	 *            the old status
 	 * @param newStatus
 	 *            the new status
-	 * @param irow
-	 *            the irow
-	 * @param topRow
-	 *            the top row
-	 * @param icol
-	 *            the icol
-	 * @param leftCol
-	 *            the left col
+	 * @param formRow
+	 *            the form row
+	 * @param formCol
+	 *            the form col
 	 * @param cell
 	 *            the cell
 	 */
@@ -147,15 +143,22 @@ public class ValidationHandler {
 	}
 
 	/**
-	 * @param row
-	 * @param col
-	 * @param topRow
-	 * @param leftCol
+	 * Validate all rules for single cell.
+	 *
+	 * @param formRow
+	 *            the form row
+	 * @param formCol
+	 *            the form col
 	 * @param cell
+	 *            the cell
 	 * @param poiCell
+	 *            the poi cell
 	 * @param value
+	 *            the value
 	 * @param sheetConfig
+	 *            the sheet config
 	 * @param cellAttributes
+	 *            the cell attributes
 	 */
 	private void validateAllRulesForSingleCell(final int formRow, final int formCol,
 			FacesCell cell, Cell poiCell,
@@ -380,8 +383,12 @@ public class ValidationHandler {
 	}
 
 	/**
+	 * Refresh cached cells in current page.
+	 *
 	 * @param facesContext
+	 *            the faces context
 	 * @param tblName
+	 *            the tbl name
 	 */
 	private void refreshCachedCellsInCurrentPage(FacesContext facesContext,
 			String tblName) {
@@ -407,10 +414,16 @@ public class ValidationHandler {
 	}
 
 	/**
+	 * Refresh cached cells in row.
+	 *
 	 * @param tblName
+	 *            the tbl name
 	 * @param top
+	 *            the top
 	 * @param left
+	 *            the left
 	 * @param i
+	 *            the i
 	 */
 	private void refreshCachedCellsInRow(String tblName, int top, int left,
 			int i) {

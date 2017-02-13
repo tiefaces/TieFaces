@@ -243,11 +243,18 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	}
 
 	/**
+	 * Builds the watch list for cell.
+	 *
 	 * @param wbWrapper
-	 * @param wb
+	 *            the wb wrapper
+	 * @param sheetIndex
+	 *            the sheet index
 	 * @param cell
+	 *            the cell
 	 * @param watchList
+	 *            the watch list
 	 * @param lastStaticRow
+	 *            the last static row
 	 */
 	private void buildWatchListForCell(
 			final XSSFEvaluationWorkbook wbWrapper, final int sheetIndex, Cell cell, List<Integer> watchList,
@@ -286,9 +293,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 
 	/**
 	 * Only rows in dynamic area will be added to watch list.
-	 * 
-	 * @param sheet
-	 *            current sheet.
+	 *
 	 * @param addRow
 	 *            row want to add.
 	 * @param lastStaticRow

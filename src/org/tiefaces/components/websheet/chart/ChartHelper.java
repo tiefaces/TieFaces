@@ -17,39 +17,18 @@ import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFChart;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
-import org.tiefaces.common.AppUtils;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.chart.objects.AreaChart;
-import org.tiefaces.components.websheet.chart.objects.Bar3DChart;
-import org.tiefaces.components.websheet.chart.objects.BarChart;
-import org.tiefaces.components.websheet.chart.objects.ChartObject;
-import org.tiefaces.components.websheet.chart.objects.LineChart;
-import org.tiefaces.components.websheet.chart.objects.Pie3DChart;
-import org.tiefaces.components.websheet.chart.objects.PieChart;
 import org.tiefaces.components.websheet.dataobjects.AnchorSize;
 import org.tiefaces.components.websheet.dataobjects.ParsedCell;
 import org.tiefaces.components.websheet.dataobjects.XColor;
 import org.tiefaces.components.websheet.utility.CellUtility;
 import org.tiefaces.components.websheet.utility.ColorUtility;
 import org.tiefaces.components.websheet.utility.PicturesUtility;
-import org.tiefaces.components.websheet.utility.WebSheetUtility;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -83,6 +62,8 @@ public class ChartHelper {
 			.getLogger(ChartHelper.class.getName());
 
 	/**
+	 * Instantiates a new chart helper.
+	 *
 	 * @param pParent
 	 *            parent websheet bean
 	 */
@@ -100,27 +81,6 @@ public class ChartHelper {
 	}
 
 	/**
-	 * initial anchors map for specified workbook. Excel put the chart position
-	 * information in draw.xml instead of chart.xml. anchors map contains the
-	 * information getting from draw.xml.
-	 * 
-	 * @param wb
-	 *            specified workbook.
-	 */
-	private void initAnchorsMap(final Workbook wb) {
-		try {
-			if (wb instanceof XSSFWorkbook) {
-				initXSSFAnchorsMap((XSSFWorkbook) wb);
-			}
-		} catch (Exception e) {
-			LOG.log(Level.SEVERE,
-					"Web Form getAnchorsMap Error Exception = "
-							+ e.getLocalizedMessage(),
-					e);
-		}
-	}
-
-	/**
 	 * initial chart map for specified workbook.
 	 * 
 	 * @param wb
@@ -129,120 +89,11 @@ public class ChartHelper {
 	private void initChartsMap(final Workbook wb) {
 		try {
 			if (wb instanceof XSSFWorkbook) {
-				initXSSFChartsMap((XSSFWorkbook) wb);
+				initXSSFChartsMap((XSSFWorkbook) wb, parent.getCharsData());
 			}
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, "getChartsMap Error Exception = "
 					+ e.getLocalizedMessage(), e);
-		}
-	}
-
-	/**
-	 * build chartData for line chart. chartData include categoryList and
-	 * seriesList which used for generate jfreechart.
-	 * 
-	 * @param chartData
-	 *            chart data.
-	 * @param ctChart
-	 *            ct chart.
-	 * @param themeTable
-	 *            themeTable used for get color with theme name.
-	 * @param ctObj
-	 *            ct object.
-	 */
-
-	public final void setUpChartData(final ChartData chartData,
-			final CTChart ctChart, final ThemesTable themeTable,
-			final ChartObject ctObj) {
-
-		Object chartObj = null;
-		@SuppressWarnings("rawtypes")
-		List plotCharts = ctObj.getChartListFromCtChart(ctChart);
-
-		// chart object
-		if (plotCharts != null && (!plotCharts.isEmpty())) {
-			chartObj = plotCharts.get(0);
-		}
-		if (chartObj != null) {
-			@SuppressWarnings("rawtypes")
-			List bsers = ctObj.getSerListFromCtObjChart(chartObj);
-			if (!AppUtils.emptyList(bsers)) {
-				chartData.buildCategoryList(
-						ctObj.getCtAxDataSourceFromSerList(bsers));
-				chartData.buildSeriesList(bsers, themeTable, ctObj);
-			}
-		}
-	}
-
-	/**
-	 * initial chart map for XSSF format file. XSSF file is actually the only
-	 * format in POI support chart object.
-	 * 
-	 * @param wb
-	 *            xssf workbook.
-	 */
-	private void initXSSFChartsMap(final XSSFWorkbook wb) {
-
-		initAnchorsMap(wb);
-		Map<String, ClientAnchor> anchorMap = parent.getCharsData().getChartAnchorsMap();
-
-		Map<String, BufferedImage> chartMap = parent.getCharsData().getChartsMap();
-		Map<String, ChartData> chartDataMap = parent.getCharsData().getChartDataMap();
-		chartMap.clear();
-		chartDataMap.clear();
-
-		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
-			XSSFSheet sheet = wb.getSheetAt(i);
-			XSSFDrawing drawing = sheet.createDrawingPatriarch();
-			List<XSSFChart> charts = drawing.getCharts();
-			if ((charts != null) && (!charts.isEmpty())) {
-				for (XSSFChart chart : charts) {
-					String chartId = sheet.getSheetName() + "!"
-							+ chart.getPackageRelationship().getId();
-					generateSingleXSSFChart(chart, chartId, sheet,
-							anchorMap, chartMap, chartDataMap);
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * Generate single XSSF chart.
-	 * @param chart
-	 *            the chart
-	 * @param chartId
-	 *            the chart id
-	 * @param sheet
-	 *            the sheet
-	 * @param anchorMap
-	 *            the anchor map
-	 * @param chartMap
-	 *            the chart map
-	 * @param chartDataMap
-	 *            the chart data map
-	 */
-	private void generateSingleXSSFChart(final XSSFChart chart,
-			final String chartId, final XSSFSheet sheet,
-			final Map<String, ClientAnchor> anchorMap,
-			final Map<String, BufferedImage> chartMap,
-			final Map<String, ChartData> chartDataMap) {
-		ClientAnchor anchor;
-		if (chartId != null) {
-			anchor = anchorMap.get(chartId);
-			if (anchor != null) {
-				ChartData chartData = initChartDataFromXSSFChart(chartId,
-						chart);
-				chartDataMap.put(chartId, chartData);
-				JFreeChart jchart = createChart(chartData);
-				if (jchart!=null) {
-					AnchorSize anchorSize = PicturesUtility.getAnchorSize(sheet,
-							anchor);
-					BufferedImage img = jchart.createBufferedImage(
-							anchorSize.getWidth(), anchorSize.getHeight());
-					chartMap.put(chartId, img);
-				}
-			}
 		}
 	}
 
@@ -273,38 +124,7 @@ public class ChartHelper {
 
 	/**
 	 * create default category dataset for JfreeChart with giving chartData.
-	 * @param chartData
-	 *            contain information gathered from excel chart object.
-	 * @return DefaultCategoryDataset for jfreechart.
-	 */
-
-	private DefaultCategoryDataset createDataset(
-			final ChartData chartData) {
-		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		List<ParsedCell> categoryList = chartData.getCategoryList();
-		for (ChartSeries chartSeries : chartData.getSeriesList()) {
-			String seriesLabel = getParsedCellValue(
-					chartSeries.getSeriesLabel());
-			List<ParsedCell> valueList = chartSeries.getValueList();
-			for (int i = 0; i < categoryList.size(); i++) {
-				try {
-					String sCategory = getParsedCellValue(
-							categoryList.get(i));
-					String sValue = getParsedCellValue(valueList.get(i));
-					dataset.addValue(Double.parseDouble(sValue),
-							seriesLabel, sCategory);
-				} catch (Exception ex) {
-					LOG.log(Level.FINE, "error in creatDataset : "
-							+ ex.getLocalizedMessage(), ex);
-				}
-			}
-		}
-		return dataset;
-
-	}
-
-	/**
-	 * create default category dataset for JfreeChart with giving chartData.
+	 * 
 	 * @param chartData
 	 *            contain information gathered from excel chart object.
 	 * @return DefaultCategoryDataset for jfreechart.
@@ -356,38 +176,58 @@ public class ChartHelper {
 
 	private JFreeChart createChart(final ChartData chartData) {
 
-		switch (chartData.getType()) {
-		case AREA:
-			return createAreaChart(chartData);
-		case AREASTACKED:
-			return createStackedAreaChart(chartData);
-		case LINE:
-			return createLineChart(chartData);
-		case COLUMN:
-			return createBarChart(chartData, true);
-		case COLUMNSTACKED:
-			return createStackedBarChart(chartData, true);
-		case COLUMN3D:
-			return createBarChart3D(chartData, true);
-		case COLUMN3DSTACKED:
-			return createStackedBarChart3D(chartData, true);
-		case BAR:
-			return createBarChart(chartData, false);
-		case BAR3D:
-			return createBarChart3D(chartData, false);
-		case BARSTACKED:
-			return createStackedBarChart(chartData, false);
-		case BAR3DSTACKED:
-			return createStackedBarChart3D(chartData, false);
-		case PIE:
-			return createPieChart(chartData);
-		case PIE3D:
-			return createPie3DChart(chartData);
-		default:
-			break;
-		}
+		return chartData.getType().createChart(this, chartData);
 
-		return null;
+	}
+
+	/**
+	 * Set color of series.
+	 * 
+	 * @param chart
+	 *            JFreeChart.
+	 * @param seriesIndex
+	 *            Index of series to set color of (0 = first series)
+	 * @param style
+	 *            One of STYLE_xxx.
+	 */
+	public final void setSeriesStyle(final JFreeChart chart,
+			final int seriesIndex, final String style) {
+		if (chart != null && style != null) {
+			BasicStroke stroke = ChartUtility.toStroke(style);
+
+			Plot plot = chart.getPlot();
+			if (plot instanceof CategoryPlot) {
+				CategoryPlot categoryPlot = chart.getCategoryPlot();
+				CategoryItemRenderer cir = categoryPlot.getRenderer();
+				try {
+					cir.setSeriesStroke(seriesIndex, stroke); // series line
+																// style
+				} catch (Exception e) {
+					LOG.log(Level.SEVERE,
+							"Error setting style '" + style
+									+ "' for series '" + seriesIndex
+									+ "' of chart '" + chart + "': "
+									+ e.getLocalizedMessage(),
+							e);
+				}
+			} else if (plot instanceof XYPlot) {
+				XYPlot xyPlot = chart.getXYPlot();
+				XYItemRenderer xyir = xyPlot.getRenderer();
+				try {
+					xyir.setSeriesStroke(seriesIndex, stroke); // series line
+																// style
+				} catch (Exception e) {
+					LOG.log(Level.SEVERE,
+							"Error setting style '" + style
+									+ "' for series '" + seriesIndex
+									+ "' of chart '" + chart + "': "
+									+ e.getLocalizedMessage(),
+							e);
+				}
+			} else {
+				LOG.fine("setSeriesColor() unsupported plot: " + plot);
+			}
+		}
 	}
 
 	/**
@@ -397,7 +237,7 @@ public class ChartHelper {
 	 *            contain information gathered from excel chart object.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createLineChart(final ChartData chartData) {
+	public JFreeChart createLineChart(final ChartData chartData) {
 
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createLineChart(
@@ -424,7 +264,7 @@ public class ChartHelper {
 	 *            contain information gathered from excel chart object.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createAreaChart(final ChartData chartData) {
+	public JFreeChart createAreaChart(final ChartData chartData) {
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createAreaChart(
@@ -450,7 +290,7 @@ public class ChartHelper {
 	 *            chart data.
 	 * @return jfree chart.
 	 */
-	private JFreeChart createStackedAreaChart(final ChartData chartData) {
+	public JFreeChart createStackedAreaChart(final ChartData chartData) {
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createStackedAreaChart(
@@ -478,7 +318,7 @@ public class ChartHelper {
 	 *            chart orientation.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createBarChart(final ChartData chartData,
+	public JFreeChart createBarChart(final ChartData chartData,
 			final boolean vertical) {
 
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
@@ -511,7 +351,7 @@ public class ChartHelper {
 	 *            chart orientation.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createStackedBarChart(final ChartData chartData,
+	public JFreeChart createStackedBarChart(final ChartData chartData,
 			final boolean vertical) {
 
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
@@ -542,7 +382,7 @@ public class ChartHelper {
 	 *            contain information gathered from excel chart object.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createPieChart(final ChartData chartData) {
+	public JFreeChart createPieChart(final ChartData chartData) {
 
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createPieChart(
@@ -566,7 +406,7 @@ public class ChartHelper {
 	 *            chart data.
 	 * @return jfreechart.
 	 */
-	private JFreeChart createPie3DChart(final ChartData chartData) {
+	public JFreeChart createPie3DChart(final ChartData chartData) {
 
 		// create the chart...
 		final JFreeChart chart = ChartFactory.createPieChart3D(
@@ -592,7 +432,7 @@ public class ChartHelper {
 	 *            chart orientation.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createBarChart3D(final ChartData chartData,
+	public JFreeChart createBarChart3D(final ChartData chartData,
 			final boolean vertical) {
 
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
@@ -625,7 +465,7 @@ public class ChartHelper {
 	 *            chart orientation.
 	 * @return jfree line chart.
 	 */
-	private JFreeChart createStackedBarChart3D(final ChartData chartData,
+	public JFreeChart createStackedBarChart3D(final ChartData chartData,
 			final boolean vertical) {
 
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
@@ -761,233 +601,135 @@ public class ChartHelper {
 	}
 
 	/**
-	 * initial chartData from POI XSSF Chart object.
+	 * create default category dataset for JfreeChart with giving chartData.
 	 * 
-	 * @param chartId
-	 *            usually as Sheet1!ref1 etc.
-	 * @param chart
-	 *            POI XSSF chart.
-	 * @return chartData object.
+	 * @param chartData
+	 *            contain information gathered from excel chart object.
+	 * @return DefaultCategoryDataset for jfreechart.
 	 */
-	private ChartData initChartDataFromXSSFChart(final String chartId,
-			final XSSFChart chart) {
 
-		XSSFWorkbook wb = (XSSFWorkbook) parent.getWb();
-		ThemesTable themeTable = wb.getStylesSource().getTheme();
-
-		ChartData chartData = new ChartData();
-		XSSFRichTextString chartTitle = chart.getTitle();
-		CTChart ctChart = chart.getCTChart();
-		ChartType chartType = ChartUtility.getChartType(ctChart);
-		chartData.setBgColor(
-				ColorUtility.getBgColor(ctChart.getPlotArea(), themeTable));
-		LOG.fine("initChartDataFromXSSFChart chart id = " + chartId
-				+ " title = " + chartTitle + " chart type = " + chartType);
-
-		chartData.setId(chartId);
-		if (chartTitle != null) {
-			chartData.setTitle(chartTitle.toString());
+	private DefaultCategoryDataset createDataset(
+			final ChartData chartData) {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		List<ParsedCell> categoryList = chartData.getCategoryList();
+		for (ChartSeries chartSeries : chartData.getSeriesList()) {
+			String seriesLabel = getParsedCellValue(
+					chartSeries.getSeriesLabel());
+			List<ParsedCell> valueList = chartSeries.getValueList();
+			for (int i = 0; i < categoryList.size(); i++) {
+				try {
+					String sCategory = getParsedCellValue(
+							categoryList.get(i));
+					String sValue = getParsedCellValue(valueList.get(i));
+					dataset.addValue(Double.parseDouble(sValue),
+							seriesLabel, sCategory);
+				} catch (Exception ex) {
+					LOG.log(Level.FINE, "error in creatDataset : "
+							+ ex.getLocalizedMessage(), ex);
+				}
+			}
 		}
-		chartData.setType(chartType);
+		return dataset;
 
-		List<CTCatAx> ctCatAxList = ctChart.getPlotArea().getCatAxList();
-		if ((ctCatAxList != null) && (!ctCatAxList.isEmpty())) {
-			chartData.setCatAx(new ChartAxis(ctCatAxList.get(0)));
-		}
-		List<CTValAx> ctValAxList = ctChart.getPlotArea().getValAxList();
-		if ((ctValAxList != null) && (!ctValAxList.isEmpty())) {
-			chartData.setValAx(new ChartAxis(ctValAxList.get(0)));
-		}
-
-		ChartObject ctObj = createChartObjByType(chartType);
-
-		if (ctObj != null) {
-			setUpChartData(chartData, ctChart, themeTable, ctObj);
-		}
-
-		return chartData;
 	}
 
 	/**
-	 * @param chartType
-	 * @param ctObj
-	 * @return
-	 */
-	private ChartObject createChartObjByType(ChartType chartType) {
-		ChartObject ctObj=null; 		
-		switch (chartType) {
-		case AREA:
-		case AREASTACKED:
-			ctObj = new AreaChart();
-			break;
-		case LINE:
-			ctObj = new LineChart();
-			break;
-		case COLUMN:
-		case COLUMNSTACKED:
-		case BAR:
-		case BARSTACKED:
-			ctObj = new BarChart();
-			break;
-		case COLUMN3D:
-		case COLUMN3DSTACKED:
-		case BAR3D:
-		case BAR3DSTACKED:
-			ctObj = new Bar3DChart();
-			break;
-		case PIE:
-			ctObj = new PieChart();
-			break;
-		case PIE3D:
-			ctObj = new Pie3DChart();
-			break;
-		default:
-			break;
-		}
-		return ctObj;
-	}
-
-	/**
-	 * retrieve anchor information from draw.xml for all the charts in the
-	 * workbook. then save them to anchors map.
+	 * initial chart map for XSSF format file. XSSF file is actually the only
+	 * format in POI support chart object.
 	 * 
 	 * @param wb
-	 *            workbook.
+	 *            xssf workbook.
 	 */
-	private void initXSSFAnchorsMap(final XSSFWorkbook wb) {
+	private void initXSSFChartsMap(final XSSFWorkbook wb,
+			final ChartsData chartsData) {
 
-		Map<String, ClientAnchor> anchortMap = parent.getCharsData().getChartAnchorsMap();
-		Map<String, String> positionMap = parent.getCharsData().getChartPositionMap();
-		anchortMap.clear();
-		positionMap.clear();
+		initAnchorsMap(wb, chartsData);
+		Map<String, ClientAnchor> anchorMap = chartsData
+				.getChartAnchorsMap();
+
+		Map<String, BufferedImage> chartMap = chartsData.getChartsMap();
+		Map<String, ChartData> chartDataMap = chartsData.getChartDataMap();
+		chartMap.clear();
+		chartDataMap.clear();
+
 		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
-			initXSSFAnchorsMapForSheet(anchortMap, positionMap, wb.getSheetAt(i));
-		}
-	}
-
-	/**
-	 * @param anchortMap
-	 * @param positionMap
-	 * @param sheet
-	 */
-	private void initXSSFAnchorsMapForSheet(
-			Map<String, ClientAnchor> anchortMap,
-			Map<String, String> positionMap, XSSFSheet sheet) {
-		XSSFDrawing drawing = sheet.createDrawingPatriarch();
-		CTDrawing ctDrawing = drawing.getCTDrawing();
-		if (ctDrawing.sizeOfTwoCellAnchorArray() <= 0) {
-			return;
-		}	
-		List<CTTwoCellAnchor> alist = ctDrawing
-				.getTwoCellAnchorList();
-		for (int j = 0; j < alist.size(); j++) {
-			CTTwoCellAnchor ctanchor = alist.get(j);
-			String chartId = sheet.getSheetName() + "!"
-					+ getAnchorAssociateChartId(
-							ctanchor.getGraphicFrame().getGraphic()
-									.getGraphicData().getDomNode());
-			if (chartId != null) {
-				int dx1 = (int) ctanchor.getFrom().getColOff();
-				int dy1 = (int) ctanchor.getFrom().getRowOff();
-				int dx2 = (int) ctanchor.getTo().getColOff();
-				int dy2 = (int) ctanchor.getTo().getRowOff();
-				int col1 = ctanchor.getFrom().getCol();
-				int row1 = ctanchor.getFrom().getRow();
-				int col2 = ctanchor.getTo().getCol();
-				int row2 = ctanchor.getTo().getRow();
-				anchortMap.put(chartId, new XSSFClientAnchor(dx1,
-						dy1, dx2, dy2, col1, row1, col2, row2));
-				positionMap.put(
-						WebSheetUtility.getFullCellRefName(
-								sheet.getSheetName(), row1, col1),
-						chartId);
-			}
-		}
-	}
-
-	/**
-	 * Navigate through xml node to get the chartId. This is a workaround as
-	 * there's no direct method in the api.
-	 * 
-	 * @param parentNode
-	 *            root node to search rid.
-	 * @return rid in the giving node tree.
-	 */
-	private String getAnchorAssociateChartId(final Node parentNode) {
-		NodeList childNodes = parentNode.getChildNodes();
-		for (int i = 0; i < childNodes.getLength(); i++) {
-			Node childNode = childNodes.item(i);
-			if ((childNode != null)
-					&& ("c:chart".equalsIgnoreCase(childNode.getNodeName()))
-					&& (childNode.hasAttributes())) {
-				String rId= getChartIdFromChildNodeAttributes(childNode.getAttributes());
-				if (rId != null) {
-					return rId;
+			XSSFSheet sheet = wb.getSheetAt(i);
+			XSSFDrawing drawing = sheet.createDrawingPatriarch();
+			List<XSSFChart> charts = drawing.getCharts();
+			if ((charts != null) && (!charts.isEmpty())) {
+				for (XSSFChart chart : charts) {
+					String chartId = sheet.getSheetName() + "!"
+							+ chart.getPackageRelationship().getId();
+					generateSingleXSSFChart(chart, chartId, sheet,
+							anchorMap, chartMap, chartDataMap);
 				}
 			}
 		}
-		return null;
+
 	}
 
 	/**
-	 * @param attrs
+	 * initial anchors map for specified workbook. Excel put the chart position
+	 * information in draw.xml instead of chart.xml. anchors map contains the
+	 * information getting from draw.xml.
+	 *
+	 * @param wb
+	 *            specified workbook.
+	 * @param chartsData
+	 *            the charts data
 	 */
-	private String getChartIdFromChildNodeAttributes(NamedNodeMap attrs) {
-		for (int j = 0; j < attrs.getLength(); j++) {
-			Attr attribute = (Attr) attrs.item(j);
-			if ("r:id".equalsIgnoreCase(attribute.getName())) {
-				return attribute.getValue();
+	private void initAnchorsMap(final Workbook wb,
+			final ChartsData chartsData) {
+		try {
+			if (wb instanceof XSSFWorkbook) {
+				ChartUtility.initXSSFAnchorsMap((XSSFWorkbook) wb,
+						chartsData);
 			}
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE,
+					"Web Form getAnchorsMap Error Exception = "
+							+ e.getLocalizedMessage(),
+					e);
 		}
-		return null;
 	}
 
 	/**
-	 * Set color of series.
+	 * Generate single XSSF chart.
 	 * 
 	 * @param chart
-	 *            JFreeChart.
-	 * @param seriesIndex
-	 *            Index of series to set color of (0 = first series)
-	 * @param style
-	 *            One of STYLE_xxx.
+	 *            the chart
+	 * @param chartId
+	 *            the chart id
+	 * @param sheet
+	 *            the sheet
+	 * @param anchorMap
+	 *            the anchor map
+	 * @param chartMap
+	 *            the chart map
+	 * @param chartDataMap
+	 *            the chart data map
 	 */
-	public final void setSeriesStyle(final JFreeChart chart,
-			final int seriesIndex, final String style) {
-		if (chart != null && style != null) {
-			BasicStroke stroke = ChartUtility.toStroke(style);
-
-			Plot plot = chart.getPlot();
-			if (plot instanceof CategoryPlot) {
-				CategoryPlot categoryPlot = chart.getCategoryPlot();
-				CategoryItemRenderer cir = categoryPlot.getRenderer();
-				try {
-					cir.setSeriesStroke(seriesIndex, stroke); // series line
-																// style
-				} catch (Exception e) {
-					LOG.log(Level.SEVERE,
-							"Error setting style '" + style
-									+ "' for series '" + seriesIndex
-									+ "' of chart '" + chart + "': "
-									+ e.getLocalizedMessage(),
-							e);
+	private void generateSingleXSSFChart(final XSSFChart chart,
+			final String chartId, final XSSFSheet sheet,
+			final Map<String, ClientAnchor> anchorMap,
+			final Map<String, BufferedImage> chartMap,
+			final Map<String, ChartData> chartDataMap) {
+		ClientAnchor anchor;
+		if (chartId != null) {
+			anchor = anchorMap.get(chartId);
+			if (anchor != null) {
+				ChartData chartData = ChartUtility
+						.initChartDataFromXSSFChart(chartId, chart,
+								(XSSFWorkbook) parent.getWb());
+				chartDataMap.put(chartId, chartData);
+				JFreeChart jchart = createChart(chartData);
+				if (jchart != null) {
+					AnchorSize anchorSize = PicturesUtility
+							.getAnchorSize(sheet, anchor);
+					BufferedImage img = jchart.createBufferedImage(
+							anchorSize.getWidth(), anchorSize.getHeight());
+					chartMap.put(chartId, img);
 				}
-			} else if (plot instanceof XYPlot) {
-				XYPlot xyPlot = chart.getXYPlot();
-				XYItemRenderer xyir = xyPlot.getRenderer();
-				try {
-					xyir.setSeriesStroke(seriesIndex, stroke); // series line
-																// style
-				} catch (Exception e) {
-					LOG.log(Level.SEVERE,
-							"Error setting style '" + style
-									+ "' for series '" + seriesIndex
-									+ "' of chart '" + chart + "': "
-									+ e.getLocalizedMessage(),
-							e);
-				}
-			} else {
-				LOG.fine("setSeriesColor() unsupported plot: " + plot);
 			}
 		}
 	}

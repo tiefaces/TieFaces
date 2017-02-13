@@ -59,6 +59,8 @@ public class ConfigRangeAttrs implements Serializable {
 	}
 
 	/**
+	 * Gets the serial first row ref.
+	 *
 	 * @return the serialFirstRowRef
 	 */
 	public final SerialCell getSerialFirstRowRef() {
@@ -88,6 +90,8 @@ public class ConfigRangeAttrs implements Serializable {
 	}
 
 	/**
+	 * Gets the serial last row plus ref.
+	 *
 	 * @return the serialLastRowPlusRef
 	 */
 	public final SerialCell getSerialLastRowPlusRef() {

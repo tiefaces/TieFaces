@@ -48,7 +48,7 @@ public class ExpressionEngine {
 	 * empty context used for evaluate single script.
 	 */
 	private static final Map<String, Object> 
-	EMPTY_CONTEXT = new HashMap<String, Object>();
+	EMPTY_CONTEXT = new HashMap<>();
 
 	/**
 	 * constructor.
@@ -103,9 +103,7 @@ public class ExpressionEngine {
 			}
 			return jexlExpression.evaluate(jexlContext);
 		} catch (Exception e) {
-			throw new EvaluationException(
-					"An error occurred when evaluating expression "
-							+ expression);
+			throw new EvaluationException(e);
 		}
 	}
 

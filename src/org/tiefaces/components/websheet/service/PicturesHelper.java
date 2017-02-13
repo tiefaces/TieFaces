@@ -72,9 +72,14 @@ public class PicturesHelper {
 	}
 
 	/**
+	 * Setup faces cell charts.
+	 *
 	 * @param sheet1
+	 *            the sheet 1
 	 * @param fcell
+	 *            the fcell
 	 * @param fId
+	 *            the f id
 	 */
 	private void setupFacesCellCharts(final Sheet sheet1,
 			final FacesCell fcell, final String fId) {
@@ -101,9 +106,14 @@ public class PicturesHelper {
 	}
 
 	/**
+	 * Setup faces cell picture.
+	 *
 	 * @param sheet1
+	 *            the sheet 1
 	 * @param fcell
+	 *            the fcell
 	 * @param fId
+	 *            the f id
 	 */
 	private void setupFacesCellPicture(final Sheet sheet1,
 			final FacesCell fcell, final String fId) {

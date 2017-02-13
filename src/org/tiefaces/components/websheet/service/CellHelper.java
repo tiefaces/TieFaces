@@ -175,6 +175,7 @@ public class CellHelper {
 	 *
 	 * @param fullName
 	 *            the full name
+	 * @return the collection object
 	 */
 	public final CollectionObject restoreDataContext(
 			final String fullName) {
@@ -219,9 +220,13 @@ public class CellHelper {
 	}
 
 	/**
+	 * Checks if is need restore.
+	 *
 	 * @param fullName
-	 * @param collect
-	 * @return
+	 *            the full name
+	 * @param parts
+	 *            the parts
+	 * @return true, if is need restore
 	 */
 	private boolean isNeedRestore(final String fullName,String[] parts) {
 		if (fullName == null) {
@@ -239,8 +244,12 @@ public class CellHelper {
 	}
 
 	/**
+	 * Start restore data context.
+	 *
 	 * @param collect
+	 *            the collect
 	 * @param part
+	 *            the part
 	 */
 	private void startRestoreDataContext(CollectionObject collect,
 			String part) {

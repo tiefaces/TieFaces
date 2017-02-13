@@ -163,6 +163,13 @@ public final class CellUtility {
 		}
 	}
 
+	/**
+	 * Gets the cell string value with number type.
+	 *
+	 * @param poiCell
+	 *            the poi cell
+	 * @return the cell string value with number type
+	 */
 	private static String getCellStringValueWithNumberType(
 			final Cell poiCell) {
 		String result;
@@ -215,8 +222,12 @@ public final class CellUtility {
 	}
 
 	/**
+	 * Sets the cell value string.
+	 *
 	 * @param c
+	 *            the c
 	 * @param value
+	 *            the value
 	 */
 	private static void setCellValueString(final Cell c,
 			final String value) {
@@ -225,8 +236,12 @@ public final class CellUtility {
 	}
 
 	/**
+	 * Sets the cell value boolean.
+	 *
 	 * @param c
+	 *            the c
 	 * @param value
+	 *            the value
 	 */
 	private static void setCellValueBoolean(final Cell c,
 			final String value) {
@@ -239,8 +254,12 @@ public final class CellUtility {
 	}
 
 	/**
+	 * Sets the cell value date.
+	 *
 	 * @param c
+	 *            the c
 	 * @param value
+	 *            the value
 	 */
 	private static void setCellValueDate(final Cell c, final String value) {
 		String date = WebSheetUtility.parseDate(value);
@@ -248,8 +267,12 @@ public final class CellUtility {
 	}
 
 	/**
+	 * Sets the cell value number.
+	 *
 	 * @param c
+	 *            the c
 	 * @param value
+	 *            the value
 	 */
 	private static void setCellValueNumber(final Cell c,
 			final String value) {
@@ -261,7 +284,7 @@ public final class CellUtility {
 
 	/**
 	 * Copy rows.
-	 * 
+	 *
 	 * @param srcSheet
 	 *            the src sheet
 	 * @param destSheet
@@ -276,8 +299,6 @@ public final class CellUtility {
 	 *            the check lock
 	 * @param setHiddenColumn
 	 *            the set hidden column
-	 * @param wb
-	 *            the wb
 	 */
 	public static void copyRows(final Sheet srcSheet, final Sheet destSheet,
 			final int srcRowStart, final int srcRowEnd, final int destRow,
@@ -315,7 +336,7 @@ public final class CellUtility {
 
 	/**
 	 * Copy single row.
-	 * 
+	 *
 	 * @param srcSheet
 	 *            the src sheet
 	 * @param destSheet
@@ -328,8 +349,6 @@ public final class CellUtility {
 	 *            the check lock
 	 * @param setHiddenColumn
 	 *            the set hidden column
-	 * @param wb
-	 *            the wb
 	 */
 	private static void copySingleRow(final Sheet srcSheet,
 			final Sheet destSheet, final int sourceRowNum,
@@ -358,21 +377,17 @@ public final class CellUtility {
 
 	/**
 	 * Copy cell.
-	 * 
+	 *
 	 * @param destSheet
 	 *            the dest sheet
 	 * @param sourceRow
 	 *            the source row
 	 * @param newRow
 	 *            the new row
+	 * @param cellIndex
+	 *            the cell index
 	 * @param checkLock
 	 *            the check lock
-	 * @param wb
-	 *            the wb
-	 * @param sourceCell
-	 *            the source cell
-	 * @param newCell
-	 *            the new cell
 	 * @return the int
 	 */
 	public static Cell copyCell(final Sheet destSheet, final Row sourceRow,
@@ -416,7 +431,12 @@ public final class CellUtility {
 		e.setCellValue(newCell, sourceCell, checkLock, newCellStyle);
 	}
 
+	/**
+	 * The Enum CellValueType.
+	 */
 	public enum CellValueType {
+		
+		/** The string. */
 		STRING {
 			@Override
 			public void setCellValue(Cell newCell, Cell sourceCell,
@@ -427,6 +447,8 @@ public final class CellUtility {
 				}
 			}
 		},
+		
+		/** The boolean. */
 		BOOLEAN {
 			@Override
 			public void setCellValue(Cell newCell, Cell sourceCell,
@@ -436,6 +458,8 @@ public final class CellUtility {
 				}
 			}
 		},
+		
+		/** The numeric. */
 		NUMERIC {
 			@Override
 			public void setCellValue(Cell newCell, Cell sourceCell,
@@ -445,6 +469,8 @@ public final class CellUtility {
 				}
 			}
 		},
+		
+		/** The formula. */
 		FORMULA {
 			@Override
 			public void setCellValue(Cell newCell, Cell sourceCell,
@@ -452,6 +478,8 @@ public final class CellUtility {
 				newCell.setCellFormula(sourceCell.getCellFormula());
 			}
 		},
+		
+		/** The error. */
 		ERROR {
 			@Override
 			public void setCellValue(Cell newCell, Cell sourceCell,
@@ -462,6 +490,8 @@ public final class CellUtility {
 				}
 			}
 		},
+		
+		/** The blank. */
 		BLANK {
 			@Override
 			public void setCellValue(Cell newCell, Cell sourceCell,
@@ -469,6 +499,19 @@ public final class CellUtility {
 				newCell.setCellType(CellType.BLANK);
 			}
 		};
+		
+		/**
+		 * Sets the cell value.
+		 *
+		 * @param newCell
+		 *            the new cell
+		 * @param sourceCell
+		 *            the source cell
+		 * @param checkLock
+		 *            the check lock
+		 * @param newCellStyle
+		 *            the new cell style
+		 */
 		public abstract void setCellValue(final Cell newCell,
 				final Cell sourceCell, final boolean checkLock,
 				final CellStyle newCellStyle);
@@ -622,7 +665,7 @@ public final class CellUtility {
 	 * @return the string
 	 */
 	// 100 >= 80
-	public static String replaceExpressionWithCellValue(String attrValue,
+	public static String replaceExpressionWithCellValue(final String attrValue,
 			final int rowIndex, final Sheet sheet) {
 
 		int ibegin = 0;
@@ -631,6 +674,7 @@ public final class CellUtility {
 		String tempStr;
 		String findStr;
 		String replaceStr;
+		String returnStr = attrValue;
 		while ((ifind = attrValue.indexOf(TieConstants.CELL_ADDR_PRE_FIX,
 				ibegin)) > 0) {
 			iblank = attrValue.indexOf(' ', ifind);
@@ -651,12 +695,12 @@ public final class CellUtility {
 			if (replaceStr == null) {
 				replaceStr = "";
 			}
-			attrValue = attrValue.replace(findStr, replaceStr);
+			returnStr = attrValue.replace(findStr, replaceStr);
 
 			ibegin = ifind + 1;
 
 		}
-		return attrValue;
+		return returnStr;
 	}
 
 	/**

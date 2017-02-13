@@ -40,7 +40,7 @@ public class SerialCell implements Serializable {
 	private SerialCellAddress cellAddr;
 
 	/**
-	 * 
+	 * Instantiates a new serial cell.
 	 */
 	public SerialCell() {
 		super();
@@ -99,6 +99,8 @@ public class SerialCell implements Serializable {
 	}
 
 	/**
+	 * Gets the cell.
+	 *
 	 * @return the cell
 	 */
 	public final Cell getCell() {
@@ -106,6 +108,8 @@ public class SerialCell implements Serializable {
 	}
 
 	/**
+	 * Sets the cell.
+	 *
 	 * @param pcell
 	 *            the cell to set
 	 */
@@ -114,6 +118,8 @@ public class SerialCell implements Serializable {
 	}
 
 	/**
+	 * Gets the cell addr.
+	 *
 	 * @return the cellAddr
 	 */
 	public final SerialCellAddress getCellAddr() {
@@ -121,6 +127,8 @@ public class SerialCell implements Serializable {
 	}
 
 	/**
+	 * Sets the cell addr.
+	 *
 	 * @param pcellAddr
 	 *            the cellAddr to set
 	 */

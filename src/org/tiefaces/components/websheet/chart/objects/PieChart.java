@@ -152,6 +152,8 @@ public class PieChart implements ChartObject {
 	}
 
 	/**
+	 * Gets the empty serlist.
+	 *
 	 * @return the emptySerlist
 	 */
 	public final List<CTPieSer> getEmptySerlist() {
@@ -159,6 +161,8 @@ public class PieChart implements ChartObject {
 	}
 
 	/**
+	 * Gets the empty dptlist.
+	 *
 	 * @return the emptyDptlist
 	 */
 	public final List<CTDPt> getEmptyDptlist() {

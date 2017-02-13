@@ -618,8 +618,6 @@ public class WebSheetLoader implements Serializable {
 	 *            the row
 	 * @param rowIndex
 	 *            the row index
-	 * @param repeatZone
-	 *            the repeat zone
 	 * @param allowAdd
 	 *            the allow add
 	 */
@@ -687,8 +685,6 @@ public class WebSheetLoader implements Serializable {
 	 *            the row index
 	 * @param sheet1
 	 *            the sheet 1
-	 * @param repeatZone
-	 *            the repeat zone
 	 * @param left
 	 *            the left
 	 * @param right
@@ -777,8 +773,6 @@ public class WebSheetLoader implements Serializable {
 	 *            the i
 	 * @param index
 	 *            the index
-	 * @param sheet1
-	 *            the sheet 1
 	 * @param cell
 	 *            the cell
 	 * @param fcell
