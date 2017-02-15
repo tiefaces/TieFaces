@@ -90,8 +90,6 @@ public class PicturesHelper {
 						 parent.getCharsData().getChartsMap().get(
 								chartId);
 				if (img != null) {
-					LOG.fine(" pic dimension width = " + img.getWidth()
-							+ " height = " + img.getHeight());
 					fcell.setContainChart(true);
 					fcell.setChartId(chartId);
 					fcell.setChartStyle(PicturesUtility
@@ -120,8 +118,6 @@ public class PicturesHelper {
 		try {
 			Picture pic =  parent.getPicturesMap().get(fId);
 			if (pic != null) {
-				LOG.fine(" pic dimension = " + pic.getImageDimension()
-						+ " perfersize = " + pic.getPreferredSize());
 				fcell.setContainPic(true);
 				fcell.setPictureId(fId);
 				fcell.setPictureStyle(PicturesUtility

@@ -144,7 +144,7 @@ public class SheetConfiguration implements Serializable {
 	 */
 	public SheetConfiguration() {
 		super();
-		LOG.info("Sheet Configuration constructor");
+		LOG.fine("Sheet Configuration constructor");
 	}
 
 	/**
@@ -772,42 +772,6 @@ public class SheetConfiguration implements Serializable {
 		sb.append("savedRowsAfter = " + savedRowsAfter);
 		sb.append("}");
 		return sb.toString();
-	}
-
-	/**
-	 * serialize.
-	 * 
-	 * @param out
-	 *            outputstream.
-	 * @throws IOException
-	 *             io exception.
-	 */
-	private void writeObject(final java.io.ObjectOutputStream out)
-			throws IOException {
-		LOG.log(Level.INFO, "sheetconfiguration default write objects");
-		out.defaultWriteObject();
-	}
-
-	/**
-	 * load the workbook from saving.
-	 * 
-	 * @param in
-	 *            inputstream.
-	 * @throws IOException
-	 *             io exception.
-	 */
-	private void readObject(final java.io.ObjectInputStream in)
-			throws IOException {
-		try {
-
-			LOG.log(Level.INFO, "sheetconfiguration default read objects");
-			in.defaultReadObject();
-		} catch (EncryptedDocumentException | ClassNotFoundException e) {
-			LOG.log(Level.SEVERE,
-					" error in readObject of serialWorkbook : "
-							+ e.getLocalizedMessage(),
-					e);
-		}
 	}
 
 }

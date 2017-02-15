@@ -32,7 +32,6 @@ import org.tiefaces.components.websheet.utility.ShiftFormulaUtility;
 
 public class FormCommand extends ConfigCommand implements Serializable  {
 
-
 	/**
 	 * serialVersionUID.
 	 */

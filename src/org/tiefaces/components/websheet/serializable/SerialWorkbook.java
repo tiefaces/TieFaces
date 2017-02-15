@@ -42,13 +42,7 @@ public class SerialWorkbook implements Serializable {
 	/** hold configuration for each sheet. */
 	private Map<String, SheetConfiguration> sheetConfigMap;
 
-	/**
-	 * Instantiates a new serial workbook.
-	 */
-	public SerialWorkbook() {
-		super();
-		LOG.log(Level.INFO, "serialworkbook constructor");
-	}
+
 
 	/**
 	 * save the workbook before serialize.
@@ -60,10 +54,8 @@ public class SerialWorkbook implements Serializable {
 	 */
 	private void writeObject(final java.io.ObjectOutputStream out)
 			throws IOException {
-		LOG.log(Level.INFO, "serialworkbook start default write objects");
 		out.defaultWriteObject();
 		if (wb != null) {
-			LOG.log(Level.INFO, "serialworkbook start workbook write");
 			wb.write(out);
 		}
 	}
@@ -79,10 +71,7 @@ public class SerialWorkbook implements Serializable {
 	private void readObject(final java.io.ObjectInputStream in)
 			throws IOException {
 		try {
-			LOG.log(Level.INFO,
-					"serialworkbook start default read objects");
 			in.defaultReadObject();
-			LOG.log(Level.INFO, "serialworkbook start create woorkbook");
 			wb = WorkbookFactory.create(in);
 			recover();
 		} catch (EncryptedDocumentException | InvalidFormatException

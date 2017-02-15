@@ -40,13 +40,6 @@ public class SerialDataContext implements Serializable {
 	/** convert map to json string. */
 	private String mapToJson;
 	
-	/**
-	 * Instantiates a new serial data context.
-	 */
-	public SerialDataContext() {
-		super();
-		LOG.log(Level.INFO, "serial data context constructor");
-	}
 
 	/**
 	 * save the workbook before serialize.
@@ -58,10 +51,8 @@ public class SerialDataContext implements Serializable {
 	 */
 	private void writeObject(final java.io.ObjectOutputStream out)
 			throws IOException {
-		LOG.log(Level.INFO, "serial data context start convert map object to json string");
 		Gson objGson = new GsonBuilder().setPrettyPrinting().create();
 		this.mapToJson = objGson.toJson(this.dataContext);
-		LOG.log(Level.INFO, "serial data context start default write objects");
 		out.defaultWriteObject();
 	}
 
@@ -76,11 +67,7 @@ public class SerialDataContext implements Serializable {
 	private void readObject(final java.io.ObjectInputStream in)
 			throws IOException {
 		try {
-			LOG.log(Level.INFO,
-					"serial data context start default read objects");
 			in.defaultReadObject();
-			
-			LOG.log(Level.INFO, "serial data context start convert json string to map");
 			Gson objGson = new GsonBuilder().setPrettyPrinting().create();
 			Type listType = new TypeToken<Map<String, Object>>() {
 			}.getType();		

@@ -151,15 +151,7 @@ public class CellUtilityTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.utility.CellUtility#findCellValidateAttributes(java.util.Map, org.apache.poi.ss.usermodel.Cell)}.
-	 */
-	@Test
-	public void testFindCellValidateAttributes() throws Exception {
-		
-	}
-
-	/**
-	 * Test method for {@link org.tiefaces.components.websheet.utility.CellUtility#replaceExpressionWithCellValue(java.lang.String, int, org.apache.poi.ss.usermodel.Sheet)}.
+	 * Test method for {@link org.tiefaces.components.websheet.utility.ConfigurationUtility#replaceExpressionWithCellValue(java.lang.String, int, org.apache.poi.ss.usermodel.Sheet)}.
 	 */
 	@Test
 	public void testReplaceExpressionWithCellValue() throws Exception {
@@ -167,7 +159,7 @@ public class CellUtilityTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.utility.CellUtility#indexMergedRegion(org.apache.poi.ss.usermodel.Sheet)}.
+	 * Test method for {@link org.tiefaces.components.websheet.utility.ConfigurationUtility#indexMergedRegion(org.apache.poi.ss.usermodel.Sheet)}.
 	 */
 	@Test
 	public void testIndexMergedRegion() throws Exception {
@@ -175,18 +167,10 @@ public class CellUtilityTest {
 	}
 
 	/**
-	 * Test method for {@link org.tiefaces.components.websheet.utility.CellUtility#skippedRegionCells(org.apache.poi.ss.usermodel.Sheet)}.
+	 * Test method for {@link org.tiefaces.components.websheet.utility.ConfigurationUtility#skippedRegionCells(org.apache.poi.ss.usermodel.Sheet)}.
 	 */
 	@Test
 	public void testSkippedRegionCells() throws Exception {
-		
-	}
-
-	/**
-	 * Test method for {@link org.tiefaces.components.websheet.utility.CellUtility#removeRow(org.apache.poi.ss.usermodel.Sheet, int)}.
-	 */
-	@Test
-	public void testRemoveRow() throws Exception {
 		
 	}
 

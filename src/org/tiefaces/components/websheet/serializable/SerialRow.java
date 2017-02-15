@@ -44,7 +44,7 @@ public class SerialRow implements Serializable {
 	 */
 	public SerialRow() {
 		this(null);
-		LOG.log(Level.INFO, "serial row constructor");
+		LOG.fine("serial row constructor");
 	}
 
 	/**
@@ -83,9 +83,7 @@ public class SerialRow implements Serializable {
 	 */
 	private void writeObject(final java.io.ObjectOutputStream out)
 			throws IOException {
-		LOG.log(Level.INFO, "before row write, save row address");
 		this.rowIndex = this.getRow().getRowNum();
-		LOG.log(Level.INFO, "serial row start default write objects");
 		out.defaultWriteObject();
 	}
 
@@ -100,7 +98,6 @@ public class SerialRow implements Serializable {
 	private void readObject(final java.io.ObjectInputStream in)
 			throws IOException {
 		try {
-			LOG.log(Level.INFO, "serial row start default read objects");
 			in.defaultReadObject();
 		} catch (EncryptedDocumentException | ClassNotFoundException e) {
 			LOG.log(Level.SEVERE, " error in readObject of serial row : "

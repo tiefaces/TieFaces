@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.tiefaces.common.TieConstants;
@@ -587,6 +588,130 @@ public final class ConfigurationUtility {
 			return fullName;
 		}
 		return fullName.substring(0, lastEachCommandIndexPos);
+	}
+
+	// This method mainly doing 2 things
+	// 1. covert $A to $A$rowIndex
+	// 2. Get value of $A$rowIndex and replace it in the string
+	// i.e. $value >= $E
+	// first $value has been taken cared before to actual value like 100
+	// Here change $E to $E$8, Then get $E$8 value. Replace it in string like
+	/**
+	 * Replace expression with cell value.
+	 *
+	 * @param attrValue
+	 *            the attr value
+	 * @param rowIndex
+	 *            the row index
+	 * @param sheet
+	 *            the sheet
+	 * @return the string
+	 */
+	// 100 >= 80
+	public static String replaceExpressionWithCellValue(final String attrValue,
+			final int rowIndex, final Sheet sheet) {
+	
+		int ibegin = 0;
+		int ifind;
+		int iblank;
+		String tempStr;
+		String findStr;
+		String replaceStr;
+		String returnStr = attrValue;
+		while ((ifind = attrValue.indexOf(TieConstants.CELL_ADDR_PRE_FIX,
+				ibegin)) > 0) {
+			iblank = attrValue.indexOf(' ', ifind);
+			if (iblank > 0) {
+				findStr = attrValue.substring(ifind, iblank);
+			} else {
+				findStr = attrValue.substring(ifind);
+			}
+			if (findStr.indexOf(TieConstants.CELL_ADDR_PRE_FIX, 1) < 0) {
+				// only $A
+				tempStr = findStr + TieConstants.CELL_ADDR_PRE_FIX
+						+ (rowIndex + 1);
+			} else {
+				tempStr = findStr;
+			}
+			replaceStr = CellUtility.getCellValueWithoutFormat(
+					WebSheetUtility.getCellByReference(tempStr, sheet));
+			if (replaceStr == null) {
+				replaceStr = "";
+			}
+			returnStr = attrValue.replace(findStr, replaceStr);
+	
+			ibegin = ifind + 1;
+	
+		}
+		return returnStr;
+	}
+
+	/**
+	 * Index merged region.
+	 *
+	 * @param sheet1
+	 *            the sheet 1
+	 * @return the map
+	 */
+	public static Map<String, CellRangeAddress> indexMergedRegion(
+			final Sheet sheet1) {
+	
+		int numRegions = sheet1.getNumMergedRegions();
+		Map<String, CellRangeAddress> cellRangeMap = new HashMap<>();
+		for (int i = 0; i < numRegions; i++) {
+	
+			CellRangeAddress caddress = sheet1.getMergedRegion(i);
+			if (caddress != null) {
+				cellRangeMap.put(CellUtility.getCellIndexNumberKey(
+						caddress.getFirstColumn(), caddress.getFirstRow()),
+						caddress);
+			}
+		}
+		return cellRangeMap;
+	}
+
+	/**
+	 * Skipped region cells.
+	 *
+	 * @param sheet1
+	 *            the sheet 1
+	 * @return the list
+	 */
+	public static List<String> skippedRegionCells(final Sheet sheet1) {
+		int numRegions = sheet1.getNumMergedRegions();
+		List<String> skipCellList = new ArrayList<>();
+		for (int i = 0; i < numRegions; i++) {
+	
+			CellRangeAddress caddress = sheet1.getMergedRegion(i);
+			if (caddress != null) {
+				addSkipCellToListInTheRegion(skipCellList, caddress);
+			}
+		}
+		return skipCellList;
+	}
+
+	/**
+	 * Add skipped cell into the list of a region.
+	 * 
+	 * @param skipCellList
+	 *            list.
+	 * @param caddress
+	 *            region.
+	 */
+	private static void addSkipCellToListInTheRegion(
+			List<String> skipCellList, CellRangeAddress caddress) {
+		for (int col = caddress.getFirstColumn(); col <= caddress
+				.getLastColumn(); col++) {
+			for (int row = caddress.getFirstRow(); row <= caddress
+					.getLastRow(); row++) {
+				if ((col == caddress.getFirstColumn())
+						&& (row == caddress.getFirstRow())) {
+					continue;
+				}
+				skipCellList
+						.add(CellUtility.getCellIndexNumberKey(col, row));
+			}
+		}
 	}
 
 

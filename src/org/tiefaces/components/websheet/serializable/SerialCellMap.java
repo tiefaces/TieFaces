@@ -38,13 +38,6 @@ public class SerialCellMap implements Serializable {
 	 */
 	private List<SerialKey> saveList;
 
-	/**
-	 * Instantiates a new serial cell map.
-	 */
-	public SerialCellMap() {
-		super();
-		LOG.log(Level.INFO, "serial cell map constructor");
-	}
 
 	/**
 	 * save the cell before serialize.
@@ -56,14 +49,12 @@ public class SerialCellMap implements Serializable {
 	 */
 	private void writeObject(final java.io.ObjectOutputStream out)
 			throws IOException {
-		LOG.log(Level.INFO, "before cell map write, save cell address");
 		saveList = new ArrayList<>();
 		for (Map.Entry<Cell, String> entry : this.getMap().entrySet()) {
 			saveList.add(
 					new SerialKey(new SerialCellAddress(entry.getKey()),
 							entry.getValue()));
 		}
-		LOG.log(Level.INFO, "serial cell map start default write objects");
 		out.defaultWriteObject();
 	}
 
@@ -78,7 +69,6 @@ public class SerialCellMap implements Serializable {
 	private void readObject(final java.io.ObjectInputStream in)
 			throws IOException {
 		try {
-			LOG.log(Level.INFO, "serial cell start default read objects");
 			in.defaultReadObject();
 		} catch (EncryptedDocumentException | ClassNotFoundException e) {
 			LOG.log(Level.SEVERE,

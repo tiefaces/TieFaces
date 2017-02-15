@@ -187,4 +187,12 @@ public class WebSheetUtilityTest {
 		
 	}
 
+	/**
+		 * Test method for {@link org.tiefaces.components.websheet.utility.WebSheetUtility#removeRow(org.apache.poi.ss.usermodel.Sheet, int)}.
+		 */
+		@Test
+		public void testRemoveRow() throws Exception {
+			
+		}
+
 }

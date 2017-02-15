@@ -208,9 +208,6 @@ public class ChartData {
 			for (int col = region.getFirstColumn(); col <= region
 					.getLastColumn(); col++) {
 				cells.add(new ParsedCell(sheetName, row, col));
-				LOG.fine(" add serial value sheetName = "
-						+ sheetName + " row = " + row + " col = "
-						+ col);
 			}
 		}
 		ctSer.setValueList(cells);

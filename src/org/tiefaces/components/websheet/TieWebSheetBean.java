@@ -724,7 +724,7 @@ public class TieWebSheetBean extends TieWebSheetView
 		this.getHelper().getValidationHandler()
 				.setFullValidationInView(fullValidation);
 		if (!this.getHelper().getValidationHandler().preValidation(true)) {
-			LOG.info("Validation failded before saving");
+			LOG.fine("Validation failded before saving");
 			return;
 		}
 
@@ -768,7 +768,6 @@ public class TieWebSheetBean extends TieWebSheetView
 	 */
 	@PreDestroy
 	public void finish() {
-		LOG.fine("finishing view webformbean");
 		if (FacesContext.getCurrentInstance() == null) {
 			LOG.info("session has gone");
 		}

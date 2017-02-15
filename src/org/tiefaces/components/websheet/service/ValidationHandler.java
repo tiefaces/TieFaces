@@ -26,7 +26,9 @@ import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
+import org.tiefaces.components.websheet.utility.CellControlsUtility;
 import org.tiefaces.components.websheet.utility.CellUtility;
+import org.tiefaces.components.websheet.utility.ConfigurationUtility;
 
 /**
  * The Class ValidationHandler.
@@ -127,7 +129,7 @@ public class ValidationHandler {
 
 		SheetConfiguration sheetConfig = parent.getSheetConfigMap()
 				.get(parent.getCurrent().getCurrentTabName());
-		List<CellFormAttributes> cellAttributes = CellUtility
+		List<CellFormAttributes> cellAttributes = CellControlsUtility
 				.findCellValidateAttributes(
 						parent.getCellAttributesMap()
 								.getCellValidateAttributes(),
@@ -204,7 +206,7 @@ public class ValidationHandler {
 
 		String attrValue = attr.getValue();
 		attrValue = attrValue.replace("$value", value.toString() + "");
-		attrValue = CellUtility.replaceExpressionWithCellValue(attrValue,
+		attrValue = ConfigurationUtility.replaceExpressionWithCellValue(attrValue,
 				rowIndex, sheet);
 		pass = parent.getCellHelper().evalBoolExpression(attrValue);
 		return pass;

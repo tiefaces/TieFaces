@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.tiefaces.components.websheet.configuration.SheetConfiguration;
+import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 
@@ -364,4 +367,71 @@ public final class CellControlsUtility {
 		return null;
 	}
 
+	/**
+	 * Setup control attributes.
+	 *
+	 * @param originRowIndex
+	 *            the origin row index
+	 * @param fcell
+	 *            the fcell
+	 * @param poiCell
+	 *            the poi cell
+	 * @param sheetConfig
+	 *            the sheet config
+	 * @param cellAttributesMap
+	 *            the cell attributes map
+	 */
+	public static void setupControlAttributes(final int originRowIndex,
+			final FacesCell fcell, final Cell poiCell,
+			final SheetConfiguration sheetConfig,
+			final CellAttributesMap cellAttributesMap) {
+		int rowIndex = originRowIndex;
+		if (rowIndex < 0) {
+			rowIndex = poiCell.getRowIndex();
+		}
+
+		String skey = poiCell.getSheet().getSheetName() + "!" + CellUtility
+				.getCellIndexNumberKey(poiCell.getColumnIndex(), rowIndex);
+
+		Map<String, String> commentMap = cellAttributesMap
+				.getTemplateCommentMap().get("$$");
+		if (commentMap != null) {
+			String comment = commentMap.get(skey);
+			if (comment != null) {
+				CommandUtility.createCellComment(poiCell, comment,
+						sheetConfig.getFinalCommentMap());
+			}
+		}
+
+		String widgetType = cellAttributesMap.getCellInputType().get(skey);
+		if (widgetType != null) {
+			fcell.setControl(widgetType.toLowerCase());
+
+			fcell.setInputAttrs(
+					cellAttributesMap.getCellInputAttributes().get(skey));
+			fcell.setSelectItemAttrs(cellAttributesMap
+					.getCellSelectItemsAttributes().get(skey));
+			fcell.setDatePattern(
+					cellAttributesMap.getCellDatePattern().get(skey));
+		}
+
+	}
+
+	/**
+	 * Find cell validate attributes.
+	 *
+	 * @param validateMaps
+	 *            validateMaps.
+	 * @param cell
+	 *            cell.
+	 * @return list.
+	 */
+	public static List<CellFormAttributes> findCellValidateAttributes(
+			final Map<String, List<CellFormAttributes>> validateMaps,
+			final Cell cell) {
+		String key = ParserUtility.getAttributeKeyInMapByCell(cell);
+		return validateMaps.get(key);
+	}
+	
+	
 }

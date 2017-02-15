@@ -88,21 +88,25 @@ public final class WebSheetUtility {
 	public static final int EMU_PER_POINTS = 12700;
 	
 
+	private static final String DATE_REGEX_YEAR_COMM_1 = "([-/.\\\\]{1})";
+	private static final String DATE_REGEX_YEAR_COMM_2 = "[0?[1-9]|[1-9]|1[012]]{1,2}";
+	private static final String DATE_REGEX_YEAR_COMM_3 = "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})";
+	
 	/** The Constant DATE_REGEX_4_DIGIT_YEAR. */
 	private static final String DATE_REGEX_4_DIGIT_YEAR = "("
-			+ "(19|20)[0-9]{2}" + "([-/.\\\\]{1})"
-			+ "[0?[1-9]|[1-9]|1[012]]{1,2}" + "\\3"
-			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + ")" + "|"
-			+ "(" + "[0?[1-9]|[1-9]|1[012]]{1,2}" + "([-/.\\\\]{1})"
-			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + "\\6"
+			+ "(19|20)[0-9]{2}" + DATE_REGEX_YEAR_COMM_1
+			+ DATE_REGEX_YEAR_COMM_2 + "\\3"
+			+ DATE_REGEX_YEAR_COMM_3 + ")" + "|"
+			+ "(" + DATE_REGEX_YEAR_COMM_2 + DATE_REGEX_YEAR_COMM_1
+			+ DATE_REGEX_YEAR_COMM_3 + "\\6"
 			+ "(19|20)[0-9]{2}" + ")";
 
 	/** The Constant DATE_REGEX_2_DIGIT_YEAR. */
 	private static final String DATE_REGEX_2_DIGIT_YEAR = "(" + "[0-9]{2}"
-			+ "([-/.\\\\]{1})" + "[0?[1-9]|[1-9]|1[012]]{1,2}" + "\\3"
-			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + ")" + "|"
-			+ "(" + "[0?[1-9]|[1-9]|1[012]]{1,2}" + "([-/.\\\\]{1})"
-			+ "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})" + "\\6"
+			+ DATE_REGEX_YEAR_COMM_1 + DATE_REGEX_YEAR_COMM_2 + "\\3"
+			+ DATE_REGEX_YEAR_COMM_3 + ")" + "|"
+			+ "(" + DATE_REGEX_YEAR_COMM_2 + DATE_REGEX_YEAR_COMM_1
+			+ DATE_REGEX_YEAR_COMM_3 + "\\6"
 			+ "[0-9]{2}" + ")";
 
 	/**
@@ -438,38 +442,82 @@ public final class WebSheetUtility {
 		char c;
 		int i; 
 		int sLen = s.length();
-		int sinceLastComma = 0;
-		boolean decimalHit = false;
-		boolean commaHit = false;
+		ShouldContinueParameter sPara = new ShouldContinueParameter(false, false, 0);
+		
 		for (i = 0; i < sLen; i++) {
 			c = s.charAt(i);
 			if (c < '0' || c > '9') {
-				if (c == '.' && !decimalHit) {
-					decimalHit = true;
-					if (commaHit && sinceLastComma != 3) {
-						return false;
-					}
-					continue;
-				} else if (c == ',' && !decimalHit) {
-					if (commaHit) {
-						if (sinceLastComma != 3) {
-							return false;
-						}
-						sinceLastComma = 0;
-					}
-					commaHit = true;
-					continue;
+				if (!shouldContinue(c, sPara)) {
+					return false;
 				}
-				return false;
 			} else {
-				if (commaHit) {
-					sinceLastComma++;
+				if (sPara.isCommaHit()) {
+					sPara.setSinceLastComma(sPara.getSinceLastComma() + 1);
 				}
 			}
 		}
 		return true;
 	}
 
+	
+	private static class ShouldContinueParameter {
+		private Boolean decimalHit;
+		private Boolean commaHit;
+		private Integer sinceLastComma;
+
+		public ShouldContinueParameter(Boolean decimalHit, Boolean commaHit,
+				Integer sinceLastComma) {
+			this.decimalHit = decimalHit;
+			this.commaHit = commaHit;
+			this.sinceLastComma = sinceLastComma;
+		}
+
+		public Boolean isDecimalHit() {
+			return decimalHit;
+		}
+
+		public void setDecimalHit(Boolean decimalHit) {
+			this.decimalHit = decimalHit;
+		}
+
+		public Boolean isCommaHit() {
+			return commaHit;
+		}
+
+		public void setCommaHit(Boolean commaHit) {
+			this.commaHit = commaHit;
+		}
+
+		public Integer getSinceLastComma() {
+			return sinceLastComma;
+		}
+
+		public void setSinceLastComma(Integer sinceLastComma) {
+			this.sinceLastComma = sinceLastComma;
+		}
+	}
+
+
+	private static boolean shouldContinue(char c, ShouldContinueParameter para) {
+		if (c == '.' && !para.isDecimalHit()) {
+			para.setDecimalHit(true);
+			if (para.isCommaHit() && para.getSinceLastComma() != 3) {
+				return false;
+			}
+			return true;
+		} else if (c == ',' && !para.isDecimalHit()) {
+			if (para.isCommaHit()) {
+				if (para.getSinceLastComma() != 3) {
+					return false;
+				}
+				para.setSinceLastComma(0);
+			}
+			para.setCommaHit(true);
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Sets the object property.
 	 *
@@ -592,6 +640,28 @@ public final class WebSheetUtility {
 					+ e.getLocalizedMessage(), e);
 		}
 		return -1;
+	}
+
+
+	/**
+	 * Removes the row.
+	 *
+	 * @param sheet
+	 *            the sheet
+	 * @param rowIndex
+	 *            the row index
+	 */
+	public static void removeRow(final Sheet sheet, final int rowIndex) {
+		int lastRowNum = sheet.getLastRowNum();
+		if (rowIndex >= 0 && rowIndex < lastRowNum) {
+			sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
+		}
+		if (rowIndex == lastRowNum) {
+			Row removingRow = sheet.getRow(rowIndex);
+			if (removingRow != null) {
+				sheet.removeRow(removingRow);
+			}
+		}
 	}
 
 }

@@ -39,12 +39,12 @@ public class SerialCell implements Serializable {
 	 */
 	private SerialCellAddress cellAddr;
 
+
 	/**
-	 * Instantiates a new serial cell.
+	 * Constructor.
 	 */
 	public SerialCell() {
 		super();
-		LOG.log(Level.INFO, "serial cell constructor");
 	}
 
 	/**
@@ -71,9 +71,7 @@ public class SerialCell implements Serializable {
 	 */
 	private void writeObject(final java.io.ObjectOutputStream out)
 			throws IOException {
-		LOG.log(Level.INFO, "before cell write, save cell address");
 		this.cellAddr = new SerialCellAddress(this.cell);
-		LOG.log(Level.INFO, "serial cell start default write objects");
 		out.defaultWriteObject();
 	}
 
@@ -88,7 +86,6 @@ public class SerialCell implements Serializable {
 	private void readObject(final java.io.ObjectInputStream in)
 			throws IOException {
 		try {
-			LOG.log(Level.INFO, "serial cell start default read objects");
 			in.defaultReadObject();
 		} catch (EncryptedDocumentException | ClassNotFoundException e) {
 			LOG.log(Level.SEVERE,

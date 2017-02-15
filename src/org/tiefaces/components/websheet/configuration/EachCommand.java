@@ -25,7 +25,6 @@ import org.tiefaces.components.websheet.utility.ConfigurationUtility;
  */
 public class EachCommand extends ConfigCommand  implements Serializable  {
 
-
 	/** logger. */
 	private static final Logger LOG = Logger.getLogger(
 			EachCommand.class.getName());
@@ -255,6 +254,7 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 		
 		int index = 0;
 		int insertPosition = atRow;
+		String thisObjClassName = objClassName; 
 
 		ExpressionEngine selectEngine = null;
 		if (select != null) {
@@ -263,10 +263,10 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 		// loop through each object in the collection
 		for (Object obj : itemsCollection) {
 			// gather and cache object class name which used for add row
-			if (objClassName == null) {
-				objClassName = obj.getClass().getName();
+			if (thisObjClassName == null) {
+				thisObjClassName = obj.getClass().getName();
 				configBuildRef.getCollectionObjNameMap().put(this.var,
-						objClassName);
+						thisObjClassName);
 			}
 			RowsMapping unitRowsMapping = new RowsMapping();
 			context.put(var, obj);

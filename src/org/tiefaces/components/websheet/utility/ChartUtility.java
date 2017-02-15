@@ -7,8 +7,6 @@ package org.tiefaces.components.websheet.utility;
 import java.awt.BasicStroke;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFChart;
@@ -58,10 +56,6 @@ public final class ChartUtility {
 	public static final float STROKE_MITER_LIMIT_STYLE_DASH = 10.0f;
 	/** STROKE_DEFAULT_DASHPHASE. */
 	public static final float STROKE_DEFAULT_DASHPHASE = 0.0f;
-
-	/** logger. */
-	private static final Logger LOG = Logger
-			.getLogger(ChartUtility.class.getName());
 
 	/**
 	 * hide constructor.
@@ -146,8 +140,6 @@ public final class ChartUtility {
 		
 		chartData.setBgColor(
 				ColorUtility.getBgColor(ctChart.getPlotArea(), themeTable));
-		LOG.fine("initChartDataFromXSSFChart chart id = " + chartId
-				+ " title = " + chartTitle + " chart type = " + chartType);
 
 		chartData.setId(chartId);
 		chartData.setType(chartType);

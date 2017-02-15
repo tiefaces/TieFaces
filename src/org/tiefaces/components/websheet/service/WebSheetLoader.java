@@ -101,7 +101,6 @@ public class WebSheetLoader implements Serializable {
 		
 		RangeBuildRef rangeBuildRef = new RangeBuildRef(left, right, totalWidth, sheet1);
 		
-		LOG.fine("totalwidth = " + totalWidth);
 		String formWidthStyle = sheetConfig.getFormWidth();
 		if ((formWidthStyle == null) || (formWidthStyle.isEmpty())) {
 			parent.setTableWidthStyle(
@@ -120,12 +119,6 @@ public class WebSheetLoader implements Serializable {
 						WebSheetUtility.pixel2WidthUnits(
 								parent.getAddRowColumnWidth()),
 						totalWidth));
-
-		LOG.fine("tableWidthStyle = " + parent.getTableWidthStyle()
-				+ " lineNumberColumnWidthStyle= "
-				+ parent.getLineNumberColumnWidthStyle()
-				+ " addRowColumnWidthStyle= "
-				+ parent.getAddRowColumnWidthStyle());
 
 		parent.getHeaderRows().clear();
 
@@ -561,9 +554,9 @@ public class WebSheetLoader implements Serializable {
 
 		// populate repeat rows before setup cell range map
 
-		Map<String, CellRangeAddress> cellRangeMap = CellUtility
+		Map<String, CellRangeAddress> cellRangeMap = ConfigurationUtility
 				.indexMergedRegion(sheet1);
-		List<String> skippedRegionCells = CellUtility
+		List<String> skippedRegionCells = ConfigurationUtility
 				.skippedRegionCells(sheet1);
 		loadHeaderRows(sheetConfig, cellRangeMap, skippedRegionCells);
 		loadBodyRows(sheetConfig, cellRangeMap, skippedRegionCells);
@@ -608,7 +601,6 @@ public class WebSheetLoader implements Serializable {
 						.getCurrentInstance().getViewRoot().getViewMap();
 				viewMap.put("currentTabName", parent.getCurrent().getCurrentTabName());
 				viewMap.put("fullValidation", parent.getFullValidation());
-				LOG.fine("saveobjs in viewMap = " + viewMap);
 			}
 		} catch (Exception ex) {
 			LOG.log(Level.SEVERE,
@@ -686,7 +678,6 @@ public class WebSheetLoader implements Serializable {
 		sheetConfig.setBodyPopulated(true);
 		parent.getCurrent().setCurrentTopRow(top);
 		parent.getCurrent().setCurrentLeftColumn(left);
-		LOG.fine("Web Form loading bodyRows = " + parent.getBodyRows());
 	}
 
 	/**
@@ -721,7 +712,6 @@ public class WebSheetLoader implements Serializable {
 		String saveAttrList = SaveAttrsUtility
 				.getSaveAttrListFromRow(row);
 		List<FacesCell> bodycells = new ArrayList<>();
-		LOG.fine(" loder row number = " + rowIndex + " row = " + row);
 		for (int cindex = left; cindex <= right; cindex++) {
 			String cellindex = CellUtility.getCellIndexNumberKey(cindex,
 					rowIndex);
@@ -805,10 +795,6 @@ public class WebSheetLoader implements Serializable {
 							newValue);
 				}
 
-				LOG.fine("refresh obj name =" + tblName + ":" + i
-						+ ":cocalc" + index + " formula = "
-						+ cell.getCellFormula() + "newValue = " + newValue);
-
 				RequestContext.getCurrentInstance()
 						.update(tblName + ":" + i + ":cocalc" + index);
 				parent.getCachedCells().put(cell, CellType.FORMULA);
@@ -891,9 +877,9 @@ public class WebSheetLoader implements Serializable {
 	private void refreshBodyRowsInRange(final int insertPosition,
 			final int length, final Sheet sheet,
 			final SheetConfiguration sheetConfig) {
-		Map<String, CellRangeAddress> cellRangeMap = CellUtility
+		Map<String, CellRangeAddress> cellRangeMap = ConfigurationUtility
 				.indexMergedRegion(sheet);
-		List<String> skippedRegionCells = CellUtility
+		List<String> skippedRegionCells = ConfigurationUtility
 				.skippedRegionCells(sheet);
 		int top = sheetConfig.getBodyCellRange().getTopRow();
 		int left = sheetConfig.getBodyCellRange().getLeftCol();
@@ -933,7 +919,7 @@ public class WebSheetLoader implements Serializable {
 							"System Error", "Cannot delete the last row"));
 			return;
 		}
-		CellUtility.removeRow(sheet1, rowIndex);
+		WebSheetUtility.removeRow(sheet1, rowIndex);
 		parent.getBodyRows().remove(rowIndex - top);
 		for (int irow = rowIndex - top; irow < parent.getBodyRows()
 				.size(); irow++) {
@@ -958,7 +944,7 @@ public class WebSheetLoader implements Serializable {
 			Boolean statusFlag) {
 		
 		// in client js should have setUnsavedState method 
-		requestContext.execute("setUnsavedState(" + statusFlag + ")");
+		//requestContext.execute("setUnsavedState(" + statusFlag + ")");
 
 	}
 

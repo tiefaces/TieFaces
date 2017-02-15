@@ -68,4 +68,12 @@ public class CellControlsUtilityTest {
 
 	}
 
+	/**
+		 * Test method for {@link org.tiefaces.components.websheet.utility.CellControlsUtility#findCellValidateAttributes(java.util.Map, org.apache.poi.ss.usermodel.Cell)}.
+		 */
+		@Test
+		public void testFindCellValidateAttributes() throws Exception {
+			
+		}
+
 }

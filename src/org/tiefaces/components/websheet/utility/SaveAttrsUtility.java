@@ -5,7 +5,6 @@
 package org.tiefaces.components.websheet.utility;
 
 import java.util.Map;
-import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,10 +17,6 @@ import org.tiefaces.components.websheet.configuration.ExpressionEngine;
  * Helper class for save attributes.
  */
 public final class SaveAttrsUtility {
-
-	/** logger. */
-	private static final Logger LOG = Logger
-			.getLogger(SaveAttrsUtility.class.getName());
 
 	/**
 	 * hide constructor.
@@ -148,11 +143,11 @@ public final class SaveAttrsUtility {
 	 * @return true, if is checks for save attr
 	 */
 	public static boolean isHasSaveAttr(final Cell cell) {
-		Cell scell = cell.getRow()
+		Cell saveAttrCell = cell.getRow()
 				.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
-		if (scell != null) {
-			return isHasSaveAttr(cell.getColumnIndex(),
-					scell.getStringCellValue());
+		if (saveAttrCell != null) {
+			return isHasSaveAttr(cell,
+					saveAttrCell.getStringCellValue());
 		}
 		return false;
 	}
@@ -166,12 +161,16 @@ public final class SaveAttrsUtility {
 	 *            the save attrs
 	 * @return true, if is checks for save attr
 	 */
-	public static boolean isHasSaveAttr(final int columnIndex,
+	public static boolean isHasSaveAttr(final Cell cell,
 			final String saveAttrs) {
-		String str = "$" + columnIndex + "=";
-		if ((saveAttrs != null) && (saveAttrs.indexOf(str) >= 0)) {
-			return true;
-		}
+		
+		if (cell != null) {
+			int columnIndex = cell.getColumnIndex();
+			String str = "$" + columnIndex + "=";
+			if ((saveAttrs != null) && (saveAttrs.indexOf(str) >= 0)) {
+				return true;
+			}
+		}	
 		return false;
 	}
 
