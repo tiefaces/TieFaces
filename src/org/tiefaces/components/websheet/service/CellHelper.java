@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.primefaces.context.RequestContext;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.CollectionObject;
@@ -76,6 +77,8 @@ public class CellHelper {
 					SaveAttrsUtility.saveDataToObjectInContext(
 							parent.getSerialDataContext().getDataContext(), saveAttr, strValue,
 							parent.getExpEngine());
+					parent.getHelper().getWebSheetLoader().setUnsavedStatus(
+							RequestContext.getCurrentInstance(), true);					
 				}
 			}
 		}
@@ -177,15 +180,15 @@ public class CellHelper {
 	 *            the full name
 	 * @return the collection object
 	 */
-	public final CollectionObject restoreDataContext(
+	public final void restoreDataContext(
 			final String fullName) {
 
-		CollectionObject collect = new CollectionObject();
+		
 		
 		String[] parts = fullName.split(":");
 		
 		if (!isNeedRestore(fullName, parts)) {
-			return collect;
+			return;
 		}
 
 		boolean stopSkip = false;
@@ -209,16 +212,33 @@ public class CellHelper {
 			}
 			if (!skip) {
 				stopSkip = true;
-				startRestoreDataContext(collect, part);
+				startRestoreDataContext(part);
 			}	
 		}
 		if (stopSkip) {
 			parent.getCurrent().setCurrentDataContextName(fullName);
 		}	
 
-		return collect;
+		return;
 	}
 
+	/**
+	 * Get last collect object from full name.
+	 * 
+	 * Last collect contain each command, collection and index.
+	 *
+	 * @param fullName
+	 *            the full name
+	 * @return the collection object
+	 */
+	public final CollectionObject getLastCollect(
+			final String fullName) {
+		String[] parts = fullName.split(":");
+		String part = parts[parts.length - 1];
+		return startRestoreDataContext(part);
+	}
+	
+	
 	/**
 	 * Checks if is need restore.
 	 *
@@ -251,11 +271,12 @@ public class CellHelper {
 	 * @param part
 	 *            the part
 	 */
-	private void startRestoreDataContext(CollectionObject collect,
-			String part) {
+	private CollectionObject startRestoreDataContext(String part) {
 		if (part.startsWith(
 				TieConstants.EACH_COMMAND_FULL_NAME_PREFIX)) {
 			String[] varparts = part.split("\\.");
+			CollectionObject collect = new CollectionObject();
+			
 			collect.setEachCommand(CommandUtility.getEachCommandFromPartsName(
 					parent.getCurrentSheetConfig().getCommandIndexMap(), varparts));
 			collect.setLastCollection(ConfigurationUtility
@@ -266,7 +287,9 @@ public class CellHelper {
 					CommandUtility.prepareCollectionDataInContext(
 							varparts, collect.getLastCollection(),
 							parent.getSerialDataContext().getDataContext()));
+			return collect;
 		}
+		return null;
 	}
 	
 }

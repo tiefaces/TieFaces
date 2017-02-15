@@ -48,7 +48,8 @@
 
 <!-- IMPLEMENTATION -->
 <cc:implementation>
-	<h:outputStylesheet name="tiefaces/websheet.css" />
+	<h:outputStylesheet name="tiefaces/websheet.css" target="head" />
+	<h:outputScript name="tiefaces/websheet.js" target="head" />
 	<div id="#{cc.clientId}">
 		<p:outputPanel id="websheet">
 			<div id="websheettabview">

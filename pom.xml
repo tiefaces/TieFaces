@@ -8,7 +8,7 @@
 
 	<groupId>org.tiefaces</groupId>
 	<artifactId>tiefaces</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<packaging>jar</packaging>
 
 	<name>Tiefaces</name>
@@ -113,7 +113,7 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.5</version>
-		</dependency>		
+		</dependency>
 
 
 	</dependencies>

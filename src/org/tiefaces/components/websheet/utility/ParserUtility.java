@@ -351,6 +351,19 @@ public final class ParserUtility {
 		return rlist;
 	}
 
+	
+	
+	private static class SpecialAttributes {
+		private String[] selectLabels;
+		private String[] selectValues = null;
+		private String defaultSelectLabel = null;
+		private String defaultSelectValue = null;
+		private String defaultDatePattern = "";
+		
+	}	
+	
+	
+	
 	/**
 	 * parse select item attributes.
 	 * 
@@ -366,59 +379,89 @@ public final class ParserUtility {
 	public static void parseSpecialAttributes(final String key,
 			final String type, final List<CellFormAttributes> inputs,
 			final CellAttributesMap cellAttributesMap) {
-		String[] selectLabels = null;
-		String[] selectValues = null;
-		String defaultSelectLabel = null;
-		String defaultSelectValue = null;
-		String defaultDatePattern = "";
+		
+		SpecialAttributes sAttr = new SpecialAttributes();
+		
 		for (CellFormAttributes attr : inputs) {
-			String attrKey = attr.getType();
-			if (attrKey.equalsIgnoreCase(TieConstants.SELECT_ITEM_LABELS)) {
-				selectLabels = attr.getValue().split(";");
-			}
-			if (attrKey.equalsIgnoreCase(TieConstants.SELECT_ITEM_VALUES)) {
-				selectValues = attr.getValue().split(";");
-			}
-			if (attrKey.equalsIgnoreCase(
-					TieConstants.DEFAULT_SELECT_ITEM_LABEL)) {
-				defaultSelectLabel = attr.getValue();
-			}
-			if (attrKey.equalsIgnoreCase(
-					TieConstants.DEFAULT_SELECT_ITEM_VALUE)) {
-				defaultSelectValue = attr.getValue();
-			}
-			if (type.equalsIgnoreCase(TieConstants.WIDGET_CALENDAR)
-					&& attrKey.equalsIgnoreCase(
-							TieConstants.WIDGET_ATTR_PATTERN)) {
-				defaultDatePattern = attr.getValue();
-			}
+			gatherSpecialAttributes(type, sAttr, attr);
 		}
 
-		if (selectLabels != null) {
-			if ((selectValues == null)
-					|| (selectValues.length != selectLabels.length)) {
-				selectValues = selectLabels;
-			}
-			Map<String, String> smap = cellAttributesMap
-					.getCellSelectItemsAttributes().get(key);
-			if (smap == null) {
-				smap = new LinkedHashMap<>();
-			}
-			smap.clear();
-			if (defaultSelectLabel != null) {
-				smap.put(defaultSelectLabel, defaultSelectValue);
-			}
-			for (int i = 0; i < selectLabels.length; i++) {
-				smap.put(selectLabels[i], selectValues[i]);
-			}
-			cellAttributesMap.getCellSelectItemsAttributes().put(key, smap);
+		if (sAttr.selectLabels != null) {
+			processSelectItemAttributes(key, cellAttributesMap, sAttr);
 		}
 		if (type.equalsIgnoreCase(TieConstants.WIDGET_CALENDAR)) {
-			if (defaultDatePattern.isEmpty()) {
-				defaultDatePattern = getDefaultDatePattern();
-			}
-			cellAttributesMap.getCellDatePattern().put(key,
-					defaultDatePattern);
+			processCalendarAttributes(key, cellAttributesMap, sAttr);
+		}
+	}
+
+	/**
+	 * @param key
+	 * @param cellAttributesMap
+	 * @param sAttr
+	 */
+	private static void processCalendarAttributes(final String key,
+			final CellAttributesMap cellAttributesMap,
+			SpecialAttributes sAttr) {
+		if (sAttr.defaultDatePattern.isEmpty()) {
+			sAttr.defaultDatePattern = getDefaultDatePattern();
+		}
+		cellAttributesMap.getCellDatePattern().put(key,
+				sAttr.defaultDatePattern);
+	}
+
+	/**
+	 * @param key
+	 * @param cellAttributesMap
+	 * @param sAttr
+	 */
+	private static void processSelectItemAttributes(final String key,
+			final CellAttributesMap cellAttributesMap,
+			SpecialAttributes sAttr) {
+		if ((sAttr.selectValues == null)
+				|| (sAttr.selectValues.length != sAttr.selectLabels.length)) {
+			sAttr.selectValues = sAttr.selectLabels;
+		}
+		Map<String, String> smap = cellAttributesMap
+				.getCellSelectItemsAttributes().get(key);
+		if (smap == null) {
+			smap = new LinkedHashMap<>();
+		}
+		smap.clear();
+		if (sAttr.defaultSelectLabel != null) {
+			smap.put(sAttr.defaultSelectLabel, sAttr.defaultSelectValue);
+		}
+		for (int i = 0; i < sAttr.selectLabels.length; i++) {
+			smap.put(sAttr.selectLabels[i], sAttr.selectValues[i]);
+		}
+		cellAttributesMap.getCellSelectItemsAttributes().put(key, smap);
+	}
+
+	/**
+	 * @param type
+	 * @param sAttr
+	 * @param attr
+	 */
+	private static void gatherSpecialAttributes(final String type,
+			SpecialAttributes sAttr, CellFormAttributes attr) {
+		String attrKey = attr.getType();
+		if (attrKey.equalsIgnoreCase(TieConstants.SELECT_ITEM_LABELS)) {
+			sAttr.selectLabels = attr.getValue().split(";");
+		}
+		if (attrKey.equalsIgnoreCase(TieConstants.SELECT_ITEM_VALUES)) {
+			sAttr.selectValues = attr.getValue().split(";");
+		}
+		if (attrKey.equalsIgnoreCase(
+				TieConstants.DEFAULT_SELECT_ITEM_LABEL)) {
+			sAttr.defaultSelectLabel = attr.getValue();
+		}
+		if (attrKey.equalsIgnoreCase(
+				TieConstants.DEFAULT_SELECT_ITEM_VALUE)) {
+			sAttr.defaultSelectValue = attr.getValue();
+		}
+		if (type.equalsIgnoreCase(TieConstants.WIDGET_CALENDAR)
+				&& attrKey.equalsIgnoreCase(
+						TieConstants.WIDGET_ATTR_PATTERN)) {
+			sAttr.defaultDatePattern = attr.getValue();
 		}
 	}
 
@@ -469,5 +512,4 @@ public final class ParserUtility {
 			sheetCommentMap.put(commentKey, map);
 		}
 	}
-
 }

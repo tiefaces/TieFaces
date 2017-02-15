@@ -8,7 +8,6 @@ import org.tiefaces.components.websheet.utility.CellControlsUtility;
 import org.tiefaces.components.websheet.utility.CellControlsUtility.AttributesType;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author JASON

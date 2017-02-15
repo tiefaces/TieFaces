@@ -78,7 +78,8 @@ public final class CommandUtility {
 
 				
 		try {
-			CollectionObject collect = configBuildRef.getCellHelper().restoreDataContext(fullName);		
+			configBuildRef.getCellHelper().restoreDataContext(fullName);
+			CollectionObject collect =  configBuildRef.getCellHelper().getLastCollect(fullName);
 			
 			Collection lastCollection = collect.getLastCollection();
 			int lastCollectionIndex = collect.getLastCollectionIndex();

@@ -205,13 +205,13 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 		fullName = fullName + ":" + this.getCommandName();
 		Collection itemsCollection = ConfigurationUtility
 				.transformToCollectionObject(configBuildRef.getEngine(),
-						items, context);
+						this.getItems(), context);
 
 		String objClassName = this.getClassName();
 
 		if (objClassName == null) {
 			objClassName = configBuildRef.getCollectionObjNameMap()
-					.get(this.var);
+					.get(this.getVar());
 		}
 		if (configBuildRef.isAddMode() && itemsCollection.isEmpty()) {
 			// do something here to insert one empty object

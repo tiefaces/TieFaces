@@ -11,19 +11,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.tiefaces.common.Item;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
-
-import javax.faces.validator.ValidatorException;
-import javax.validation.constraints.AssertTrue;
 
 /**
  * @author Jason Jiang
@@ -62,14 +56,8 @@ public class ValidationHandlerTest {
 		assertEquals(bean.loadWebSheet(stream, context), 1);
 
 		bean.getCellsMap().put("4:3", "-1");
-		Throwable e = null;
-		try {
-			bean.getValidationHandler().validateWithRowColInCurrentPage(4,
+		bean.getValidationHandler().validateWithRowColInCurrentPage(4,
 					3, true);
-		} catch (Throwable ex) {
-			e = ex;
-		}
-		assertTrue(e instanceof ValidatorException);
 		FacesCell fcell = bean.getBodyRows().get(4).getCells().get(3);
 		assertTrue(fcell.isInvalid());
 		bean.getCellsMap().put("4:3", "1");

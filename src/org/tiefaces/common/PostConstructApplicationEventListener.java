@@ -43,7 +43,7 @@ public class PostConstructApplicationEventListener
 	 */
 	@Override
 	public final void processEvent(final SystemEvent event)
-			throws AbortProcessingException {
+			{
 
 		LOGGER.log(Level.INFO, "Running on TieFaces {0}",
 				AppUtils.getBuildVersion());

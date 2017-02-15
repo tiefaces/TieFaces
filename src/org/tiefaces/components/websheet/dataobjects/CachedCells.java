@@ -7,8 +7,6 @@ package org.tiefaces.components.websheet.dataobjects;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.tiefaces.components.websheet.TieWebSheetBean;

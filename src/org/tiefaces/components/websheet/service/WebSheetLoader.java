@@ -785,20 +785,34 @@ public class WebSheetLoader implements Serializable {
 
 		if ((cell != null) && (cell.getCellTypeEnum() == CellType.FORMULA)
 				&& (tblName != null)) {
-			String newValue = CellUtility.getCellValueWithFormat(cell,
-					parent.getFormulaEvaluator(),
-					parent.getDataFormatter());
-			if (parent.getCachedCells().isValueChanged(cell, newValue)) {
-
-				if (fcell.isHasSaveAttr()) {
-					parent.getCellHelper().saveDataInContext(cell,
-							newValue);
-				}
-
-				RequestContext.getCurrentInstance()
-						.update(tblName + ":" + i + ":cocalc" + index);
-				parent.getCachedCells().put(cell, CellType.FORMULA);
+			try {
+				processRefreshCell(tblName, i, index, cell, fcell);
+			} catch (Exception ex) {
+				LOG.log(Level.SEVERE,  "refresh Cached Cell error : "+ex.getLocalizedMessage(), ex);
 			}
+		}
+	}
+
+	/**
+	 * @param tblName
+	 * @param i
+	 * @param index
+	 * @param cell
+	 * @param fcell
+	 */
+	private void processRefreshCell(final String tblName, final int i,
+			final int index, final Cell cell, final FacesCell fcell) {
+		String newValue = CellUtility.getCellValueWithFormat(cell,
+				parent.getFormulaEvaluator(),
+				parent.getDataFormatter());
+		if (parent.getCachedCells().isValueChanged(cell, newValue)) {
+			if (fcell.isHasSaveAttr()) {
+				parent.getCellHelper().saveDataInContext(cell,
+						newValue);
+			}
+			RequestContext.getCurrentInstance()
+					.update(tblName + ":" + i + ":cocalc" + index);
+			parent.getCachedCells().put(cell, CellType.FORMULA);
 		}
 	}
 
@@ -944,7 +958,10 @@ public class WebSheetLoader implements Serializable {
 			Boolean statusFlag) {
 		
 		// in client js should have setUnsavedState method 
-		//requestContext.execute("setUnsavedState(" + statusFlag + ")");
+		if (requestContext != null) {
+			LOG.info("run setUnsavedState(" + statusFlag + ")");
+			requestContext.execute("setUnsavedState(" + statusFlag + ")");
+		}	
 
 	}
 

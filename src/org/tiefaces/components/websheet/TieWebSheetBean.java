@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -732,11 +733,12 @@ public class TieWebSheetBean extends TieWebSheetView
 	}
 
 	/**
-	 * save process. unfinished.
+	 * save process. User need override this method to save into db.
 	 * 
 	 */
 	public void processSave() {
-		// unfinished.
+		this.getHelper().getWebSheetLoader().setUnsavedStatus(
+				RequestContext.getCurrentInstance(), false);
 		return;
 	}
 

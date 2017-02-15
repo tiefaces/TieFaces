@@ -5,15 +5,12 @@
 
 package org.tiefaces.components.websheet.configuration;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -584,7 +581,12 @@ public class SheetConfiguration implements Serializable {
 	 */
 	public final void setCommandIndexMap(
 			final Map<String, Command> pcommandIndexMap) {
-		this.commandIndexMap = (HashMap) pcommandIndexMap;
+		if (pcommandIndexMap instanceof HashMap) {
+			this.commandIndexMap = (HashMap<String, Command>) pcommandIndexMap;
+		} else {
+			this.commandIndexMap = new HashMap<>();
+			this.commandIndexMap.putAll(pcommandIndexMap);
+		}
 	}
 
 	/**

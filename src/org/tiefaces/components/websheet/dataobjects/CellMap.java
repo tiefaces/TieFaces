@@ -268,30 +268,35 @@ public class CellMap implements Serializable, java.util.Map {
 	 */
 	@Override
 	public final Object put(final Object key, final Object value) {
-		CellMapKey mkey = new CellMapKey((String) key);
-		if (!mkey.isParseSuccess()) {
-			return null;
-		}
-		Cell poiCell = parent.getCellHelper()
-				.getPoiCellWithRowColFromCurrentPage(mkey.getRowIndex(),
-						mkey.getColIndex());
-		if (poiCell == null) {
-			return null;
-		}
-		String oldValue = CellUtility.getCellValueWithoutFormat(poiCell);
-		FacesCell facesCell = parent.getCellHelper()
-				.getFacesCellWithRowColFromCurrentPage(mkey.getRowIndex(),
-						mkey.getColIndex());
-		String newValue = assembleNewValue(value, facesCell);
-		if (newValue != null && !newValue.equals(oldValue)) {
-			CellUtility.setCellValue(poiCell, newValue);
-			if (facesCell.isHasSaveAttr()) {
-				parent.getCellHelper().saveDataInContext(poiCell, newValue);
+		try {
+			CellMapKey mkey = new CellMapKey((String) key);
+			if (!mkey.isParseSuccess()) {
+				return null;
 			}
-			parent.getCellHelper().reCalc();
+			Cell poiCell = parent.getCellHelper()
+					.getPoiCellWithRowColFromCurrentPage(mkey.getRowIndex(),
+							mkey.getColIndex());
+			if (poiCell == null) {
+				return null;
+			}
+			String oldValue = CellUtility.getCellValueWithoutFormat(poiCell);
+			FacesCell facesCell = parent.getCellHelper()
+					.getFacesCellWithRowColFromCurrentPage(mkey.getRowIndex(),
+							mkey.getColIndex());
+			String newValue = assembleNewValue(value, facesCell);
+			if (newValue != null && !newValue.equals(oldValue)) {
+				CellUtility.setCellValue(poiCell, newValue);
+				if (facesCell.isHasSaveAttr()) {
+					parent.getCellHelper().saveDataInContext(poiCell, newValue);
+				}
+				parent.getCellHelper().reCalc();
+			}
+	
+			return value;
+		} catch (Exception ex) {
+			LOG.log(Level.SEVERE, "Save cell data error : "+ex.getLocalizedMessage(), ex);
 		}
-
-		return value;
+		return null;
 	}
 
 	/**

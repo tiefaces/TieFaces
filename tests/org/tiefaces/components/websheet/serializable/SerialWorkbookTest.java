@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Test;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;

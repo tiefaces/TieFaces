@@ -34,11 +34,6 @@ public class TieWebSheetView {
 	 */
 	private TabView webFormTabView = null;
 
-	/**
-	 * tab style.
-	 */
-	private String tabStyle;
-
 	/** maxrowsperpage. */
 	private Integer maxRowsPerPage = TieConstants.DEFAULT_MAX_ROWS_PER_PAGE;
 	
@@ -210,7 +205,7 @@ public class TieWebSheetView {
 	 */
 	public String getTabStyle() {
 
-		tabStyle = TieConstants.TAB_STYLE_VISIBLE;
+		String tabStyle = TieConstants.TAB_STYLE_VISIBLE;
 		int sheetId = webFormTabView.getActiveIndex();
 		if ((sheetId >= 0) && (sheetId < tabs.size())) {
 				tabStyle = TieConstants.TAB_STYLE_INVISIBLE;
