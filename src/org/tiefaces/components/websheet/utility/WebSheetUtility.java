@@ -88,8 +88,13 @@ public final class WebSheetUtility {
 	public static final int EMU_PER_POINTS = 12700;
 	
 
+	/** The Constant DATE_REGEX_YEAR_COMM_1. */
 	private static final String DATE_REGEX_YEAR_COMM_1 = "([-/.\\\\]{1})";
+	
+	/** The Constant DATE_REGEX_YEAR_COMM_2. */
 	private static final String DATE_REGEX_YEAR_COMM_2 = "[0?[1-9]|[1-9]|1[012]]{1,2}";
+	
+	/** The Constant DATE_REGEX_YEAR_COMM_3. */
 	private static final String DATE_REGEX_YEAR_COMM_3 = "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})";
 	
 	/** The Constant DATE_REGEX_4_DIGIT_YEAR. */
@@ -460,11 +465,30 @@ public final class WebSheetUtility {
 	}
 
 	
+	/**
+	 * The Class ShouldContinueParameter.
+	 */
 	private static class ShouldContinueParameter {
+		
+		/** The decimal hit. */
 		private Boolean decimalHit;
+		
+		/** The comma hit. */
 		private Boolean commaHit;
+		
+		/** The since last comma. */
 		private Integer sinceLastComma;
 
+		/**
+		 * Instantiates a new should continue parameter.
+		 *
+		 * @param decimalHit
+		 *            the decimal hit
+		 * @param commaHit
+		 *            the comma hit
+		 * @param sinceLastComma
+		 *            the since last comma
+		 */
 		public ShouldContinueParameter(Boolean decimalHit, Boolean commaHit,
 				Integer sinceLastComma) {
 			this.decimalHit = decimalHit;
@@ -472,32 +496,74 @@ public final class WebSheetUtility {
 			this.sinceLastComma = sinceLastComma;
 		}
 
+		/**
+		 * Checks if is decimal hit.
+		 *
+		 * @return the boolean
+		 */
 		public Boolean isDecimalHit() {
 			return decimalHit;
 		}
 
+		/**
+		 * Sets the decimal hit.
+		 *
+		 * @param decimalHit
+		 *            the new decimal hit
+		 */
 		public void setDecimalHit(Boolean decimalHit) {
 			this.decimalHit = decimalHit;
 		}
 
+		/**
+		 * Checks if is comma hit.
+		 *
+		 * @return the boolean
+		 */
 		public Boolean isCommaHit() {
 			return commaHit;
 		}
 
+		/**
+		 * Sets the comma hit.
+		 *
+		 * @param commaHit
+		 *            the new comma hit
+		 */
 		public void setCommaHit(Boolean commaHit) {
 			this.commaHit = commaHit;
 		}
 
+		/**
+		 * Gets the since last comma.
+		 *
+		 * @return the since last comma
+		 */
 		public Integer getSinceLastComma() {
 			return sinceLastComma;
 		}
 
+		/**
+		 * Sets the since last comma.
+		 *
+		 * @param sinceLastComma
+		 *            the new since last comma
+		 */
 		public void setSinceLastComma(Integer sinceLastComma) {
 			this.sinceLastComma = sinceLastComma;
 		}
 	}
 
 
+	/**
+	 * Should continue.
+	 *
+	 * @param c
+	 *            the c
+	 * @param para
+	 *            the para
+	 * @return true, if successful
+	 */
 	private static boolean shouldContinue(char c, ShouldContinueParameter para) {
 		if (c == '.' && !para.isDecimalHit()) {
 			para.setDecimalHit(true);

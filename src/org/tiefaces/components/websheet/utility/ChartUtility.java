@@ -204,9 +204,11 @@ public final class ChartUtility {
 	/**
 	 * retrieve anchor information from draw.xml for all the charts in the
 	 * workbook. then save them to anchors map.
-	 * 
+	 *
 	 * @param wb
 	 *            workbook.
+	 * @param charsData
+	 *            the chars data
 	 */
 	public static void initXSSFAnchorsMap(final XSSFWorkbook wb,
 			final ChartsData charsData) {

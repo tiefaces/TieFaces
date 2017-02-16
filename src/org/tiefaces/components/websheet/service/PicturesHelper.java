@@ -26,8 +26,8 @@ public class PicturesHelper {
 	private TieWebSheetBean parent = null;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(PicturesHelper.class
-			.getName());
+	private static final Logger LOG = Logger
+			.getLogger(PicturesHelper.class.getName());
 
 	/**
 	 * Instantiates a new pictures helper.
@@ -45,9 +45,11 @@ public class PicturesHelper {
 	 *
 	 * @param wb
 	 *            the wb
-	 * @return the pictrues map
+	 * @param picMap
+	 *            the pic map
 	 */
-	public final void getPictruesMap(final Workbook wb, final Map<String, Picture> picMap) {
+	public final void getPictruesMap(final Workbook wb,
+			final Map<String, Picture> picMap) {
 		PicturesUtility.getPictruesMap(wb, picMap);
 	}
 
@@ -84,22 +86,22 @@ public class PicturesHelper {
 	private void setupFacesCellCharts(final Sheet sheet1,
 			final FacesCell fcell, final String fId) {
 		try {
-			String chartId = parent.getCharsData().getChartPositionMap().get(fId);
+			String chartId = parent.getCharsData().getChartPositionMap()
+					.get(fId);
 			if (chartId != null) {
-				BufferedImage img =
-						 parent.getCharsData().getChartsMap().get(
-								chartId);
+				BufferedImage img = parent.getCharsData().getChartsMap()
+						.get(chartId);
 				if (img != null) {
 					fcell.setContainChart(true);
 					fcell.setChartId(chartId);
-					fcell.setChartStyle(PicturesUtility
-							.generateChartStyle(sheet1, chartId, parent
-									.getCharsData().getChartAnchorsMap()));
+					fcell.setChartStyle(PicturesUtility.generateChartStyle(
+							sheet1, chartId,
+							parent.getCharsData().getChartAnchorsMap()));
 				}
 			}
 		} catch (Exception ex) {
-			LOG.log(Level.SEVERE, "setupFacesCell Charts error = "
-					+ ex.getMessage(), ex);
+			LOG.log(Level.SEVERE,
+					"setupFacesCell Charts error = " + ex.getMessage(), ex);
 		}
 	}
 
@@ -116,16 +118,17 @@ public class PicturesHelper {
 	private void setupFacesCellPicture(final Sheet sheet1,
 			final FacesCell fcell, final String fId) {
 		try {
-			Picture pic =  parent.getPicturesMap().get(fId);
+			Picture pic = parent.getPicturesMap().get(fId);
 			if (pic != null) {
 				fcell.setContainPic(true);
 				fcell.setPictureId(fId);
-				fcell.setPictureStyle(PicturesUtility
-						.generatePictureStyle(sheet1, pic));
+				fcell.setPictureStyle(
+						PicturesUtility.generatePictureStyle(sheet1, pic));
 			}
 		} catch (Exception ex) {
-			LOG.log(Level.SEVERE, "setupFacesCell Picture error = "
-					+ ex.getMessage(), ex);
+			LOG.log(Level.SEVERE,
+					"setupFacesCell Picture error = " + ex.getMessage(),
+					ex);
 		}
 	}
 

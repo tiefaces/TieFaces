@@ -353,11 +353,24 @@ public final class ParserUtility {
 
 	
 	
+	/**
+	 * The Class SpecialAttributes.
+	 */
 	private static class SpecialAttributes {
+		
+		/** The select labels. */
 		private String[] selectLabels;
+		
+		/** The select values. */
 		private String[] selectValues = null;
+		
+		/** The default select label. */
 		private String defaultSelectLabel = null;
+		
+		/** The default select value. */
 		private String defaultSelectValue = null;
+		
+		/** The default date pattern. */
 		private String defaultDatePattern = "";
 		
 	}	
@@ -395,9 +408,14 @@ public final class ParserUtility {
 	}
 
 	/**
+	 * Process calendar attributes.
+	 *
 	 * @param key
+	 *            the key
 	 * @param cellAttributesMap
+	 *            the cell attributes map
 	 * @param sAttr
+	 *            the s attr
 	 */
 	private static void processCalendarAttributes(final String key,
 			final CellAttributesMap cellAttributesMap,
@@ -410,9 +428,14 @@ public final class ParserUtility {
 	}
 
 	/**
+	 * Process select item attributes.
+	 *
 	 * @param key
+	 *            the key
 	 * @param cellAttributesMap
+	 *            the cell attributes map
 	 * @param sAttr
+	 *            the s attr
 	 */
 	private static void processSelectItemAttributes(final String key,
 			final CellAttributesMap cellAttributesMap,
@@ -437,9 +460,14 @@ public final class ParserUtility {
 	}
 
 	/**
+	 * Gather special attributes.
+	 *
 	 * @param type
+	 *            the type
 	 * @param sAttr
+	 *            the s attr
 	 * @param attr
+	 *            the attr
 	 */
 	private static void gatherSpecialAttributes(final String type,
 			SpecialAttributes sAttr, CellFormAttributes attr) {

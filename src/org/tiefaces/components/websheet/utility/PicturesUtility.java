@@ -53,7 +53,8 @@ public final class PicturesUtility {
 	 *
 	 * @param wb
 	 *            the wb
-	 * @return the pictrues map
+	 * @param picMap
+	 *            the pic map
 	 */
 	public static void getPictruesMap(final Workbook wb,
 			final Map<String, Picture> picMap) {
@@ -70,7 +71,8 @@ public final class PicturesUtility {
 	 *
 	 * @param wb
 	 *            the wb
-	 * @return the HSSF pictrues map
+	 * @param picMap
+	 *            the pic map
 	 */
 	private static void getHSSFPictruesMap(final HSSFWorkbook wb,
 			final Map<String, Picture> picMap) {
@@ -104,7 +106,8 @@ public final class PicturesUtility {
 	 *
 	 * @param wb
 	 *            the wb
-	 * @return the XSSF pictrues map
+	 * @param picMap
+	 *            the pic map
 	 */
 	private static void getXSSFPictruesMap(final XSSFWorkbook wb,
 			final Map<String, Picture> picMap) {
@@ -140,8 +143,8 @@ public final class PicturesUtility {
 	 * @param dr
 	 *            documentme part.
 	 */
-	private static void indexPictureInMap(Map<String, Picture> picMap,
-			XSSFSheet sheet, POIXMLDocumentPart dr) {
+	private static void indexPictureInMap(final Map<String, Picture> picMap,
+			final XSSFSheet sheet, final POIXMLDocumentPart dr) {
 		if (dr instanceof XSSFDrawing) {
 			XSSFDrawing drawing = (XSSFDrawing) dr;
 			List<XSSFShape> shapes = drawing.getShapes();

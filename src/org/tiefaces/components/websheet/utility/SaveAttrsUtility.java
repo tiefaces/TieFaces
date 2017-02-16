@@ -155,8 +155,8 @@ public final class SaveAttrsUtility {
 	/**
 	 * Checks if is checks for save attr.
 	 *
-	 * @param columnIndex
-	 *            the column index
+	 * @param cell
+	 *            the cell
 	 * @param saveAttrs
 	 *            the save attrs
 	 * @return true, if is checks for save attr

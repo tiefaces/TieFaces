@@ -172,12 +172,12 @@ public final class CommandUtility {
 	 * @param dataContext
 	 *            the data context
 	 * @return the string
-	 * @throws EvaluationException
-	 *             the evaluation exception
 	 * @throws InstantiationException
 	 *             the instantiation exception
 	 * @throws IllegalAccessException
 	 *             the illegal access exception
+	 * @throws EvaluationException
+	 *             the evaluation exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static String insertEmptyObjectInContext(final String fullName,

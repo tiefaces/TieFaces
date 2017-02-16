@@ -638,9 +638,11 @@ public class ChartHelper {
 	/**
 	 * initial chart map for XSSF format file. XSSF file is actually the only
 	 * format in POI support chart object.
-	 * 
+	 *
 	 * @param wb
 	 *            xssf workbook.
+	 * @param chartsData
+	 *            the charts data
 	 */
 	private void initXSSFChartsMap(final XSSFWorkbook wb,
 			final ChartsData chartsData) {
@@ -670,6 +672,15 @@ public class ChartHelper {
 
 	}
 
+	/**
+	 * Gets the chart id from parent.
+	 *
+	 * @param chart
+	 *            the chart
+	 * @param sheetName
+	 *            the sheet name
+	 * @return the chart id from parent
+	 */
 	private final String getChartIdFromParent(XSSFChart chart,
 			String sheetName) {
 		if (chart.getParent() != null) {

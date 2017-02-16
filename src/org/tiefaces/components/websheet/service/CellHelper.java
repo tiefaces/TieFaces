@@ -75,17 +75,14 @@ public class CellHelper {
 				if (fullName != null) {
 					restoreDataContext(fullName);
 					SaveAttrsUtility.saveDataToObjectInContext(
-							parent.getSerialDataContext().getDataContext(), saveAttr, strValue,
-							parent.getExpEngine());
+							parent.getSerialDataContext().getDataContext(),
+							saveAttr, strValue, parent.getExpEngine());
 					parent.getHelper().getWebSheetLoader().setUnsavedStatus(
-							RequestContext.getCurrentInstance(), true);					
+							RequestContext.getCurrentInstance(), true);
 				}
 			}
 		}
 	}
-	
-	
-
 
 	/**
 	 * recalc whole workbook.
@@ -178,21 +175,18 @@ public class CellHelper {
 	 *
 	 * @param fullName
 	 *            the full name
-	 * @return the collection object
 	 */
-	public final void restoreDataContext(
-			final String fullName) {
+	public final void restoreDataContext(final String fullName) {
 
-		
-		
 		String[] parts = fullName.split(":");
-		
+
 		if (!isNeedRestore(fullName, parts)) {
 			return;
 		}
 
 		boolean stopSkip = false;
-		List<String> list = parent.getCurrent().getCurrentDataContextNameList();
+		List<String> list = parent.getCurrent()
+				.getCurrentDataContextNameList();
 		int listSize = list.size();
 
 		// prepare collection data in context.
@@ -204,7 +198,7 @@ public class CellHelper {
 		for (int i = 0; i < parts.length; i++) {
 			String part = parts[i];
 			boolean skip = false;
-			if ((!stopSkip) && (i<listSize)) {
+			if ((!stopSkip) && (i < listSize)) {
 				String listPart = list.get(i);
 				if (part.equalsIgnoreCase(listPart)) {
 					skip = true;
@@ -213,11 +207,11 @@ public class CellHelper {
 			if (!skip) {
 				stopSkip = true;
 				startRestoreDataContext(part);
-			}	
+			}
 		}
 		if (stopSkip) {
 			parent.getCurrent().setCurrentDataContextName(fullName);
-		}	
+		}
 
 		return;
 	}
@@ -231,14 +225,12 @@ public class CellHelper {
 	 *            the full name
 	 * @return the collection object
 	 */
-	public final CollectionObject getLastCollect(
-			final String fullName) {
+	public final CollectionObject getLastCollect(final String fullName) {
 		String[] parts = fullName.split(":");
 		String part = parts[parts.length - 1];
 		return startRestoreDataContext(part);
 	}
-	
-	
+
 	/**
 	 * Checks if is need restore.
 	 *
@@ -248,16 +240,18 @@ public class CellHelper {
 	 *            the parts
 	 * @return true, if is need restore
 	 */
-	private boolean isNeedRestore(final String fullName,String[] parts) {
+	private boolean isNeedRestore(final String fullName, String[] parts) {
 		if (fullName == null) {
 			return false;
 		}
 		if ((parent.getCurrent().getCurrentDataContextName() != null)
-				&& (parent.getCurrent().getCurrentDataContextName().toLowerCase().startsWith(fullName.toLowerCase()))) {
+				&& (parent.getCurrent().getCurrentDataContextName()
+						.toLowerCase()
+						.startsWith(fullName.toLowerCase()))) {
 			return false;
 		}
 
-		if ((parts == null)||(parts.length<=1)) {
+		if ((parts == null) || (parts.length <= 1)) {
 			return false;
 		}
 		return true;
@@ -266,30 +260,34 @@ public class CellHelper {
 	/**
 	 * Start restore data context.
 	 *
-	 * @param collect
-	 *            the collect
 	 * @param part
 	 *            the part
+	 * @return the collection object
 	 */
-	private CollectionObject startRestoreDataContext(String part) {
-		if (part.startsWith(
-				TieConstants.EACH_COMMAND_FULL_NAME_PREFIX)) {
+	private CollectionObject startRestoreDataContext(final String part) {
+		if (part.startsWith(TieConstants.EACH_COMMAND_FULL_NAME_PREFIX)) {
 			String[] varparts = part.split("\\.");
 			CollectionObject collect = new CollectionObject();
-			
-			collect.setEachCommand(CommandUtility.getEachCommandFromPartsName(
-					parent.getCurrentSheetConfig().getCommandIndexMap(), varparts));
+
+			collect.setEachCommand(
+					CommandUtility
+							.getEachCommandFromPartsName(
+									parent.getCurrentSheetConfig()
+											.getCommandIndexMap(),
+									varparts));
 			collect.setLastCollection(ConfigurationUtility
 					.transformToCollectionObject(parent.getExpEngine(),
 							collect.getEachCommand().getItems(),
-							parent.getSerialDataContext().getDataContext()));
+							parent.getSerialDataContext()
+									.getDataContext()));
 			collect.setLastCollectionIndex(
-					CommandUtility.prepareCollectionDataInContext(
-							varparts, collect.getLastCollection(),
-							parent.getSerialDataContext().getDataContext()));
+					CommandUtility.prepareCollectionDataInContext(varparts,
+							collect.getLastCollection(),
+							parent.getSerialDataContext()
+									.getDataContext()));
 			return collect;
 		}
 		return null;
 	}
-	
+
 }

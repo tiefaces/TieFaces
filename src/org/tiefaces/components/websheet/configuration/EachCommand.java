@@ -233,16 +233,23 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 	}
 
 	/**
+	 * Builds the each objects.
+	 *
 	 * @param fullName
+	 *            the full name
 	 * @param configBuildRef
+	 *            the config build ref
 	 * @param atRow
+	 *            the at row
 	 * @param context
+	 *            the context
 	 * @param currentRowsMappingList
+	 *            the current rows mapping list
 	 * @param itemsCollection
-	 * @param selectEngine
-	 * @param commandRowsMappingList
+	 *            the items collection
 	 * @param objClassName
-	 * @return
+	 *            the obj class name
+	 * @return the int
 	 */
 	@SuppressWarnings("rawtypes")
 	private int buildEachObjects(String fullName,

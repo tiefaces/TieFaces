@@ -658,9 +658,14 @@ public class ConfigurationHandler {
 	}
 
 	/**
+	 * Process method line.
+	 *
 	 * @param cell
+	 *            the cell
 	 * @param line
+	 *            the line
 	 * @param cellAttributesMap
+	 *            the cell attributes map
 	 */
 	private void processMethodLine(final Cell cell, String line,
 			final CellAttributesMap cellAttributesMap) {
@@ -678,11 +683,18 @@ public class ConfigurationHandler {
 	}
 
 	/**
+	 * Process command line.
+	 *
 	 * @param sheet
+	 *            the sheet
 	 * @param cell
+	 *            the cell
 	 * @param line
+	 *            the line
 	 * @param cList
+	 *            the c list
 	 * @param sheetRightCol
+	 *            the sheet right col
 	 */
 	private void processCommandLine(final Sheet sheet, final Cell cell,
 			String line, final List<ConfigCommand> cList,

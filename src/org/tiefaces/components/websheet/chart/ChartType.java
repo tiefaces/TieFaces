@@ -32,6 +32,13 @@ import org.tiefaces.components.websheet.chart.objects.PieChart;
 public enum ChartType {
 	/** area. */
 	AREA("Area") {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.tiefaces.components.websheet.chart.ChartType#isThisType(org.
+		 * openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea)
+		 */
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
@@ -52,8 +59,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createAreaChart(chartData);
 		}
 	},
@@ -79,8 +86,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createStackedAreaChart(chartData);
 		}
 	},
@@ -109,8 +116,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createBarChart3D(chartData, false);
 		}
 	},
@@ -139,8 +146,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createStackedBarChart3D(chartData, false);
 		}
 	},
@@ -169,8 +176,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createBarChart3D(chartData, true);
 		}
 	},
@@ -199,8 +206,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createStackedBarChart3D(chartData, true);
 		}
 	},
@@ -230,8 +237,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createBarChart(chartData, false);
 		}
 	},
@@ -261,8 +268,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createStackedBarChart(chartData, false);
 		}
 	},
@@ -291,8 +298,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createBarChart(chartData, true);
 		}
 	},
@@ -321,8 +328,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createStackedBarChart(chartData, true);
 		}
 	},
@@ -343,8 +350,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -366,8 +373,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -388,8 +395,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -410,8 +417,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createLineChart(chartData);
 		}
 	},
@@ -432,8 +439,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -454,8 +461,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createPie3DChart(chartData);
 		}
 	},
@@ -477,8 +484,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return chartHelper.createPieChart(chartData);
 		}
 	},
@@ -499,8 +506,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -523,8 +530,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -546,8 +553,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -569,8 +576,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	},
@@ -592,8 +599,8 @@ public enum ChartType {
 		}
 
 		@Override
-		public JFreeChart createChart(ChartHelper chartHelper,
-				ChartData chartData) {
+		public JFreeChart createChart(final ChartHelper chartHelper,
+				final ChartData chartData) {
 			return null;
 		}
 	};
@@ -634,7 +641,8 @@ public enum ChartType {
 	 * create jfree chart.
 	 * 
 	 * @param chartHelper
-	 *          
+	 *            chart helper.
+	 * 
 	 * @param chartData
 	 *            chart data.
 	 * @return jfree chart.

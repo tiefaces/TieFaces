@@ -148,14 +148,8 @@ public class WebSheetLoader implements Serializable {
 	/**
 	 * Load header row without configuration tab.
 	 *
-	 * @param sheet1
-	 *            the sheet 1
-	 * @param firstCol
-	 *            the first col
-	 * @param lastCol
-	 *            the last col
-	 * @param totalWidth
-	 *            the total width
+	 * @param rangeBuildRef
+	 *            the range build ref
 	 * @param rendered
 	 *            the rendered
 	 * @return the list
@@ -247,16 +241,10 @@ public class WebSheetLoader implements Serializable {
 	 *
 	 * @param sheetConfig
 	 *            the sheet config
-	 * @param sheet1
-	 *            the sheet 1
+	 * @param rangeBuildRef
+	 *            the range build ref
 	 * @param currentRow
 	 *            the current row
-	 * @param left
-	 *            the left
-	 * @param right
-	 *            the right
-	 * @param totalWidth
-	 *            the total width
 	 * @param cellRangeMap
 	 *            the cell range map
 	 * @param skippedRegionCells
@@ -794,11 +782,18 @@ public class WebSheetLoader implements Serializable {
 	}
 
 	/**
+	 * Process refresh cell.
+	 *
 	 * @param tblName
+	 *            the tbl name
 	 * @param i
+	 *            the i
 	 * @param index
+	 *            the index
 	 * @param cell
+	 *            the cell
 	 * @param fcell
+	 *            the fcell
 	 */
 	private void processRefreshCell(final String tblName, final int i,
 			final int index, final Cell cell, final FacesCell fcell) {

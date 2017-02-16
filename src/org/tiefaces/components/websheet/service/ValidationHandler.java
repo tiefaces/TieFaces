@@ -92,8 +92,7 @@ public class ValidationHandler {
 	 *            the col
 	 * @param passEmptyCheck
 	 *            the pass empty check
-	 * @throws ValidatorException
-	 *             the validator exception
+	 * @return true, if successful
 	 */
 	public boolean validateWithRowColInCurrentPage(final int row,
 			final int col, final boolean passEmptyCheck) {
@@ -160,6 +159,7 @@ public class ValidationHandler {
 	 *            the sheet config
 	 * @param cellAttributes
 	 *            the cell attributes
+	 * @return true, if successful
 	 */
 	private boolean validateAllRulesForSingleCell(final int formRow,
 			final int formCol, FacesCell cell, Cell poiCell, String value,
@@ -200,8 +200,6 @@ public class ValidationHandler {
 	 * @param sheet
 	 *            the sheet
 	 * @return true, if successful
-	 * @throws ValidatorException
-	 *             the validator exception
 	 */
 	private boolean doValidation(final Object value,
 			final CellFormAttributes attr, final int rowIndex,
