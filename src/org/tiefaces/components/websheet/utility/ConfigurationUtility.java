@@ -74,25 +74,6 @@ public final class ConfigurationUtility {
 		return (Collection) collectionObject;
 	}
 
-	/**
-	 * Checks if is condition true.
-	 *
-	 * @param engine
-	 *            the engine
-	 * @param context
-	 *            the context
-	 * @return the boolean
-	 */
-	public static Boolean isConditionTrue(final ExpressionEngine engine,
-			final Map<String, Object> context) {
-		Object conditionResult = engine.evaluate(context);
-		if (!(conditionResult instanceof Boolean)) {
-			throw new EvaluationException(
-					"Condition result is not a boolean value - "
-							+ engine.getJexlExpression().getExpression());
-		}
-		return (Boolean) conditionResult;
-	}
 
 	/**
 	 * Gets the full name from row.

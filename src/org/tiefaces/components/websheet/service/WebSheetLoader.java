@@ -420,6 +420,7 @@ public class WebSheetLoader implements Serializable {
 					new ConfigurationHandler(parent).buildConfiguration());
 			parent.reCalcMaxColCounts();
 			parent.getChartHelper().loadChartsMap();
+			parent.getPicHelper().loadPicturesMap();
 			initSheet();
 			initTabs();
 			if (!parent.getTabs().isEmpty()) {
@@ -954,8 +955,8 @@ public class WebSheetLoader implements Serializable {
 		
 		// in client js should have setUnsavedState method 
 		if (requestContext != null) {
-			LOG.info("run setUnsavedState(" + statusFlag + ")");
-			requestContext.execute("setUnsavedState(" + statusFlag + ")");
+			LOG.info("run setUnsavedState(" + statusFlag.toString() + ")");
+			requestContext.execute("setUnsavedState(" + statusFlag.toString() + ")");
 		}	
 
 	}

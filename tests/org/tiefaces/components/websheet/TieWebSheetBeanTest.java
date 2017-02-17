@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -16,7 +17,10 @@ import org.junit.Test;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.chart.ChartData;
 import org.tiefaces.components.websheet.chart.ChartType;
-
+import org.tiefaces.components.websheet.utility.CellUtility;
+import org.tiefaces.components.websheet.utility.ConfigurationUtility;
+import org.tiefaces.datademo.Department;
+import org.tiefaces.datademo.WebSheetDataDemo;
 import org.tiefaces.common.Item;
 
 import static org.junit.Assert.assertEquals;
@@ -92,6 +96,49 @@ public class TieWebSheetBeanTest {
 
 	}
 
+    /**
+     * Test method for
+     * {@link org.tiefaces.components.websheet.TieWebSheetBean#loadWebSheet(java.io.InputStream)}
+     * .
+     */
+    @Test
+    public final void testLoadWebSheetWithData() throws Exception {
+        TieWebSheetBean bean = new TieWebSheetBean();
+        bean.init();
+        InputStream stream =
+                this.getClass().getClassLoader().getResourceAsStream(
+                        "resources/sheet/datacommentdemo.xlsx");
+        Map<String, Object> context = new HashMap<String, Object>();
+        List<Department> departments = WebSheetDataDemo.createDepartments();
+        context.put("departments", departments);
+        
+        assertEquals(bean.loadWebSheet(stream, context), 1);
+        Workbook wb = bean.getWb();
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            String sheetName = wb.getSheetName(i);
+            if (sheetName.startsWith(TieConstants.COPY_SHEET_PREFIX)) {
+                assertTrue(wb.isSheetVeryHidden(i));
+            } else {
+                Sheet sheet = wb.getSheetAt(i);
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(8).getCell(6)), "2875");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(6)), "12415");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(21).getCell(6)), "2070");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(23).getCell(6)), "8245");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(33).getCell(6)), "2687.5");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(34).getCell(6)), "10957.5");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(35).getCell(6)), "31617.5");
+                assertEquals(ConfigurationUtility.getFullNameFromRow(sheet.getRow(7)), "F.departments:E.department.0:E.employee.0");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(7)), "10800.75");
+                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(22).getCell(7)), "1900.15");
+
+                int size = departments.size();
+                bean.addRepeatRow(2);
+                assertEquals(departments.size(), (size + 1));
+            }
+        }
+
+    }
+	
 	/**
 	 * Test charts line. .
 	 */

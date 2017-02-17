@@ -14,7 +14,7 @@ import org.junit.Test;
 /**
  * The Class AppUtilsTest.
  *
- * @author ihsb_developer
+ * @author Jason Jiang
  */
 public class AppUtilsTest {
 

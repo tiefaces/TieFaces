@@ -177,8 +177,8 @@ public class ValidationHandler {
 				cell.setErrormsg(errmsg);
 				LOG.info("Validation failed for sheet "
 						+ sheet1.getSheetName() + " row "
-						+ poiCell.getRowIndex() + " column "
-						+ poiCell.getColumnIndex() + " : " + errmsg);
+						+ Integer.toString(poiCell.getRowIndex()) + " column "
+						+ Integer.toString(poiCell.getColumnIndex()) + " : " + errmsg);
 				refreshAfterStatusChanged(false, true, formRow, formCol,
 						cell);
 				return false;

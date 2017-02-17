@@ -68,28 +68,80 @@ public final class ColorUtility {
 			final ThemesTable themeTable) {
 
 		CTSolidColorFillProperties colorFill = null;
-
 		try {
 			colorFill = ctPlot.getSpPr().getSolidFill();
 		} catch (Exception ex) {
 			LOG.log(Level.FINE, "No entry in bgcolor for solidFill", ex);
 		}
-		// if there's no solidFill, then use white color
-		if (colorFill != null) {
-			CTSchemeColor ctsColor = colorFill.getSchemeClr();
-			if (ctsColor != null) {
-				return getXColorFromSchemeClr(ctsColor, themeTable);
-			} else {
-				CTSRgbColor ctrColor = colorFill.getSrgbClr();
-				if (ctrColor != null) {
-					return getXColorFromRgbClr(ctrColor);
-				}
-			}
+		XColor xcolor = findAutomaticFillColor(themeTable, colorFill);
+		if (xcolor != null) {
+			return xcolor;
+		} else {
+			return new XColor(new XSSFColor(Color.WHITE));
 		}
-		return new XColor(new XSSFColor(Color.WHITE));
+	}
+
+	/**
+	 * get line color of line chart from CTLineSer.
+	 *
+	 * @param index
+	 *            line index.
+	 * @param ctSpPr
+	 *            the ct sp pr
+	 * @param themeTable
+	 *            themeTable.
+	 * @param isLineColor
+	 *            is line color.
+	 * @return xcolor.
+	 */
+	public static XColor geColorFromSpPr(final int index,
+			final CTShapeProperties ctSpPr, final ThemesTable themeTable,
+			final boolean isLineColor) {
+
+		CTSolidColorFillProperties colorFill = null;
+
+		try {
+			if (isLineColor) {
+				colorFill = ctSpPr.getLn().getSolidFill();
+			} else {
+				colorFill = ctSpPr.getSolidFill();
+			}
+		} catch (Exception ex) {
+			LOG.log(Level.FINE, "No entry for solidFill", ex);
+		}
+		XColor xcolor = findAutomaticFillColor(themeTable, colorFill);
+		if (xcolor != null) {
+			return xcolor;
+		} else {
+			return getXColorWithAutomaticFill(index, themeTable);
+		}
 
 	}
 
+	/**
+	 * @param themeTable
+	 * @param colorFill
+	 */
+	private static XColor findAutomaticFillColor(final ThemesTable themeTable,
+			CTSolidColorFillProperties colorFill) {
+		// if there's no solidFill, then use automaticFill color
+		if (colorFill == null) {
+			return null;
+		}	
+		CTSchemeColor ctsColor = colorFill.getSchemeClr();
+		if (ctsColor != null) {
+			return getXColorFromSchemeClr(ctsColor, themeTable);
+		} else {
+			CTSRgbColor ctrColor = colorFill.getSrgbClr();
+			if (ctrColor != null) {
+				return getXColorFromRgbClr(ctrColor);
+			}
+		}
+		return null;
+	}
+	
+	
+	
 	/**
 	 * assemble xssfcolor with tint/lumoff/lummod/alpha to xcolor.
 	 * 
@@ -240,49 +292,6 @@ public final class ColorUtility {
 		return assembleXcolor(bcolor, 0, lumOff, lumMod, alphaStr);
 	}
 
-	/**
-	 * get line color of line chart from CTLineSer.
-	 *
-	 * @param index
-	 *            line index.
-	 * @param ctSpPr
-	 *            the ct sp pr
-	 * @param themeTable
-	 *            themeTable.
-	 * @param isLineColor
-	 *            is line color.
-	 * @return xcolor.
-	 */
-	public static XColor geColorFromSpPr(final int index,
-			final CTShapeProperties ctSpPr, final ThemesTable themeTable,
-			final boolean isLineColor) {
-
-		CTSolidColorFillProperties colorFill = null;
-
-		try {
-			if (isLineColor) {
-				colorFill = ctSpPr.getLn().getSolidFill();
-			} else {
-				colorFill = ctSpPr.getSolidFill();
-			}
-		} catch (Exception ex) {
-			LOG.log(Level.FINE, "No entry for solidFill", ex);
-		}
-		// if there's no solidFill, then use automaticFill color
-		if (colorFill != null) {
-			CTSchemeColor ctsColor = colorFill.getSchemeClr();
-			if (ctsColor != null) {
-				return getXColorFromSchemeClr(ctsColor, themeTable);
-			} else {
-				CTSRgbColor ctrColor = colorFill.getSrgbClr();
-				if (ctrColor != null) {
-					return getXColorFromRgbClr(ctrColor);
-				}
-			}
-		}
-		return getXColorWithAutomaticFill(index, themeTable);
-
-	}
 
 	/**
 	 * Get xcolor for automatic fill setting. This is the default setting in

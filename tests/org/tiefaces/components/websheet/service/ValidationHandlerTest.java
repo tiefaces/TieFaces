@@ -16,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.tiefaces.common.Item;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 
@@ -60,6 +61,7 @@ public class ValidationHandlerTest {
 					3, true);
 		FacesCell fcell = bean.getBodyRows().get(4).getCells().get(3);
 		assertTrue(fcell.isInvalid());
+		assertTrue(fcell.getValidStyle().contains(TieConstants.CELL_INVALID_STYLE));
 		bean.getCellsMap().put("4:3", "1");
 		bean.getValidationHandler().validateWithRowColInCurrentPage(4, 3,
 				true);

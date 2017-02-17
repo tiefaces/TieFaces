@@ -18,7 +18,7 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.junit.Test;
 
 /**
- * @author ihsb_developer
+ * @author Jason Jiang
  *
  */
 public class CellUtilityTest {
@@ -63,8 +63,6 @@ public class CellUtilityTest {
 		
 		
 		Workbook wb = new XSSFWorkbook();
-		XSSFEvaluationWorkbook wbWrapper = XSSFEvaluationWorkbook
-				.create((XSSFWorkbook) wb);	
 		CreationHelper createHelper = wb.getCreationHelper();		
 		Sheet sheet1 = wb.createSheet("sheet1");
 		// Create a row and put some cells in it. Rows are 0 based.

@@ -263,10 +263,6 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 		int insertPosition = atRow;
 		String thisObjClassName = objClassName; 
 
-		ExpressionEngine selectEngine = null;
-		if (select != null) {
-			selectEngine = new ExpressionEngine(select);
-		}
 		// loop through each object in the collection
 		for (Object obj : itemsCollection) {
 			// gather and cache object class name which used for add row
@@ -277,11 +273,6 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			}
 			RowsMapping unitRowsMapping = new RowsMapping();
 			context.put(var, obj);
-			if (selectEngine != null && !ConfigurationUtility
-					.isConditionTrue(selectEngine, context)) {
-				context.remove(var);
-				continue;
-			}
 			CommandUtility.insertEachTemplate(this.getConfigRange(),
 					configBuildRef, index, insertPosition, unitRowsMapping);
 			ConfigRange currentRange = ConfigurationUtility

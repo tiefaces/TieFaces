@@ -150,7 +150,7 @@ public class TieWebSheetBean extends TieWebSheetView
 
 	/** constructor. Allow for extension. */
 	public TieWebSheetBean() {
-		LOG.fine("TieWebSheetBean Constructor");
+		LOG.info("TieWebSheetBean Constructor "+this.toString());
 	}
 
 	/** initialize. */
@@ -910,8 +910,7 @@ public class TieWebSheetBean extends TieWebSheetView
 	private void recover() {
 		if (this.getWb() != null) {
 			this.getChartHelper().loadChartsMap();
-			this.getPicHelper().getPictruesMap(this.getWb(),
-					this.getPicturesMap());
+			this.getPicHelper().loadPicturesMap();
 		}
 	}
 

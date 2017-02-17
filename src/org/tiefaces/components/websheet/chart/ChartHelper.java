@@ -207,8 +207,8 @@ public class ChartHelper {
 				} catch (Exception e) {
 					LOG.log(Level.SEVERE,
 							"Error setting style '" + style
-									+ "' for series '" + seriesIndex
-									+ "' of chart '" + chart + "': "
+									+ "' for series '" + Integer.toString(seriesIndex)
+									+ "' of chart '" + chart.toString() + "': "
 									+ e.getLocalizedMessage(),
 							e);
 				}
@@ -221,8 +221,8 @@ public class ChartHelper {
 				} catch (Exception e) {
 					LOG.log(Level.SEVERE,
 							"Error setting style '" + style
-									+ "' for series '" + seriesIndex
-									+ "' of chart '" + chart + "': "
+									+ "' for series '" + Integer.toString(seriesIndex)
+									+ "' of chart '" + chart.toString() + "': "
 									+ e.getLocalizedMessage(),
 							e);
 				}

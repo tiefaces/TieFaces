@@ -6,13 +6,11 @@
 package org.tiefaces.components.websheet.service;
 
 import java.awt.image.BufferedImage;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.utility.PicturesUtility;
@@ -37,21 +35,17 @@ public class PicturesHelper {
 	 */
 	public PicturesHelper(final TieWebSheetBean pparent) {
 		this.parent = pparent;
-		LOG.fine("TieWebSheetBean Constructor");
 	}
 
-	/**
-	 * Gets the pictrues map.
-	 *
-	 * @param wb
-	 *            the wb
-	 * @param picMap
-	 *            the pic map
-	 */
-	public final void getPictruesMap(final Workbook wb,
-			final Map<String, Picture> picMap) {
-		PicturesUtility.getPictruesMap(wb, picMap);
-	}
+	
+	
+    /**
+     * initial pictures map for current workbook.
+     */
+    public final void loadPicturesMap() {
+        PicturesUtility.getPictruesMap(parent.getWb(), parent.getPicturesMap());
+    }	
+	
 
 	/**
 	 * Setup faces cell picture charts.

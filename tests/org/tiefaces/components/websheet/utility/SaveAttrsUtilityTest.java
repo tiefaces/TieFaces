@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- * @author ihsb_developer
+ * @author Jason Jiang
  *
  */
 public class SaveAttrsUtilityTest {
