@@ -43,7 +43,6 @@ public final class ConfigurationUtility {
 	static final Logger LOG = Logger
 			.getLogger(ConfigurationUtility.class.getName());
 
-	
 	/**
 	 * hide constructor.
 	 */
@@ -73,7 +72,6 @@ public final class ConfigurationUtility {
 		}
 		return (Collection) collectionObject;
 	}
-
 
 	/**
 	 * Gets the full name from row.
@@ -225,7 +223,7 @@ public final class ConfigurationUtility {
 	 * @param changeMap
 	 *            the change map
 	 */
-	public static void increaseIndexNumberInShiftMap(
+	public static void changeIndexNumberInShiftMap(
 			final Map<String, ConfigRangeAttrs> shiftMap,
 			final Map<String, String> changeMap) {
 		for (Map.Entry<String, String> entry : changeMap.entrySet()) {
@@ -249,7 +247,7 @@ public final class ConfigurationUtility {
 	 * @param increasedLength
 	 *            the increased length
 	 */
-	public static void increaseUpperLevelFinalLength(
+	public static void changeUpperLevelFinalLength(
 			final Map<String, ConfigRangeAttrs> shiftMap,
 			final String addedFullName, final int increasedLength) {
 		String[] parts = addedFullName.split(":");
@@ -277,16 +275,18 @@ public final class ConfigurationUtility {
 	 * @param changeMap
 	 *            the change map
 	 */
-	public static void increaseIndexNumberInHiddenColumn(
+	public static void changeIndexNumberInHiddenColumn(
 			final ConfigBuildRef configBuildRef, final int startRowIndex,
-			final String fullName, final Map<String, String> changeMap) {
+			final String fullName, final Map<String, String> changeMap,
+			final int steps
+			) {
 		String searchName = fullName.substring(0,
 				fullName.lastIndexOf('.') + 1);
 		Sheet sheet = configBuildRef.getSheet();
 		for (int i = startRowIndex; i <= sheet.getLastRowNum(); i++) {
 			Row row = sheet.getRow(i);
 			String fname = getFullNameFromRow(row);
-			if ((fname != null) && (fname.indexOf(searchName) >=0 )){
+			if ((fname != null) && (fname.indexOf(searchName) >= 0)) {
 				int sindex = fname.indexOf(searchName);
 				String snum = fname.substring(sindex + searchName.length());
 				int sufindex = snum.indexOf(':');
@@ -295,15 +295,63 @@ public final class ConfigurationUtility {
 					snum = snum.substring(0, sufindex);
 					suffix = ":";
 				}
-				int increaseNum = Integer.parseInt(snum) + 1;
+				int increaseNum = Integer.parseInt(snum) + steps;
 				String realFullName = fname.substring(sindex);
-				String changeName = fname.replace(searchName + snum + suffix,
+				String changeName = fname.replace(
+						searchName + snum + suffix,
 						searchName + increaseNum + suffix);
 				if (changeMap.get(realFullName) == null) {
-					changeMap.put(realFullName, changeName.substring(sindex));
+					changeMap.put(realFullName,
+							changeName.substring(sindex));
 				}
 				setFullNameInHiddenColumn(row, changeName);
-			}	
+			} else {
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Decrease index number in hidden column.
+	 *
+	 * @param configBuildRef
+	 *            the config build ref
+	 * @param startRowIndex
+	 *            the start row index
+	 * @param fullName
+	 *            the full name
+	 * @param changeMap
+	 *            the change map
+	 */
+	public static void decreaseIndexNumberInHiddenColumn(
+			final ConfigBuildRef configBuildRef, final int startRowIndex,
+			final String fullName, final Map<String, String> changeMap) {
+		String searchName = fullName.substring(0,
+				fullName.lastIndexOf('.') + 1);
+		Sheet sheet = configBuildRef.getSheet();
+		for (int i = startRowIndex; i <= sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			String fname = getFullNameFromRow(row);
+			if ((fname != null) && (fname.indexOf(searchName) >= 0)) {
+				int sindex = fname.indexOf(searchName);
+				String snum = fname.substring(sindex + searchName.length());
+				int sufindex = snum.indexOf(':');
+				String suffix = "";
+				if (sufindex > 0) {
+					snum = snum.substring(0, sufindex);
+					suffix = ":";
+				}
+				int increaseNum = Integer.parseInt(snum) - 1;
+				String realFullName = fname.substring(sindex);
+				String changeName = fname.replace(
+						searchName + snum + suffix,
+						searchName + increaseNum + suffix);
+				if (changeMap.get(realFullName) == null) {
+					changeMap.put(realFullName,
+							changeName.substring(sindex));
+				}
+				setFullNameInHiddenColumn(row, changeName);
+			}
 		}
 	}
 
@@ -589,9 +637,9 @@ public final class ConfigurationUtility {
 	 * @return the string
 	 */
 	// 100 >= 80
-	public static String replaceExpressionWithCellValue(final String attrValue,
-			final int rowIndex, final Sheet sheet) {
-	
+	public static String replaceExpressionWithCellValue(
+			final String attrValue, final int rowIndex, final Sheet sheet) {
+
 		int ibegin = 0;
 		int ifind;
 		int iblank;
@@ -620,9 +668,9 @@ public final class ConfigurationUtility {
 				replaceStr = "";
 			}
 			returnStr = attrValue.replace(findStr, replaceStr);
-	
+
 			ibegin = ifind + 1;
-	
+
 		}
 		return returnStr;
 	}
@@ -636,11 +684,11 @@ public final class ConfigurationUtility {
 	 */
 	public static Map<String, CellRangeAddress> indexMergedRegion(
 			final Sheet sheet1) {
-	
+
 		int numRegions = sheet1.getNumMergedRegions();
 		Map<String, CellRangeAddress> cellRangeMap = new HashMap<>();
 		for (int i = 0; i < numRegions; i++) {
-	
+
 			CellRangeAddress caddress = sheet1.getMergedRegion(i);
 			if (caddress != null) {
 				cellRangeMap.put(CellUtility.getCellIndexNumberKey(
@@ -662,7 +710,7 @@ public final class ConfigurationUtility {
 		int numRegions = sheet1.getNumMergedRegions();
 		List<String> skipCellList = new ArrayList<>();
 		for (int i = 0; i < numRegions; i++) {
-	
+
 			CellRangeAddress caddress = sheet1.getMergedRegion(i);
 			if (caddress != null) {
 				addSkipCellToListInTheRegion(skipCellList, caddress);
@@ -694,6 +742,5 @@ public final class ConfigurationUtility {
 			}
 		}
 	}
-
 
 }

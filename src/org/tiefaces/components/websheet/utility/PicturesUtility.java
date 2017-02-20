@@ -137,7 +137,7 @@ public final class PicturesUtility {
             if (anchorSize != null) {
                 return "PADDING-LEFT:" + anchorSize.getLeft() + "px;PADDING-TOP:"
                         + anchorSize.getTop() + "px;width:" + anchorSize.getWidth()
-                        + "px; height:" + anchorSize.getHeight() + "px;";
+                        + "px; height:" + String.format("%.2f", anchorSize.getHeight() / WebSheetUtility.PICTURE_HEIGHT_ADJUST)  + "px;";
             }
         }
         return "";

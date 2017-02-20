@@ -175,7 +175,7 @@ public class ValidationHandler {
 					errmsg = TieConstants.DEFALT_MSG_INVALID_INPUT;
 				}
 				cell.setErrormsg(errmsg);
-				LOG.info("Validation failed for sheet "
+				LOG.log(Level.INFO,"Validation failed for sheet "
 						+ sheet1.getSheetName() + " row "
 						+ Integer.toString(poiCell.getRowIndex()) + " column "
 						+ Integer.toString(poiCell.getColumnIndex()) + " : " + errmsg);

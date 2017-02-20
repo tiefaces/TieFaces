@@ -28,6 +28,9 @@ import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.RowsMapping;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CollectionObject;
+import org.tiefaces.components.websheet.dataobjects.FacesRow;
+import org.tiefaces.exception.AddRowException;
+import org.tiefaces.exception.DeleteRowException;
 import org.tiefaces.exception.EvaluationException;
 
 /**
@@ -56,86 +59,194 @@ public final class CommandUtility {
 	 * @param dataContext
 	 *            the data context
 	 * @return the int
+	 * @throws InstantiationException
+	 *             the instantiation exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public static int addRow(final ConfigBuildRef configBuildRef,
-			final int rowIndex, final Map<String, Object> dataContext) {
-		String fullName = ConfigurationUtility.getFullNameFromRow(
-				configBuildRef.getSheet().getRow(rowIndex));
-		if (fullName == null) {
-			return -1;
-		}
-		String[] parts = fullName.split(":");
-		if (parts == null) {
-			return -1;
-		}
-	
+			final int rowIndex, final Map<String, Object> dataContext)
+			throws InstantiationException, IllegalAccessException {
+
 		// replace the lastCollection.
 		// since here's add one row.
 		// Then we should insert one empty object in the list.
 		// The collection must be a list to support add/delete function.
 		// and the object must support empty constructor.
 
-				
-		try {
-			configBuildRef.getCellHelper().restoreDataContext(fullName);
-			CollectionObject collect =  configBuildRef.getCellHelper().getLastCollect(fullName);
-			
-			Collection lastCollection = collect.getLastCollection();
-			int lastCollectionIndex = collect.getLastCollectionIndex();
-			EachCommand eachCommand = collect.getEachCommand();
-			if (lastCollectionIndex < 0) {
-				// no each command in the loop.
-				return 0;
-			}
-			String unitFullName = CommandUtility.insertEmptyObjectInContext(fullName,
-					lastCollection, eachCommand, lastCollectionIndex,
-					dataContext);
-			RowsMapping unitRowsMapping = new RowsMapping();
-			ConfigRangeAttrs savedRangeAttrs = configBuildRef.getShiftMap()
-					.get(fullName);
-			int insertPosition = savedRangeAttrs.getFirstRowRef()
-					.getRowIndex() + savedRangeAttrs.getFinalLength();
-			configBuildRef.setInsertPosition(insertPosition);
-			CommandUtility.insertEachTemplate(eachCommand.getConfigRange(), configBuildRef,
-					lastCollectionIndex + 1, insertPosition,
-					unitRowsMapping);
-			ConfigRange currentRange = ConfigurationUtility.buildCurrentRange(
-					eachCommand.getConfigRange(), configBuildRef.getSheet(),
-					insertPosition);
-			List<RowsMapping> currentRowsMappingList = ConfigurationUtility.findParentRowsMappingFromShiftMap(
-					parts, configBuildRef.getShiftMap());
-			currentRowsMappingList.add(unitRowsMapping);
-			currentRange.getAttrs().setAllowAdd(true);
-			configBuildRef.setBodyAllowAdd(true);
-			// reverse order of changeMap.
-			Map<String, String> changeMap = new TreeMap<>(
-					Collections.reverseOrder());
-			ConfigurationUtility.increaseIndexNumberInHiddenColumn(
-					configBuildRef, currentRange.getAttrs()
-							.getLastRowPlusRef().getRowIndex(),
-					fullName, changeMap);
-			ConfigurationUtility.increaseIndexNumberInShiftMap(configBuildRef.getShiftMap(),
-					changeMap);
-			configBuildRef.putShiftAttrs(unitFullName,
-					currentRange.getAttrs(), unitRowsMapping);
-			int length = currentRange.buildAt(unitFullName, configBuildRef,
-					insertPosition, dataContext, currentRowsMappingList);
-			currentRange.getAttrs().setFinalLength(length);
-	
-			ConfigurationUtility.reBuildUpperLevelFormula(configBuildRef, fullName);
-			ConfigurationUtility.increaseUpperLevelFinalLength(configBuildRef.getShiftMap(),
-					fullName, length);
-			currentRowsMappingList.remove(unitRowsMapping);
-			dataContext.remove(eachCommand.getVar());
-	
-			return length;
-	
-		} catch (Exception ex) {
-			LOG.log(Level.SEVERE, "Add row error=" + ex.getMessage(), ex);
-			return -1;
+		String fullName = ConfigurationUtility.getFullNameFromRow(
+				configBuildRef.getSheet().getRow(rowIndex));
+		String[] parts = fullName.split(":");
+		configBuildRef.getCellHelper().restoreDataContext(fullName);
+		CollectionObject collect = configBuildRef.getCellHelper()
+				.getLastCollect(fullName);
+
+		Collection lastCollection = collect.getLastCollection();
+		int lastCollectionIndex = collect.getLastCollectionIndex();
+		EachCommand eachCommand = collect.getEachCommand();
+		if (lastCollectionIndex < 0) {
+			// no each command in the loop.
+			throw new AddRowException("No each command found.");
 		}
-	
+		String unitFullName = CommandUtility.insertEmptyObjectInContext(
+				fullName, lastCollection, eachCommand, lastCollectionIndex,
+				dataContext);
+		RowsMapping unitRowsMapping = new RowsMapping();
+		ConfigRangeAttrs savedRangeAttrs = configBuildRef.getShiftMap()
+				.get(fullName);
+		int insertPosition = savedRangeAttrs.getFirstRowRef().getRowIndex()
+				+ savedRangeAttrs.getFinalLength();
+		configBuildRef.setInsertPosition(insertPosition);
+		CommandUtility.insertEachTemplate(eachCommand.getConfigRange(),
+				configBuildRef, lastCollectionIndex + 1, insertPosition,
+				unitRowsMapping);
+		ConfigRange currentRange = ConfigurationUtility.buildCurrentRange(
+				eachCommand.getConfigRange(), configBuildRef.getSheet(),
+				insertPosition);
+		List<RowsMapping> currentRowsMappingList = ConfigurationUtility
+				.findParentRowsMappingFromShiftMap(parts,
+						configBuildRef.getShiftMap());
+		currentRowsMappingList.add(unitRowsMapping);
+		currentRange.getAttrs().setAllowAdd(true);
+		configBuildRef.setBodyAllowAdd(true);
+		// reverse order of changeMap.
+		Map<String, String> changeMap = new TreeMap<>(
+				Collections.reverseOrder());
+		ConfigurationUtility.changeIndexNumberInHiddenColumn(configBuildRef,
+				currentRange.getAttrs().getLastRowPlusRef().getRowIndex(),
+				fullName, changeMap, 1);
+		ConfigurationUtility.changeIndexNumberInShiftMap(
+				configBuildRef.getShiftMap(), changeMap);
+		configBuildRef.putShiftAttrs(unitFullName, currentRange.getAttrs(),
+				unitRowsMapping);
+		int length = currentRange.buildAt(unitFullName, configBuildRef,
+				insertPosition, dataContext, currentRowsMappingList);
+		currentRange.getAttrs().setFinalLength(length);
+
+		ConfigurationUtility.reBuildUpperLevelFormula(configBuildRef,
+				fullName);
+		ConfigurationUtility.changeUpperLevelFinalLength(
+				configBuildRef.getShiftMap(), fullName, length);
+		currentRowsMappingList.remove(unitRowsMapping);
+		dataContext.remove(eachCommand.getVar());
+
+		return length;
+
+	}
+
+	/**
+	 * Delete row.
+	 *
+	 * @param configBuildRef
+	 *            the config build ref
+	 * @param rowIndex
+	 *            the row index
+	 * @param dataContext
+	 *            the data context
+	 * @param sheetConfig
+	 *            the sheet config
+	 * @param bodyRows
+	 *            the body rows
+	 * @return the int
+	 * @throws DeleteRowException
+	 *             the delete row exception
+	 * @throws InstantiationException
+	 *             the instantiation exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	public static int deleteRow(final ConfigBuildRef configBuildRef,
+			final int rowIndex, final Map<String, Object> dataContext,
+			final SheetConfiguration sheetConfig,
+			final List<FacesRow> bodyRows)
+			throws InstantiationException, IllegalAccessException {
+
+		String fullName = ConfigurationUtility.getFullNameFromRow(
+				configBuildRef.getSheet().getRow(rowIndex));
+		if (hasChildRow(rowIndex, fullName)) {
+			throw new DeleteRowException(
+					"Found child records. Cannot delte.");
+		}
+
+		configBuildRef.getCellHelper().restoreDataContext(fullName);
+		CollectionObject collect = configBuildRef.getCellHelper()
+				.getLastCollect(fullName);
+
+		Collection lastCollection = collect.getLastCollection();
+		int lastCollectionIndex = collect.getLastCollectionIndex();
+		EachCommand eachCommand = collect.getEachCommand();
+		if (lastCollectionIndex < 0) {
+			// no each command in the loop.
+			throw new DeleteRowException("No each command found.");
+		}
+		if ((lastCollection.size() <= 1)
+				&& hasNoEachCommandParent(fullName)) {
+			// this is the last record and no parent left.
+			throw new DeleteRowException("Cannot delete the last record.");
+		}
+
+		CommandUtility.deleteObjectInContext(fullName, lastCollection,
+				eachCommand, lastCollectionIndex, dataContext);
+
+		// 1. remove ranged rows from sheet
+		int startRow = eachCommand.getConfigRange().getFirstRowAddr()
+				.getRow();
+		int endRow = eachCommand.getConfigRange().getLastRowPlusAddr()
+				.getRow() - 1;
+		int length = endRow - startRow + 1;
+		String var = eachCommand.getVar();
+		CommandUtility.removeRowsInSheet(configBuildRef.getSheet(),
+				startRow, endRow);
+		// 2. reset FacesRow row index.
+		CommandUtility.removeRowsInBody(sheetConfig, bodyRows, startRow,
+				endRow);
+		// 3. decrease index number in hidden column
+		Map<String, String> changeMap = new TreeMap<>(
+				Collections.reverseOrder());
+		ConfigurationUtility.changeIndexNumberInHiddenColumn(configBuildRef,
+				startRow, fullName, changeMap, -1);
+		// 4. decrease index number in shift map
+		ConfigurationUtility.changeIndexNumberInShiftMap(
+				configBuildRef.getShiftMap(), changeMap);
+		// 5. rebuild upper level formula
+		ConfigurationUtility.reBuildUpperLevelFormula(configBuildRef,
+				fullName);
+		// 6. decrease upper level final length
+		ConfigurationUtility.changeUpperLevelFinalLength(
+				configBuildRef.getShiftMap(), fullName, -length);
+
+		dataContext.remove(var);
+
+		return length;
+
+	}
+
+	/**
+	 * Checks for no each command parent.
+	 *
+	 * @param fullName
+	 *            the full name
+	 * @return true, if successful
+	 */
+	private static boolean hasNoEachCommandParent(String fullName) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * Checks for child row.
+	 *
+	 * @param rowIndex
+	 *            the row index
+	 * @param fullName
+	 *            the full name
+	 * @return true, if successful
+	 */
+	private static boolean hasChildRow(int rowIndex, String fullName) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/**
@@ -148,14 +259,15 @@ public final class CommandUtility {
 	 * @return the each command from parts name
 	 */
 	public static EachCommand getEachCommandFromPartsName(
-			final Map<String, Command>  commandIndexMap, final String[] varparts) {
+			final Map<String, Command> commandIndexMap,
+			final String[] varparts) {
 		if (varparts.length == TieConstants.DEFAULT_COMMAND_PART_LENGTH) {
 			return (EachCommand) commandIndexMap
 					.get(TieConstants.EACH_COMMAND_FULL_NAME_PREFIX
 							+ varparts[1]);
 		}
 		return null;
-	
+
 	}
 
 	/**
@@ -184,8 +296,7 @@ public final class CommandUtility {
 			final Collection lastCollection, final EachCommand eachCommand,
 			final int lastCollectionIndex,
 			final Map<String, Object> dataContext)
-			throws InstantiationException,
-			IllegalAccessException {
+			throws InstantiationException, IllegalAccessException {
 		if (!(lastCollection instanceof List)) {
 			throw new EvaluationException(eachCommand.getVar()
 					+ TieConstants.EACH_COMMAND_INVALID_MSG);
@@ -198,7 +309,43 @@ public final class CommandUtility {
 		dataContext.put(eachCommand.getVar(), insertObj);
 		return fullName.substring(0, fullName.lastIndexOf('.') + 1)
 				+ (lastCollectionIndex + 1);
-	
+
+	}
+
+	/**
+	 * Delete object in context.
+	 *
+	 * @param fullName
+	 *            the full name
+	 * @param lastCollection
+	 *            the last collection
+	 * @param eachCommand
+	 *            the each command
+	 * @param lastCollectionIndex
+	 *            the last collection index
+	 * @param dataContext
+	 *            the data context
+	 * @throws InstantiationException
+	 *             the instantiation exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	private static void deleteObjectInContext(final String fullName,
+			final Collection lastCollection, final EachCommand eachCommand,
+			final int lastCollectionIndex,
+			final Map<String, Object> dataContext)
+			throws InstantiationException, IllegalAccessException {
+		if (!(lastCollection instanceof List)) {
+			throw new EvaluationException(eachCommand.getVar()
+					+ TieConstants.EACH_COMMAND_INVALID_MSG);
+		}
+		List collectionList = (List) lastCollection;
+		// the object must support empty constructor.
+
+		collectionList.remove(lastCollectionIndex);
+		dataContext.remove(eachCommand.getVar());
+
 	}
 
 	/**
@@ -213,13 +360,13 @@ public final class CommandUtility {
 	 * @return the int
 	 */
 	@SuppressWarnings("rawtypes")
-	public
-	static int prepareCollectionDataInContext(
+	public static int prepareCollectionDataInContext(
 			final String[] varparts, final Collection collection,
 			final Map<String, Object> dataContext) {
 		if (varparts.length == TieConstants.DEFAULT_COMMAND_PART_LENGTH) {
 			int collectionIndex = Integer.parseInt(varparts[2]);
-			Object obj = ConfigurationUtility.findItemInCollection(collection, collectionIndex);
+			Object obj = ConfigurationUtility
+					.findItemInCollection(collection, collectionIndex);
 			if (obj != null) {
 				dataContext.put(varparts[1], obj);
 				return collectionIndex;
@@ -247,7 +394,7 @@ public final class CommandUtility {
 				command.getConfigRange().indexCommandRange(indexMap);
 			}
 		}
-	
+
 	}
 
 	/**
@@ -293,7 +440,7 @@ public final class CommandUtility {
 			final int insertPosition, final RowsMapping unitRowsMapping) {
 		int srcStartRow = sourceConfigRange.getFirstRowAddr().getRow();
 		int srcEndRow = sourceConfigRange.getLastRowPlusAddr().getRow() - 1;
-	
+
 		Sheet sheet = configBuildRef.getSheet();
 		Workbook wb = sheet.getWorkbook();
 		// excel sheet name has limit 31 chars
@@ -308,10 +455,11 @@ public final class CommandUtility {
 			CellUtility.copyRows(srcSheet, sheet, srcStartRow, srcEndRow,
 					insertPosition, false, true);
 		}
-	
+
 		for (int rowIndex = srcStartRow; rowIndex <= srcEndRow; rowIndex++) {
 			if (configBuildRef.getWatchList().contains(rowIndex)
-					&& (ConfigurationUtility.isStaticRow(sourceConfigRange, rowIndex))) {
+					&& (ConfigurationUtility.isStaticRow(sourceConfigRange,
+							rowIndex))) {
 				unitRowsMapping.addRow(rowIndex, sheet
 						.getRow(insertPosition + rowIndex - srcStartRow));
 			}
@@ -357,7 +505,7 @@ public final class CommandUtility {
 			String strValue, final Map<String, Object> context,
 			final ExpressionEngine engine) {
 		if (strValue.contains(TieConstants.METHOD_PREFIX)) {
-	
+
 			Object evaluationResult = evaluate(strValue, context, engine);
 			if (evaluationResult == null) {
 				evaluationResult = "";
@@ -467,10 +615,10 @@ public final class CommandUtility {
 		// otherwise poi will mess up.
 		// workaround solution is to save all comments into a map,
 		// and output them together when download workbook.
-	
+
 		if (newComment != null) {
 			finalCommentMap.put(cell, newComment);
-	
+
 		}
 	}
 
@@ -505,5 +653,66 @@ public final class CommandUtility {
 		}
 	}
 
+	/**
+	 * Remove the rows.
+	 *
+	 * @param sheet
+	 *            the sheet
+	 * @param rowIndexStart
+	 *            start row index.
+	 * @param rowIndexEnd
+	 *            end row index.
+	 */
+	public static void removeRowsInSheet(final Sheet sheet,
+			final int rowIndexStart, final int rowIndexEnd) {
+		int irows = rowIndexEnd - rowIndexStart + 1;
+		if ((irows < 1) || (rowIndexStart < 0)) {
+			return;
+		}
+		int lastRowNum = sheet.getLastRowNum();
+		if (rowIndexEnd < lastRowNum) {
+			sheet.shiftRows(rowIndexEnd + 1, lastRowNum, -irows);
+		}
+		if (rowIndexEnd == lastRowNum) {
+			// reverse order to delete rows.
+			for (int i = rowIndexEnd; i >= rowIndexStart; i--) {
+				Row removingRow = sheet.getRow(rowIndexStart);
+				if (removingRow != null) {
+					sheet.removeRow(removingRow);
+				}
+			}
+		}
+	}
 
+	/**
+	 * Removes the rows in body.
+	 *
+	 * @param sheetConfig
+	 *            the sheet config
+	 * @param bodyRows
+	 *            the body rows
+	 * @param rowIndexStart
+	 *            the row index start
+	 * @param rowIndexEnd
+	 *            the row index end
+	 */
+	public static void removeRowsInBody(
+			final SheetConfiguration sheetConfig,
+			final List<FacesRow> bodyRows, final int rowIndexStart,
+			final int rowIndexEnd) {
+		int top = sheetConfig.getBodyCellRange().getTopRow();
+		if ((rowIndexEnd < rowIndexStart) || (rowIndexStart < top)) {
+			return;
+		}
+
+		int irows = rowIndexEnd - rowIndexStart + 1;
+		for (int rowIndex = rowIndexEnd; rowIndex >= rowIndexStart; rowIndex--) {
+			bodyRows.remove(rowIndex - top);
+		}
+		for (int irow = rowIndexStart - top; irow < bodyRows
+				.size(); irow++) {
+			FacesRow facesrow = bodyRows.get(irow);
+			facesrow.setRowIndex(facesrow.getRowIndex() - irows);
+		}
+	}
 }

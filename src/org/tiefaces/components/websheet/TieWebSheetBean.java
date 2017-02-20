@@ -150,7 +150,7 @@ public class TieWebSheetBean extends TieWebSheetView
 
 	/** constructor. Allow for extension. */
 	public TieWebSheetBean() {
-		LOG.info("TieWebSheetBean Constructor "+this.toString());
+		LOG.fine("TieWebSheetBean Constructor");
 	}
 
 	/** initialize. */

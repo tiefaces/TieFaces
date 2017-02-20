@@ -227,7 +227,7 @@ public class ChartHelper {
 							e);
 				}
 			} else {
-				LOG.fine("setSeriesColor() unsupported plot: " + plot);
+				LOG.log(Level.FINE,"setSeriesColor() unsupported plot: " + plot.toString());
 			}
 		}
 	}

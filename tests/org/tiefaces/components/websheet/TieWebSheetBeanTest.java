@@ -375,17 +375,11 @@ public class TieWebSheetBeanTest {
 		assertEquals(itemList.size(), 2);
 		bean.addRepeatRow(5);
 		assertEquals(itemList.size(), 3);
+		bean.deleteRepeatRow(5);
+        assertEquals(itemList.size(), 2);
 
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.tiefaces.components.websheet.TieWebSheetBean#deleteRepeatRow(int)}
-	 * .
-	 */
-	@Test
-	public final void testDeleteRepeatRow() throws Exception {
-	}
 
 	/**
 	 * Test method for

@@ -5,9 +5,6 @@
 
 package org.tiefaces.components.websheet.utility;
 
-import org.apache.poi.hssf.model.InternalSheet;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,7 +16,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.configuration.ConfigRange;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +53,8 @@ public final class WebSheetUtility {
 	/** The Constant PIXELS_PER_MILLIMETRES. */
 	// millimetre. These values are required for the conversion algorithm.
 	public static final double PIXELS_PER_MILLIMETRES = 3.78; // MB
+    //These values are required for the conversion algorithm.
+    public static final double PICTURE_HEIGHT_ADJUST = 3.03125; // MB
 
 	/** The Constant POINTS_PER_MILLIMETRE. */
 	public static final double POINTS_PER_MILLIMETRE = 2.83; // MB
@@ -687,47 +685,12 @@ public final class WebSheetUtility {
 					return CellRangeAddress.valueOf(sheetDimensions)
 							.getLastColumn();
 				}
-			} else if (sheet instanceof HSSFSheet) {
-				HSSFSheet hsheet = (HSSFSheet) sheet;
-				Field sheetField;
-				sheetField = HSSFSheet.class.getDeclaredField("_sheet");
-				sheetField.setAccessible(true);
-				InternalSheet internalsheet =
-						(InternalSheet) sheetField.get(hsheet);
-				DimensionsRecord record =
-						(DimensionsRecord) internalsheet
-								.findFirstRecordBySid(DimensionsRecord.sid);
-				if ((record != null) && (record.getLastCol() > 0)) {
-					return record.getLastCol() - 1;
-				}
-			}
+			} 
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, "error in getSheetRightCol : "
 					+ e.getLocalizedMessage(), e);
 		}
 		return -1;
-	}
-
-
-	/**
-	 * Removes the row.
-	 *
-	 * @param sheet
-	 *            the sheet
-	 * @param rowIndex
-	 *            the row index
-	 */
-	public static void removeRow(final Sheet sheet, final int rowIndex) {
-		int lastRowNum = sheet.getLastRowNum();
-		if (rowIndex >= 0 && rowIndex < lastRowNum) {
-			sheet.shiftRows(rowIndex + 1, lastRowNum, -1);
-		}
-		if (rowIndex == lastRowNum) {
-			Row removingRow = sheet.getRow(rowIndex);
-			if (removingRow != null) {
-				sheet.removeRow(removingRow);
-			}
-		}
 	}
 
 }

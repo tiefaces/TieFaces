@@ -44,12 +44,12 @@ public class ConfigurationUtilityTest {
     }
 
     /**
-     * Test method for {@link org.tiefaces.components.websheet.utility.ConfigurationUtility#increaseIndexNumberInShiftMap(java.util.Map, java.util.Map)}.
-     */
-    @Test
-    public void testIncreaseIndexNumberInShiftMap() throws Exception {
-        
-    }
+	     * Test method for {@link org.tiefaces.components.websheet.utility.ConfigurationUtility#changeIndexNumberInShiftMap(java.util.Map, java.util.Map)}.
+	     */
+	    @Test
+	    public void testChangeIndexNumberInShiftMap() throws Exception {
+	        
+	    }
 
     /**
      * Test method for {@link org.tiefaces.components.websheet.utility.ConfigurationUtility#increaseUpperLevelFinalLength(java.util.Map, java.lang.String, int)}.
