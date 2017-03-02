@@ -887,6 +887,10 @@ public class ConfigurationHandler {
         if ((hidden != null) && (Boolean.parseBoolean(hidden))) {
             sheetConfig.setHidden(true);
         }
+        String fixedWidthStyle = fcommand.getFixedWidthStyle();
+        if ((fixedWidthStyle != null) && (Boolean.parseBoolean(fixedWidthStyle))) {
+            sheetConfig.setFixedWidthStyle(true);
+        }
         sheetConfig.setFormCommand(fcommand);
         return sheetConfig;
 

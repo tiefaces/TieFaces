@@ -55,6 +55,9 @@ public class TieWebSheetView {
 	private boolean bodyAllowAddRows;	
 	/** show line number in web gui. */
 	private boolean showLineNumber = false;
+	/** The hide single sheet tab title. */
+	private boolean hideSingleSheetTabTitle = true;
+	
 	
 	/**
 	 * empty constructor.
@@ -389,4 +392,26 @@ public class TieWebSheetView {
 		this.showLineNumber = pshowLineNumber;
 	}
 
+	
+	/**
+	 * Checks if is hide single sheet tab title.
+	 *
+	 * @return the hideSingleSheetTabTitle
+	 */
+	public boolean isHideSingleSheetTabTitle() {
+		return hideSingleSheetTabTitle;
+	}
+
+	/**
+	 * Sets the hide single sheet tab title.
+	 *
+	 * @param phideSingleSheetTabTitle
+	 *            the hideSingleSheetTabTitle to set
+	 */
+	public void setHideSingleSheetTabTitle(
+			final boolean phideSingleSheetTabTitle) {
+		this.hideSingleSheetTabTitle = phideSingleSheetTabTitle;
+	}
+	
+	
 }

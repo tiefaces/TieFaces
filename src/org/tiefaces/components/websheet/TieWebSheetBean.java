@@ -126,7 +126,8 @@ public class TieWebSheetBean extends TieWebSheetView
 	 */
 	private String clientId = null;
 	/** Client id for web forms. */
-	private String webFormClientId = null;
+	private transient String webFormClientId = null;
+
 	/** skip configuration. show the excel form as is. */
 	private boolean skipConfiguration = false;
 
@@ -912,6 +913,12 @@ public class TieWebSheetBean extends TieWebSheetView
 			this.getChartHelper().loadChartsMap();
 			this.getPicHelper().loadPicturesMap();
 		}
+	}
+
+	public boolean isShowTabView() {
+		return !this.isHideSingleSheetTabTitle()
+				|| (this.getTabs().size() > 1);
+
 	}
 
 }

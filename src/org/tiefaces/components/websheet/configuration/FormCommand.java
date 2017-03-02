@@ -43,6 +43,10 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	private String footerLength;
 	/** hidden holder. */
 	private String hidden;
+	/** readonly holder. */
+	private String readOnly;
+	/** fixedWidthStyle holder. */ 
+	private String fixedWidthStyle;
 
 	/**
 	 * Instantiates a new form command.
@@ -63,6 +67,8 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 		this.headerLength = sourceCommand.headerLength;
 		this.footerLength = sourceCommand.footerLength;
 		this.hidden = sourceCommand.hidden;
+		this.readOnly = sourceCommand.readOnly;
+		this.fixedWidthStyle = sourceCommand.fixedWidthStyle;
 	}
 
 	/**
@@ -170,6 +176,34 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	}
 
 	/**
+     * @return the readOnly
+     */
+    public final String getReadOnly() {
+        return readOnly;
+    }
+
+    /**
+     * @param readOnly the readOnly to set
+     */
+    public final void setReadOnly(String readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    /**
+     * @return the fixedWidthStyle
+     */
+    public final String getFixedWidthStyle() {
+        return fixedWidthStyle;
+    }
+
+    /**
+     * @param fixedWidthStyle the fixedWidthStyle to set
+     */
+    public final void setFixedWidthStyle(String fixedWidthStyle) {
+        this.fixedWidthStyle = fixedWidthStyle;
+    }
+
+    /**
 	 * Obtain a human readable representation.
 	 * 
 	 * @return String Human readable label
@@ -188,6 +222,10 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 		sb.append(",");
 		sb.append("footer length = " + this.getFooterLength());
 		sb.append(",");
+        sb.append("readOnly = " + this.getReadOnly());
+        sb.append(",");
+        sb.append("fixedWidthStyle = " + this.getFixedWidthStyle());
+        sb.append(",");
 		sb.append("ConfigRange = " + this.getConfigRange());
 		sb.append("}");
 		return sb.toString();

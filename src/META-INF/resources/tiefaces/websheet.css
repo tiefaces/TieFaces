@@ -8,7 +8,7 @@
 }
 
 #websheet .ui-inputfield {
-    padding:  3px !important;
+    padding: 1px 3px !important;
 }
 
 #websheet .ui-datatable td {
@@ -21,11 +21,9 @@
 
 #websheet .inputColumnWidth {
 	width:  100% !important;
-	padding: 0px 4px 0px 0px !important;
 	-moz-box-sizing: border-box !important;
 	box-sizing: border-box !important;
     white-space: pre-wrap !important;
-    border-radius: 0 !important;
 }
 
 #websheet .inputColumnWidthCalendar input {
@@ -71,9 +69,30 @@
 }   
    
 #websheet .icon_button {
-	width: 1.2em !important;
+	width: 24px !important;
 }
 
 #websheettabview .ui-tabs-panel {
 	padding:0 !important;
+}
+
+#websheettabview .ui-tabs .ui-tabs-nav li a {
+    height: 30px !important;
+}
+
+#websheet .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield {
+    line-height: 1.42 !important;
+}
+
+#websheet button.ui-datepicker-trigger {
+    height: 23px !important;
+    padding: 1px 10px !important;
+}
+
+#websheet div.ui-selectonemenu, div.ui-fluid div.ui-selectonemenu {
+    height: 23px !important;
+}	
+
+#websheet button.ui-button {
+    padding: 1px 12px !important;
 }

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.tiefaces.components.websheet.TieWebSheetBean;
@@ -37,15 +38,13 @@ public class PicturesHelper {
 		this.parent = pparent;
 	}
 
-	
-	
-    /**
-     * initial pictures map for current workbook.
-     */
-    public final void loadPicturesMap() {
-        PicturesUtility.getPictruesMap(parent.getWb(), parent.getPicturesMap());
-    }	
-	
+	/**
+	 * initial pictures map for current workbook.
+	 */
+	public final void loadPicturesMap() {
+		PicturesUtility.getPictruesMap(parent.getWb(),
+				parent.getPicturesMap());
+	}
 
 	/**
 	 * Setup faces cell picture charts.
@@ -54,18 +53,21 @@ public class PicturesHelper {
 	 *            the sheet 1
 	 * @param fcell
 	 *            the fcell
+	 * @param cell
+	 *            the cell
 	 * @param fId
 	 *            the f id
 	 */
 	public final void setupFacesCellPictureCharts(final Sheet sheet1,
-			final FacesCell fcell, final String fId) {
+			final FacesCell fcell, final Cell cell, final String fId) {
 		if (parent.getPicturesMap() != null) {
-			setupFacesCellPicture(sheet1, fcell, fId);
+			setupFacesCellPicture(sheet1, fcell, cell, fId);
 		}
 		if (parent.getCharsData().getChartsMap() != null) {
-			setupFacesCellCharts(sheet1, fcell, fId);
+			setupFacesCellCharts(sheet1, fcell, cell, fId);
 		}
 	}
+
 
 	/**
 	 * Setup faces cell charts.
@@ -74,11 +76,13 @@ public class PicturesHelper {
 	 *            the sheet 1
 	 * @param fcell
 	 *            the fcell
+	 * @param cell
+	 *            the cell
 	 * @param fId
 	 *            the f id
 	 */
 	private void setupFacesCellCharts(final Sheet sheet1,
-			final FacesCell fcell, final String fId) {
+			final FacesCell fcell, final Cell cell, final String fId) {
 		try {
 			String chartId = parent.getCharsData().getChartPositionMap()
 					.get(fId);
@@ -89,7 +93,7 @@ public class PicturesHelper {
 					fcell.setContainChart(true);
 					fcell.setChartId(chartId);
 					fcell.setChartStyle(PicturesUtility.generateChartStyle(
-							sheet1, chartId,
+							sheet1, fcell, cell, chartId,
 							parent.getCharsData().getChartAnchorsMap()));
 				}
 			}
@@ -106,18 +110,20 @@ public class PicturesHelper {
 	 *            the sheet 1
 	 * @param fcell
 	 *            the fcell
+	 * @param cell
+	 *            the cell
 	 * @param fId
 	 *            the f id
 	 */
 	private void setupFacesCellPicture(final Sheet sheet1,
-			final FacesCell fcell, final String fId) {
+			final FacesCell fcell, final Cell cell, final String fId) {
 		try {
 			Picture pic = parent.getPicturesMap().get(fId);
 			if (pic != null) {
 				fcell.setContainPic(true);
 				fcell.setPictureId(fId);
-				fcell.setPictureStyle(
-						PicturesUtility.generatePictureStyle(sheet1, pic));
+				fcell.setPictureStyle(PicturesUtility
+						.generatePictureStyle(sheet1, fcell, cell, pic));
 			}
 		} catch (Exception ex) {
 			LOG.log(Level.SEVERE,

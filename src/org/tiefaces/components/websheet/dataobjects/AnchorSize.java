@@ -19,9 +19,27 @@ public class AnchorSize {
 	private int width;
 	/** anchor's height. */
 	private int height;
-	
+
+	/** The cell width. */
+	private double cellWidth;
+
+	/** The cell height. */
+	private double cellHeight;
+
+	/** The percent left. */
+	private double percentLeft;
+
+	/** The percent top. */
+	private double percentTop;
+
+	/** The percent width. */
+	private double percentWidth;
+
+	/** The percent height. */
+	private double percentHeight;
+
 	/**
-	 * Constructor.
+	 * Instantiates a new anchor size.
 	 *
 	 * @param pleft
 	 *            the pleft
@@ -31,15 +49,22 @@ public class AnchorSize {
 	 *            the pwidth
 	 * @param pheight
 	 *            the pheight
+	 * @param pcellWidth
+	 *            the pcell width
+	 * @param pcellHeight
+	 *            the pcell height
 	 */
 	public AnchorSize(final int pleft, final int ptop, final int pwidth,
-			final int pheight) {
+			final int pheight, final double pcellWidth,
+			final double pcellHeight) {
 		super();
 		this.left = pleft;
 		this.top = ptop;
 		this.width = pwidth;
 		this.height = pheight;
-	}	
+		this.cellWidth = pcellWidth;
+		this.cellHeight = pcellHeight;
+	}
 
 	/**
 	 * Gets the top.
@@ -117,7 +142,95 @@ public class AnchorSize {
 		this.height = pheight;
 	}
 
+	/**
+	 * Gets the cell width.
+	 *
+	 * @return the cellWidth
+	 */
+	public final double getCellWidth() {
+		return cellWidth;
+	}
 
+	/**
+	 * Sets the cell width.
+	 *
+	 * @param pcellWidth
+	 *            the cellWidth to set
+	 */
+	public final void setCellWidth(double pcellWidth) {
+		this.cellWidth = pcellWidth;
+	}
+
+	/**
+	 * Gets the cell height.
+	 *
+	 * @return the cellHeight
+	 */
+	public final double getCellHeight() {
+		return cellHeight;
+	}
+
+	/**
+	 * Sets the cell height.
+	 *
+	 * @param pcellHeight
+	 *            the cellHeight to set
+	 */
+	public final void setCellHeight(double pcellHeight) {
+		this.cellHeight = pcellHeight;
+	}
+
+	/**
+	 * Gets the percent left.
+	 *
+	 * @return the percentLeft
+	 */
+	public final double getPercentLeft() {
+		if (this.getCellWidth() > 0) {
+			return 100 * this.getLeft() / this.getCellWidth();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Gets the percent top.
+	 *
+	 * @return the percentTop
+	 */
+	public final double getPercentTop() {
+		if (this.getCellHeight() > 0) {
+			return 100 * this.getTop() / this.getCellHeight();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Gets the percent width.
+	 *
+	 * @return the percentWidth
+	 */
+	public final double getPercentWidth() {
+		if (this.getCellWidth() > 0) {
+			return 100 * this.getWidth() / this.getCellWidth();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Gets the percent height.
+	 *
+	 * @return the percentHeight
+	 */
+	public final double getPercentHeight() {
+		if (this.getCellHeight() > 0) {
+			return 100 * this.getHeight() / this.getCellHeight();
+		} else {
+			return 0;
+		}	
+	}
 
 	/**
 	 * show human readable message.
@@ -126,7 +239,7 @@ public class AnchorSize {
 	 */
 	@Override
 	public final String toString() {
-				StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("left = " + left);
 		sb.append(",");
@@ -135,6 +248,14 @@ public class AnchorSize {
 		sb.append("width = " + width);
 		sb.append(",");
 		sb.append("height = " + height);
+		sb.append(",");
+		sb.append("left% = " + this.getPercentLeft());
+		sb.append(",");
+		sb.append("top% = " + this.getPercentTop());
+		sb.append(",");
+		sb.append("width% = " + this.getPercentWidth());
+		sb.append(",");
+		sb.append("height% = " + this.getPercentHeight());
 		sb.append("}");
 		return sb.toString();
 	}

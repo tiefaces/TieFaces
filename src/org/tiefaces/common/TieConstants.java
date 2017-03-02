@@ -185,7 +185,7 @@ public final class TieConstants {
 	public static final int DEFAULT_MAX_ROWS_PER_PAGE = 80;
 
 	/** The Constant defaultTableWidthStyle. */
-	public static final String DEFAULT_TABLE_WIDTH_STYLE = "100%;";
+	public static final String DEFAULT_TABLE_WIDTH_STYLE = "width: 100%;";
 
 	/** The Constant defaultLineNumberColumnWidth. */
 	public static final int DEFAULT_LINENUMBER_COLUMN_WIDTH = 26;
@@ -194,7 +194,7 @@ public final class TieConstants {
 	public static final int EXCEL_LETTER_NUMBERS = 26;
 
 	/** The Constant defaultAddRowColumnWidth. */
-	public static final int DEFAULT_ADDROW_COLUMN_WIDTH = 38;
+	public static final int DEFAULT_ADDROW_COLUMN_WIDTH = 64;
 
 	/** default basic stroke width. */
 	public static final float DEFAULT_BASIC_STROKE = 0.1f;

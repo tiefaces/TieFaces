@@ -49,16 +49,6 @@ public class SheetConfiguration implements Serializable {
 	// configuration tab
 	private String formFooterRange; // corresponds to formFooterRange of
 
-	/** The form page type id. */
-	// configuration tab
-	private String formPageTypeId; // corresponds to formPageType of
-
-	/** The form page id. */
-	private String formPageId; // runtime holder
-
-	/** The form fiscal year. */
-	private String formFiscalYear; // runtime holder
-
 	/** The header cell range. */
 	private CellRange headerCellRange; // transfer formHeaderRange to CellRange
 
@@ -85,9 +75,6 @@ public class SheetConfiguration implements Serializable {
 	// EL.
 	private boolean bodyPopulated; // runtime holder
 
-	/** The form width. */
-	private String formWidth; // formWidth Style
-
 	/** The max row per page. */
 	private int maxRowPerPage; // max rows per page
 
@@ -110,15 +97,11 @@ public class SheetConfiguration implements Serializable {
 	/** The watch list. */
 	private List<Integer> watchList;
 
-	/** The saved rows before. */
-	private int savedRowsBefore = 0; // Saved Rows before repeat row
-
-	/** The saved rows after. */
-	private int savedRowsAfter = 0; // Saved Rows after repeat row
-
 	/** The hidden. */
 	private boolean hidden = false; // in some case e.g. prepop, we choose to
 									// hide the sheet.
+	/** fixedWidthStyle. */
+	private boolean fixedWidthStyle = false;
 
 	/** The cached origin formulas. */
 	private SerialCellMap serialCachedCells = new SerialCellMap();
@@ -392,81 +375,6 @@ public class SheetConfiguration implements Serializable {
 		this.bodyPopulated = pbodyPopulated;
 	}
 
-	/**
-	 * Gets the form page type id.
-	 *
-	 * @return the form page type id
-	 */
-	public final String getFormPageTypeId() {
-		return formPageTypeId;
-	}
-
-	/**
-	 * Sets the form page type id.
-	 *
-	 * @param pformPageTypeId
-	 *            the new form page type id
-	 */
-	public final void setFormPageTypeId(final String pformPageTypeId) {
-		this.formPageTypeId = pformPageTypeId;
-	}
-
-	/**
-	 * Gets the form page id.
-	 *
-	 * @return the form page id
-	 */
-	public final String getFormPageId() {
-		return formPageId;
-	}
-
-	/**
-	 * Sets the form page id.
-	 *
-	 * @param pformPageId
-	 *            the new form page id
-	 */
-	public final void setFormPageId(final String pformPageId) {
-		this.formPageId = pformPageId;
-	}
-
-	/**
-	 * Gets the form fiscal year.
-	 *
-	 * @return the form fiscal year
-	 */
-	public final String getFormFiscalYear() {
-		return formFiscalYear;
-	}
-
-	/**
-	 * Sets the form fiscal year.
-	 *
-	 * @param pformFiscalYear
-	 *            the new form fiscal year
-	 */
-	public final void setFormFiscalYear(final String pformFiscalYear) {
-		this.formFiscalYear = pformFiscalYear;
-	}
-
-	/**
-	 * Gets the form width.
-	 *
-	 * @return the form width
-	 */
-	public final String getFormWidth() {
-		return formWidth;
-	}
-
-	/**
-	 * Sets the form width.
-	 *
-	 * @param pformWidth
-	 *            the new form width
-	 */
-	public final void setFormWidth(final String pformWidth) {
-		this.formWidth = pformWidth;
-	}
 
 	/**
 	 * Gets the max row per page.
@@ -485,44 +393,6 @@ public class SheetConfiguration implements Serializable {
 	 */
 	public final void setMaxRowPerPage(final int pmaxRowPerPage) {
 		this.maxRowPerPage = pmaxRowPerPage;
-	}
-
-	/**
-	 * Gets the saved rows before.
-	 *
-	 * @return the saved rows before
-	 */
-	public final int getSavedRowsBefore() {
-		return savedRowsBefore;
-	}
-
-	/**
-	 * Sets the saved rows before.
-	 *
-	 * @param psavedRowsBefore
-	 *            the new saved rows before
-	 */
-	public final void setSavedRowsBefore(final int psavedRowsBefore) {
-		this.savedRowsBefore = psavedRowsBefore;
-	}
-
-	/**
-	 * Gets the saved rows after.
-	 *
-	 * @return the saved rows after
-	 */
-	public final int getSavedRowsAfter() {
-		return savedRowsAfter;
-	}
-
-	/**
-	 * Sets the saved rows after.
-	 *
-	 * @param psavedRowsAfter
-	 *            the new saved rows after
-	 */
-	public final void setSavedRowsAfter(final int psavedRowsAfter) {
-		this.savedRowsAfter = psavedRowsAfter;
 	}
 
 	/**
@@ -712,7 +582,23 @@ public class SheetConfiguration implements Serializable {
 
 	}
 
+	
+	
 	/**
+     * @return the fixedWidthStyle
+     */
+    public final boolean isFixedWidthStyle() {
+        return fixedWidthStyle;
+    }
+
+    /**
+     * @param fixedWidthStyle the fixedWidthStyle to set
+     */
+    public final void setFixedWidthStyle(boolean fixedWidthStyle) {
+        this.fixedWidthStyle = fixedWidthStyle;
+    }
+
+    /**
 	 * Obtain a human readable representation.
 	 * 
 	 * @return String Human readable label
@@ -737,12 +623,6 @@ public class SheetConfiguration implements Serializable {
 		sb.append(",");
 		sb.append("bodyInitialRows = " + bodyInitialRows);
 		sb.append(",");
-		sb.append("formPageId = " + formPageId);
-		sb.append(",");
-		sb.append("formPageTypeId = " + formPageTypeId);
-		sb.append(",");
-		sb.append("formFiscalYear = " + formFiscalYear);
-		sb.append(",");
 		sb.append("HeaderCellRange = " + headerCellRange);
 		sb.append(",");
 		sb.append("BodyCellRange = " + bodyCellRange);
@@ -752,8 +632,6 @@ public class SheetConfiguration implements Serializable {
 		sb.append("FooterCellRange = " + footerCellRange);
 		sb.append(",");
 		sb.append("cellFormAttributes = " + cellFormAttributes);
-		sb.append(",");
-		sb.append("formWidth = " + formWidth);
 		sb.append(",");
 		sb.append("cachedOriginFormulas = " + serialCachedCells);
 		sb.append(",");
@@ -768,10 +646,6 @@ public class SheetConfiguration implements Serializable {
 		sb.append("collectionObjNameMap = " + collectionObjNameMap);
 		sb.append(",");
 		sb.append("watchList = " + watchList);
-		sb.append(",");
-		sb.append("savedRowsBefore = " + savedRowsBefore);
-		sb.append(",");
-		sb.append("savedRowsAfter = " + savedRowsAfter);
 		sb.append("}");
 		return sb.toString();
 	}

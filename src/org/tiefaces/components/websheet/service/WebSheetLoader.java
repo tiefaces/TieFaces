@@ -105,12 +105,9 @@ public class WebSheetLoader implements Serializable {
 		RangeBuildRef rangeBuildRef = new RangeBuildRef(left, right,
 				totalWidth, sheet1);
 
-		String formWidthStyle = sheetConfig.getFormWidth();
-		if ((formWidthStyle == null) || (formWidthStyle.isEmpty())) {
-			parent.setTableWidthStyle(
-					WebSheetUtility.widthUnits2Pixel(totalWidth) + "px;");
-		} else {
-			parent.setTableWidthStyle(formWidthStyle);
+		if (sheetConfig.isFixedWidthStyle()) {
+			parent.setTableWidthStyle("table-layout: fixed; width:"
+					+ WebSheetUtility.widthUnits2Pixel(totalWidth) + "px;");
 		}
 
 		parent.setLineNumberColumnWidthStyle(
@@ -119,10 +116,7 @@ public class WebSheetLoader implements Serializable {
 								parent.getLineNumberColumnWidth()),
 						totalWidth));
 		parent.setAddRowColumnWidthStyle(
-				getWidthStyle(
-						WebSheetUtility.pixel2WidthUnits(
-								parent.getAddRowColumnWidth()),
-						totalWidth));
+				"width:" + parent.getAddRowColumnWidth() + "px;");
 
 		parent.getHeaderRows().clear();
 
@@ -287,7 +281,7 @@ public class WebSheetLoader implements Serializable {
 							cellRangeMap, originRowIndex,
 							parent.getCellAttributesMap(), null);
 					parent.getPicHelper().setupFacesCellPictureCharts(
-							sheet1, fcell, WebSheetUtility
+							sheet1, fcell, cell, WebSheetUtility
 									.getFullCellRefName(sheet1, cell));
 					CellStyleUtility.setupCellStyle(parent.getWb(), fcell,
 							cell, row.getHeightInPoints());
@@ -417,6 +411,7 @@ public class WebSheetLoader implements Serializable {
 						"Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
 				return -1;
 			}
+			LOG.info("Begin load work book...");
 			parent.setWb(wb);
 			parent.getSerialDataContext().setDataContext(dataContext);
 			parent.setSheetConfigMap(
@@ -720,7 +715,7 @@ public class WebSheetLoader implements Serializable {
 							cellRangeMap, facesRow.getOriginRowIndex(),
 							parent.getCellAttributesMap(), saveAttrList);
 					parent.getPicHelper().setupFacesCellPictureCharts(
-							sheet1, fcell, WebSheetUtility
+							sheet1, fcell, cell, WebSheetUtility
 									.getFullCellRefName(sheet1, cell));
 					CellStyleUtility.setupCellStyle(parent.getWb(), fcell,
 							cell, row.getHeightInPoints());

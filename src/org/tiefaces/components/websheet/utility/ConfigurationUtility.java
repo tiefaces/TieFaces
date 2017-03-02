@@ -263,8 +263,9 @@ public final class ConfigurationUtility {
 		}
 	}
 
+
 	/**
-	 * Increase index number in hidden column.
+	 * Change index number in hidden column.
 	 *
 	 * @param configBuildRef
 	 *            the config build ref
@@ -274,6 +275,8 @@ public final class ConfigurationUtility {
 	 *            the full name
 	 * @param changeMap
 	 *            the change map
+	 * @param steps
+	 *            the steps
 	 */
 	public static void changeIndexNumberInHiddenColumn(
 			final ConfigBuildRef configBuildRef, final int startRowIndex,

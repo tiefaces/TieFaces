@@ -750,7 +750,7 @@ public class ChartHelper {
 				JFreeChart jchart = createChart(chartData);
 				if (jchart != null) {
 					AnchorSize anchorSize = PicturesUtility
-							.getAnchorSize(sheet, anchor);
+							.getAnchorSize(sheet, null, null, anchor);
 					BufferedImage img = jchart.createBufferedImage(
 							anchorSize.getWidth(), anchorSize.getHeight());
 					chartMap.put(chartId, img);

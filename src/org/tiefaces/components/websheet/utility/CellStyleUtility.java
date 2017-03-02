@@ -21,8 +21,11 @@ import org.tiefaces.components.websheet.dataobjects.FacesCell;
 /**
  * The Class PicturesHelper.
  */
+/**
+ * @author JASON
+ *
+ */
 public final class CellStyleUtility {
-
 
 	/**
 	 * hide constructor.
@@ -30,6 +33,7 @@ public final class CellStyleUtility {
 	private CellStyleUtility() {
 		// not called
 	}
+
 
 	/**
 	 * Gets the row style.
@@ -42,13 +46,16 @@ public final class CellStyleUtility {
 	 *            the input type
 	 * @param rowHeight
 	 *            the row height
+	 * @param rowspan
+	 *            the rowspan
 	 * @return the row style
 	 */
 	public static String getRowStyle(final Workbook wb, final Cell poiCell,
-			final String inputType, final float rowHeight) {
-	
+			final String inputType, final float rowHeight,
+			final int rowspan) {
+
 		CellStyle cellStyle = poiCell.getCellStyle();
-		if (cellStyle != null) {
+		if ((cellStyle != null) && (rowspan == 1)) {
 			short fontIdx = cellStyle.getFontIndex();
 			Font font = wb.getFontAt(fontIdx);
 			float maxHeight = rowHeight;
@@ -73,7 +80,7 @@ public final class CellStyleUtility {
 	 */
 	public static String getCellFontStyle(final Workbook wb,
 			final Cell poiCell) {
-	
+
 		CellStyle cellStyle = poiCell.getCellStyle();
 		StringBuilder webStyle = new StringBuilder();
 		if (cellStyle != null) {
@@ -92,15 +99,17 @@ public final class CellStyleUtility {
 				webStyle.append("text-decoration:" + decoration + ";");
 			}
 			webStyle.append(getCellFontColor(font));
-	
+
 		}
 		return webStyle.toString();
-	
+
 	}
 
-	/** 
+	/**
 	 * get cell font color.
-	 * @param font font.
+	 * 
+	 * @param font
+	 *            font.
 	 * @return String font color.
 	 */
 	private static String getCellFontColor(Font font) {
@@ -113,14 +122,16 @@ public final class CellStyleUtility {
 			}
 		}
 		if (rgbfix[0] != TieConstants.RGB_MAX) {
-			return "color:rgb("+ FacesUtility.strJoin(rgbfix, ",") + ");";
+			return "color:rgb(" + FacesUtility.strJoin(rgbfix, ",") + ");";
 		}
 		return "";
 	}
 
 	/**
 	 * Get font decoration.
-	 * @param font font.
+	 * 
+	 * @param font
+	 *            font.
 	 * @return font decoration.
 	 */
 	private static String getCellFontDecoration(Font font) {
@@ -147,7 +158,7 @@ public final class CellStyleUtility {
 	 */
 	public static String getCellStyle(final Workbook wb, final Cell poiCell,
 			final String inputType) {
-	
+
 		CellStyle cellStyle = poiCell.getCellStyle();
 		StringBuilder webStyle = new StringBuilder();
 		if (cellStyle != null) {
@@ -155,11 +166,12 @@ public final class CellStyleUtility {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
 				webStyle.append(getVerticalAlignmentFromCell(cellStyle));
 			}
-	
-			webStyle.append(ColorUtility.getBgColorFromCell(wb, poiCell, cellStyle));
+
+			webStyle.append(ColorUtility.getBgColorFromCell(wb, poiCell,
+					cellStyle));
 		}
 		return webStyle.toString();
-	
+
 	}
 
 	/**
@@ -178,7 +190,7 @@ public final class CellStyleUtility {
 	public static String getColumnStyle(final Workbook wb,
 			final FacesCell fcell, final Cell poiCell,
 			final float rowHeight) {
-	
+
 		String inputType = fcell.getInputType();
 		CellStyle cellStyle = poiCell.getCellStyle();
 		StringBuilder webStyle = new StringBuilder();
@@ -189,13 +201,15 @@ public final class CellStyleUtility {
 				webStyle.append(getAlignmentFromCell(poiCell, cellStyle));
 				webStyle.append(getVerticalAlignmentFromCell(cellStyle));
 			}
-			webStyle.append(ColorUtility.getBgColorFromCell(wb, poiCell, cellStyle));
-			webStyle.append(getRowStyle(wb, poiCell, inputType, rowHeight));
+			webStyle.append(ColorUtility.getBgColorFromCell(wb, poiCell,
+					cellStyle));
+			webStyle.append(getRowStyle(wb, poiCell, inputType, rowHeight,
+					fcell.getRowspan()));
 		} else {
 			webStyle.append(getAlignmentFromCellType(poiCell));
 		}
 		return webStyle.toString();
-	
+
 	}
 
 	/**
@@ -209,7 +223,7 @@ public final class CellStyleUtility {
 	 */
 	private static String getAlignmentFromCell(final Cell poiCell,
 			final CellStyle cellStyle) {
-	
+
 		String style = "";
 		switch (cellStyle.getAlignmentEnum()) {
 		case LEFT:
@@ -240,7 +254,7 @@ public final class CellStyleUtility {
 	 */
 	private static String getVerticalAlignmentFromCell(
 			final CellStyle cellStyle) {
-	
+
 		String style = "";
 		switch (cellStyle.getVerticalAlignmentEnum()) {
 		case TOP:
@@ -276,7 +290,7 @@ public final class CellStyleUtility {
 	// e.g. lineNumberColumnWidth and addRowColumnWidth
 	public static int calcTotalWidth(final Sheet sheet1, final int firstCol,
 			final int lastCol, final int additionalWidth) {
-	
+
 		int totalWidth = additionalWidth;
 		for (int i = firstCol; i <= lastCol; i++) {
 			totalWidth += sheet1.getColumnWidth(i);
@@ -300,10 +314,10 @@ public final class CellStyleUtility {
 	public static int calcTotalHeight(final Sheet sheet1,
 			final int firstRow, final int lastRow,
 			final int additionalHeight) {
-	
+
 		int totalHeight = additionalHeight;
 		for (int i = firstRow; i <= lastRow; i++) {
-	
+
 			totalHeight += sheet1.getRow(i).getHeight();
 		}
 		return totalHeight;
@@ -321,25 +335,28 @@ public final class CellStyleUtility {
 	 * @param rowHeight
 	 *            the row height
 	 */
-	public static void setupCellStyle(final Workbook wb, final FacesCell fcell,
-			final Cell poiCell, final float rowHeight) {
-	
+	public static void setupCellStyle(final Workbook wb,
+			final FacesCell fcell, final Cell poiCell,
+			final float rowHeight) {
+
 		CellStyle cellStyle = poiCell.getCellStyle();
 		if ((cellStyle != null) && (!cellStyle.getLocked())) {
 			// not locked
 			if (fcell.getInputType().isEmpty()) {
-				fcell.setInputType(CellStyleUtility.getInputTypeFromCellType(poiCell));
+				fcell.setInputType(
+						CellStyleUtility.getInputTypeFromCellType(poiCell));
 			}
 			if (fcell.getControl().isEmpty()
 					&& (!fcell.getInputType().isEmpty())) {
 				fcell.setControl("text");
 			}
 			setInputStyleBaseOnInputType(fcell, poiCell);
-	
+
 		}
 		String webStyle = getCellStyle(wb, poiCell, fcell.getInputType())
 				+ getCellFontStyle(wb, poiCell)
-				+ getRowStyle(wb, poiCell, fcell.getInputType(), rowHeight);
+				+ getRowStyle(wb, poiCell, fcell.getInputType(), rowHeight,
+						fcell.getRowspan());
 		fcell.setStyle(webStyle);
 		fcell.setColumnStyle(getColumnStyle(wb, fcell, poiCell, rowHeight));
 	}
@@ -355,31 +372,34 @@ public final class CellStyleUtility {
 	 */
 	static void setInputStyleBaseOnInputType(final FacesCell fcell,
 			final Cell poiCell) {
-	
+
 		if ((fcell == null) || fcell.getInputType().isEmpty()) {
 			return;
 		}
-	
+
 		switch (fcell.getInputType()) {
 		case TieConstants.CELL_INPUT_TYPE_PERCENTAGE:
 			fcell.setSymbol("%");
 			fcell.setSymbolPosition("p");
-			fcell.setDecimalPlaces(CellStyleUtility.getDecimalPlacesFromFormat(poiCell));
+			fcell.setDecimalPlaces(
+					CellStyleUtility.getDecimalPlacesFromFormat(poiCell));
 			break;
-	
+
 		case TieConstants.CELL_INPUT_TYPE_INTEGER:
 			fcell.setDecimalPlaces((short) 0);
 			break;
-	
+
 		case TieConstants.CELL_INPUT_TYPE_DOUBLE:
-			fcell.setDecimalPlaces(CellStyleUtility.getDecimalPlacesFromFormat(poiCell));
+			fcell.setDecimalPlaces(
+					CellStyleUtility.getDecimalPlacesFromFormat(poiCell));
 			fcell.setSymbol(CellStyleUtility.getSymbolFromFormat(poiCell));
-			fcell.setSymbolPosition(CellStyleUtility.getSymbolPositionFromFormat(poiCell));
+			fcell.setSymbolPosition(
+					CellStyleUtility.getSymbolPositionFromFormat(poiCell));
 			break;
 		default:
 			break;
 		}
-	
+
 	}
 
 	/**
@@ -391,7 +411,7 @@ public final class CellStyleUtility {
 	 */
 	@SuppressWarnings("deprecation")
 	private static String getAlignmentFromCellType(final Cell poiCell) {
-	
+
 		switch (poiCell.getCellTypeEnum()) {
 		case FORMULA:
 		case NUMERIC:
@@ -399,7 +419,7 @@ public final class CellStyleUtility {
 		default:
 			return "";
 		}
-	
+
 	}
 
 	/**
@@ -411,7 +431,7 @@ public final class CellStyleUtility {
 	 */
 	@SuppressWarnings("deprecation")
 	private static String getInputTypeFromCellType(final Cell cell) {
-	
+
 		String inputType = TieConstants.CELL_INPUT_TYPE_TEXT;
 		if (cell.getCellTypeEnum() == CellType.NUMERIC) {
 			inputType = TieConstants.CELL_INPUT_TYPE_DOUBLE;
@@ -529,14 +549,12 @@ public final class CellStyleUtility {
 	 * @return true if it's percentage formatted
 	 */
 	private static boolean isAPercentageCell(final String formatString) {
-	
+
 		if (formatString == null) {
 			return false;
 		}
 		return formatString.indexOf('%') >= 0;
-	
+
 	}
-
-
 
 }

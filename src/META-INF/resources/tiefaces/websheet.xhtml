@@ -6,7 +6,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui">
-	
+
 <!-- INTERFACE -->
 <!-- INTERFACE -->
 <cc:interface componentType="tieWebSheetComponent">
@@ -39,6 +39,8 @@
 	<cc:attribute name="tableWidthStyle" required="false"
 		default="#{cc.attrs.webSheetBean.tableWidthStyle}"
 		type="java.lang.String" />
+	<cc:attribute name="hideSingleSheetTabTitle" required="false"
+		default="true" type="java.lang.Boolean" />
 	<cc:attribute name="emptyMessage" required="false" default=""
 		type="java.lang.String" />
 	<cc:attribute name="deleteRowConfirmMessage" required="false"
@@ -55,9 +57,11 @@
 			<div id="websheettabview">
 				<p:tabView id="websheettab" scrollable="true" style="height: 35px;"
 					binding="#{cc.attrs.webSheetBean.webFormTabView}"
-					rendered="#{cc.attrs.rendered}">
+					rendered="#{cc.attrs.rendered and cc.attrs.webSheetBean.showTabView}">
 					<p:ajax event="tabChange"
-						listener="#{cc.attrs.webSheetBean.onTabChange}" update="@form" />
+						listener="#{cc.attrs.webSheetBean.onTabChange}" update="@form" 
+                        onstart="PF('tiefaces_websheet_bui').show()"
+                        oncomplete="PF('tiefaces_websheet_bui').hide()" />
 					<c:forEach items="#{cc.attrs.webSheetBean.tabs}" var="tab"
 						varStatus="status">
 						<p:tab title="#{tab.title}" rendered="#{cc.attrs.rendered}" />
@@ -76,9 +80,8 @@
 					paginatorTemplate="#{cc.attrs.paginatorTemplate}"
 					rowsPerPageTemplate="#{cc.attrs.rowsPerPageTemplate}"
 					emptyMessage="#{cc.attrs.emptyMessage}" rowIndexVar="rowindex"
-					widgetVar="webSheetTable"
-					editable="true" editMode="cell"
-					tableStyle="table-layout: fixed; width:#{cc.attrs.tableWidthStyle} ">
+					widgetVar="webSheetTable" editable="true" editMode="cell"
+					tableStyle="#{cc.attrs.tableWidthStyle}">
 
 
 					<p:columnGroup type="header">
@@ -93,8 +96,7 @@
 									<p:column rowspan="#{headerrowcolumn.rowspan}"
 										colspan="#{headerrowcolumn.colspan}"
 										style="#{headerrowcolumn.columnStyle}"
-										rendered="#{headerrowcolumn.columnRendered}"
-										 >
+										rendered="#{headerrowcolumn.columnRendered}">
 										<f:facet name="header">
 											<h:outputText value="#{headerrowcolumn.cellValue}"
 												style="#{headerrowcolumn.style}"
@@ -122,15 +124,14 @@
 							rendered="#{not empty dataRow.cells[loop.index] and dataRow.rendered }"
 							rowspan="#{dataRow.cells[loop.index].rowspan}"
 							colspan="#{dataRow.cells[loop.index].colspan}"
-							style="#{dataRow.cells[loop.index].columnStyle}"
-							>
+							style="#{dataRow.cells[loop.index].columnStyle}">
 							<h:panelGroup id="group#{loop.index}">
 								<h:outputText id="cocalc#{loop.index}"
 									rendered="#{empty dataRow.cells[loop.index].inputType or cc.attrs.readOnly}"
 									style="#{dataRow.cells[loop.index].style}"
 									styleClass="inputColumnWidth"
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex).concat(':format')]}" />
-									
+
 								<p:inputText id="column#{loop.index}"
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									style="#{dataRow.cells[loop.index].validStyle}"
@@ -141,68 +142,83 @@
 									<p:ajax event="change" process="@this" update="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
 									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
-									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
-									<f:attribute name="data-symbol"	value="#{dataRow.cells[loop.index].symbol}" />
+									<f:attribute name="data-column"
+										value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="data-symbol"
+										value="#{dataRow.cells[loop.index].symbol}" />
 								</p:inputText>
-								<p:inputTextarea id="coarea#{loop.index}" 
+								<p:inputTextarea id="coarea#{loop.index}"
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									style="#{dataRow.cells[loop.index].style}"
 									styleClass="inputTextarea inputColumnWidth" autocomplete="off"
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'textarea'}">
-									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		                     
+									<f:event type="preRenderComponent"
+										listener="#{cc.attrs.webSheetBean.populateComponent}" />
 									<p:ajax event="change" process="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
 									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
-									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
-									<f:attribute name="data-symbol"	value="#{dataRow.cells[loop.index].symbol}" />
+									<f:attribute name="data-column"
+										value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="data-symbol"
+										value="#{dataRow.cells[loop.index].symbol}" />
 								</p:inputTextarea>
 
-								<p:calendar id="cocale#{loop.index}" 
+								<p:calendar id="cocale#{loop.index}"
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									style="#{dataRow.cells[loop.index].style}"
-		      						styleClass="inputColumnWidthCalendar" 
-		      						pattern="#{dataRow.cells[loop.index].datePattern}"
+									styleClass="inputColumnWidthCalendar"
+									pattern="#{dataRow.cells[loop.index].datePattern}"
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'calendar'}">
-									<f:converter converterId="tieCalendaConverter" />									
-									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		
+									<f:converter converterId="tieCalendaConverter" />
+									<f:event type="preRenderComponent"
+										listener="#{cc.attrs.webSheetBean.populateComponent}" />
 									<p:ajax event="dateSelect" process="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
 									<p:ajax event="change" process="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
 									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
-									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
-									<f:attribute name="data-symbol"	value="#{dataRow.cells[loop.index].symbol}" />
+									<f:attribute name="data-column"
+										value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="data-symbol"
+										value="#{dataRow.cells[loop.index].symbol}" />
 								</p:calendar>
-									 								
-								<p:selectOneMenu id="coselo#{loop.index}" 
+
+								<p:selectOneMenu id="coselo#{loop.index}"
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									styleClass="formFieldInputColumnWidthSelectOneMenu"
 									style="width:90%;"
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'dropdown'}">
-						            <f:selectItems value="#{dataRow.cells[loop.index].selectItemAttrs}" />
-									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		                     
-									<p:ajax event="change" process="@this"
+									<f:selectItems
+										value="#{dataRow.cells[loop.index].selectItemAttrs}" />
+									<f:event type="preRenderComponent"
+										listener="#{cc.attrs.webSheetBean.populateComponent}" />
+									<p:ajax event="change" process="@this" update="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
 									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
-									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
-									<f:attribute name="data-symbol"	value="#{dataRow.cells[loop.index].symbol}" />
-						        </p:selectOneMenu>				
-						        
-						        
-				                <p:inputNumber id="coinnu#{loop.index}" 
+									<f:attribute name="data-column"
+										value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="data-symbol"
+										value="#{dataRow.cells[loop.index].symbol}" />
+								</p:selectOneMenu>
+
+
+								<p:inputNumber id="coinnu#{loop.index}"
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									inputStyle="#{dataRow.cells[loop.index].style}"
-									inputStyleClass="inputColumnWidth" 
+									inputStyleClass="inputColumnWidth"
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'inputnumber'}">
-									<f:event type="preRenderComponent" listener="#{cc.attrs.webSheetBean.populateComponent}" />		                     
+									<f:event type="preRenderComponent"
+										listener="#{cc.attrs.webSheetBean.populateComponent}" />
 									<p:ajax event="change" process="@this"
 										listener="#{cc.attrs.webSheetBean.valueChangeEvent}" />
 									<f:attribute name="data-row" value="#{dataRow.rowIndex}" />
-									<f:attribute name="data-column"	value="#{dataRow.cells[loop.index].columnIndex}" />
-									<f:attribute name="data-symbol"	value="#{dataRow.cells[loop.index].symbol}" />
-				                </p:inputNumber>  						        			   										    
-									 								
-									 								
+									<f:attribute name="data-column"
+										value="#{dataRow.cells[loop.index].columnIndex}" />
+									<f:attribute name="data-symbol"
+										value="#{dataRow.cells[loop.index].symbol}" />
+								</p:inputNumber>
+
+
 								<h:outputText id="msgcolumn#{loop.index}" style="color:red"
 									styleClass="inputColumnWidth"
 									rendered="#{dataRow.cells[loop.index].invalid}"
@@ -227,8 +243,7 @@
 					<p:column
 						style="text-align: center;#{cc.attrs.webSheetBean.addRowColumnWidthStyle}"
 						rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows}">
-						<h:panelGroup
-							rendered="#{dataRow.rendered and dataRow.allowAdd}">
+						<h:panelGroup rendered="#{dataRow.rendered and dataRow.allowAdd}">
 							<p:commandButton
 								actionListener="#{cc.attrs.webSheetBean.addRepeatRow(dataRow.rowIndex)}"
 								update="@form" title="Add Row" alt="Add Row" icon="ui-icon-plus"
@@ -236,7 +251,7 @@
 							<p:commandButton
 								actionListener="#{cc.attrs.webSheetBean.deleteRepeatRow(dataRow.rowIndex)}"
 								update="@form" title="Delete Row" alt="Delete Row"
-								icon="ui-icon-minus" styleClass="icon_button">
+								icon="ui-icon-close" styleClass="icon_button">
 								<p:confirm header="Confirmation"
 									message="#{cc.attrs.deleteRowConfirmMessage}"
 									icon="ui-icon-alert" />
@@ -245,11 +260,12 @@
 					</p:column>
 				</p:dataTable>
 
+
 				<p:blockUI block="#{cc.clientId}:websheet"
-					widgetVar="tiefaces_websheet_bui"
-					trigger="#{cc.clientId}:websheettab #{cc.clientId}:websheettable">
+					widgetVar="tiefaces_websheet_bui">
 					<p:graphicImage name="tiefaces/img/ajaxloadingbar.gif" />
 				</p:blockUI>
+
 				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
 					<p:commandButton value="Yes" type="button"
 						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
