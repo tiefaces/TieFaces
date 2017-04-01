@@ -411,7 +411,7 @@ public class WebSheetLoader implements Serializable {
 						"Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
 				return -1;
 			}
-			LOG.info("Begin load work book...");
+			LOG.fine("Begin load work book...");
 			parent.setWb(wb);
 			parent.getSerialDataContext().setDataContext(dataContext);
 			parent.setSheetConfigMap(
@@ -936,9 +936,7 @@ public class WebSheetLoader implements Serializable {
 			configBuildRef.setWatchList(sheetConfig.getWatchList());
 			int length = CommandUtility.deleteRow(configBuildRef, rowIndex,
 					parent.getSerialDataContext().getDataContext(),
-					sheetConfig, parent.getBodyRows());
-			refreshBodyRowsInRange(configBuildRef.getInsertPosition(),
-					length, sheet, sheetConfig);
+					sheetConfig, parent.getBodyRows());			
 			parent.getCellHelper().reCalc();
 		} catch (DeleteRowException e) {
 			FacesContext.getCurrentInstance().addMessage(null,

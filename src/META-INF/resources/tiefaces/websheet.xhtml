@@ -46,6 +46,8 @@
 	<cc:attribute name="deleteRowConfirmMessage" required="false"
 		default="Are you sure you want to delete this row?"
 		type="java.lang.String" />
+	<cc:attribute name="reflow" required="false"
+		default="false" type="java.lang.Boolean" />		
 </cc:interface>
 
 <!-- IMPLEMENTATION -->
@@ -80,7 +82,7 @@
 					paginatorTemplate="#{cc.attrs.paginatorTemplate}"
 					rowsPerPageTemplate="#{cc.attrs.rowsPerPageTemplate}"
 					emptyMessage="#{cc.attrs.emptyMessage}" rowIndexVar="rowindex"
-					widgetVar="webSheetTable" editable="true" editMode="cell"
+					widgetVar="webSheetTable" reflow="#{cc.attrs.reflow}"
 					tableStyle="#{cc.attrs.tableWidthStyle}">
 
 

@@ -51,9 +51,6 @@ public class SerialWorkbookTest {
 			String key = entry.getKey();			
 			SheetConfiguration config1 = entry.getValue();
 			SheetConfiguration config2 = copy.getSheetConfigMap().get(key);
-		    System.out.println("Key = " + key );
-		    System.out.println("Config1 = " + config1);
-		    System.out.println("Config2 = "+config2);
 		}
 
 	}

@@ -58,7 +58,7 @@ public class TieWebSheetComponent extends UINamingContainer {
                 .get(TieConstants.ATTRS_WEBSHEETBEAN);
         if ((webSheetBean != null)
                 && (webSheetBean.getWebFormClientId() == null)) {
-            LOG.info("WebSheet component parameter setup");
+            LOG.fine("WebSheet component parameter setup");
             webSheetBean.setClientId(this.getClientId());
             webSheetBean.setWebFormClientId(
                     this.getClientId() + ":" + TieConstants.COMPONENT_ID);
