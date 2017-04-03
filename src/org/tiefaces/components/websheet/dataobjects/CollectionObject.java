@@ -8,24 +8,23 @@ import java.util.Collection;
 
 import org.tiefaces.components.websheet.configuration.EachCommand;
 
-
 /**
  * static snapshot for current map object.
  * 
- * This is mainly used for save the snapshot of context for each 
+ * This is mainly used for save the snapshot of context for each
+ * 
  * @author Jason Jiang
  *
  */
-public class CollectionObject  {
-	
-	
+public class CollectionObject {
+
 	/** The last collection. */
 	@SuppressWarnings("rawtypes")
 	private Collection lastCollection;
-	
+
 	/** The last collection index. */
 	private int lastCollectionIndex = -1;
-	
+
 	/** The each command. */
 	private EachCommand eachCommand;
 
@@ -42,12 +41,12 @@ public class CollectionObject  {
 	/**
 	 * Sets the last collection.
 	 *
-	 * @param lastCollection
+	 * @param plastCollection
 	 *            the lastCollection to set
 	 */
 	@SuppressWarnings("rawtypes")
-	public final void setLastCollection(Collection lastCollection) {
-		this.lastCollection = lastCollection;
+	public final void setLastCollection(final Collection plastCollection) {
+		this.lastCollection = plastCollection;
 	}
 
 	/**
@@ -62,11 +61,11 @@ public class CollectionObject  {
 	/**
 	 * Sets the last collection index.
 	 *
-	 * @param lastCollectionIndex
+	 * @param plastCollectionIndex
 	 *            the lastCollectionIndex to set
 	 */
-	public final void setLastCollectionIndex(int lastCollectionIndex) {
-		this.lastCollectionIndex = lastCollectionIndex;
+	public final void setLastCollectionIndex(final int plastCollectionIndex) {
+		this.lastCollectionIndex = plastCollectionIndex;
 	}
 
 	/**
@@ -81,16 +80,11 @@ public class CollectionObject  {
 	/**
 	 * Sets the each command.
 	 *
-	 * @param eachCommand
+	 * @param peachCommand
 	 *            the eachCommand to set
 	 */
-	public final void setEachCommand(EachCommand eachCommand) {
-		this.eachCommand = eachCommand;
-	}	
-	
+	public final void setEachCommand(final EachCommand peachCommand) {
+		this.eachCommand = peachCommand;
+	}
 
-	
-	
-	
-	
 }

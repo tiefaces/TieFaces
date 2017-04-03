@@ -23,12 +23,12 @@ import org.tiefaces.components.websheet.utility.ConfigurationUtility;
  * @author Jason Jiang
  *
  */
-public class EachCommand extends ConfigCommand  implements Serializable  {
+public class EachCommand extends ConfigCommand implements Serializable {
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			EachCommand.class.getName());
-	
+	private static final Logger LOG = Logger
+			.getLogger(EachCommand.class.getName());
+
 	/**
 	 * serialVersionUID.
 	 */
@@ -197,9 +197,9 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public final int buildAt(String fullName, 
-			final ConfigBuildRef configBuildRef,
-			final int atRow, final Map<String, Object> context,
+	public final int buildAt(String fullName,
+			final ConfigBuildRef configBuildRef, final int atRow,
+			final Map<String, Object> context,
 			final List<RowsMapping> currentRowsMappingList) {
 
 		fullName = fullName + ":" + this.getCommandName();
@@ -219,12 +219,14 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 				itemsCollection
 						.add(Class.forName(objClassName).newInstance());
 			} catch (Exception ex) {
-				LOG.log(Level.SEVERE,"canot insert empty object in itemCollections error = "+ex.getLocalizedMessage(), ex);
+				LOG.log(Level.SEVERE,
+						"canot insert empty object in itemCollections error = "
+								+ ex.getLocalizedMessage(),
+						ex);
 				return 0;
 			}
 		}
 
-		
 		int insertPosition = buildEachObjects(fullName, configBuildRef,
 				atRow, context, currentRowsMappingList, itemsCollection,
 				objClassName);
@@ -256,12 +258,11 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 			final ConfigBuildRef configBuildRef, final int atRow,
 			final Map<String, Object> context,
 			final List<RowsMapping> currentRowsMappingList,
-			Collection itemsCollection,
-			String objClassName) {
-		
+			final Collection itemsCollection, final String objClassName) {
+
 		int index = 0;
 		int insertPosition = atRow;
-		String thisObjClassName = objClassName; 
+		String thisObjClassName = objClassName;
 
 		// loop through each object in the collection
 		for (Object obj : itemsCollection) {
@@ -302,8 +303,11 @@ public class EachCommand extends ConfigCommand  implements Serializable  {
 		return insertPosition;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#getCommandName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#getCommandName()
 	 */
 	/*
 	 * 

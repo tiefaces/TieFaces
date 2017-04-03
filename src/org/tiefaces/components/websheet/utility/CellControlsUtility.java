@@ -182,7 +182,7 @@ public final class CellControlsUtility {
 		 *            the value
 		 * @return the object
 		 */
-		public abstract Object parseValue(final String value);
+		public abstract Object parseValue(String value);
 	}
 
 	/**
@@ -287,7 +287,7 @@ public final class CellControlsUtility {
 	 *            value.
 	 * @return object according to class.
 	 */
-	static Object convertToObject(AttributesType attr, final String value) {
+	static Object convertToObject(final AttributesType attr, final String value) {
 
 		return attr.parseValue(value);
 

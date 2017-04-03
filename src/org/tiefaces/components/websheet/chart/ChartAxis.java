@@ -17,12 +17,12 @@ import org.tiefaces.components.websheet.utility.CellControlsUtility;
  * @author Jason Jiang
  *
  */
-public class ChartAxis  {
+public class ChartAxis {
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			CellControlsUtility.class.getName());
-	
+	private static final Logger LOG = Logger
+			.getLogger(CellControlsUtility.class.getName());
+
 	/** position. */
 	private String position;
 	/** orientation. */
@@ -41,50 +41,54 @@ public class ChartAxis  {
 		try {
 			this.position = ctCatAx.getAxPos().getVal().toString();
 		} catch (Exception ex) {
-			LOG.log(Level.FINE,"cannot get axpos from CtCatAx", ex);
+			LOG.log(Level.FINE, "cannot get axpos from CtCatAx", ex);
 		}
 		try {
-			this.orientation = ctCatAx.getScaling().getOrientation().getVal()
-					.toString();
+			this.orientation = ctCatAx.getScaling().getOrientation()
+					.getVal().toString();
 		} catch (Exception ex) {
-			LOG.log(Level.FINE,"cannot get scaling.orientation from CtCatAx",ex);
+			LOG.log(Level.FINE,
+					"cannot get scaling.orientation from CtCatAx", ex);
 		}
 		try {
-			this.title = ctCatAx.getTitle().getTx().getRich().getPList().get(0)
-					.getRList().get(0).getT();
+			this.title = ctCatAx.getTitle().getTx().getRich().getPList()
+					.get(0).getRList().get(0).getT();
 		} catch (Exception ex) {
-			LOG.log(Level.FINE,"cannot get title from CtCatAx",ex);
+			LOG.log(Level.FINE, "cannot get title from CtCatAx", ex);
 		}
 	}
-	
+
 	/**
 	 * Constructor from CTValAx.
-	 * @param ctValAx CTValAx object from xml.
+	 * 
+	 * @param ctValAx
+	 *            CTValAx object from xml.
 	 */
-		public ChartAxis(final CTValAx ctValAx) {
-			super();
-			try {
-				this.position = ctValAx.getAxPos().getVal().toString();
-			} catch (Exception ex) {
-				LOG.log(Level.FINE,"cannot get AxPos from CtValAx",ex);
-			}
-			try {
-				this.orientation = ctValAx.getScaling().getOrientation().getVal()
-						.toString();
-			} catch (Exception ex) {
-				LOG.log(Level.FINE,"cannot get scaling.orientation from CtValAx",ex);
-			}
-			try {
-				this.title = ctValAx.getTitle().getTx().getRich().getPList().get(0)
-						.getRList().get(0).getT();
-			} catch (Exception ex) {
-				LOG.log(Level.FINE,"cannot get title from CtValAx",ex);
-			}
+	public ChartAxis(final CTValAx ctValAx) {
+		super();
+		try {
+			this.position = ctValAx.getAxPos().getVal().toString();
+		} catch (Exception ex) {
+			LOG.log(Level.FINE, "cannot get AxPos from CtValAx", ex);
 		}
-	
-	
+		try {
+			this.orientation = ctValAx.getScaling().getOrientation()
+					.getVal().toString();
+		} catch (Exception ex) {
+			LOG.log(Level.FINE,
+					"cannot get scaling.orientation from CtValAx", ex);
+		}
+		try {
+			this.title = ctValAx.getTitle().getTx().getRich().getPList()
+					.get(0).getRList().get(0).getT();
+		} catch (Exception ex) {
+			LOG.log(Level.FINE, "cannot get title from CtValAx", ex);
+		}
+	}
+
 	/**
 	 * get position.
+	 * 
 	 * @return position.
 	 */
 	public final String getPosition() {
@@ -93,7 +97,9 @@ public class ChartAxis  {
 
 	/**
 	 * set position.
-	 * @param pPosition position.
+	 * 
+	 * @param pPosition
+	 *            position.
 	 */
 	public final void setPosition(final String pPosition) {
 		this.position = pPosition;
@@ -101,6 +107,7 @@ public class ChartAxis  {
 
 	/**
 	 * get orientation.
+	 * 
 	 * @return orientation.
 	 */
 	public final String getOrientation() {
@@ -109,7 +116,9 @@ public class ChartAxis  {
 
 	/**
 	 * set orientation.
-	 * @param pOrientation orientation.
+	 * 
+	 * @param pOrientation
+	 *            orientation.
 	 */
 	public final void setOrientation(final String pOrientation) {
 		this.orientation = pOrientation;
@@ -117,6 +126,7 @@ public class ChartAxis  {
 
 	/**
 	 * get title.
+	 * 
 	 * @return title.
 	 */
 	public final String getTitle() {
@@ -125,12 +135,12 @@ public class ChartAxis  {
 
 	/**
 	 * set title.
-	 * @param pTitle title.
+	 * 
+	 * @param pTitle
+	 *            title.
 	 */
 	public final void setTitle(final String pTitle) {
 		this.title = pTitle;
 	}
-
-
 
 }

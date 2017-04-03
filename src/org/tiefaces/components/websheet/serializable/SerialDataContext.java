@@ -39,7 +39,6 @@ public class SerialDataContext implements Serializable {
 
 	/** convert map to json string. */
 	private String mapToJson;
-	
 
 	/**
 	 * save the workbook before serialize.
@@ -70,7 +69,7 @@ public class SerialDataContext implements Serializable {
 			in.defaultReadObject();
 			Gson objGson = new GsonBuilder().setPrettyPrinting().create();
 			Type listType = new TypeToken<Map<String, Object>>() {
-			}.getType();		
+			}.getType();
 			this.dataContext = objGson.fromJson(mapToJson, listType);
 		} catch (EncryptedDocumentException | ClassNotFoundException e) {
 			LOG.log(Level.SEVERE,
@@ -92,13 +91,12 @@ public class SerialDataContext implements Serializable {
 	/**
 	 * Sets the data context.
 	 *
-	 * @param dataContext
+	 * @param pdataContext
 	 *            the dataContext to set
 	 */
-	public final void setDataContext(Map<String, Object> dataContext) {
-		this.dataContext = dataContext;
+	public final void setDataContext(
+			final Map<String, Object> pdataContext) {
+		this.dataContext = pdataContext;
 	}
 
-	
-	
 }

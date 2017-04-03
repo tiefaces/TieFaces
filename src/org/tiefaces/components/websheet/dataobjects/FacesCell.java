@@ -424,7 +424,8 @@ public class FacesCell implements Serializable {
 	 * @param pinputAttrs
 	 *            the new input attrs
 	 */
-	public final void setInputAttrs(final List<CellFormAttributes> pinputAttrs) {
+	public final void setInputAttrs(
+			final List<CellFormAttributes> pinputAttrs) {
 		this.inputAttrs = pinputAttrs;
 	}
 
@@ -505,6 +506,5 @@ public class FacesCell implements Serializable {
 	public final void setHasSaveAttr(final boolean phasSaveAttr) {
 		this.hasSaveAttr = phasSaveAttr;
 	}
-
 
 }

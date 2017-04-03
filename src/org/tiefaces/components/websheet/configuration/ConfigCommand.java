@@ -18,16 +18,16 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 
 public abstract class ConfigCommand implements Command, Serializable {
-	
+
 	/**
 	 * serialid.
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/** logger. */
-	private static final Logger LOG = Logger.getLogger(
-			ConfigCommand.class.getName());
-		
+	private static final Logger LOG = Logger
+			.getLogger(ConfigCommand.class.getName());
+
 	/** Type Name. */
 	private String commandTypeName;
 	/** Range. */
@@ -184,7 +184,8 @@ public abstract class ConfigCommand implements Command, Serializable {
 		try {
 			return Integer.parseInt(lengthStr);
 		} catch (Exception ex) {
-			LOG.log(Level.FINE,"canot calcLength :"+ex.getLocalizedMessage(), ex);
+			LOG.log(Level.FINE,
+					"canot calcLength :" + ex.getLocalizedMessage(), ex);
 		}
 		return 0;
 	}
@@ -268,9 +269,8 @@ public abstract class ConfigCommand implements Command, Serializable {
 		this.finalLength = populatedLength;
 	}
 
-	
 	/**
-	 * recover  by using it's address.
+	 * recover by using it's address.
 	 * 
 	 * @param sheet
 	 *            sheet.
@@ -280,6 +280,6 @@ public abstract class ConfigCommand implements Command, Serializable {
 
 		this.getConfigRange().recover(sheet);
 
-	}	
-			
+	}
+
 }

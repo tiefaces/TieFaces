@@ -117,6 +117,7 @@ public class CachedCells implements Serializable {
 
 	/**
 	 * Checks if is value changed.
+	 * 
 	 * @param cell
 	 *            the cell
 	 *
@@ -130,6 +131,7 @@ public class CachedCells implements Serializable {
 
 	/**
 	 * Checks if is value changed.
+	 * 
 	 * @param cell
 	 *            the cell
 	 * @param pnewValue
@@ -137,7 +139,8 @@ public class CachedCells implements Serializable {
 	 *
 	 * @return true, if is value changed
 	 */
-	public final boolean isValueChanged(final Cell cell, final String pnewValue) {
+	public final boolean isValueChanged(final Cell cell,
+			final String pnewValue) {
 		Map<Cell, FormulaMapping> map = cachedMap;
 		String oldValue = map.get(cell).getValue();
 		String newValue = pnewValue;

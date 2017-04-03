@@ -217,7 +217,7 @@ public final class SaveAttrsUtility {
 	 * @param row
 	 *            row.
 	 */
-	private static void setSaveAttrsForRow(Row row) {
+	private static void setSaveAttrsForRow(final Row row) {
 		StringBuilder saveAttr = new StringBuilder();
 		for (Cell cell : row) {
 			String sAttr = parseSaveAttr(cell);

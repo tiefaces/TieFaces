@@ -50,27 +50,27 @@ public class SerialRow implements Serializable {
 	/**
 	 * constructor.
 	 * 
-	 * @param row
+	 * @param prow
 	 *            row.
 	 */
 
-	public SerialRow(Row row) {
-		this(row, -1);
+	public SerialRow(final Row prow) {
+		this(prow, -1);
 	}
 
 	/**
 	 * constructor.
 	 * 
-	 * @param row
+	 * @param prow
 	 *            row.
-	 * @param rowIndex
+	 * @param prowIndex
 	 *            row index.
 	 */
 
-	public SerialRow(final Row row, final int rowIndex) {
+	public SerialRow(final Row prow, final int prowIndex) {
 		super();
-		this.row = row;
-		this.rowIndex = rowIndex;
+		this.row = prow;
+		this.rowIndex = prowIndex;
 	}
 
 	/**
@@ -157,8 +157,10 @@ public class SerialRow implements Serializable {
 		}
 
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -166,11 +168,10 @@ public class SerialRow implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		if (this.getRow() != null) {
-		sb.append("row = " + this.getRow().getRowNum());
+			sb.append("row = " + this.getRow().getRowNum());
 		}
 		sb.append("}");
 		return sb.toString();
 	}
-	
 
 }

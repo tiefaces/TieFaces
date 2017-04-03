@@ -22,28 +22,28 @@ public class RangeBuildRef {
 	private int totalWidth;
 	/** sheet. */
 	private Sheet sheet;
-	
+
 	/**
 	 * Instantiates a new range build ref.
 	 *
-	 * @param left
+	 * @param pleft
 	 *            the left
-	 * @param right
+	 * @param pright
 	 *            the right
-	 * @param totalWidth
+	 * @param ptotalWidth
 	 *            the total width
-	 * @param sheet
+	 * @param psheet
 	 *            the sheet
 	 */
-	public RangeBuildRef(int left, int right, int totalWidth, Sheet sheet) {
+	public RangeBuildRef(final int pleft, final int pright,
+			final int ptotalWidth, final Sheet psheet) {
 		super();
-		this.left = left;
-		this.right = right;
-		this.totalWidth = totalWidth;
-		this.sheet = sheet;
+		this.left = pleft;
+		this.right = pright;
+		this.totalWidth = ptotalWidth;
+		this.sheet = psheet;
 	}
-	
-	
+
 	/**
 	 * Gets the left.
 	 *
@@ -52,17 +52,17 @@ public class RangeBuildRef {
 	public final int getLeft() {
 		return left;
 	}
-	
+
 	/**
 	 * Sets the left.
 	 *
-	 * @param left
+	 * @param pleft
 	 *            the left to set
 	 */
-	public final void setLeft(int left) {
-		this.left = left;
+	public final void setLeft(final int pleft) {
+		this.left = pleft;
 	}
-	
+
 	/**
 	 * Gets the right.
 	 *
@@ -71,17 +71,17 @@ public class RangeBuildRef {
 	public final int getRight() {
 		return right;
 	}
-	
+
 	/**
 	 * Sets the right.
 	 *
-	 * @param right
+	 * @param pright
 	 *            the right to set
 	 */
-	public final void setRight(int right) {
-		this.right = right;
+	public final void setRight(final int pright) {
+		this.right = pright;
 	}
-	
+
 	/**
 	 * Gets the total width.
 	 *
@@ -90,17 +90,17 @@ public class RangeBuildRef {
 	public final int getTotalWidth() {
 		return totalWidth;
 	}
-	
+
 	/**
 	 * Sets the total width.
 	 *
-	 * @param totalWidth
+	 * @param ptotalWidth
 	 *            the totalWidth to set
 	 */
-	public final void setTotalWidth(int totalWidth) {
-		this.totalWidth = totalWidth;
+	public final void setTotalWidth(final int ptotalWidth) {
+		this.totalWidth = ptotalWidth;
 	}
-	
+
 	/**
 	 * Gets the sheet.
 	 *
@@ -109,17 +109,15 @@ public class RangeBuildRef {
 	public final Sheet getSheet() {
 		return sheet;
 	}
-	
+
 	/**
 	 * Sets the sheet.
 	 *
-	 * @param sheet1
+	 * @param psheet1
 	 *            the sheet1 to set
 	 */
-	public final void setSheet(Sheet sheet1) {
-		this.sheet = sheet1;
+	public final void setSheet(final Sheet psheet1) {
+		this.sheet = psheet1;
 	}
 
-	
-	
 }

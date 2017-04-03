@@ -162,9 +162,9 @@ public class ValidationHandler {
 	 * @return true, if successful
 	 */
 	private boolean validateAllRulesForSingleCell(final int formRow,
-			final int formCol, FacesCell cell, Cell poiCell, String value,
-			SheetConfiguration sheetConfig,
-			List<CellFormAttributes> cellAttributes) {
+			final int formCol, final FacesCell cell, final Cell poiCell,
+			final String value, final SheetConfiguration sheetConfig,
+			final List<CellFormAttributes> cellAttributes) {
 		Sheet sheet1 = parent.getWb().getSheet(sheetConfig.getSheetName());
 		for (CellFormAttributes attr : cellAttributes) {
 			boolean pass = doValidation(value, attr, poiCell.getRowIndex(),
@@ -175,10 +175,13 @@ public class ValidationHandler {
 					errmsg = TieConstants.DEFALT_MSG_INVALID_INPUT;
 				}
 				cell.setErrormsg(errmsg);
-				LOG.log(Level.INFO,"Validation failed for sheet "
-						+ sheet1.getSheetName() + " row "
-						+ Integer.toString(poiCell.getRowIndex()) + " column "
-						+ Integer.toString(poiCell.getColumnIndex()) + " : " + errmsg);
+				LOG.log(Level.INFO,
+						"Validation failed for sheet "
+								+ sheet1.getSheetName() + " row "
+								+ Integer.toString(poiCell.getRowIndex())
+								+ " column "
+								+ Integer.toString(poiCell.getColumnIndex())
+								+ " : " + errmsg);
 				refreshAfterStatusChanged(false, true, formRow, formCol,
 						cell);
 				return false;
@@ -373,8 +376,8 @@ public class ValidationHandler {
 	 * @param tblName
 	 *            the tbl name
 	 */
-	private void refreshCachedCellsInCurrentPage(FacesContext facesContext,
-			String tblName) {
+	private void refreshCachedCellsInCurrentPage(
+			final FacesContext facesContext, final String tblName) {
 		// refresh current page calculation fields
 		UIComponent s = facesContext.getViewRoot().findComponent(tblName);
 		if (s == null) {
@@ -407,8 +410,8 @@ public class ValidationHandler {
 	 * @param i
 	 *            the i
 	 */
-	private void refreshCachedCellsInRow(String tblName, int top, int left,
-			int i) {
+	private void refreshCachedCellsInRow(final String tblName,
+			final int top, final int left, final int i) {
 		FacesRow dataRow = parent.getBodyRows().get(i);
 		int isize = dataRow.getCells().size();
 		for (int index = 0; index < isize; index++) {

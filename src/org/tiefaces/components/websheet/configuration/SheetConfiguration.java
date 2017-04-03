@@ -592,10 +592,10 @@ public class SheetConfiguration implements Serializable {
     }
 
     /**
-     * @param fixedWidthStyle the fixedWidthStyle to set
+     * @param pfixedWidthStyle the fixedWidthStyle to set
      */
-    public final void setFixedWidthStyle(boolean fixedWidthStyle) {
-        this.fixedWidthStyle = fixedWidthStyle;
+    public final void setFixedWidthStyle(final boolean pfixedWidthStyle) {
+        this.fixedWidthStyle = pfixedWidthStyle;
     }
 
     /**

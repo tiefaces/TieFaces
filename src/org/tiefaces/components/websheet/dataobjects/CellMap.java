@@ -211,8 +211,8 @@ public class CellMap implements Serializable, java.util.Map {
 				Map<String, Object> sessionMap = context
 						.getExternalContext().getSessionMap();
 				if (sessionMap.get(chartViewId) == null) {
-					sessionMap.put(chartViewId,
-							parent.getCharsData().getChartsMap().get(chartId));
+					sessionMap.put(chartViewId, parent.getCharsData()
+							.getChartsMap().get(chartId));
 				}
 			}
 			return chartViewId;
@@ -279,22 +279,26 @@ public class CellMap implements Serializable, java.util.Map {
 			if (poiCell == null) {
 				return null;
 			}
-			String oldValue = CellUtility.getCellValueWithoutFormat(poiCell);
+			String oldValue = CellUtility
+					.getCellValueWithoutFormat(poiCell);
 			FacesCell facesCell = parent.getCellHelper()
-					.getFacesCellWithRowColFromCurrentPage(mkey.getRowIndex(),
-							mkey.getColIndex());
+					.getFacesCellWithRowColFromCurrentPage(
+							mkey.getRowIndex(), mkey.getColIndex());
 			String newValue = assembleNewValue(value, facesCell);
 			if (newValue != null && !newValue.equals(oldValue)) {
 				CellUtility.setCellValue(poiCell, newValue);
 				if (facesCell.isHasSaveAttr()) {
-					parent.getCellHelper().saveDataInContext(poiCell, newValue);
+					parent.getCellHelper().saveDataInContext(poiCell,
+							newValue);
 				}
 				parent.getCellHelper().reCalc();
 			}
-	
+
 			return value;
 		} catch (Exception ex) {
-			LOG.log(Level.SEVERE, "Save cell data error : "+ex.getLocalizedMessage(), ex);
+			LOG.log(Level.SEVERE,
+					"Save cell data error : " + ex.getLocalizedMessage(),
+					ex);
 		}
 		return null;
 	}

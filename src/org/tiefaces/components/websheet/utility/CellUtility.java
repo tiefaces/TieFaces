@@ -185,7 +185,7 @@ public final class CellUtility {
 	 * Set cell value with giving String value.
 	 * 
 	 * @param c
-	 *            cell. 
+	 *            cell.
 	 * @param value
 	 *            giving value.
 	 * @return cell.
@@ -414,8 +414,8 @@ public final class CellUtility {
 	 *            check lock flag.
 	 */
 	@SuppressWarnings("deprecation")
-	private static void copyCellSetValue(Cell sourceCell, Cell newCell,
-			final boolean checkLock) {
+	private static void copyCellSetValue(final Cell sourceCell,
+			final Cell newCell, final boolean checkLock) {
 
 		CellStyle newCellStyle = newCell.getCellStyle();
 		String name = sourceCell.getCellTypeEnum().toString();
@@ -427,71 +427,77 @@ public final class CellUtility {
 	 * The Enum CellValueType.
 	 */
 	public enum CellValueType {
-		
+
 		/** The string. */
 		STRING {
 			@Override
-			public void setCellValue(Cell newCell, Cell sourceCell,
-					boolean checkLock, CellStyle newCellStyle) {
+			public void setCellValue(final Cell newCell,
+					final Cell sourceCell, final boolean checkLock,
+					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
 					newCell.setCellValue(
 							sourceCell.getRichStringCellValue());
 				}
 			}
 		},
-		
+
 		/** The boolean. */
 		BOOLEAN {
 			@Override
-			public void setCellValue(Cell newCell, Cell sourceCell,
-					boolean checkLock, CellStyle newCellStyle) {
+			public void setCellValue(final Cell newCell,
+					final Cell sourceCell, final boolean checkLock,
+					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
 					newCell.setCellValue(sourceCell.getBooleanCellValue());
 				}
 			}
 		},
-		
+
 		/** The numeric. */
 		NUMERIC {
 			@Override
-			public void setCellValue(Cell newCell, Cell sourceCell,
-					boolean checkLock, CellStyle newCellStyle) {
+			public void setCellValue(final Cell newCell,
+					final Cell sourceCell, final boolean checkLock,
+					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
 					newCell.setCellValue(sourceCell.getNumericCellValue());
 				}
 			}
 		},
-		
+
 		/** The formula. */
 		FORMULA {
 			@Override
-			public void setCellValue(Cell newCell, Cell sourceCell,
-					boolean checkLock, CellStyle newCellStyle) {
+			public void setCellValue(final Cell newCell,
+					final Cell sourceCell, final boolean checkLock,
+					final CellStyle newCellStyle) {
 				newCell.setCellFormula(sourceCell.getCellFormula());
 			}
 		},
-		
+
 		/** The error. */
 		ERROR {
 			@Override
-			public void setCellValue(Cell newCell, Cell sourceCell,
-					boolean checkLock, CellStyle newCellStyle) {
+			public void setCellValue(final Cell newCell,
+					final Cell sourceCell, final boolean checkLock,
+					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
 					newCell.setCellErrorValue(
 							sourceCell.getErrorCellValue());
 				}
 			}
 		},
-		
+
 		/** The blank. */
 		BLANK {
 			@Override
-			public void setCellValue(Cell newCell, Cell sourceCell,
-					boolean checkLock, CellStyle newCellStyle) {
+			public void setCellValue(final Cell newCell,
+					final Cell sourceCell, final boolean checkLock,
+					final CellStyle newCellStyle) {
 				newCell.setCellType(CellType.BLANK);
 			}
 		};
-		
+
 		/**
 		 * Sets the cell value.
 		 *
@@ -504,12 +510,11 @@ public final class CellUtility {
 		 * @param newCellStyle
 		 *            the new cell style
 		 */
-		public abstract void setCellValue(final Cell newCell,
-				final Cell sourceCell, final boolean checkLock,
-				final CellStyle newCellStyle);
+		public abstract void setCellValue(Cell newCell,
+				Cell sourceCell, boolean checkLock,
+				CellStyle newCellStyle);
 
 	}
-
 
 	/**
 	 * set up cell style.
@@ -523,7 +528,7 @@ public final class CellUtility {
 	 */
 	@SuppressWarnings("deprecation")
 	private static void copyCellSetStyle(final Sheet destSheet,
-			Cell sourceCell, Cell newCell) {
+			final Cell sourceCell, final Cell newCell) {
 		CellStyle newCellStyle = getCellStyleFromSourceCell(destSheet,
 				sourceCell);
 		newCell.setCellStyle(newCellStyle);
@@ -552,7 +557,7 @@ public final class CellUtility {
 	 * @return cell style.
 	 */
 	private static CellStyle getCellStyleFromSourceCell(
-			final Sheet destSheet, Cell sourceCell) {
+			final Sheet destSheet, final Cell sourceCell) {
 		Workbook wb = destSheet.getWorkbook();
 		// Copy style from old cell and apply to new cell
 		CellStyle newCellStyle = wb.createCellStyle();
@@ -659,13 +664,12 @@ public final class CellUtility {
 					caddress.getLastRow() - caddress.getFirstRow() + 1);
 		}
 
-		CellControlsUtility.setupControlAttributes(originRowIndex, fcell, poiCell, sheetConfig,
-				cellAttributesMap);
-		fcell.setHasSaveAttr(SaveAttrsUtility
-				.isHasSaveAttr(poiCell, saveAttrs));
+		CellControlsUtility.setupControlAttributes(originRowIndex, fcell,
+				poiCell, sheetConfig, cellAttributesMap);
+		fcell.setHasSaveAttr(
+				SaveAttrsUtility.isHasSaveAttr(poiCell, saveAttrs));
 
 	}
-
 
 	/**
 	 * Gets the row col from component attributes.
@@ -743,9 +747,9 @@ public final class CellUtility {
 
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE,
-					"Web Form WebFormHelper getFacesCellFromBodyRow Error row = "
-							+ row + " col = " + col + "top row = " + topRow
-							+ " leftCol = " + leftCol + " ; error = "
+					"getFacesCellFromBodyRow Error row = " + row + " col = "
+							+ col + "top row = " + topRow + " leftCol = "
+							+ leftCol + " ; error = "
 							+ e.getLocalizedMessage(),
 					e);
 		}

@@ -161,7 +161,8 @@ public final class ShiftFormulaUtility {
 	 */
 	private static Ptg[] convertPtgForWatchList(final Ptg[] ptgs,
 			final int position, final ShiftFormulaRef shiftFormulaRef,
-			final Object ptg, byte originalOperandClass, int currentRow) {
+			final Object ptg, final byte originalOperandClass,
+			final int currentRow) {
 		List<SerialRow> rowlist = getRowsList(currentRow,
 				shiftFormulaRef.getCurrentRowsMappingList());
 		if ((rowlist == null) || (rowlist.isEmpty())) {
@@ -250,7 +251,7 @@ public final class ShiftFormulaUtility {
 	 */
 	private static List<SerialRow> assembleRowsListFromRowsMapping(
 			final List<SerialRow> all, final List<SerialRow> current) {
-		List<SerialRow> list; 
+		List<SerialRow> list;
 		if (all == null) {
 			list = new ArrayList<>();
 			list.addAll(current);

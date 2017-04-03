@@ -207,9 +207,10 @@ public class ChartHelper {
 				} catch (Exception e) {
 					LOG.log(Level.SEVERE,
 							"Error setting style '" + style
-									+ "' for series '" + Integer.toString(seriesIndex)
-									+ "' of chart '" + chart.toString() + "': "
-									+ e.getLocalizedMessage(),
+									+ "' for series '"
+									+ Integer.toString(seriesIndex)
+									+ "' of chart '" + chart.toString()
+									+ "': " + e.getLocalizedMessage(),
 							e);
 				}
 			} else if (plot instanceof XYPlot) {
@@ -221,13 +222,15 @@ public class ChartHelper {
 				} catch (Exception e) {
 					LOG.log(Level.SEVERE,
 							"Error setting style '" + style
-									+ "' for series '" + Integer.toString(seriesIndex)
-									+ "' of chart '" + chart.toString() + "': "
-									+ e.getLocalizedMessage(),
+									+ "' for series '"
+									+ Integer.toString(seriesIndex)
+									+ "' of chart '" + chart.toString()
+									+ "': " + e.getLocalizedMessage(),
 							e);
 				}
 			} else {
-				LOG.log(Level.FINE,"setSeriesColor() unsupported plot: " + plot.toString());
+				LOG.log(Level.FINE, "setSeriesColor() unsupported plot: "
+						+ plot.toString());
 			}
 		}
 	}
@@ -681,8 +684,8 @@ public class ChartHelper {
 	 *            the sheet name
 	 * @return the chart id from parent
 	 */
-	private final String getChartIdFromParent(XSSFChart chart,
-			String sheetName) {
+	private String getChartIdFromParent(final XSSFChart chart,
+			final String sheetName) {
 		if (chart.getParent() != null) {
 			for (RelationPart rp : chart.getParent().getRelationParts()) {
 				if (rp.getDocumentPart() == chart) {

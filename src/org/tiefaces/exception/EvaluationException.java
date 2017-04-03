@@ -34,7 +34,8 @@ public class EvaluationException extends RuntimeException {
 	 *            the writable stack trace
 	 */
 	public EvaluationException(final String message, final Throwable cause,
-			final boolean enableSuppression, final boolean writableStackTrace) {
+			final boolean enableSuppression,
+			final boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 
@@ -46,7 +47,8 @@ public class EvaluationException extends RuntimeException {
 	 * @param cause
 	 *            the cause
 	 */
-	public EvaluationException(final String message, final Throwable cause) {
+	public EvaluationException(final String message,
+			final Throwable cause) {
 		super(message, cause);
 	}
 
@@ -57,7 +59,7 @@ public class EvaluationException extends RuntimeException {
 	 *            the message
 	 */
 	public EvaluationException(final String message) {
-		super("Evaluation exception = "+message);
+		super("Evaluation exception = " + message);
 	}
 
 	/**
@@ -67,8 +69,8 @@ public class EvaluationException extends RuntimeException {
 	 *            the cause
 	 */
 	public EvaluationException(final Throwable cause) {
-		super("Evaluation exception = "+cause.getLocalizedMessage(), cause);
+		super("Evaluation exception = " + cause.getLocalizedMessage(),
+				cause);
 	}
 
- 
 }

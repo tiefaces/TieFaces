@@ -112,7 +112,7 @@ public final class CellStyleUtility {
 	 *            font.
 	 * @return String font color.
 	 */
-	private static String getCellFontColor(Font font) {
+	private static String getCellFontColor(final Font font) {
 		short[] rgbfix = { TieConstants.RGB_MAX, TieConstants.RGB_MAX,
 				TieConstants.RGB_MAX };
 		if (font instanceof XSSFFont) {
@@ -134,7 +134,7 @@ public final class CellStyleUtility {
 	 *            font.
 	 * @return font decoration.
 	 */
-	private static String getCellFontDecoration(Font font) {
+	private static String getCellFontDecoration(final Font font) {
 		StringBuilder decoration = new StringBuilder();
 		if (font.getUnderline() != 0) {
 			decoration.append(" underline");

@@ -157,8 +157,8 @@ public final class FacesUtility {
 			final String resource) {
 		String normalizedResource = resource;
 		if (normalizedResource.startsWith(prefix)) {
-			normalizedResource =
-					normalizedResource.substring(prefix.length() - 1);
+			normalizedResource = normalizedResource
+					.substring(prefix.length() - 1);
 		}
 
 		return normalizedResource;
@@ -177,9 +177,9 @@ public final class FacesUtility {
 			final String type) {
 
 		Scanner scanner = new Scanner(input);
-		boolean ireturn=false;
+		boolean ireturn = false;
 		if ("Integer".equalsIgnoreCase(type)) {
-			ireturn =  scanner.hasNextInt();
+			ireturn = scanner.hasNextInt();
 		} else if ("Double".equalsIgnoreCase(type)) {
 			ireturn = scanner.hasNextDouble();
 		} else if ("Boolean".equalsIgnoreCase(type)) {

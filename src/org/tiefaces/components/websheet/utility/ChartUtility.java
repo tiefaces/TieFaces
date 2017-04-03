@@ -268,14 +268,14 @@ public final class ChartUtility {
         }
     }
 
+
     /**
-     * Navigate through xml node to get the chartId. This is a workaround as
-     * there's no direct method in the api.
-     * 
-     * @param parentNode
-     *            root node to search rid.
-     * @return rid in the giving node tree.
-     */
+	 * Gets the anchor associate chart id.
+	 *
+	 * @param ctanchor
+	 *            the ctanchor
+	 * @return the anchor associate chart id
+	 */
     private static String getAnchorAssociateChartId(
             final CTTwoCellAnchor ctanchor) {
 

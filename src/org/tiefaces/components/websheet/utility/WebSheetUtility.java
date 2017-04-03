@@ -27,11 +27,10 @@ import java.util.regex.Pattern;
  */
 public final class WebSheetUtility {
 
-	
 	/** logger. */
 	private static final Logger LOG = Logger
 			.getLogger(WebSheetUtility.class.getName());
-	
+
 	// Each cell conatins a fixed number of co-ordinate points; this number
 	// does not vary with row height or column width or with font. These two
 	/** The Constant TOTAL_COLUMN_COORDINATE_POSITIONS. */
@@ -53,8 +52,10 @@ public final class WebSheetUtility {
 	/** The Constant PIXELS_PER_MILLIMETRES. */
 	// millimetre. These values are required for the conversion algorithm.
 	public static final double PIXELS_PER_MILLIMETRES = 3.78; // MB
-    //These values are required for the conversion algorithm.
-    public static final double PICTURE_HEIGHT_ADJUST = 3.03125; // MB
+
+	/** The Constant PICTURE_HEIGHT_ADJUST. */
+	// These values are required for the conversion algorithm.
+	public static final double PICTURE_HEIGHT_ADJUST = 3.03125; // MB
 
 	/** The Constant POINTS_PER_MILLIMETRE. */
 	public static final double POINTS_PER_MILLIMETRE = 2.83; // MB
@@ -73,8 +74,8 @@ public final class WebSheetUtility {
 	public static final int UNIT_OFFSET_LENGTH = 7;
 
 	/** The Constant UNIT_OFFSET_MAP. */
-	static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73, 109,
-			146, 182, 219 };
+	static final int[] UNIT_OFFSET_MAP = new int[] { 0, 36, 73, 109, 146,
+			182, 219 };
 
 	/** The Constant EXCEL_ROW_HEIGHT_FACTOR. */
 	public static final short EXCEL_ROW_HEIGHT_FACTOR = 20;
@@ -84,33 +85,29 @@ public final class WebSheetUtility {
 
 	/** The Constant EMU_PER_POINTS. */
 	public static final int EMU_PER_POINTS = 12700;
-	
 
 	/** The Constant DATE_REGEX_YEAR_COMM_1. */
 	private static final String DATE_REGEX_YEAR_COMM_1 = "([-/.\\\\]{1})";
-	
+
 	/** The Constant DATE_REGEX_YEAR_COMM_2. */
 	private static final String DATE_REGEX_YEAR_COMM_2 = "[0?[1-9]|[1-9]|1[012]]{1,2}";
-	
+
 	/** The Constant DATE_REGEX_YEAR_COMM_3. */
 	private static final String DATE_REGEX_YEAR_COMM_3 = "([0?[1-9]|[1-9]|1[0-9]|2[0-9]|3[01]]{1,2})";
-	
+
 	/** The Constant DATE_REGEX_4_DIGIT_YEAR. */
 	private static final String DATE_REGEX_4_DIGIT_YEAR = "("
 			+ "(19|20)[0-9]{2}" + DATE_REGEX_YEAR_COMM_1
-			+ DATE_REGEX_YEAR_COMM_2 + "\\3"
-			+ DATE_REGEX_YEAR_COMM_3 + ")" + "|"
-			+ "(" + DATE_REGEX_YEAR_COMM_2 + DATE_REGEX_YEAR_COMM_1
-			+ DATE_REGEX_YEAR_COMM_3 + "\\6"
-			+ "(19|20)[0-9]{2}" + ")";
+			+ DATE_REGEX_YEAR_COMM_2 + "\\3" + DATE_REGEX_YEAR_COMM_3 + ")"
+			+ "|" + "(" + DATE_REGEX_YEAR_COMM_2 + DATE_REGEX_YEAR_COMM_1
+			+ DATE_REGEX_YEAR_COMM_3 + "\\6" + "(19|20)[0-9]{2}" + ")";
 
 	/** The Constant DATE_REGEX_2_DIGIT_YEAR. */
 	private static final String DATE_REGEX_2_DIGIT_YEAR = "(" + "[0-9]{2}"
 			+ DATE_REGEX_YEAR_COMM_1 + DATE_REGEX_YEAR_COMM_2 + "\\3"
-			+ DATE_REGEX_YEAR_COMM_3 + ")" + "|"
-			+ "(" + DATE_REGEX_YEAR_COMM_2 + DATE_REGEX_YEAR_COMM_1
-			+ DATE_REGEX_YEAR_COMM_3 + "\\6"
-			+ "[0-9]{2}" + ")";
+			+ DATE_REGEX_YEAR_COMM_3 + ")" + "|" + "("
+			+ DATE_REGEX_YEAR_COMM_2 + DATE_REGEX_YEAR_COMM_1
+			+ DATE_REGEX_YEAR_COMM_3 + "\\6" + "[0-9]{2}" + ")";
 
 	/**
 	 * PIXEL_HEIGHT_ASPC_ADJUST.
@@ -124,7 +121,6 @@ public final class WebSheetUtility {
 		// not called
 	}
 
-
 	/**
 	 * Gets the excel column name.
 	 *
@@ -133,7 +129,7 @@ public final class WebSheetUtility {
 	 * @return the string
 	 */
 	public static String getExcelColumnName(final int pnumber) {
-		StringBuilder converted =  new StringBuilder();
+		StringBuilder converted = new StringBuilder();
 		// Repeatedly divide the number by 26 and convert the
 		// remainder into the appropriate letter.
 		int number = pnumber;
@@ -255,20 +251,19 @@ public final class WebSheetUtility {
 			CellReference ref = new CellReference(cellRef);
 			Row r = sheet.getRow(ref.getRow());
 			if (r != null) {
-				c =
-						r.getCell(ref.getCol(),
-								MissingCellPolicy.CREATE_NULL_AS_BLANK);
+				c = r.getCell(ref.getCol(),
+						MissingCellPolicy.CREATE_NULL_AS_BLANK);
 			}
 		} catch (Exception ex) {
 			// use log.debug because mostly it's expected
 			LOG.log(Level.SEVERE,
 					"WebForm WebFormHelper getCellByReference cellRef = "
 							+ cellRef + "; error = "
-							+ ex.getLocalizedMessage(), ex);
+							+ ex.getLocalizedMessage(),
+					ex);
 		}
 		return c;
 	}
-
 
 	/**
 	 * pixel units to excel width units(units of 1/256th of a character width).
@@ -278,8 +273,8 @@ public final class WebSheetUtility {
 	 * @return the short
 	 */
 	public static short pixel2WidthUnits(final int pxs) {
-		short widthUnits =
-				(short) (EXCEL_COLUMN_WIDTH_FACTOR * (pxs / UNIT_OFFSET_LENGTH));
+		short widthUnits = (short) (EXCEL_COLUMN_WIDTH_FACTOR
+				* (pxs / UNIT_OFFSET_LENGTH));
 		widthUnits += UNIT_OFFSET_MAP[pxs % UNIT_OFFSET_LENGTH];
 		return widthUnits;
 	}
@@ -292,16 +287,13 @@ public final class WebSheetUtility {
 	 * @return the int
 	 */
 	public static int widthUnits2Pixel(final int widthUnits) {
-		int pixels =
-				(widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)
-						* UNIT_OFFSET_LENGTH;
+		int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)
+				* UNIT_OFFSET_LENGTH;
 		int offsetWidthUnits = widthUnits % EXCEL_COLUMN_WIDTH_FACTOR;
-		pixels +=
-				Math.round(offsetWidthUnits
-						/ ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
+		pixels += Math.round(offsetWidthUnits
+				/ ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH));
 		return pixels;
 	}
-
 
 	/**
 	 * Height units 2 pixel.
@@ -313,10 +305,9 @@ public final class WebSheetUtility {
 	public static int heightUnits2Pixel(final short heightUnits) {
 		int pixels = heightUnits / EXCEL_ROW_HEIGHT_FACTOR;
 		int offsetHeightUnits = heightUnits % EXCEL_ROW_HEIGHT_FACTOR;
-		pixels +=
-				Math.round((float) offsetHeightUnits
-						/ ((float) EXCEL_COLUMN_WIDTH_FACTOR
-								/ UNIT_OFFSET_LENGTH / 2));
+		pixels += Math.round((float) offsetHeightUnits
+				/ ((float) EXCEL_COLUMN_WIDTH_FACTOR / UNIT_OFFSET_LENGTH
+						/ 2));
 		pixels += (Math.floor(pixels / PIXEL_HEIGHT_ASPC_ADJUST) + 1) * 4;
 
 		return pixels;
@@ -345,7 +336,8 @@ public final class WebSheetUtility {
 	 *         Excels units.
 	 */
 	public static int millimetres2WidthUnits(final double millimetres) {
-		return pixel2WidthUnits((int) (millimetres * PIXELS_PER_MILLIMETRES));
+		return pixel2WidthUnits(
+				(int) (millimetres * PIXELS_PER_MILLIMETRES));
 	}
 
 	/**
@@ -369,9 +361,6 @@ public final class WebSheetUtility {
 	public static double pointsToMillimeters(final double points) {
 		return points / POINTS_PER_INCH * MILLIMETERS_PER_INCH;
 	}
-
-
-
 
 	/**
 	 * Checks if is date.
@@ -437,16 +426,17 @@ public final class WebSheetUtility {
 	 * @return true, if is numeric
 	 */
 	public static boolean isNumeric(final String str) {
-				
+
 		String s = str;
 		if (s.startsWith("-")) {
 			s = s.substring(1);
 		}
 		char c;
-		int i; 
+		int i;
 		int sLen = s.length();
-		ShouldContinueParameter sPara = new ShouldContinueParameter(false, false, 0);
-		
+		ShouldContinueParameter sPara = new ShouldContinueParameter(false,
+				false, 0);
+
 		for (i = 0; i < sLen; i++) {
 			c = s.charAt(i);
 			if (c < '0' || c > '9') {
@@ -462,36 +452,35 @@ public final class WebSheetUtility {
 		return true;
 	}
 
-	
 	/**
 	 * The Class ShouldContinueParameter.
 	 */
 	private static class ShouldContinueParameter {
-		
+
 		/** The decimal hit. */
 		private Boolean decimalHit;
-		
+
 		/** The comma hit. */
 		private Boolean commaHit;
-		
+
 		/** The since last comma. */
 		private Integer sinceLastComma;
 
 		/**
 		 * Instantiates a new should continue parameter.
 		 *
-		 * @param decimalHit
+		 * @param pdecimalHit
 		 *            the decimal hit
-		 * @param commaHit
+		 * @param pcommaHit
 		 *            the comma hit
-		 * @param sinceLastComma
+		 * @param psinceLastComma
 		 *            the since last comma
 		 */
-		public ShouldContinueParameter(Boolean decimalHit, Boolean commaHit,
-				Integer sinceLastComma) {
-			this.decimalHit = decimalHit;
-			this.commaHit = commaHit;
-			this.sinceLastComma = sinceLastComma;
+		ShouldContinueParameter(final Boolean pdecimalHit,
+				final Boolean pcommaHit, final Integer psinceLastComma) {
+			this.decimalHit = pdecimalHit;
+			this.commaHit = pcommaHit;
+			this.sinceLastComma = psinceLastComma;
 		}
 
 		/**
@@ -506,11 +495,11 @@ public final class WebSheetUtility {
 		/**
 		 * Sets the decimal hit.
 		 *
-		 * @param decimalHit
+		 * @param pdecimalHit
 		 *            the new decimal hit
 		 */
-		public void setDecimalHit(Boolean decimalHit) {
-			this.decimalHit = decimalHit;
+		public void setDecimalHit(final Boolean pdecimalHit) {
+			this.decimalHit = pdecimalHit;
 		}
 
 		/**
@@ -525,11 +514,11 @@ public final class WebSheetUtility {
 		/**
 		 * Sets the comma hit.
 		 *
-		 * @param commaHit
+		 * @param pcommaHit
 		 *            the new comma hit
 		 */
-		public void setCommaHit(Boolean commaHit) {
-			this.commaHit = commaHit;
+		public void setCommaHit(final Boolean pcommaHit) {
+			this.commaHit = pcommaHit;
 		}
 
 		/**
@@ -544,14 +533,13 @@ public final class WebSheetUtility {
 		/**
 		 * Sets the since last comma.
 		 *
-		 * @param sinceLastComma
+		 * @param psinceLastComma
 		 *            the new since last comma
 		 */
-		public void setSinceLastComma(Integer sinceLastComma) {
-			this.sinceLastComma = sinceLastComma;
+		public void setSinceLastComma(final Integer psinceLastComma) {
+			this.sinceLastComma = psinceLastComma;
 		}
 	}
-
 
 	/**
 	 * Should continue.
@@ -562,7 +550,8 @@ public final class WebSheetUtility {
 	 *            the para
 	 * @return true, if successful
 	 */
-	private static boolean shouldContinue(char c, ShouldContinueParameter para) {
+	private static boolean shouldContinue(final char c,
+			final ShouldContinueParameter para) {
 		if (c == '.' && !para.isDecimalHit()) {
 			para.setDecimalHit(true);
 			if (para.isCommaHit() && para.getSinceLastComma() != 3) {
@@ -581,7 +570,7 @@ public final class WebSheetUtility {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Sets the object property.
 	 *
@@ -598,19 +587,15 @@ public final class WebSheetUtility {
 			final String propertyName, final String propertyValue,
 			final boolean ignoreNonExisting) {
 		try {
-			Method method =
-					obj.getClass().getMethod(
-							"set"
-									+ Character.toUpperCase(propertyName
-											.charAt(0))
-									+ propertyName.substring(1),
-							new Class[] { String.class });
+			Method method = obj.getClass().getMethod(
+					"set" + Character.toUpperCase(propertyName.charAt(0))
+							+ propertyName.substring(1),
+					new Class[] { String.class });
 			method.invoke(obj, propertyValue);
 		} catch (Exception e) {
-			String msg =
-					"failed to set property '" + propertyName
-							+ "' to value '" + propertyValue
-							+ "' for object " + obj;
+			String msg = "failed to set property '" + propertyName
+					+ "' to value '" + propertyValue + "' for object "
+					+ obj;
 			if (ignoreNonExisting) {
 				LOG.info(msg);
 			} else {
@@ -656,9 +641,10 @@ public final class WebSheetUtility {
 	public static boolean insideRange(final ConfigRange child,
 			final ConfigRange parent) {
 
-		if ((cellCompareTo(child.getFirstRowRef(), parent.getFirstRowRef()) >= 0)
-				&& (cellCompareTo(child.getLastRowPlusRef(), parent
-						.getLastRowPlusRef()) <= 0)) {
+		if ((cellCompareTo(child.getFirstRowRef(),
+				parent.getFirstRowRef()) >= 0)
+				&& (cellCompareTo(child.getLastRowPlusRef(),
+						parent.getLastRowPlusRef()) <= 0)) {
 			return true;
 		}
 		return false;
@@ -676,8 +662,8 @@ public final class WebSheetUtility {
 		try {
 			if (sheet instanceof XSSFSheet) {
 				XSSFSheet xsheet = (XSSFSheet) sheet;
-				CTSheetDimension dimension =
-						xsheet.getCTWorksheet().getDimension();
+				CTSheetDimension dimension = xsheet.getCTWorksheet()
+						.getDimension();
 				String sheetDimensions = dimension.getRef();
 				if (sheetDimensions.indexOf(':') < 0) {
 					return -1;
@@ -685,7 +671,7 @@ public final class WebSheetUtility {
 					return CellRangeAddress.valueOf(sheetDimensions)
 							.getLastColumn();
 				}
-			} 
+			}
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, "error in getSheetRightCol : "
 					+ e.getLocalizedMessage(), e);

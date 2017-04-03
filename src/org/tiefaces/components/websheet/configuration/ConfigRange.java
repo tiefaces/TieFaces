@@ -381,8 +381,8 @@ public class ConfigRange implements Serializable {
 		ShiftFormulaRef shiftFormulaRef = new ShiftFormulaRef(
 				configBuildRef.getWatchList(), allRowsMappingList);
 		for (int i = atRow; i < lastRowPlus; i++) {
-			buildCellsForRow(configBuildRef.getSheet().getRow(i), fullName, context, configBuildRef,
-					shiftFormulaRef);
+			buildCellsForRow(configBuildRef.getSheet().getRow(i), fullName,
+					context, configBuildRef, shiftFormulaRef);
 		}
 	}
 
@@ -400,18 +400,18 @@ public class ConfigRange implements Serializable {
 	 * @param shiftFormulaRef
 	 *            the shift formula ref
 	 */
-	private void buildCellsForRow(Row row, final String fullName,
+	private void buildCellsForRow(final Row row, final String fullName,
 			final Map<String, Object> context,
 			final ConfigBuildRef configBuildRef,
 			ShiftFormulaRef shiftFormulaRef) {
-		if ((row == null) || !ConfigurationUtility.isStaticRowRef(this, row)) {
+		if ((row == null)
+				|| !ConfigurationUtility.isStaticRowRef(this, row)) {
 			return;
-		}	
+		}
 		for (Cell cell : row) {
 			buildSingleCell(cell, context, configBuildRef, shiftFormulaRef);
 		}
-		ConfigurationUtility.setFullNameInHiddenColumn(row,
-				fullName);
+		ConfigurationUtility.setFullNameInHiddenColumn(row, fullName);
 	}
 
 	/**
@@ -426,10 +426,10 @@ public class ConfigRange implements Serializable {
 	 * @param shiftFormulaRef
 	 *            the shift formula ref
 	 */
-	private void buildSingleCell(Cell cell,
+	private void buildSingleCell(final Cell cell,
 			final Map<String, Object> context,
 			final ConfigBuildRef configBuildRef,
-			ShiftFormulaRef shiftFormulaRef) {
+			final ShiftFormulaRef shiftFormulaRef) {
 		try {
 			CommandUtility.evaluate(context, cell,
 					configBuildRef.getEngine());
@@ -437,12 +437,10 @@ public class ConfigRange implements Serializable {
 				// rebuild formula if necessary for dynamic row
 				String originFormula = cell.getCellFormula();
 				shiftFormulaRef.setFormulaChanged(0);
-				ConfigurationUtility
-						.buildCellFormulaForShiftedRows(
-								configBuildRef.getSheet(),
-								configBuildRef.getWbWrapper(),
-								shiftFormulaRef, cell,
-								cell.getCellFormula());
+				ConfigurationUtility.buildCellFormulaForShiftedRows(
+						configBuildRef.getSheet(),
+						configBuildRef.getWbWrapper(), shiftFormulaRef,
+						cell, cell.getCellFormula());
 				if (shiftFormulaRef.getFormulaChanged() > 0) {
 					configBuildRef.getCachedCells().put(cell,
 							originFormula);
@@ -450,10 +448,11 @@ public class ConfigRange implements Serializable {
 			}
 
 		} catch (Exception ex) {
-			LOG.log(Level.SEVERE, "build cell ( row = "
-					+ cell.getRowIndex() + " column = "
-					+ cell.getColumnIndex() + " error = "
-					+ ex.getLocalizedMessage(), ex);
+			LOG.log(Level.SEVERE,
+					"build cell ( row = " + cell.getRowIndex()
+							+ " column = " + cell.getColumnIndex()
+							+ " error = " + ex.getLocalizedMessage(),
+					ex);
 		}
 	}
 

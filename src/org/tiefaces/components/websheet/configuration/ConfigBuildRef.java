@@ -49,7 +49,7 @@ public class ConfigBuildRef {
 	 * Saved configRange attributes for each full name. String : full name.
 	 * ConfigRangeAttrs : include range (top, bottom) and rows mapping.
 	 */
-	private  NavigableMap<String, ConfigRangeAttrs> shiftMap;
+	private NavigableMap<String, ConfigRangeAttrs> shiftMap;
 
 	/**
 	 * Saved formula cells. include original formula and rows mapping for this
@@ -195,7 +195,7 @@ public class ConfigBuildRef {
 	 *
 	 * @return the shift map
 	 */
-	public final  NavigableMap<String, ConfigRangeAttrs> getShiftMap() {
+	public final NavigableMap<String, ConfigRangeAttrs> getShiftMap() {
 		return shiftMap;
 	}
 
@@ -244,7 +244,8 @@ public class ConfigBuildRef {
 	 * @param poriginConfigRange
 	 *            the new origin config range
 	 */
-	public final void setOriginConfigRange(final ConfigRange poriginConfigRange) {
+	public final void setOriginConfigRange(
+			final ConfigRange poriginConfigRange) {
 		this.originConfigRange = poriginConfigRange;
 	}
 

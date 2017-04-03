@@ -29,7 +29,7 @@ import org.tiefaces.components.websheet.utility.ShiftFormulaUtility;
  *
  */
 
-public class FormCommand extends ConfigCommand implements Serializable  {
+public class FormCommand extends ConfigCommand implements Serializable {
 
 	/**
 	 * serialVersionUID.
@@ -45,7 +45,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	private String hidden;
 	/** readonly holder. */
 	private String readOnly;
-	/** fixedWidthStyle holder. */ 
+	/** fixedWidthStyle holder. */
 	private String fixedWidthStyle;
 
 	/**
@@ -176,34 +176,36 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	}
 
 	/**
-     * @return the readOnly
-     */
-    public final String getReadOnly() {
-        return readOnly;
-    }
+	 * @return the readOnly
+	 */
+	public final String getReadOnly() {
+		return readOnly;
+	}
 
-    /**
-     * @param readOnly the readOnly to set
-     */
-    public final void setReadOnly(String readOnly) {
-        this.readOnly = readOnly;
-    }
+	/**
+	 * @param preadOnly
+	 *            the readOnly to set
+	 */
+	public final void setReadOnly(final String preadOnly) {
+		this.readOnly = preadOnly;
+	}
 
-    /**
-     * @return the fixedWidthStyle
-     */
-    public final String getFixedWidthStyle() {
-        return fixedWidthStyle;
-    }
+	/**
+	 * @return the fixedWidthStyle
+	 */
+	public final String getFixedWidthStyle() {
+		return fixedWidthStyle;
+	}
 
-    /**
-     * @param fixedWidthStyle the fixedWidthStyle to set
-     */
-    public final void setFixedWidthStyle(String fixedWidthStyle) {
-        this.fixedWidthStyle = fixedWidthStyle;
-    }
+	/**
+	 * @param pfixedWidthStyle
+	 *            the fixedWidthStyle to set
+	 */
+	public final void setFixedWidthStyle(final String pfixedWidthStyle) {
+		this.fixedWidthStyle = pfixedWidthStyle;
+	}
 
-    /**
+	/**
 	 * Obtain a human readable representation.
 	 * 
 	 * @return String Human readable label
@@ -222,10 +224,10 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 		sb.append(",");
 		sb.append("footer length = " + this.getFooterLength());
 		sb.append(",");
-        sb.append("readOnly = " + this.getReadOnly());
-        sb.append(",");
-        sb.append("fixedWidthStyle = " + this.getFixedWidthStyle());
-        sb.append(",");
+		sb.append("readOnly = " + this.getReadOnly());
+		sb.append(",");
+		sb.append("fixedWidthStyle = " + this.getFixedWidthStyle());
+		sb.append(",");
 		sb.append("ConfigRange = " + this.getConfigRange());
 		sb.append("}");
 		return sb.toString();
@@ -261,7 +263,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 			lastStaticRow = this.getTopRow();
 		}
 
-		int sheetIndex =  sheet.getWorkbook().getSheetIndex(sheet);
+		int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
 
 		for (int i = this.getTopRow(); i <= this.getLastRow(); i++) {
 			Row row = sheet.getRow(i);
@@ -294,8 +296,8 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	 *            the last static row
 	 */
 	private void buildWatchListForCell(
-			final XSSFEvaluationWorkbook wbWrapper, final int sheetIndex, Cell cell, List<Integer> watchList,
-			int lastStaticRow) {
+			final XSSFEvaluationWorkbook wbWrapper, final int sheetIndex,
+			final Cell cell, final List<Integer> watchList, final int lastStaticRow) {
 		String formula = cell.getCellFormula();
 
 		Ptg[] ptgs = FormulaParser.parse(formula, wbWrapper,
@@ -312,8 +314,7 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 			int areaInt = ShiftFormulaUtility
 					.getFirstSupportedRowNumFromPtg(ptg);
 			if (areaInt >= 0) {
-				addToWatchList(areaInt, lastStaticRow,
-						watchList);
+				addToWatchList(areaInt, lastStaticRow, watchList);
 			}
 		}
 
@@ -322,10 +323,8 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 		// change formula to user formula to preserve the row
 		// changes.
 		cell.setCellType(CellType.STRING);
-		cell.setCellValue(
-				TieConstants.USER_FORMULA_PREFIX
-						+ formula
-						+ TieConstants.USER_FORMULA_SUFFIX);
+		cell.setCellValue(TieConstants.USER_FORMULA_PREFIX + formula
+				+ TieConstants.USER_FORMULA_SUFFIX);
 	}
 
 	/**
@@ -338,8 +337,8 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 	 * @param watchList
 	 *            watch list.
 	 */
-	private void addToWatchList(final int addRow,
-			final int lastStaticRow, final List<Integer> watchList) {
+	private void addToWatchList(final int addRow, final int lastStaticRow,
+			final List<Integer> watchList) {
 		if ((addRow > lastStaticRow) && !(watchList.contains(addRow))) {
 			watchList.add(addRow);
 		}
@@ -393,14 +392,16 @@ public class FormCommand extends ConfigCommand implements Serializable  {
 		configBuildRef.getSheet().setColumnHidden(
 				TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN, true);
 		configBuildRef.getSheet().setColumnHidden(
-				TieConstants.HIDDEN_ORIGIN_ROW_NUMBER_COLUMN, true);		
+				TieConstants.HIDDEN_ORIGIN_ROW_NUMBER_COLUMN, true);
 
 		return length;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.tiefaces.components.websheet.configuration.Command#getCommandName()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.tiefaces.components.websheet.configuration.Command#getCommandName()
 	 */
 	/*
 	 * 

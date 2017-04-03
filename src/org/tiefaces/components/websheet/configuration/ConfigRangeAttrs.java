@@ -228,7 +228,6 @@ public class ConfigRangeAttrs implements Serializable {
 		this.unitRowsMapping = punitRowsMapping;
 	}
 
-
 	/**
 	 * recover by using it's address.
 	 * 
@@ -242,6 +241,34 @@ public class ConfigRangeAttrs implements Serializable {
 		if (this.getUnitRowsMapping() != null) {
 			this.getUnitRowsMapping().recover(sheet);
 		}
+	}
+
+	/**
+	 * Gets the first row index.
+	 *
+	 * @return the first row index
+	 */
+	public final int getFirstRowIndex() {
+
+		Cell cell = this.getFirstRowRef();
+		if (cell != null) {
+			return cell.getRowIndex();
+		}
+		return -1;
+	}
+
+	/**
+	 * Gets the last row index.
+	 *
+	 * @return the last row index
+	 */
+	public final int getLastRowIndex() {
+
+		Cell cell = this.getLastRowPlusRef();
+		if (cell != null) {
+			return cell.getRowIndex() - 1;
+		}
+		return -1;
 	}
 
 }

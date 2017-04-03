@@ -23,9 +23,8 @@ public class DateTimeCustomConverter implements Converter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * javax.faces.convert.Converter#getAsObject(javax.faces.context.FacesContext
-	 * , javax.faces.component.UIComponent, java.lang.String)
+	 * @see javax.faces.convert.Converter#getAsObject(javax.faces.context.
+	 * FacesContext , javax.faces.component.UIComponent, java.lang.String)
 	 */
 	@Override
 	public final Object getAsObject(final FacesContext context,
@@ -39,16 +38,16 @@ public class DateTimeCustomConverter implements Converter {
 		try {
 			return formatter.parse(value);
 		} catch (Exception e) {
-			throw new ConverterException("ConverterException = "+e.getLocalizedMessage(), e);
+			throw new ConverterException(
+					"ConverterException = " + e.getLocalizedMessage(), e);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * javax.faces.convert.Converter#getAsString(javax.faces.context.FacesContext
-	 * , javax.faces.component.UIComponent, java.lang.Object)
+	 * @see javax.faces.convert.Converter#getAsString(javax.faces.context.
+	 * FacesContext , javax.faces.component.UIComponent, java.lang.Object)
 	 */
 	@Override
 	public final String getAsString(final FacesContext context,
@@ -64,8 +63,8 @@ public class DateTimeCustomConverter implements Converter {
 		}
 
 		try {
-			String pattern = (String) component.getAttributes().get(
-					TieConstants.WIDGET_ATTR_PATTERN);
+			String pattern = (String) component.getAttributes()
+					.get(TieConstants.WIDGET_ATTR_PATTERN);
 			SimpleDateFormat dateFormat = new SimpleDateFormat(pattern,
 					getLocale(context, component));
 			return dateFormat.format(value);
@@ -87,8 +86,8 @@ public class DateTimeCustomConverter implements Converter {
 	private Locale getLocale(final FacesContext context,
 			final UIComponent component) {
 
-		String localeStr = (String) component.getAttributes().get(
-				TieConstants.COMPONENT_ATTR_LOCALE);
+		String localeStr = (String) component.getAttributes()
+				.get(TieConstants.COMPONENT_ATTR_LOCALE);
 
 		if (localeStr == null) {
 			return context.getViewRoot().getLocale();

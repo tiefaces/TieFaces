@@ -240,7 +240,8 @@ public class CellHelper {
 	 *            the parts
 	 * @return true, if is need restore
 	 */
-	private boolean isNeedRestore(final String fullName, String[] parts) {
+	private boolean isNeedRestore(final String fullName,
+			final String[] parts) {
 		if (fullName == null) {
 			return false;
 		}

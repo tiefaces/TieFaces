@@ -289,11 +289,12 @@ public class TieWebSheetBean extends TieWebSheetView
 	/**
 	 * Sets the serial data context.
 	 *
-	 * @param serialDataContext
+	 * @param pserialDataContext
 	 *            the serialDataContext to set
 	 */
-	public void setSerialDataContext(SerialDataContext serialDataContext) {
-		this.serialDataContext = serialDataContext;
+	public void setSerialDataContext(
+			final SerialDataContext pserialDataContext) {
+		this.serialDataContext = pserialDataContext;
 	}
 
 	/**
@@ -915,6 +916,11 @@ public class TieWebSheetBean extends TieWebSheetView
 		}
 	}
 
+	/**
+	 * Checks if is show tab view.
+	 *
+	 * @return true, if is show tab view
+	 */
 	public boolean isShowTabView() {
 		return !this.isHideSingleSheetTabTitle()
 				|| (this.getTabs().size() > 1);

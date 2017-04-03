@@ -14,6 +14,7 @@ import javax.faces.event.SystemEventListener;
 
 /**
  * use show the version of tiefaces.
+ * 
  * @author Jason Jiang
  *
  */
@@ -26,6 +27,7 @@ public class PostConstructApplicationEventListener
 
 	/**
 	 * is listener for source.
+	 * 
 	 * @param source
 	 *            source.
 	 * @return true.
@@ -38,16 +40,17 @@ public class PostConstructApplicationEventListener
 
 	/**
 	 * process event.
-	 * @param event systemevent.
-	 * @throws AbortProcessingException abort process exception.
+	 * 
+	 * @param event
+	 *            systemevent.
+	 * @throws AbortProcessingException
+	 *             abort process exception.
 	 */
 	@Override
-	public final void processEvent(final SystemEvent event)
-			{
+	public final void processEvent(final SystemEvent event) {
 
 		LOGGER.log(Level.INFO, "Running on TieFaces {0}",
 				AppUtils.getBuildVersion());
 	}
-	
 
 }

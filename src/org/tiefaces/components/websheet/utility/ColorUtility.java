@@ -118,12 +118,18 @@ public final class ColorUtility {
 
 	}
 
+
 	/**
+	 * Find automatic fill color.
+	 *
 	 * @param themeTable
+	 *            the theme table
 	 * @param colorFill
+	 *            the color fill
+	 * @return the x color
 	 */
 	private static XColor findAutomaticFillColor(final ThemesTable themeTable,
-			CTSolidColorFillProperties colorFill) {
+			final CTSolidColorFillProperties colorFill) {
 		// if there's no solidFill, then use automaticFill color
 		if (colorFill == null) {
 			return null;

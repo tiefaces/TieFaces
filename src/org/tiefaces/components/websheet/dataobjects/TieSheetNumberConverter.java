@@ -35,29 +35,28 @@ public class TieSheetNumberConverter implements Converter {
 			final UIComponent component, final String value) {
 		Double doubleValue = 0.0;
 		String symbol = "";
-		String strValue =  value;
+		String strValue = value;
 		try {
-			symbol =
-					(String) component.getAttributes().get(
-							TieConstants.CELL_DATA_SYMBOL);
+			symbol = (String) component.getAttributes()
+					.get(TieConstants.CELL_DATA_SYMBOL);
 
-			if ((symbol != null)
-					&& (symbol
-							.equals(TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL) && strValue != null)) {
+			if ((symbol != null) && (symbol
+					.equals(TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL)
+					&& strValue != null)) {
 				strValue = strValue.trim();
-				if (strValue
-						.endsWith(TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL)) {
-					doubleValue =
-							Double.valueOf(strValue.substring(0, strValue
-									.length() - 1))
-									/ TieConstants.CELL_FORMAT_PERCENTAGE_VALUE;
+				if (strValue.endsWith(
+						TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL)) {
+					doubleValue = Double.valueOf(
+							strValue.substring(0, strValue.length() - 1))
+							/ TieConstants.CELL_FORMAT_PERCENTAGE_VALUE;
 					strValue = doubleValue.toString();
 				}
 			}
 		} catch (Exception ex) {
 			LOG.log(Level.SEVERE,
 					"error in getAsObject of TieSheetNumberConverter : "
-							+ ex.getLocalizedMessage(), ex);
+							+ ex.getLocalizedMessage(),
+					ex);
 		}
 		return strValue;
 
@@ -71,7 +70,7 @@ public class TieSheetNumberConverter implements Converter {
 	 * @return the string
 	 */
 	private String fmtNumber(final double d) {
-		if (Double.compare(d % 1,0)==0) {
+		if (Double.compare(d % 1, 0) == 0) {
 			return String.format("%d", (int) d);
 		} else {
 			return String.format("%.2f", d);
@@ -93,26 +92,24 @@ public class TieSheetNumberConverter implements Converter {
 		try {
 
 			strValue = (String) value;
-			symbol =
-					(String) component.getAttributes().get(
-							TieConstants.CELL_DATA_SYMBOL);
+			symbol = (String) component.getAttributes()
+					.get(TieConstants.CELL_DATA_SYMBOL);
 
 			if ((symbol != null)
 					&& (symbol
 							.equals(TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL))
 					&& (value != null) && !((String) value).isEmpty()) {
 
-				Double doubleValue =
-						Double.valueOf((String) value)
-								* TieConstants.CELL_FORMAT_PERCENTAGE_VALUE;
-				strValue =
-						fmtNumber(doubleValue)
-								+ TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL;
+				Double doubleValue = Double.valueOf((String) value)
+						* TieConstants.CELL_FORMAT_PERCENTAGE_VALUE;
+				strValue = fmtNumber(doubleValue)
+						+ TieConstants.CELL_FORMAT_PERCENTAGE_SYMBOL;
 			}
 		} catch (Exception ex) {
 			LOG.log(Level.SEVERE,
 					"error in getAsString of TieSheetNumberConverter : "
-							+ ex.getLocalizedMessage(), ex);
+							+ ex.getLocalizedMessage(),
+					ex);
 		}
 		return strValue;
 	}

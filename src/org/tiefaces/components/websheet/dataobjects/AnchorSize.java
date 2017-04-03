@@ -26,17 +26,7 @@ public class AnchorSize {
 	/** The cell height. */
 	private double cellHeight;
 
-	/** The percent left. */
-	private double percentLeft;
 
-	/** The percent top. */
-	private double percentTop;
-
-	/** The percent width. */
-	private double percentWidth;
-
-	/** The percent height. */
-	private double percentHeight;
 
 	/**
 	 * Instantiates a new anchor size.
@@ -157,7 +147,7 @@ public class AnchorSize {
 	 * @param pcellWidth
 	 *            the cellWidth to set
 	 */
-	public final void setCellWidth(double pcellWidth) {
+	public final void setCellWidth(final double pcellWidth) {
 		this.cellWidth = pcellWidth;
 	}
 
@@ -176,7 +166,7 @@ public class AnchorSize {
 	 * @param pcellHeight
 	 *            the cellHeight to set
 	 */
-	public final void setCellHeight(double pcellHeight) {
+	public final void setCellHeight(final double pcellHeight) {
 		this.cellHeight = pcellHeight;
 	}
 

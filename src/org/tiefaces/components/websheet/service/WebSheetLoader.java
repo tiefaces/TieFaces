@@ -407,8 +407,7 @@ public class WebSheetLoader implements Serializable {
 			clearWorkbook();
 			// only support xssf workbook now since 2016 July
 			if (!(wb instanceof XSSFWorkbook)) {
-				LOG.fine(
-						"Web Form loadWorkbook Error: Not supported format. Only support xlsx now.");
+				LOG.fine("Error: WebSheet only support xlsx template.");
 				return -1;
 			}
 			LOG.fine("Begin load work book...");
@@ -934,9 +933,9 @@ public class WebSheetLoader implements Serializable {
 					.setCommandIndexMap(sheetConfig.getCommandIndexMap());
 			configBuildRef.setShiftMap(sheetConfig.getShiftMap());
 			configBuildRef.setWatchList(sheetConfig.getWatchList());
-			int length = CommandUtility.deleteRow(configBuildRef, rowIndex,
+			CommandUtility.deleteRow(configBuildRef, rowIndex,
 					parent.getSerialDataContext().getDataContext(),
-					sheetConfig, parent.getBodyRows());			
+					sheetConfig, parent.getBodyRows());
 			parent.getCellHelper().reCalc();
 		} catch (DeleteRowException e) {
 			FacesContext.getCurrentInstance().addMessage(null,
@@ -961,8 +960,8 @@ public class WebSheetLoader implements Serializable {
 	 * @param statusFlag
 	 *            the status flag
 	 */
-	public void setUnsavedStatus(RequestContext requestContext,
-			Boolean statusFlag) {
+	public void setUnsavedStatus(final RequestContext requestContext,
+			final Boolean statusFlag) {
 
 		// in client js should have setUnsavedState method
 		if (requestContext != null) {

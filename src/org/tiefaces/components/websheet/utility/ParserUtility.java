@@ -318,7 +318,7 @@ public final class ParserUtility {
 	 * @param cattr input attributes.
 	 */
 	private static void extractValidationAttributes(
-			CellFormAttributes attr, String cattr) {
+			final CellFormAttributes attr, final String cattr) {
 		String[] details = splitByEualSign(cattr);
 		if (details.length > 1) {
 			if (details[0].equalsIgnoreCase(
@@ -419,7 +419,7 @@ public final class ParserUtility {
 	 */
 	private static void processCalendarAttributes(final String key,
 			final CellAttributesMap cellAttributesMap,
-			SpecialAttributes sAttr) {
+			final SpecialAttributes sAttr) {
 		if (sAttr.defaultDatePattern.isEmpty()) {
 			sAttr.defaultDatePattern = getDefaultDatePattern();
 		}
@@ -439,7 +439,7 @@ public final class ParserUtility {
 	 */
 	private static void processSelectItemAttributes(final String key,
 			final CellAttributesMap cellAttributesMap,
-			SpecialAttributes sAttr) {
+			final SpecialAttributes sAttr) {
 		if ((sAttr.selectValues == null)
 				|| (sAttr.selectValues.length != sAttr.selectLabels.length)) {
 			sAttr.selectValues = sAttr.selectLabels;
@@ -470,7 +470,7 @@ public final class ParserUtility {
 	 *            the attr
 	 */
 	private static void gatherSpecialAttributes(final String type,
-			SpecialAttributes sAttr, CellFormAttributes attr) {
+			final SpecialAttributes sAttr, final CellFormAttributes attr) {
 		String attrKey = attr.getType();
 		if (attrKey.equalsIgnoreCase(TieConstants.SELECT_ITEM_LABELS)) {
 			sAttr.selectLabels = attr.getValue().split(";");
