@@ -262,8 +262,7 @@ public final class ConfigurationUtility {
 			}
 			String sname = fname.toString();
 			shiftMap.get(sname).setFinalLength(
-					shiftMap.get(sname).getFinalLength()
-							+ increasedLength);
+					shiftMap.get(sname).getFinalLength() + increasedLength);
 		}
 	}
 
@@ -390,7 +389,8 @@ public final class ConfigurationUtility {
 					MissingCellPolicy.CREATE_NULL_AS_BLANK);
 			String rowNum = cell.getStringCellValue();
 			try {
-				if ((rowNum != null) && (!rowNum.isEmpty())) {
+				if ((rowNum != null) && (!rowNum.isEmpty())
+						&& (WebSheetUtility.isNumeric(rowNum))) {
 					return Integer.parseInt(rowNum);
 				}
 

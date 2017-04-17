@@ -111,7 +111,7 @@ public class ConfigurationHandler {
 	 * @return the sheet configuration
 	 */
 	private SheetConfiguration getSheetConfiguration(final Sheet sheet,
-			final String formName) {
+			final String formName, final int sheetRightCol) {
 
 		SheetConfiguration sheetConfig = new SheetConfiguration();
 		sheetConfig.setFormName(formName);
@@ -131,7 +131,8 @@ public class ConfigurationHandler {
 				leftCol = firstCellNum;
 			}
 			if ((row.getLastCellNum() - 1) > rightCol) {
-				int verifiedcol = verifyLastCell(row, rightCol);
+				int verifiedcol = verifyLastCell(row, rightCol,
+						sheetRightCol);
 				if (verifiedcol > rightCol) {
 					rightCol = verifiedcol;
 				}
@@ -217,15 +218,19 @@ public class ConfigurationHandler {
 
 	/**
 	 * check last column. if it's blank then treat it as null cell.
-	 * 
+	 *
 	 * @param row
 	 *            row object.
 	 * @param stoppoint
 	 *            the left cell we want to stop check.
+	 * @param sheetRightCol
+	 *            the sheet right col
 	 * @return integer. the last column without blank cell.
 	 */
-	private int verifyLastCell(final Row row, final int stoppoint) {
-		int lastCol = row.getLastCellNum() - 1;
+	private int verifyLastCell(final Row row, final int stoppoint,
+			final int sheetRightCol) {
+
+		int lastCol = sheetRightCol;
 		int col;
 		for (col = lastCol; col >= stoppoint; col--) {
 
@@ -276,7 +281,7 @@ public class ConfigurationHandler {
 		List<String> formList = new ArrayList<>();
 
 		buildSheetConfigMapFromFormCommand(sheet, sheetConfigMap,
-				commandList, formList);
+				commandList, formList, sheetRightCol);
 		// match parent command
 		matchParentCommand(commandList);
 		// setup save attrs in hidden column in the sheet.
@@ -397,7 +402,7 @@ public class ConfigurationHandler {
 	private void buildSheetConfigMapFromFormCommand(final Sheet sheet,
 			final Map<String, SheetConfiguration> sheetConfigMap,
 			final List<ConfigCommand> commandList,
-			final List<String> formList) {
+			final List<String> formList, final int sheetRightCol) {
 		boolean foundForm = false;
 		int minRowNum = sheet.getLastRowNum();
 		int maxRowNum = sheet.getFirstRowNum();
@@ -409,7 +414,7 @@ public class ConfigurationHandler {
 				FormCommand fcommand = (FormCommand) command;
 				sheetConfigMap.put(fcommand.getName(),
 						getSheetConfigurationFromConfigCommand(sheet,
-								fcommand));
+								fcommand, sheetRightCol));
 				formList.add(fcommand.getName());
 				if (fcommand.getTopRow() < minRowNum) {
 					minRowNum = fcommand.getTopRow();
@@ -421,9 +426,10 @@ public class ConfigurationHandler {
 		}
 		// if no form found, then use the whole sheet as form
 		if (!foundForm) {
+			WebSheetUtility.clearHiddenColumns(sheet);
 			String formName = sheet.getSheetName();
 			SheetConfiguration sheetConfig = getSheetConfiguration(sheet,
-					formName);
+					formName, sheetRightCol);
 			FormCommand fcommand = buildFormCommandFromSheetConfig(
 					sheetConfig, sheet);
 			commandList.add(fcommand);
@@ -810,7 +816,8 @@ public class ConfigurationHandler {
 	 * @return sheet configuration.
 	 */
 	private SheetConfiguration getSheetConfigurationFromConfigCommand(
-			final Sheet sheet, final FormCommand fcommand) {
+			final Sheet sheet, final FormCommand fcommand,
+			final int sheetRightCol) {
 
 		SheetConfiguration sheetConfig = new SheetConfiguration();
 		sheetConfig.setFormName(fcommand.getName());
@@ -825,7 +832,8 @@ public class ConfigurationHandler {
 			}
 			maxRow = row.getRowNum();
 			if ((row.getLastCellNum() - 1) > rightCol) {
-				int verifiedcol = verifyLastCell(row, rightCol);
+				int verifiedcol = verifyLastCell(row, rightCol,
+						sheetRightCol);
 				if (verifiedcol > rightCol) {
 					rightCol = verifiedcol;
 				}

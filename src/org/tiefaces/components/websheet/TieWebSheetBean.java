@@ -922,6 +922,9 @@ public class TieWebSheetBean extends TieWebSheetView
 	 * @return true, if is show tab view
 	 */
 	public boolean isShowTabView() {
+		if (this.getTabs() == null) {
+			return false;
+		}
 		return !this.isHideSingleSheetTabTitle()
 				|| (this.getTabs().size() > 1);
 

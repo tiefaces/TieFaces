@@ -34,68 +34,52 @@ public final class TieConstants {
 	public static final String CONFIGURATION_SCHEMA_TAB_NAME = "Tab Name";
 
 	/** The Constant CONFIGURATION_SCHEMA_SHEET_NAME. */
-	public static final String CONFIGURATION_SCHEMA_SHEET_NAME =
-			"Sheet Name";
+	public static final String CONFIGURATION_SCHEMA_SHEET_NAME = "Sheet Name";
 
 	/** The Constant CONFIGURATION_SCHEMA_FORM_HEADER_RANGE. */
-	public static final String CONFIGURATION_SCHEMA_FORM_HEADER_RANGE =
-			"Form Header Range";
+	public static final String CONFIGURATION_SCHEMA_FORM_HEADER_RANGE = "Form Header Range";
 
 	/** The Constant CONFIGURATION_SCHEMA_FORM_BODY_RANGE. */
-	public static final String CONFIGURATION_SCHEMA_FORM_BODY_RANGE =
-			"Form Body Range";
+	public static final String CONFIGURATION_SCHEMA_FORM_BODY_RANGE = "Form Body Range";
 
 	/** The Constant CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE. */
-	public static final String CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE =
-			"Form Footer Range";
+	public static final String CONFIGURATION_SCHEMA_FORM_FOOTER_RANGE = "Form Footer Range";
 
 	/** The Constant CONFIGURATION_SCHEMA_FORM_BODY_TYPE. */
-	public static final String CONFIGURATION_SCHEMA_FORM_BODY_TYPE =
-			"Form Body Type";
+	public static final String CONFIGURATION_SCHEMA_FORM_BODY_TYPE = "Form Body Type";
 
 	/** The Constant CONFIGURATION_SCHEMA_ALLOW_ADD_ROW. */
-	public static final String CONFIGURATION_SCHEMA_ALLOW_ADD_ROW =
-			"Allow ADD/DELETE ROW";
+	public static final String CONFIGURATION_SCHEMA_ALLOW_ADD_ROW = "Allow ADD/DELETE ROW";
 
 	/** The Constant CONFIGURATION_SCHEMA_INIT_ROWS. */
-	public static final String CONFIGURATION_SCHEMA_INIT_ROWS =
-			"Initial Rows";
+	public static final String CONFIGURATION_SCHEMA_INIT_ROWS = "Initial Rows";
 
 	/** The Constant CONFIGURATION_SCHEMA_FORM_PAGE_TYPE. */
-	public static final String CONFIGURATION_SCHEMA_FORM_PAGE_TYPE =
-			"Form Page Type";
+	public static final String CONFIGURATION_SCHEMA_FORM_PAGE_TYPE = "Form Page Type";
 
 	/** The Constant CONFIGURATION_SCHEMA_FORM_WIDTH. */
-	public static final String CONFIGURATION_SCHEMA_FORM_WIDTH =
-			"Form Width";
+	public static final String CONFIGURATION_SCHEMA_FORM_WIDTH = "Form Width";
 
 	/** The Constant CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE. */
-	public static final String CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE =
-			"Max Rows Per Page";
+	public static final String CONFIGURATION_SCHEMA_MAX_ROWS_PER_PAGE = "Max Rows Per Page";
 
 	/** The Constant CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE. */
-	public static final String CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE =
-			"Saved Rows Before Repeat";
+	public static final String CONFIGURATION_SCHEMA_SAVED_ROWS_BEFORE = "Saved Rows Before Repeat";
 
 	/** The Constant CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER. */
-	public static final String CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER =
-			"Saved Rows After Rpeat";
+	public static final String CONFIGURATION_SCHEMA_SAVED_ROWS_AFTER = "Saved Rows After Rpeat";
 
 	/** The Constant CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL. */
-	public static final String CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL =
-			"Target Column/Cell";
+	public static final String CONFIGURATION_SCHEMA_TARGET_COLUMN_CELL = "Target Column/Cell";
 
 	/** The Constant CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE. */
-	public static final String CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE =
-			"Attributes Type";
+	public static final String CONFIGURATION_SCHEMA_ATTRIBUTE_TYPE = "Attributes Type";
 
 	/** The Constant CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE. */
-	public static final String CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE =
-			"Attributes Value";
+	public static final String CONFIGURATION_SCHEMA_ATTRIBUTE_VALUE = "Attributes Value";
 
 	/** The Constant CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG. */
-	public static final String CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG =
-			"Validation Error Messages";
+	public static final String CONFIGURATION_SCHEMA_VALIDATION_ERROR_MSG = "Validation Error Messages";
 
 	/** The Constant CONFIGURATION_ATTR_CONTROL. */
 	public static final String CONFIGURATION_ATTR_CONTROL = "Control";
@@ -145,8 +129,7 @@ public final class TieConstants {
 	/** attribute suffix. */
 	public static final String ATTR_SUFFIX = ")";
 	/** attribute's regex. */
-	public static final String ATTR_REGEX =
-			"\\s*\\w+\\s*=\\s*([\"|'])(?:(?!\\1).)*\\1";
+	public static final String ATTR_REGEX = "\\s*\\w+\\s*=\\s*([\"|'])(?:(?!\\1).)*\\1";
 	/** attribute's regex pattern. */
 	public static final Pattern ATTR_REGEX_PATTERN = Pattern
 			.compile(ATTR_REGEX);
@@ -212,8 +195,7 @@ public final class TieConstants {
 	public static final int DEFAULT_BARSTYLE_FOREGROUND_ALPHA = 1;
 
 	/** The Constant eachCommandInvalidMsg. */
-	public static final String EACH_COMMAND_INVALID_MSG =
-			" is not a list collection, cannot support add/delete function.";
+	public static final String EACH_COMMAND_INVALID_MSG = " is not a list collection, cannot support add/delete function.";
 
 	/** The Constant defaultCommandPartLength. */
 	public static final int DEFAULT_COMMAND_PART_LENGTH = 3;
@@ -223,6 +205,9 @@ public final class TieConstants {
 
 	/** The Constant USER_FORMULA_SUFFIX. */
 	public static final String USER_FORMULA_SUFFIX = "]";
+
+	/** The Constant max columns in sheet. = AML */
+	public static final int MAX_COLUMNS_IN_SHEET = 1024;
 
 	/** The Constant hiddenOriginRowNumber. = AML */
 	public static final int HIDDEN_ORIGIN_ROW_NUMBER_COLUMN = 1025;
@@ -290,8 +275,7 @@ public final class TieConstants {
 	/** The VALIDATION_ERROR_MSG_TAG. */
 	public static final String VALIDATION_ERROR_MSG_TAG = "error";
 	/** SPLIT_SPACE_SEPERATE_ATTRS_REGX. */
-	public static final String SPLIT_SPACE_SEPERATE_ATTRS_REGX =
-			"\" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
+	public static final String SPLIT_SPACE_SEPERATE_ATTRS_REGX = "\" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
 	/** The Constant DEFALT_MSG_INVALID_INPUT. */
 	public static final String DEFALT_MSG_INVALID_INPUT = "Invalid input";
 
@@ -312,12 +296,10 @@ public final class TieConstants {
 	/** The Constant VERTICAL_ALIGN_TOP. */
 	public static final String VERTICAL_ALIGN_TOP = "vertical-align: top;";
 	/** The Constant VERTICAL_ALIGN_BOTTOM. */
-	public static final String VERTICAL_ALIGN_BOTTOM =
-			"vertical-align: bottom;";
+	public static final String VERTICAL_ALIGN_BOTTOM = "vertical-align: bottom;";
 	/** The Constant VERTICAL_ALIGN_CENTER. */
-	public static final String VERTICAL_ALIGN_CENTER =
-			"vertical-align: middle;";
-	
+	public static final String VERTICAL_ALIGN_CENTER = "vertical-align: middle;";
+
 	/** The Constant FULL_VALIDATION. */
 	public static final String FULL_VALIDATION = "fullValidation";
 
@@ -328,5 +310,4 @@ public final class TieConstants {
 		// not called
 	}
 
-	
 }

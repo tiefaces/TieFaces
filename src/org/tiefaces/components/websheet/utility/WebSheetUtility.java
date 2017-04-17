@@ -662,15 +662,13 @@ public final class WebSheetUtility {
 		try {
 			if (sheet instanceof XSSFSheet) {
 				XSSFSheet xsheet = (XSSFSheet) sheet;
-				CTSheetDimension dimension = xsheet.getCTWorksheet()
-						.getDimension();
-				String sheetDimensions = dimension.getRef();
-				if (sheetDimensions.indexOf(':') < 0) {
-					return -1;
-				} else {
-					return CellRangeAddress.valueOf(sheetDimensions)
-							.getLastColumn();
+				int rightCol = getSheetRightColFromDimension(xsheet);
+				if (rightCol > TieConstants.MAX_COLUMNS_IN_SHEET) {
+					clearHiddenColumns(sheet);
+					rightCol = getSheetRightColFromDimension(xsheet);
 				}
+				return rightCol;
+
 			}
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, "error in getSheetRightCol : "
@@ -679,4 +677,72 @@ public final class WebSheetUtility {
 		return -1;
 	}
 
+	/**
+	 * Clear hidden columns.
+	 *
+	 * @param sheet
+	 *            the sheet
+	 */
+	public static void clearHiddenColumns(final Sheet sheet) {
+
+		for (Row row : sheet) {
+			if (row.getLastCellNum() > TieConstants.MAX_COLUMNS_IN_SHEET) {
+				deleteHiddenColumnsInRow(row);
+			}
+		}
+
+	}
+
+	/**
+	 * Delete hidden columns in row.
+	 *
+	 * @param row
+	 *            the row
+	 */
+	private static void deleteHiddenColumnsInRow(final Row row) {
+		deleteCellFromRow(row,
+				TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
+		deleteCellFromRow(row,
+				TieConstants.HIDDEN_ORIGIN_ROW_NUMBER_COLUMN);
+		deleteCellFromRow(row,
+				TieConstants.HIDDEN_FULL_NAME_COLUMN);
+	}
+
+	
+	
+	
+	/**
+	 * Delete cell from row.
+	 *
+	 * @param row
+	 *            the row
+	 * @param cellNum
+	 *            the cell num
+	 */
+	private static void deleteCellFromRow(final Row row,
+			final int cellNum) {
+		Cell cell = row.getCell(cellNum);
+		if (cell != null) {
+			row.removeCell(cell);
+		}
+	}
+
+	/**
+	 * return the last column of the sheet.
+	 *
+	 * @param xsheet
+	 *            the xsheet
+	 * @return last column number (A column will return 0).
+	 */
+	private static int getSheetRightColFromDimension(
+			final XSSFSheet xsheet) {
+		CTSheetDimension dimension = xsheet.getCTWorksheet().getDimension();
+		String sheetDimensions = dimension.getRef();
+		if (sheetDimensions.indexOf(':') < 0) {
+			return -1;
+		} else {
+			return CellRangeAddress.valueOf(sheetDimensions)
+					.getLastColumn();
+		}
+	}
 }
