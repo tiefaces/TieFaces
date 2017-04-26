@@ -5,7 +5,7 @@
 
 # Tiefaces Web Sheet
 
-> Tiefaces Web Sheet is a JSF UI component (built upon Primefaces) which can render excel templates as Web form. It also use specail markup in the template to support data input/output. 
+> Tiefaces Web Sheet is a JSF UI component (built upon Primefaces) which can render excel templates as Web form. It also use special mark-up in the template to support data input/output. 
 
 This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for more information.
 
@@ -22,7 +22,7 @@ This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for m
 - Use special command in the cell comment to define features.
 - Two way binding between data and cell object.
 - Support multiple input/output widget. i.e. calendar, dropdown, inputNumber, inputArea etc.
-- upport nested data collections. i.e. a company include multiple departments while each department include multiple employees.
+- Support nested data collections. i.e. a company include multiple departments while each department include multiple employees.
 - Support add/delete functions for data collections.
 
 ![Dynamic web solution](http://showcase-tiefaces.rhcloud.com/javax.faces.resource/img/websheet2.png.xhtml?ln=showcase)
@@ -30,7 +30,7 @@ This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for m
 ### Getting Started
 ***
 
-**TieFaces** can be downloaded manually or via maven.  
+**TieFaces** can be download manually or via maven.  
 
 ##### Latest Downloads
 Version | Binary | Source | Java Doc 
