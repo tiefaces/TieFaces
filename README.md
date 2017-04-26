@@ -35,7 +35,7 @@ This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for m
 ##### Latest Downloads
 Version | Binary | Source | Java Doc 
 ------------ | -------------  | ------------- | -------------  
-1.0.3 | [tiefaces-1.0.3.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.3/tiefaces-1.0.3.jar) | [tiefaces-1.0.3-sources.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.3/tiefaces-1.0.3-sources.jar) | [tiefaces-1.0.3-javadoc.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.3/tiefaces-1.0.3-javadoc.jar)
+1.0.5 | [tiefaces-1.0.5.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.3/tiefaces-1.0.5.jar) | [tiefaces-1.0.5-sources.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.5/tiefaces-1.0.5-sources.jar) | [tiefaces-1.0.5-javadoc.jar](http://central.maven.org/maven2/org/tiefaces/tiefaces/1.0.5/tiefaces-1.0.5-javadoc.jar)
 
 You can also visit download page in [tiefaces.org](http://www.tiefaces.org/).
 
@@ -45,7 +45,7 @@ You can also visit download page in [tiefaces.org](http://www.tiefaces.org/).
 <dependency>  
     <groupId>org.tiefaces</groupId>  
     <artifactId>tiefaces</artifactId>  
-    <version>1.0.0</version>  
+    <version>1.0.5</version>  
 </dependency>  
 ```
 
