@@ -5,7 +5,7 @@
 
 # Tiefaces Web Sheet
 
-> Tiefaces Web Sheet is a JSF UI component (built upon Primefaces) which can render excel templates as Web form. It also use specail markup in the templdate to support data input/output. 
+> Tiefaces Web Sheet is a JSF UI component (built upon Primefaces) which can render excel templates as Web form. It also use specail markup in the template to support data input/output. 
 
 This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for more information.
 
