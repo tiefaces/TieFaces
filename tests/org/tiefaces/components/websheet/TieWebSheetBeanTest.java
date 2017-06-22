@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Before;
@@ -24,6 +25,7 @@ import org.tiefaces.datademo.WebSheetDataDemo;
 import org.tiefaces.common.Item;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -131,9 +133,20 @@ public class TieWebSheetBeanTest {
                 assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(7)), "10800.75");
                 assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(22).getCell(7)), "1900.15");
 
+                Comment comment1 = sheet.getRow(0).getCell(0).getCellComment();
+                assertNull(comment1);
+                comment1 = sheet.getRow(1).getCell(1).getCellComment();
+                String commentStr1 = comment1.getString().toString();
+                
+                Comment comment2 = sheet.getRow(13).getCell(1).getCellComment();
+                String commentStr2 = comment2.getString().toString();
+                assertEquals(commentStr1, commentStr2);
+                assertEquals(comment1.getAuthor(), comment2.getAuthor());
+                
                 int size = departments.size();
                 bean.addRepeatRow(2);
                 assertEquals(departments.size(), (size + 1));
+                
             }
         }
 

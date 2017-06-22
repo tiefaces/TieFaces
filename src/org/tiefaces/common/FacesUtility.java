@@ -266,6 +266,22 @@ public final class FacesUtility {
 		}
 		return sbStr.toString();
 	}
+	/**
+	 * join string
+	 * @param aArr attr list.
+	 * @param sSep seperator string.
+	 * @return joined string.
+	 */
+	public static String strJoin(final String[] aArr, final String sSep) {
+		StringBuilder sbStr = new StringBuilder();
+		for (int i = 0, il = aArr.length; i < il; i++) {
+			if (i > 0) {
+				sbStr.append(sSep);
+			}
+			sbStr.append(aArr[i]);
+		}
+		return sbStr.toString();
+	}
 
 	/**
 	 * round number according to decimal places.

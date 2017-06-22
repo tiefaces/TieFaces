@@ -5,6 +5,7 @@
 
 package org.tiefaces.components.websheet.utility;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -13,21 +14,35 @@ import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFComment;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFVMLDrawing;
+import org.tiefaces.common.FacesUtility;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
+
+import com.microsoft.schemas.office.excel.CTClientData;
+import com.microsoft.schemas.vml.CTShape;
 
 /**
  * Helper class for web sheet cells.
@@ -59,8 +74,7 @@ public final class CellUtility {
 	 * @return cell string value with format.
 	 */
 	@SuppressWarnings("deprecation")
-	public static String getCellValueWithFormat(final Cell poiCell,
-			final FormulaEvaluator formulaEvaluator,
+	public static String getCellValueWithFormat(final Cell poiCell, final FormulaEvaluator formulaEvaluator,
 			final DataFormatter dataFormatter) {
 
 		if (poiCell == null) {
@@ -71,21 +85,17 @@ public final class CellUtility {
 		try {
 			CellType cellType = poiCell.getCellTypeEnum();
 			if (cellType == CellType.FORMULA) {
-				cellType = formulaEvaluator.evaluate(poiCell)
-						.getCellTypeEnum();
+				cellType = formulaEvaluator.evaluate(poiCell).getCellTypeEnum();
 			}
 			if (cellType == CellType.ERROR) {
 				result = "";
 			} else {
-				result = dataFormatter.formatCellValue(poiCell,
-						formulaEvaluator);
+				result = dataFormatter.formatCellValue(poiCell, formulaEvaluator);
 			}
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE,
-					"Web Form WebFormHelper getCellValue Error row = "
-							+ poiCell.getRowIndex() + " column = "
-							+ poiCell.getColumnIndex() + " error = "
-							+ e.getLocalizedMessage()
+					"Web Form WebFormHelper getCellValue Error row = " + poiCell.getRowIndex() + " column = "
+							+ poiCell.getColumnIndex() + " error = " + e.getLocalizedMessage()
 							+ "; Change return result to blank",
 					e);
 			result = "";
@@ -109,11 +119,9 @@ public final class CellUtility {
 		}
 
 		if (poiCell.getCellTypeEnum() == CellType.FORMULA) {
-			return getCellStringValueWithType(poiCell,
-					poiCell.getCachedFormulaResultTypeEnum());
+			return getCellStringValueWithType(poiCell, poiCell.getCachedFormulaResultTypeEnum());
 		} else {
-			return getCellStringValueWithType(poiCell,
-					poiCell.getCellTypeEnum());
+			return getCellStringValueWithType(poiCell, poiCell.getCellTypeEnum());
 		}
 	}
 
@@ -126,8 +134,7 @@ public final class CellUtility {
 	 *            cell type.
 	 * @return Sting cell value.
 	 */
-	private static String getCellStringValueWithType(final Cell poiCell,
-			final CellType cellType) {
+	private static String getCellStringValueWithType(final Cell poiCell, final CellType cellType) {
 
 		switch (cellType) {
 		case BOOLEAN:
@@ -149,8 +156,7 @@ public final class CellUtility {
 	 *            the poi cell
 	 * @return the cell string value with boolean type
 	 */
-	private static String getCellStringValueWithBooleanType(
-			final Cell poiCell) {
+	private static String getCellStringValueWithBooleanType(final Cell poiCell) {
 		if (poiCell.getBooleanCellValue()) {
 			return "Y";
 		} else {
@@ -165,14 +171,12 @@ public final class CellUtility {
 	 *            the poi cell
 	 * @return the cell string value with number type
 	 */
-	private static String getCellStringValueWithNumberType(
-			final Cell poiCell) {
+	private static String getCellStringValueWithNumberType(final Cell poiCell) {
 		String result;
 		if (DateUtil.isCellDateFormatted(poiCell)) {
 			result = poiCell.getDateCellValue().toString();
 		} else {
-			result = BigDecimal.valueOf(poiCell.getNumericCellValue())
-					.toPlainString();
+			result = BigDecimal.valueOf(poiCell.getNumericCellValue()).toPlainString();
 			// remove .0 from end for int
 			if (result.endsWith(".0")) {
 				result = result.substring(0, result.length() - 2);
@@ -206,8 +210,7 @@ public final class CellUtility {
 				setCellValueString(c, value);
 			}
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, " error in setCellValue of CellUtility = "
-					+ e.getLocalizedMessage(), e);
+			LOG.log(Level.SEVERE, " error in setCellValue of CellUtility = " + e.getLocalizedMessage(), e);
 			setCellValueString(c, value);
 		}
 		return c;
@@ -221,8 +224,7 @@ public final class CellUtility {
 	 * @param value
 	 *            the value
 	 */
-	private static void setCellValueString(final Cell c,
-			final String value) {
+	private static void setCellValueString(final Cell c, final String value) {
 		c.setCellType(CellType.STRING);
 		c.setCellValue(value);
 	}
@@ -235,10 +237,8 @@ public final class CellUtility {
 	 * @param value
 	 *            the value
 	 */
-	private static void setCellValueBoolean(final Cell c,
-			final String value) {
-		if ("Y".equalsIgnoreCase(value) || "Yes".equalsIgnoreCase(value)
-				|| "True".equalsIgnoreCase(value)) {
+	private static void setCellValueBoolean(final Cell c, final String value) {
+		if ("Y".equalsIgnoreCase(value) || "Yes".equalsIgnoreCase(value) || "True".equalsIgnoreCase(value)) {
 			c.setCellValue(true);
 		} else {
 			c.setCellValue(false);
@@ -266,10 +266,8 @@ public final class CellUtility {
 	 * @param value
 	 *            the value
 	 */
-	private static void setCellValueNumber(final Cell c,
-			final String value) {
-		double val = Double
-				.parseDouble(value.replace(Character.toString(','), ""));
+	private static void setCellValueNumber(final Cell c, final String value) {
+		double val = Double.parseDouble(value.replace(Character.toString(','), ""));
 		c.setCellType(CellType.NUMERIC);
 		c.setCellValue(val);
 	}
@@ -292,35 +290,27 @@ public final class CellUtility {
 	 * @param setHiddenColumn
 	 *            the set hidden column
 	 */
-	public static void copyRows(final Sheet srcSheet, final Sheet destSheet,
-			final int srcRowStart, final int srcRowEnd, final int destRow,
-			final boolean checkLock, final boolean setHiddenColumn) {
+	public static void copyRows(final Sheet srcSheet, final Sheet destSheet, final int srcRowStart, final int srcRowEnd,
+			final int destRow, final boolean checkLock, final boolean setHiddenColumn) {
 
 		int length = srcRowEnd - srcRowStart + 1;
 		if (length <= 0) {
 			return;
 		}
-		destSheet.shiftRows(destRow, destSheet.getLastRowNum(), length,
-				true, false);
+		destSheet.shiftRows(destRow, destSheet.getLastRowNum(), length, true, false);
 		for (int i = 0; i < length; i++) {
-			copySingleRow(srcSheet, destSheet, srcRowStart + i, destRow + i,
-					checkLock, setHiddenColumn);
+			copySingleRow(srcSheet, destSheet, srcRowStart + i, destRow + i, checkLock, setHiddenColumn);
 		}
 		// If there are are any merged regions in the source row, copy to new
 		// row
 		for (int i = 0; i < srcSheet.getNumMergedRegions(); i++) {
 			CellRangeAddress cellRangeAddress = srcSheet.getMergedRegion(i);
-			if ((cellRangeAddress.getFirstRow() >= srcRowStart)
-					&& (cellRangeAddress.getLastRow() <= srcRowEnd)) {
-				int targetRowFrom = cellRangeAddress.getFirstRow()
-						- srcRowStart + destRow;
-				int targetRowTo = cellRangeAddress.getLastRow()
-						- srcRowStart + destRow;
+			if ((cellRangeAddress.getFirstRow() >= srcRowStart) && (cellRangeAddress.getLastRow() <= srcRowEnd)) {
+				int targetRowFrom = cellRangeAddress.getFirstRow() - srcRowStart + destRow;
+				int targetRowTo = cellRangeAddress.getLastRow() - srcRowStart + destRow;
 
-				CellRangeAddress newCellRangeAddress = new CellRangeAddress(
-						targetRowFrom, targetRowTo,
-						cellRangeAddress.getFirstColumn(),
-						cellRangeAddress.getLastColumn());
+				CellRangeAddress newCellRangeAddress = new CellRangeAddress(targetRowFrom, targetRowTo,
+						cellRangeAddress.getFirstColumn(), cellRangeAddress.getLastColumn());
 				destSheet.addMergedRegion(newCellRangeAddress);
 			}
 		}
@@ -342,10 +332,8 @@ public final class CellUtility {
 	 * @param setHiddenColumn
 	 *            the set hidden column
 	 */
-	private static void copySingleRow(final Sheet srcSheet,
-			final Sheet destSheet, final int sourceRowNum,
-			final int destinationRowNum, final boolean checkLock,
-			final boolean setHiddenColumn) {
+	private static void copySingleRow(final Sheet srcSheet, final Sheet destSheet, final int sourceRowNum,
+			final int destinationRowNum, final boolean checkLock, final boolean setHiddenColumn) {
 		// Get the source / new row
 		Row newRow = destSheet.getRow(destinationRowNum);
 		Row sourceRow = srcSheet.getRow(sourceRowNum);
@@ -360,8 +348,7 @@ public final class CellUtility {
 			copyCell(destSheet, sourceRow, newRow, i, checkLock);
 		}
 		if (setHiddenColumn) {
-			ConfigurationUtility.setOriginalRowNumInHiddenColumn(newRow,
-					sourceRow.getRowNum());
+			ConfigurationUtility.setOriginalRowNumInHiddenColumn(newRow, sourceRow.getRowNum());
 		}
 		return;
 
@@ -382,8 +369,7 @@ public final class CellUtility {
 	 *            the check lock
 	 * @return the int
 	 */
-	public static Cell copyCell(final Sheet destSheet, final Row sourceRow,
-			final Row newRow, final int cellIndex,
+	public static Cell copyCell(final Sheet destSheet, final Row sourceRow, final Row newRow, final int cellIndex,
 			final boolean checkLock) {
 		// If the old cell is null jump to next cell
 		Cell sourceCell = sourceRow.getCell(cellIndex);
@@ -395,9 +381,7 @@ public final class CellUtility {
 			copyCellSetStyle(destSheet, sourceCell, newCell);
 			copyCellSetValue(sourceCell, newCell, checkLock);
 		} catch (Exception ex) {
-			LOG.log(Level.SEVERE,
-					"copy cell set error = " + ex.getLocalizedMessage(),
-					ex);
+			LOG.log(Level.SEVERE, "copy cell set error = " + ex.getLocalizedMessage(), ex);
 		}
 
 		return newCell;
@@ -414,8 +398,7 @@ public final class CellUtility {
 	 *            check lock flag.
 	 */
 	@SuppressWarnings("deprecation")
-	private static void copyCellSetValue(final Cell sourceCell,
-			final Cell newCell, final boolean checkLock) {
+	private static void copyCellSetValue(final Cell sourceCell, final Cell newCell, final boolean checkLock) {
 
 		CellStyle newCellStyle = newCell.getCellStyle();
 		String name = sourceCell.getCellTypeEnum().toString();
@@ -431,12 +414,10 @@ public final class CellUtility {
 		/** The string. */
 		STRING {
 			@Override
-			public void setCellValue(final Cell newCell,
-					final Cell sourceCell, final boolean checkLock,
+			public void setCellValue(final Cell newCell, final Cell sourceCell, final boolean checkLock,
 					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
-					newCell.setCellValue(
-							sourceCell.getRichStringCellValue());
+					newCell.setCellValue(sourceCell.getRichStringCellValue());
 				}
 			}
 		},
@@ -444,8 +425,7 @@ public final class CellUtility {
 		/** The boolean. */
 		BOOLEAN {
 			@Override
-			public void setCellValue(final Cell newCell,
-					final Cell sourceCell, final boolean checkLock,
+			public void setCellValue(final Cell newCell, final Cell sourceCell, final boolean checkLock,
 					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
 					newCell.setCellValue(sourceCell.getBooleanCellValue());
@@ -456,8 +436,7 @@ public final class CellUtility {
 		/** The numeric. */
 		NUMERIC {
 			@Override
-			public void setCellValue(final Cell newCell,
-					final Cell sourceCell, final boolean checkLock,
+			public void setCellValue(final Cell newCell, final Cell sourceCell, final boolean checkLock,
 					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
 					newCell.setCellValue(sourceCell.getNumericCellValue());
@@ -468,8 +447,7 @@ public final class CellUtility {
 		/** The formula. */
 		FORMULA {
 			@Override
-			public void setCellValue(final Cell newCell,
-					final Cell sourceCell, final boolean checkLock,
+			public void setCellValue(final Cell newCell, final Cell sourceCell, final boolean checkLock,
 					final CellStyle newCellStyle) {
 				newCell.setCellFormula(sourceCell.getCellFormula());
 			}
@@ -478,12 +456,10 @@ public final class CellUtility {
 		/** The error. */
 		ERROR {
 			@Override
-			public void setCellValue(final Cell newCell,
-					final Cell sourceCell, final boolean checkLock,
+			public void setCellValue(final Cell newCell, final Cell sourceCell, final boolean checkLock,
 					final CellStyle newCellStyle) {
 				if ((!checkLock) || newCellStyle.getLocked()) {
-					newCell.setCellErrorValue(
-							sourceCell.getErrorCellValue());
+					newCell.setCellErrorValue(sourceCell.getErrorCellValue());
 				}
 			}
 		},
@@ -491,8 +467,7 @@ public final class CellUtility {
 		/** The blank. */
 		BLANK {
 			@Override
-			public void setCellValue(final Cell newCell,
-					final Cell sourceCell, final boolean checkLock,
+			public void setCellValue(final Cell newCell, final Cell sourceCell, final boolean checkLock,
 					final CellStyle newCellStyle) {
 				newCell.setCellType(CellType.BLANK);
 			}
@@ -510,9 +485,7 @@ public final class CellUtility {
 		 * @param newCellStyle
 		 *            the new cell style
 		 */
-		public abstract void setCellValue(Cell newCell,
-				Cell sourceCell, boolean checkLock,
-				CellStyle newCellStyle);
+		public abstract void setCellValue(Cell newCell, Cell sourceCell, boolean checkLock, CellStyle newCellStyle);
 
 	}
 
@@ -527,15 +500,13 @@ public final class CellUtility {
 	 *            new cell.
 	 */
 	@SuppressWarnings("deprecation")
-	private static void copyCellSetStyle(final Sheet destSheet,
-			final Cell sourceCell, final Cell newCell) {
-		CellStyle newCellStyle = getCellStyleFromSourceCell(destSheet,
-				sourceCell);
+	private static void copyCellSetStyle(final Sheet destSheet, final Cell sourceCell, final Cell newCell) {
+		CellStyle newCellStyle = getCellStyleFromSourceCell(destSheet, sourceCell);
 		newCell.setCellStyle(newCellStyle);
 
 		// If there is a cell comment, copy
 		if (sourceCell.getCellComment() != null) {
-			newCell.setCellComment(sourceCell.getCellComment());
+			cloneComment(sourceCell, newCell);
 		}
 
 		// If there is a cell hyperlink, copy
@@ -545,6 +516,105 @@ public final class CellUtility {
 
 		// Set the cell data type
 		newCell.setCellType(sourceCell.getCellTypeEnum());
+	}
+	
+	/**
+	 * clone existing comments into new cell comment.
+	 * @param sourceCell source cell.
+	 * @param newCell target cell.
+	 */
+
+	private static void cloneComment(final Cell sourceCell, final Cell newCell) {
+
+		XSSFSheet sheet = (XSSFSheet) newCell.getSheet();
+		CreationHelper factory = sheet.getWorkbook().getCreationHelper();
+		Drawing drawing = sheet.createDrawingPatriarch();
+		XSSFComment sourceComment = (XSSFComment) sourceCell.getCellComment();
+		// Below code are from POI busy manual.
+		// When the comment box is visible, have it show in a 1x3 space
+		ClientAnchor anchor = factory.createClientAnchor();
+		anchor.setCol1(newCell.getColumnIndex());
+		anchor.setCol2(newCell.getColumnIndex() + 1);
+		anchor.setRow1(newCell.getRowIndex());
+		anchor.setRow2(newCell.getRowIndex() + 3);
+		// Create the comment and set the text+author
+		Comment comment = drawing.createCellComment(anchor);
+		RichTextString str = factory.createRichTextString(sourceComment.getString().toString());
+		comment.setString(str);
+		comment.setAuthor(sourceComment.getAuthor());
+		// Assign the comment to the cell
+		newCell.setCellComment(comment);
+		comment.setColumn(newCell.getColumnIndex());
+		comment.setRow(newCell.getRowIndex());
+		// As POI doesn't has well support for comments,
+		// So we have to use low level api to match the comments. 
+		matchCommentSettings(newCell, sourceCell);
+	}
+
+	/**
+	 * Use low level API to match the comments setting.
+	 * @param newCell target cell.
+	 * @param sourceCell source cell.
+	 */
+	private static void matchCommentSettings(final Cell newCell, final Cell sourceCell) {
+		try {
+			XSSFVMLDrawing sourceVml = getVmlDrawingFromCell(sourceCell);
+			XSSFVMLDrawing targetVml = getVmlDrawingFromCell(newCell);
+			CTShape sourceCtShape = getCtShapeFromVml(sourceCell, sourceVml);
+			CTShape targetCtShape = getCtShapeFromVml(newCell, targetVml);
+			targetCtShape.setType(sourceCtShape.getType());
+			CTClientData sourceClientData = sourceCtShape.getClientDataArray(0);
+			CTClientData targetClientData = targetCtShape.getClientDataArray(0);
+			String[] anchorArray = sourceClientData.getAnchorList().get(0).split(",");
+			int shiftRows = newCell.getRowIndex() - sourceCell.getRowIndex();
+			/*
+			 * AchorArray mappings: 0->col1 1->dx1 2->row1 3->dy1 4->col2
+			 * 5->dx2 6-> row2 7->dy2
+			 */
+			anchorArray[2] = Integer.toString(Integer.parseInt(anchorArray[2].trim()) + shiftRows);
+			anchorArray[6] = Integer.toString(Integer.parseInt(anchorArray[6].trim()) + shiftRows);
+			targetClientData.getAnchorList().set(0, FacesUtility.strJoin(anchorArray,","));
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, "matchCommentSettings error = " + e.getLocalizedMessage(), e);
+		}
+	}
+
+	/**
+	 * Find vmldrawing part according to cell.
+	 * @param cell cell.
+	 * @return vmldrawing.
+	 */
+	private static XSSFVMLDrawing getVmlDrawingFromCell(final Cell cell) {
+		XSSFSheet sourceSheet = (XSSFSheet) cell.getSheet();
+		for (POIXMLDocumentPart sourcePart : sourceSheet.getRelations()) {
+			if ((sourcePart != null) && (sourcePart instanceof XSSFVMLDrawing)) {
+				return (XSSFVMLDrawing) sourcePart;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find CtShape from vml object.
+	 * This class use reflection to invoke the protected method in POI.
+	 * @param sourceCell cell.
+	 * @param sourceVml vml.
+	 * @return ctShape.
+	 * @throws ReflectiveOperationException
+	 * @throws SecurityException
+	 */
+	@SuppressWarnings("rawtypes")
+	private static CTShape getCtShapeFromVml(final Cell sourceCell, XSSFVMLDrawing sourceVml)
+			throws ReflectiveOperationException, SecurityException {
+		Method findshape;
+		// int parameter
+		Class[] paramInt = new Class[2];
+		paramInt[0] = Integer.TYPE;
+		paramInt[1] = Integer.TYPE;
+		findshape = sourceVml.getClass().getDeclaredMethod("findCommentShape", paramInt);
+		findshape.setAccessible(true);
+		CTShape ctShape = (CTShape) findshape.invoke(sourceVml, sourceCell.getRowIndex(), sourceCell.getColumnIndex());
+		return ctShape;
 	}
 
 	/**
@@ -556,8 +626,7 @@ public final class CellUtility {
 	 *            source cell.
 	 * @return cell style.
 	 */
-	private static CellStyle getCellStyleFromSourceCell(
-			final Sheet destSheet, final Cell sourceCell) {
+	private static CellStyle getCellStyleFromSourceCell(final Sheet destSheet, final Cell sourceCell) {
 		Workbook wb = destSheet.getWorkbook();
 		// Copy style from old cell and apply to new cell
 		CellStyle newCellStyle = wb.createCellStyle();
@@ -574,8 +643,8 @@ public final class CellUtility {
 	 */
 	public static String getCellIndexNumberKey(final Cell cell) {
 		if (cell != null) {
-			return TieConstants.CELL_ADDR_PRE_FIX + cell.getColumnIndex()
-					+ TieConstants.CELL_ADDR_PRE_FIX + cell.getRowIndex();
+			return TieConstants.CELL_ADDR_PRE_FIX + cell.getColumnIndex() + TieConstants.CELL_ADDR_PRE_FIX
+					+ cell.getRowIndex();
 		}
 		return null;
 	}
@@ -589,10 +658,8 @@ public final class CellUtility {
 	 *            row index.
 	 * @return string.
 	 */
-	public static String getCellIndexNumberKey(final int columnIndex,
-			final int rowIndex) {
-		return TieConstants.CELL_ADDR_PRE_FIX + columnIndex
-				+ TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
+	public static String getCellIndexNumberKey(final int columnIndex, final int rowIndex) {
+		return TieConstants.CELL_ADDR_PRE_FIX + columnIndex + TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
 	}
 
 	/**
@@ -605,10 +672,8 @@ public final class CellUtility {
 	 *            row index.
 	 * @return String.
 	 */
-	public static String getCellIndexLetterKey(final String columnLetter,
-			final int rowIndex) {
-		return TieConstants.CELL_ADDR_PRE_FIX + columnLetter
-				+ TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
+	public static String getCellIndexLetterKey(final String columnLetter, final int rowIndex) {
+		return TieConstants.CELL_ADDR_PRE_FIX + columnLetter + TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
 	}
 
 	/**
@@ -621,10 +686,8 @@ public final class CellUtility {
 	 * @return key.
 	 */
 
-	public static String getCellIndexLetterKey(final int columnIndex,
-			final int rowIndex) {
-		return TieConstants.CELL_ADDR_PRE_FIX
-				+ WebSheetUtility.getExcelColumnName(columnIndex)
+	public static String getCellIndexLetterKey(final int columnIndex, final int rowIndex) {
+		return TieConstants.CELL_ADDR_PRE_FIX + WebSheetUtility.getExcelColumnName(columnIndex)
 				+ TieConstants.CELL_ADDR_PRE_FIX + rowIndex;
 	}
 
@@ -647,27 +710,20 @@ public final class CellUtility {
 	 *            the save attrs
 	 */
 	// set up facesCell's attribute from poiCell and others.
-	public static void convertCell(final SheetConfiguration sheetConfig,
-			final FacesCell fcell, final Cell poiCell,
-			final Map<String, CellRangeAddress> cellRangeMap,
-			final int originRowIndex,
-			final CellAttributesMap cellAttributesMap,
-			final String saveAttrs) {
+	public static void convertCell(final SheetConfiguration sheetConfig, final FacesCell fcell, final Cell poiCell,
+			final Map<String, CellRangeAddress> cellRangeMap, final int originRowIndex,
+			final CellAttributesMap cellAttributesMap, final String saveAttrs) {
 		CellRangeAddress caddress;
 		String key = getCellIndexNumberKey(poiCell);
 		caddress = cellRangeMap.get(key);
 		if (caddress != null) {
 			// has col or row span
-			fcell.setColspan(caddress.getLastColumn()
-					- caddress.getFirstColumn() + 1);
-			fcell.setRowspan(
-					caddress.getLastRow() - caddress.getFirstRow() + 1);
+			fcell.setColspan(caddress.getLastColumn() - caddress.getFirstColumn() + 1);
+			fcell.setRowspan(caddress.getLastRow() - caddress.getFirstRow() + 1);
 		}
 
-		CellControlsUtility.setupControlAttributes(originRowIndex, fcell,
-				poiCell, sheetConfig, cellAttributesMap);
-		fcell.setHasSaveAttr(
-				SaveAttrsUtility.isHasSaveAttr(poiCell, saveAttrs));
+		CellControlsUtility.setupControlAttributes(originRowIndex, fcell, poiCell, sheetConfig, cellAttributesMap);
+		fcell.setHasSaveAttr(SaveAttrsUtility.isHasSaveAttr(poiCell, saveAttrs));
 
 	}
 
@@ -678,8 +734,7 @@ public final class CellUtility {
 	 *            the target
 	 * @return the row col from component attributes
 	 */
-	public static int[] getRowColFromComponentAttributes(
-			final UIComponent target) {
+	public static int[] getRowColFromComponentAttributes(final UIComponent target) {
 
 		int rowIndex = (Integer) target.getAttributes().get("data-row");
 		int colIndex = (Integer) target.getAttributes().get("data-column");
@@ -696,8 +751,7 @@ public final class CellUtility {
 	 *            the sheet config
 	 * @return the inits the rows from config
 	 */
-	public static int getInitRowsFromConfig(
-			final SheetConfiguration sheetConfig) {
+	public static int getInitRowsFromConfig(final SheetConfiguration sheetConfig) {
 		int initRows = 1;
 		if ("Repeat".equalsIgnoreCase(sheetConfig.getFormBodyType())) {
 			initRows = sheetConfig.getBodyInitialRows();
@@ -715,8 +769,7 @@ public final class CellUtility {
 	 *            the sheet config
 	 * @return the body bottom from config
 	 */
-	public static int getBodyBottomFromConfig(
-			final SheetConfiguration sheetConfig) {
+	public static int getBodyBottomFromConfig(final SheetConfiguration sheetConfig) {
 
 		return sheetConfig.getBodyCellRange().getBottomRow();
 
@@ -737,21 +790,16 @@ public final class CellUtility {
 	 *            the left col
 	 * @return the faces cell from body row
 	 */
-	public static FacesCell getFacesCellFromBodyRow(final int row,
-			final int col, final List<FacesRow> bodyRows, final int topRow,
-			final int leftCol) {
+	public static FacesCell getFacesCellFromBodyRow(final int row, final int col, final List<FacesRow> bodyRows,
+			final int topRow, final int leftCol) {
 		FacesCell cell = null;
 
 		try {
 			cell = bodyRows.get(row - topRow).getCells().get(col - leftCol);
 
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE,
-					"getFacesCellFromBodyRow Error row = " + row + " col = "
-							+ col + "top row = " + topRow + " leftCol = "
-							+ leftCol + " ; error = "
-							+ e.getLocalizedMessage(),
-					e);
+			LOG.log(Level.SEVERE, "getFacesCellFromBodyRow Error row = " + row + " col = " + col + "top row = " + topRow
+					+ " leftCol = " + leftCol + " ; error = " + e.getLocalizedMessage(), e);
 		}
 		return cell;
 	}
@@ -767,11 +815,9 @@ public final class CellUtility {
 	 *            workbook.
 	 * @return the poi cell with row col from current page
 	 */
-	public static Cell getPoiCellWithRowColFromCurrentPage(
-			final int rowIndex, final int colIndex, final Workbook wb) {
+	public static Cell getPoiCellWithRowColFromCurrentPage(final int rowIndex, final int colIndex, final Workbook wb) {
 		if (wb != null) {
-			return getPoiCellFromSheet(rowIndex, colIndex,
-					wb.getSheetAt(wb.getActiveSheetIndex()));
+			return getPoiCellFromSheet(rowIndex, colIndex, wb.getSheetAt(wb.getActiveSheetIndex()));
 		}
 		return null;
 	}
@@ -787,8 +833,7 @@ public final class CellUtility {
 	 *            the sheet 1
 	 * @return the poi cell from sheet
 	 */
-	public static Cell getPoiCellFromSheet(final int rowIndex,
-			final int colIndex, final Sheet sheet1) {
+	public static Cell getPoiCellFromSheet(final int rowIndex, final int colIndex, final Sheet sheet1) {
 		if ((sheet1 != null) && (sheet1.getRow(rowIndex) != null)) {
 			return sheet1.getRow(rowIndex).getCell(colIndex);
 		}

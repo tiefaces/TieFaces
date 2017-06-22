@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -647,11 +649,19 @@ public class ConfigurationHandler {
 			moveCommentToMap(cell, text,
 					cellAttributesMap.getTemplateCommentMap(), true);
 		} else {
-			moveCommentToMap(cell, newComment.toString(),
-					cellAttributesMap.getTemplateCommentMap(), true);
+			// reset comment string if changed
+			if (newComment.length() > 0) {
+				moveCommentToMap(cell, newComment.toString(),
+						cellAttributesMap.getTemplateCommentMap(), true);
+				CreationHelper factory = sheet.getWorkbook().getCreationHelper();
+				RichTextString str = factory.createRichTextString(newComment.toString());
+				comment.setString(str);
+			} else {
+			// remove cell comment if new comment become empty.
+				cell.removeCellComment();
+			}
 		}
-		// after saved to map. remove the cell comments.
-		cell.removeCellComment();
+
 		return cList;
 	}
 
