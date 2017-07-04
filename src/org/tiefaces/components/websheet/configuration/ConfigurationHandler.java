@@ -274,6 +274,8 @@ public class ConfigurationHandler {
 			// this is a empty sheet. skip it.
 			return;
 		}
+		checkAndRepairLastRow(sheet);
+
 		int sheetRightCol = WebSheetUtility.getSheetRightCol(sheet);
 		List<ConfigCommand> commandList = buildCommandListFromSheetComment(
 				(XSSFSheet) sheet, sheetRightCol, cellAttributesMap);
@@ -292,6 +294,26 @@ public class ConfigurationHandler {
 		matchSheetConfigForm(sheetConfigMap, commandList, formList);
 		initTemplateForCommand(sheet, sheetConfigMap, formList,
 				hasEachCommand);
+	}
+
+	/**
+	 * check and repair the sheet's lastrow. If the row is blank then remove it.
+	 * @param sheet
+	 */
+	private final void checkAndRepairLastRow(final Sheet sheet) {
+		// repair last row if it's inserted in the configuration generation
+		Row lastrow = sheet.getRow(sheet.getLastRowNum());
+		// if it's lastrow and all the cells are blank. then remove the lastrow.
+		if (lastrow != null) {
+			for (Cell cell : lastrow) {
+				if ((cell.getCellTypeEnum() != CellType._NONE)
+						&& (cell.getCellTypeEnum() != CellType.BLANK)) {
+					return;
+				}
+			}
+			sheet.removeRow(lastrow);
+		}
+
 	}
 
 	/**
@@ -653,11 +675,13 @@ public class ConfigurationHandler {
 			if (newComment.length() > 0) {
 				moveCommentToMap(cell, newComment.toString(),
 						cellAttributesMap.getTemplateCommentMap(), true);
-				CreationHelper factory = sheet.getWorkbook().getCreationHelper();
-				RichTextString str = factory.createRichTextString(newComment.toString());
+				CreationHelper factory = sheet.getWorkbook()
+						.getCreationHelper();
+				RichTextString str = factory
+						.createRichTextString(newComment.toString());
 				comment.setString(str);
 			} else {
-			// remove cell comment if new comment become empty.
+				// remove cell comment if new comment become empty.
 				cell.removeCellComment();
 			}
 		}
