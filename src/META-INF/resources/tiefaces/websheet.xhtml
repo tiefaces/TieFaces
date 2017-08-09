@@ -46,6 +46,21 @@
 	<cc:attribute name="deleteRowConfirmMessage" required="false"
 		default="Are you sure you want to delete this row?"
 		type="java.lang.String" />
+	<cc:attribute name="deleteRowConfirmHeader" required="false"
+		default="Confirmation"
+		type="java.lang.String" />
+	<cc:attribute name="deleteRowConfirmButtonYes" required="false"
+		default="Yes"
+		type="java.lang.String" />
+	<cc:attribute name="deleteRowConfirmButtonNo" required="false"
+		default="No"
+		type="java.lang.String" />
+	<cc:attribute name="addRowButtonTip" required="false"
+		default="Add Row"
+		type="java.lang.String" />
+	<cc:attribute name="deleteRowButtonTip" required="false"
+		default="Delete Row"
+		type="java.lang.String" />
 	<cc:attribute name="reflow" required="false"
 		default="false" type="java.lang.Boolean" />		
 </cc:interface>
@@ -89,7 +104,7 @@
 					<p:columnGroup type="header">
 						<c:forEach items="#{cc.attrs.webSheetBean.headerRows}"
 							var="headerrow" varStatus="loopheaderrow">
-							<p:row>
+							<p:row rendered="#{cc.attrs.rendered}">
 								<p:column
 									style="#{cc.attrs.webSheetBean.lineNumberColumnWidthStyle}"
 									rendered="#{cc.attrs.showLineNumber}" />
@@ -116,14 +131,14 @@
 
 					<p:column
 						style="text-align: center;#{cc.attrs.webSheetBean.lineNumberColumnWidthStyle}"
-						rendered="#{cc.attrs.showLineNumber and dataRow.rendered}">
+						rendered="#{cc.attrs.rendered and cc.attrs.showLineNumber and dataRow.rendered}">
 						<h:outputText value="#{dataRow.rowIndex + 1}" />
 					</p:column>
 
 					<c:forEach items="#{cc.attrs.webSheetBean.columns}" var="column"
 						varStatus="loop">
 						<p:column
-							rendered="#{not empty dataRow.cells[loop.index] and dataRow.rendered }"
+							rendered="#{not empty dataRow.cells[loop.index] and dataRow.rendered and cc.attrs.rendered}"
 							rowspan="#{dataRow.cells[loop.index].rowspan}"
 							colspan="#{dataRow.cells[loop.index].colspan}"
 							style="#{dataRow.cells[loop.index].columnStyle}">
@@ -244,17 +259,17 @@
 					</c:forEach>
 					<p:column
 						style="text-align: center;#{cc.attrs.webSheetBean.addRowColumnWidthStyle}"
-						rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows}">
+						rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows and cc.attrs.rendered}">
 						<h:panelGroup rendered="#{dataRow.rendered and dataRow.allowAdd}">
 							<p:commandButton
 								actionListener="#{cc.attrs.webSheetBean.addRepeatRow(dataRow.rowIndex)}"
-								update="@form" title="Add Row" alt="Add Row" icon="ui-icon-plus"
+								update="@form" title="#{cc.attrs.addRowButtonTip}" alt="#{cc.attrs.addRowButtonTip}" icon="ui-icon-plus"
 								styleClass="icon_button" />
 							<p:commandButton
 								actionListener="#{cc.attrs.webSheetBean.deleteRepeatRow(dataRow.rowIndex)}"
-								update="@form" title="Delete Row" alt="Delete Row"
+								update="@form" title="#{cc.attrs.deleteRowButtonTip}" alt="#{cc.attrs.deleteRowButtonTip}"
 								icon="ui-icon-close" styleClass="icon_button">
-								<p:confirm header="Confirmation"
+								<p:confirm header="#{cc.attrs.deleteRowConfirmHeader}"
 									message="#{cc.attrs.deleteRowConfirmMessage}"
 									icon="ui-icon-alert" />
 							</p:commandButton>
@@ -269,9 +284,9 @@
 				</p:blockUI>
 
 				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-					<p:commandButton value="Yes" type="button"
+					<p:commandButton value="#{cc.attrs.deleteRowConfirmButtonYes}" type="button"
 						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-					<p:commandButton value="No" type="button"
+					<p:commandButton value="#{cc.attrs.deleteRowConfirmButtonNo}" type="button"
 						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 				</p:confirmDialog>
 			</div>
