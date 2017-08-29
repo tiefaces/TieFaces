@@ -13,8 +13,6 @@
 
 	<cc:attribute name="webSheetBean" required="true"
 		type="org.tiefaces.components.websheet.TieWebSheetBean" />
-	<cc:attribute name="rendered" required="false" default="true"
-		type="java.lang.Boolean" />
 	<cc:attribute name="readOnly" required="false" default="false"
 		type="java.lang.Boolean" />
 	<cc:attribute name="showLineNumber" required="false"
@@ -69,26 +67,26 @@
 <cc:implementation>
 	<h:outputStylesheet name="tiefaces/websheet.css" target="head" />
 	<h:outputScript name="tiefaces/websheet.js" target="head" />
-	<div id="#{cc.clientId}">
+	<div id="#{cc.clientId}">	
 		<p:outputPanel id="websheet">
 			<div id="websheettabview">
 				<p:tabView id="websheettab" scrollable="true" style="height: 35px;"
 					binding="#{cc.attrs.webSheetBean.webFormTabView}"
-					rendered="#{cc.attrs.rendered and cc.attrs.webSheetBean.showTabView}">
+					rendered="#{cc.attrs.webSheetBean.rendered and cc.attrs.webSheetBean.showTabView}">
 					<p:ajax event="tabChange"
 						listener="#{cc.attrs.webSheetBean.onTabChange}" update="@form" 
                         onstart="PF('tiefaces_websheet_bui').show()"
                         oncomplete="PF('tiefaces_websheet_bui').hide()" />
 					<c:forEach items="#{cc.attrs.webSheetBean.tabs}" var="tab"
 						varStatus="status">
-						<p:tab title="#{tab.title}" rendered="#{cc.attrs.rendered}" />
+						<p:tab title="#{tab.title}" rendered="#{cc.attrs.webSheetBean.rendered}" />
 					</c:forEach>
 				</p:tabView>
 			</div>
 
 			<div id="websheet">
 				<p:dataTable id="websheettable" var="dataRow"
-					rendered="#{cc.attrs.rendered}"
+					rendered="#{cc.attrs.webSheetBean.rendered}"
 					value="#{cc.attrs.webSheetBean.bodyRows}"
 					paginator="#{cc.attrs.paginator}"
 					paginatorPosition="#{cc.attrs.paginatorPosition}"
@@ -104,7 +102,7 @@
 					<p:columnGroup type="header">
 						<c:forEach items="#{cc.attrs.webSheetBean.headerRows}"
 							var="headerrow" varStatus="loopheaderrow">
-							<p:row rendered="#{cc.attrs.rendered}">
+							<p:row>
 								<p:column
 									style="#{cc.attrs.webSheetBean.lineNumberColumnWidthStyle}"
 									rendered="#{cc.attrs.showLineNumber}" />
@@ -131,14 +129,14 @@
 
 					<p:column
 						style="text-align: center;#{cc.attrs.webSheetBean.lineNumberColumnWidthStyle}"
-						rendered="#{cc.attrs.rendered and cc.attrs.showLineNumber and dataRow.rendered}">
+						rendered="#{cc.attrs.showLineNumber and dataRow.rendered}">
 						<h:outputText value="#{dataRow.rowIndex + 1}" />
 					</p:column>
 
 					<c:forEach items="#{cc.attrs.webSheetBean.columns}" var="column"
 						varStatus="loop">
 						<p:column
-							rendered="#{not empty dataRow.cells[loop.index] and dataRow.rendered and cc.attrs.rendered}"
+							rendered="#{not empty dataRow.cells[loop.index] and dataRow.rendered}"
 							rowspan="#{dataRow.cells[loop.index].rowspan}"
 							colspan="#{dataRow.cells[loop.index].colspan}"
 							style="#{dataRow.cells[loop.index].columnStyle}">
@@ -259,7 +257,7 @@
 					</c:forEach>
 					<p:column
 						style="text-align: center;#{cc.attrs.webSheetBean.addRowColumnWidthStyle}"
-						rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows and cc.attrs.rendered}">
+						rendered="#{cc.attrs.webSheetBean.bodyAllowAddRows}">
 						<h:panelGroup rendered="#{dataRow.rendered and dataRow.allowAdd}">
 							<p:commandButton
 								actionListener="#{cc.attrs.webSheetBean.addRepeatRow(dataRow.rowIndex)}"

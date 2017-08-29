@@ -144,6 +144,14 @@ public class TieWebSheetBean extends TieWebSheetView
 	 */
 
 	private CellMap cellsMap = new CellMap(this);
+	
+	/**
+	 * workaround for rendered attributes.
+	 * True -- work sheet will be rendered.
+	 * False -- work sheet not rendered.
+	 */
+	private boolean rendered = true;	
+	
 
 	/** logger. */
 	private static final Logger LOG = Logger
@@ -929,5 +937,23 @@ public class TieWebSheetBean extends TieWebSheetView
 				|| (this.getTabs().size() > 1);
 
 	}
+	
+
+	/**
+	 * @return the rendered
+	 */
+	public boolean isRendered() {
+		return rendered;
+	}
+
+	/**
+	 * @param rendered the rendered to set
+	 */
+	public void setRendered(boolean rendered) {
+		this.rendered = rendered;
+	}
+	
+	
+	
 
 }
