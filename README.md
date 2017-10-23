@@ -15,7 +15,7 @@ This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for m
   - Keep Excel formats and styles
   - Keep Excel formulas
   - Support charts and images
-![Render excel as web form](http://showcase-tiefaces.rhcloud.com/javax.faces.resource/img/websheet1.png.xhtml?ln=showcase)
+![Render excel as web form](http://showcase-showcase.a3c1.starter-us-west-1.openshiftapps.com/javax.faces.resource/img/websheet1.png.xhtml?ln=showcase)
 
 ### Dynamic Web Form Solution
 - Use expression language to define data.
@@ -25,7 +25,7 @@ This is an overview page, please visit [TieFaces.org](http://tiefaces.org) for m
 - Support nested data collections. i.e. a company include multiple departments while each department include multiple employees.
 - Support add/delete functions for data collections.
 
-![Dynamic web solution](http://showcase-tiefaces.rhcloud.com/javax.faces.resource/img/websheet2.png.xhtml?ln=showcase)
+![Dynamic web solution](http://showcase-showcase.a3c1.starter-us-west-1.openshiftapps.com/javax.faces.resource/img/websheet2.png.xhtml?ln=showcase)
 
 ### Getting Started
 ***
