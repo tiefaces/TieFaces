@@ -376,6 +376,10 @@ public final class CellUtility {
 		if (sourceCell == null) {
 			return null;
 		}
+		// If source cell is dest cell refresh it
+		if (sourceRow.equals(newRow)) {
+		    sourceRow.removeCell(sourceCell);
+		}
 		Cell newCell = newRow.createCell(cellIndex);
 		try {
 			copyCellSetStyle(destSheet, sourceCell, newCell);
