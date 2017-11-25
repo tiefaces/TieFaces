@@ -70,18 +70,21 @@
 	<div id="#{cc.clientId}">	
 		<p:outputPanel id="websheet">
 			<div id="websheettabview">
-				<p:tabView id="websheettab" scrollable="true" style="height: 35px;"
-					binding="#{cc.attrs.webSheetBean.webFormTabView}"
-					rendered="#{cc.attrs.webSheetBean.rendered and cc.attrs.webSheetBean.showTabView}">
-					<p:ajax event="tabChange"
-						listener="#{cc.attrs.webSheetBean.onTabChange}" update="@form" 
-                        onstart="PF('tiefaces_websheet_bui').show()"
-                        oncomplete="PF('tiefaces_websheet_bui').hide()" />
-					<c:forEach items="#{cc.attrs.webSheetBean.tabs}" var="tab"
-						varStatus="status">
-						<p:tab title="#{tab.title}" rendered="#{cc.attrs.webSheetBean.rendered}" />
-					</c:forEach>
-				</p:tabView>
+				<c:if test="#{cc.attrs.webSheetBean.showTabView}">
+					<p:tabView id="websheettab" scrollable="true" style="height: 35px;"
+						binding="#{cc.attrs.webSheetBean.webFormTabView}"
+						rendered="#{cc.attrs.webSheetBean.rendered}">
+						<p:ajax event="tabChange"
+							listener="#{cc.attrs.webSheetBean.onTabChange}" update="@form"
+							onstart="PF('tiefaces_websheet_bui').show()"
+							oncomplete="PF('tiefaces_websheet_bui').hide()" />
+						<c:forEach items="#{cc.attrs.webSheetBean.tabs}" var="tab"
+							varStatus="status">
+							<p:tab title="#{tab.title}"
+								rendered="#{cc.attrs.webSheetBean.rendered}" />
+						</c:forEach>
+					</p:tabView>
+				</c:if>
 			</div>
 
 			<div id="websheet">
