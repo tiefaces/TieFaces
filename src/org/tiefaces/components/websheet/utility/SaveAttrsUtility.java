@@ -64,6 +64,7 @@ public final class SaveAttrsUtility {
 		if (index > 0) {
 			String strObject = saveAttr.substring(0, index);
 			String strMethod = saveAttr.substring(index + 1);
+			strObject = "${" + strObject + "}";
 			Object object = CommandUtility.evaluate(strObject, context, engine);
 			CellControlsUtility.setObjectProperty(object, strMethod,
 					strValue, true);
