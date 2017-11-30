@@ -420,9 +420,6 @@ public final class ParserUtility {
 	private static void processCalendarAttributes(final String key,
 			final CellAttributesMap cellAttributesMap,
 			final SpecialAttributes sAttr) {
-		if (sAttr.defaultDatePattern.isEmpty()) {
-			sAttr.defaultDatePattern = getDefaultDatePattern();
-		}
 		cellAttributesMap.getCellDatePattern().put(key,
 				sAttr.defaultDatePattern);
 	}
@@ -491,17 +488,6 @@ public final class ParserUtility {
 						TieConstants.WIDGET_ATTR_PATTERN)) {
 			sAttr.defaultDatePattern = attr.getValue();
 		}
-	}
-
-	/**
-	 * get default date pattern.
-	 * 
-	 * @return default date pattern.
-	 */
-	private static String getDefaultDatePattern() {
-		DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT,
-				Locale.getDefault());
-		return ((SimpleDateFormat) formatter).toLocalizedPattern();
 	}
 
 	/**

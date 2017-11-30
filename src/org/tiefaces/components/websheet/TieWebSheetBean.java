@@ -11,9 +11,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -151,6 +155,10 @@ public class TieWebSheetBean extends TieWebSheetView
 	 * False -- work sheet not rendered.
 	 */
 	private boolean rendered = true;	
+	
+	private Locale defaultLocale = null;
+	
+	private String defaultDatePattern = null;
 	
 
 	/** logger. */
@@ -371,7 +379,7 @@ public class TieWebSheetBean extends TieWebSheetView
 	 */
 	public DataFormatter getDataFormatter() {
 		if (this.dataFormatter == null) {
-			this.dataFormatter = new DataFormatter();
+			this.dataFormatter = new DataFormatter(this.getDefaultLocale());
 		}
 		return dataFormatter;
 	}
@@ -953,7 +961,39 @@ public class TieWebSheetBean extends TieWebSheetView
 		this.rendered = rendered;
 	}
 	
-	
-	
+
+	public Locale getDefaultLocale() {
+	    if (defaultLocale== null) {
+		defaultLocale = Locale.getDefault();
+	    }
+	    return defaultLocale;
+	}
+
+	public void setDefaultLocale(Locale defaultLocale) {
+		this.defaultLocale = defaultLocale;
+	}
+
+	public String getDefaultDatePattern() {
+	    if (defaultDatePattern == null) {
+		DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT,
+			Locale.getDefault());
+		defaultDatePattern = ((SimpleDateFormat) formatter).toLocalizedPattern();
+	    }
+	    return defaultDatePattern;
+	}
+
+	public void setDefaultDatePattern(String defaultDatePattern) {
+		this.defaultDatePattern = defaultDatePattern;
+	}
+
+	public String getDecimalSeparatorByDefaultLocale() {
+		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
+		return "" + nf.getDecimalFormatSymbols().getDecimalSeparator();
+	}
+
+	public String getThousandSeparatorByDefaultLocale() {
+		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
+		return "" + nf.getDecimalFormatSymbols().getGroupingSeparator();
+	}
 
 }
