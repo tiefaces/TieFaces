@@ -185,7 +185,8 @@
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									style="#{dataRow.cells[loop.index].style}"
 									styleClass="inputColumnWidthCalendar"
-									pattern="#{dataRow.cells[loop.index].datePattern}"
+									locale="#{cc.attrs.webSheetBean.getDefaultLocale().getLanguage()}"
+									pattern="#{empty dataRow.cells[loop.index].datePattern ? cc.attrs.webSheetBean.defaultDatePattern : dataRow.cells[loop.index].datePattern}"
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'calendar'}">
 									<f:converter converterId="tieCalendaConverter" />
 									<f:event type="preRenderComponent"
@@ -223,6 +224,8 @@
 								<p:inputNumber id="coinnu#{loop.index}"
 									value="#{cc.attrs.webSheetBean.cellsMap[''.concat(dataRow.rowIndex).concat(':').concat(dataRow.cells[loop.index].columnIndex)]}"
 									inputStyle="#{dataRow.cells[loop.index].style}"
+									decimalSeparator="#{cc.attrs.webSheetBean.getDecimalSeparatorByDefaultLocale()}"
+									thousandSeparator="#{cc.attrs.webSheetBean.getThousandSeparatorByDefaultLocale()}"
 									inputStyleClass="inputColumnWidth"
 									rendered="#{(!cc.attrs.readOnly) and  dataRow.cells[loop.index].control == 'inputnumber'}">
 									<f:event type="preRenderComponent"
