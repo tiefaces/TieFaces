@@ -79,7 +79,7 @@
                         oncomplete="PF('tiefaces_websheet_bui').hide()" />
 					<c:forEach items="#{cc.attrs.webSheetBean.tabs}" var="tab"
 						varStatus="status">
-						<p:tab title="#{tab.title}" rendered="#{cc.attrs.webSheetBean.rendered}" />
+						<p:tab id="wtab#{status.index}" title="#{tab.title}" rendered="#{cc.attrs.webSheetBean.rendered}" />
 					</c:forEach>
 				</p:tabView>
 			</div>
