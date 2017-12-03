@@ -694,6 +694,7 @@ public class TieWebSheetBean extends TieWebSheetView
 			if ((getSheetConfigMap() != null)
 					&& (sheetId < getSheetConfigMap().size())) {
 				this.getHelper().getWebSheetLoader().loadWorkSheet(tabName);
+				setActiveTabIndex(sheetId);
 			}
 			return 1;
 		} catch (Exception ex) {

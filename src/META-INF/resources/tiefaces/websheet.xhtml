@@ -70,8 +70,7 @@
 	<div id="#{cc.clientId}">	
 		<p:outputPanel id="websheet">
 			<div id="websheettabview">
-				<p:tabView id="websheettab" scrollable="true" style="height: 35px;"
-					binding="#{cc.attrs.webSheetBean.webFormTabView}"
+				<p:tabView id="websheettab" scrollable="true" style="height: 35px;" activeIndex="#{cc.attrs.webSheetBean.activeTabIndex}"
 					rendered="#{cc.attrs.webSheetBean.rendered and cc.attrs.webSheetBean.showTabView}">
 					<p:ajax event="tabChange"
 						listener="#{cc.attrs.webSheetBean.onTabChange}" update="@form" 
