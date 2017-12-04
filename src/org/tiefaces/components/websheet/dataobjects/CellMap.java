@@ -317,11 +317,12 @@ public class CellMap implements Serializable, java.util.Map {
 	private String assembleNewValue(final Object value,
 			final FacesCell facesCell) {
 		String newValue;
-		if ((value instanceof java.util.Date)
-				&& (facesCell.getDatePattern() != null)
-				&& (!facesCell.getDatePattern().isEmpty())) {
-			Format formatter = new SimpleDateFormat(
-					facesCell.getDatePattern());
+		if (value instanceof java.util.Date) {
+			String datePattern = facesCell.getDatePattern();
+			if (datePattern == null || datePattern.isEmpty()) {
+			    datePattern = parent.getDefaultDatePattern();
+			}
+			Format formatter = new SimpleDateFormat(datePattern);
 			newValue = formatter.format(value);
 		} else {
 			newValue = (String) value;
