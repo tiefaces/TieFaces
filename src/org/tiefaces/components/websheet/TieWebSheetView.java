@@ -57,6 +57,8 @@ public class TieWebSheetView {
 	private boolean showLineNumber = false;
 	/** The hide single sheet tab title. */
 	private boolean hideSingleSheetTabTitle = true;
+	/** active tab index */
+	private int activeTabIndex = 0;
 	
 	
 	/**
@@ -412,6 +414,13 @@ public class TieWebSheetView {
 			final boolean phideSingleSheetTabTitle) {
 		this.hideSingleSheetTabTitle = phideSingleSheetTabTitle;
 	}
-	
-	
+
+	public int getActiveTabIndex() {
+		return activeTabIndex;
+	}
+
+	public void setActiveTabIndex(int activeTabIndex) {
+		this.activeTabIndex = activeTabIndex;
+	}
+
 }
