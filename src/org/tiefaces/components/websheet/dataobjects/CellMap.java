@@ -291,6 +291,8 @@ public class CellMap implements Serializable, java.util.Map {
 					parent.getCellHelper().saveDataInContext(poiCell,
 							newValue);
 				}
+				// patch to avoid not updated downloaded file
+				CellUtility.copyCell(poiCell.getSheet(), poiCell.getRow(), poiCell.getRow(), poiCell.getColumnIndex(),false);
 				parent.getCellHelper().reCalc();
 			}
 
