@@ -422,16 +422,20 @@ public final class CellControlsUtility {
 	 *
 	 * @param validateMaps
 	 *            validateMaps.
+	 * @param originRowIndex
+	 * 			   original Row Index from facesRow.           
 	 * @param cell
 	 *            cell.
 	 * @return list.
 	 */
 	public static List<CellFormAttributes> findCellValidateAttributes(
 			final Map<String, List<CellFormAttributes>> validateMaps,
+			final int originRowIndex,
 			final Cell cell) {
-		String key = ParserUtility.getAttributeKeyInMapByCell(cell);
+		String key = cell.getSheet().getSheetName() + "!" + CellUtility
+				.getCellIndexNumberKey(cell.getColumnIndex(), originRowIndex);
+		
 		return validateMaps.get(key);
 	}
-	
 	
 }

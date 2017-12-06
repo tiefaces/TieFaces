@@ -780,6 +780,31 @@ public final class CellUtility {
 	}
 
 	/**
+	 * Gets the faces row from body row.
+	 * @param row
+	 * 		the row
+	 * @param bodyRows
+	 * 		the body rows
+	 * @param topRow
+	 * 		the top row
+	 * @return
+	 * 		faces row
+	 */
+	public static FacesRow getFacesRowFromBodyRow(final int row, final List<FacesRow> bodyRows,
+			final int topRow) {
+		FacesRow frow = null;
+
+		try {
+			frow = bodyRows.get(row - topRow);
+
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, "getFacesRowFromBodyRow Error row = " + row +  "top row = " + topRow
+					+ " ; error = " + e.getLocalizedMessage(), e);
+		}
+		return frow;
+	}	
+	
+	/**
 	 * Gets the faces cell from body row.
 	 *
 	 * @param row

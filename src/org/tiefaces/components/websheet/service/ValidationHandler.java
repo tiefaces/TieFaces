@@ -101,11 +101,18 @@ public class ValidationHandler {
 		int leftCol = parent.getCurrent().getCurrentLeftColumn();
 		boolean pass = true;
 
+		
+		FacesRow fRow = CellUtility.getFacesRowFromBodyRow(row, parent.getBodyRows(), topRow);
+		if (fRow == null) {
+			return pass;
+		}
+		
 		FacesCell cell = CellUtility.getFacesCellFromBodyRow(row, col,
 				parent.getBodyRows(), topRow, leftCol);
 		if (cell == null) {
 			return pass;
 		}
+
 
 		Cell poiCell = parent.getCellHelper()
 				.getPoiCellWithRowColFromCurrentPage(row, col);
@@ -128,7 +135,7 @@ public class ValidationHandler {
 				.get(parent.getCurrent().getCurrentTabName());
 		List<CellFormAttributes> cellAttributes = CellControlsUtility
 				.findCellValidateAttributes(parent.getCellAttributesMap()
-						.getCellValidateAttributes(), poiCell);
+						.getCellValidateAttributes(), fRow.getOriginRowIndex(), poiCell);
 		if (cellAttributes != null) {
 			pass = validateAllRulesForSingleCell(row - topRow,
 					col - leftCol, cell, poiCell, value, sheetConfig,
