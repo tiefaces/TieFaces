@@ -346,7 +346,7 @@ public final class CellControlsUtility {
 	 *            true ignore no existing.
 	 * @return perperty value.
 	 */
-	private static String getObjectPropertyValue(final Object obj,
+	public static String getObjectPropertyValue(final Object obj,
 			final String propertyName, final boolean ignoreNonExisting) {
 		try {
 			Method method = obj.getClass()
