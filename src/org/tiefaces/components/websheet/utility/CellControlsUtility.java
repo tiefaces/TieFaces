@@ -346,7 +346,7 @@ public final class CellControlsUtility {
 	 *            true ignore no existing.
 	 * @return perperty value.
 	 */
-	private static String getObjectPropertyValue(final Object obj,
+	public static String getObjectPropertyValue(final Object obj,
 			final String propertyName, final boolean ignoreNonExisting) {
 		try {
 			Method method = obj.getClass()
@@ -422,16 +422,20 @@ public final class CellControlsUtility {
 	 *
 	 * @param validateMaps
 	 *            validateMaps.
+	 * @param originRowIndex
+	 * 			   original Row Index from facesRow.           
 	 * @param cell
 	 *            cell.
 	 * @return list.
 	 */
 	public static List<CellFormAttributes> findCellValidateAttributes(
 			final Map<String, List<CellFormAttributes>> validateMaps,
+			final int originRowIndex,
 			final Cell cell) {
-		String key = ParserUtility.getAttributeKeyInMapByCell(cell);
+		String key = cell.getSheet().getSheetName() + "!" + CellUtility
+				.getCellIndexNumberKey(cell.getColumnIndex(), originRowIndex);
+		
 		return validateMaps.get(key);
 	}
-	
 	
 }

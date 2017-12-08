@@ -43,6 +43,7 @@ import org.primefaces.model.StreamedContent;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.chart.ChartHelper;
 import org.tiefaces.components.websheet.chart.ChartsData;
+import org.tiefaces.components.websheet.configuration.ConfigAdvancedContext;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CachedCells;
@@ -159,6 +160,10 @@ public class TieWebSheetBean extends TieWebSheetView
 	private Locale defaultLocale = null;
 	
 	private String defaultDatePattern = null;
+	
+	private boolean isAdvancedContext = false;
+	
+	private ConfigAdvancedContext configAdvancedContext;
 	
 
 	/** logger. */
@@ -995,6 +1000,22 @@ public class TieWebSheetBean extends TieWebSheetView
 	public String getThousandSeparatorByDefaultLocale() {
 		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
 		return "" + nf.getDecimalFormatSymbols().getGroupingSeparator();
+	}
+
+	public boolean isAdvancedContext() {
+		return isAdvancedContext;
+	}
+
+	public void setAdvancedContext(boolean isAdvancedContext) {
+		this.isAdvancedContext = isAdvancedContext;
+	}
+
+	public ConfigAdvancedContext getConfigAdvancedContext() {
+		return configAdvancedContext;
+	}
+
+	public void setConfigAdvancedContext(ConfigAdvancedContext configAdvancedContext) {
+		this.configAdvancedContext = configAdvancedContext;
 	}
 
 }

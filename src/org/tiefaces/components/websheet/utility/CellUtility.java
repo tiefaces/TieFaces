@@ -7,6 +7,7 @@ package org.tiefaces.components.websheet.utility;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -40,6 +41,7 @@ import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
+import org.tiefaces.components.websheet.dataobjects.TieCell;
 
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.vml.CTShape;
@@ -780,6 +782,31 @@ public final class CellUtility {
 	}
 
 	/**
+	 * Gets the faces row from body row.
+	 * @param row
+	 * 		the row
+	 * @param bodyRows
+	 * 		the body rows
+	 * @param topRow
+	 * 		the top row
+	 * @return
+	 * 		faces row
+	 */
+	public static FacesRow getFacesRowFromBodyRow(final int row, final List<FacesRow> bodyRows,
+			final int topRow) {
+		FacesRow frow = null;
+
+		try {
+			frow = bodyRows.get(row - topRow);
+
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, "getFacesRowFromBodyRow Error row = " + row +  "top row = " + topRow
+					+ " ; error = " + e.getLocalizedMessage(), e);
+		}
+		return frow;
+	}	
+	
+	/**
 	 * Gets the faces cell from body row.
 	 *
 	 * @param row
@@ -842,6 +869,23 @@ public final class CellUtility {
 			return sheet1.getRow(rowIndex).getCell(colIndex);
 		}
 		return null;
+	}
+
+
+	public static String getSkeyFromPoiCell(final Cell poiCell) {
+		String skey = poiCell.getSheet().getSheetName() + "!" + CellUtility.getCellIndexNumberKey(poiCell.getColumnIndex(), poiCell.getRowIndex());
+		return skey;
+	}
+
+	public static TieCell getOrAddTieCellInMap(final Cell poiCell, HashMap<String, TieCell> tieCells) {
+		String skey = CellUtility.getSkeyFromPoiCell(poiCell);
+		TieCell tieCell = tieCells.get(skey);
+		if (tieCell == null)  {
+			tieCell = new TieCell();
+			tieCell.setSkey(skey);
+			tieCells.put(skey, tieCell);
+		}
+		return tieCell;
 	}
 
 }

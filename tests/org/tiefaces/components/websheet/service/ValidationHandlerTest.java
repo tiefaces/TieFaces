@@ -66,6 +66,20 @@ public class ValidationHandlerTest {
 		bean.getValidationHandler().validateWithRowColInCurrentPage(4, 3,
 				true);
 		assertFalse(fcell.isInvalid());
+		
+		bean.addRepeatRow(4);
+		
+		bean.getCellsMap().put("5:3", "-1");
+		bean.getValidationHandler().validateWithRowColInCurrentPage(5,
+					3, true);
+		fcell = bean.getBodyRows().get(5).getCells().get(3);
+		assertTrue(fcell.isInvalid());
+		assertTrue(fcell.getValidStyle().contains(TieConstants.CELL_INVALID_STYLE));
+		bean.getCellsMap().put("5:3", "1");
+		bean.getValidationHandler().validateWithRowColInCurrentPage(5, 3,
+				true);
+		assertFalse(fcell.isInvalid());
+		
 
 	}
 

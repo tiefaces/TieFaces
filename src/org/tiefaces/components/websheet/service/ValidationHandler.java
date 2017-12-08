@@ -5,6 +5,7 @@
 
 package org.tiefaces.components.websheet.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -24,6 +25,7 @@ import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
+import org.tiefaces.components.websheet.dataobjects.TieCell;
 import org.tiefaces.components.websheet.utility.CellControlsUtility;
 import org.tiefaces.components.websheet.utility.CellUtility;
 import org.tiefaces.components.websheet.utility.ConfigurationUtility;
@@ -101,11 +103,18 @@ public class ValidationHandler {
 		int leftCol = parent.getCurrent().getCurrentLeftColumn();
 		boolean pass = true;
 
+		
+		FacesRow fRow = CellUtility.getFacesRowFromBodyRow(row, parent.getBodyRows(), topRow);
+		if (fRow == null) {
+			return pass;
+		}
+		
 		FacesCell cell = CellUtility.getFacesCellFromBodyRow(row, col,
 				parent.getBodyRows(), topRow, leftCol);
 		if (cell == null) {
 			return pass;
 		}
+
 
 		Cell poiCell = parent.getCellHelper()
 				.getPoiCellWithRowColFromCurrentPage(row, col);
@@ -128,17 +137,61 @@ public class ValidationHandler {
 				.get(parent.getCurrent().getCurrentTabName());
 		List<CellFormAttributes> cellAttributes = CellControlsUtility
 				.findCellValidateAttributes(parent.getCellAttributesMap()
-						.getCellValidateAttributes(), poiCell);
+						.getCellValidateAttributes(), fRow.getOriginRowIndex(), poiCell);
+
+		if (parent.isAdvancedContext() && parent.getConfigAdvancedContext().getErrorSuffix()!= null) {
+			pass = checkErrorMessageFromObjectInContext(row - topRow,
+				col - leftCol, cell, poiCell, value, sheetConfig);
+		}
+
 		if (cellAttributes != null) {
-			pass = validateAllRulesForSingleCell(row - topRow,
+			pass = pass && validateAllRulesForSingleCell(row - topRow,
 					col - leftCol, cell, poiCell, value, sheetConfig,
 					cellAttributes);
 		}
+
+
 		if (pass) {
 			refreshAfterStatusChanged(oldStatus, false, row - topRow,
 					col - leftCol, cell);
 		}
 		return pass;
+
+	}
+
+
+	private boolean checkErrorMessageFromObjectInContext(final int formRow, final int formCol, final FacesCell cell,
+	    final Cell poiCell, final String value, final SheetConfiguration sheetConfig) {
+
+        	@SuppressWarnings("unchecked")
+        	HashMap<String, TieCell> tieCells = (HashMap<String, TieCell>) parent.getSerialDataContext().getDataContext()
+        		.get("tiecells");
+        
+        	if (tieCells != null) {
+
+        	    TieCell tieCell = tieCells.get(CellUtility.getSkeyFromPoiCell(poiCell));
+        
+        	    if (tieCell != null && tieCell.getContextObject() != null) {
+        
+        		String errorMethod = tieCell.getMethodStr() + parent.getConfigAdvancedContext().getErrorSuffix();
+        
+        		String errorMessage = CellControlsUtility.getObjectPropertyValue(tieCell.getContextObject(),
+        			errorMethod, true);
+        
+        		if (errorMessage != null && !errorMessage.isEmpty()) {
+        		    cell.setErrormsg(errorMessage);
+        		    LOG.log(Level.INFO,
+        			    "Validation failed for sheet " + poiCell.getSheet().getSheetName() + " row "
+        				    + Integer.toString(poiCell.getRowIndex()) + " column "
+        				    + Integer.toString(poiCell.getColumnIndex()) + " : " + errorMessage);
+        		    refreshAfterStatusChanged(false, true, formRow, formCol, cell);
+        		    return false;
+        		}
+        
+        	    }
+        	}
+        
+        	return true;
 
 	}
 

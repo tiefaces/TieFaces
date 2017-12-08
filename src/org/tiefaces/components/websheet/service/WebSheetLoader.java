@@ -8,6 +8,7 @@ package org.tiefaces.components.websheet.service;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -39,6 +40,7 @@ import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.FacesCell;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
 import org.tiefaces.components.websheet.dataobjects.HeaderCell;
+import org.tiefaces.components.websheet.dataobjects.TieCell;
 import org.tiefaces.components.websheet.utility.CellStyleUtility;
 import org.tiefaces.components.websheet.utility.CellUtility;
 import org.tiefaces.components.websheet.utility.CommandUtility;
@@ -461,6 +463,10 @@ public class WebSheetLoader implements Serializable {
 		if (parent.getSerialDataContext().getDataContext() == null) {
 			// no data objects available.
 			return;
+		}
+
+		if (parent.isAdvancedContext()) {
+			parent.getSerialDataContext().getDataContext().put("tiecells", new HashMap<String,TieCell>());
 		}
 
 		for (SheetConfiguration sheetConfig : parent.getSheetConfigMap()
