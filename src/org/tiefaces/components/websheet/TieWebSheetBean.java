@@ -1008,7 +1008,8 @@ public class TieWebSheetBean extends TieWebSheetView
 
 	public void setFileName(String fileName) {
 	    this.fileName = fileName;
-
+	}
+	
 	public boolean isAdvancedContext() {
 		return isAdvancedContext;
 	}
