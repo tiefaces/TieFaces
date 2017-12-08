@@ -43,6 +43,7 @@ import org.primefaces.model.StreamedContent;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.chart.ChartHelper;
 import org.tiefaces.components.websheet.chart.ChartsData;
+import org.tiefaces.components.websheet.configuration.ConfigAdvancedContext;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CachedCells;
@@ -160,7 +161,12 @@ public class TieWebSheetBean extends TieWebSheetView
 	
 	private String defaultDatePattern = null;
 	
+	private String fileName = "WebSheetTemplate" + "." + TieConstants.EXCEL_2007_TYPE;
 
+	private boolean isAdvancedContext = false;
+	
+	private ConfigAdvancedContext configAdvancedContext;
+	
 	/** logger. */
 	private static final Logger LOG = Logger
 			.getLogger(TieWebSheetBean.class.getName());
@@ -719,8 +725,7 @@ public class TieWebSheetBean extends TieWebSheetView
 	public void doExport() {
 		try {
 
-			String fileName = "WebSheetTemplate" + "."
-					+ TieConstants.EXCEL_2007_TYPE;
+			String fileName = getFileName();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			this.getWb().write(out);
 			InputStream stream = new BufferedInputStream(
@@ -995,6 +1000,30 @@ public class TieWebSheetBean extends TieWebSheetView
 	public String getThousandSeparatorByDefaultLocale() {
 		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
 		return "" + nf.getDecimalFormatSymbols().getGroupingSeparator();
+	}
+
+	public String getFileName() {
+	    return fileName;
+	}
+
+	public void setFileName(String fileName) {
+	    this.fileName = fileName;
+	}
+	
+	public boolean isAdvancedContext() {
+		return isAdvancedContext;
+	}
+
+	public void setAdvancedContext(boolean isAdvancedContext) {
+		this.isAdvancedContext = isAdvancedContext;
+	}
+
+	public ConfigAdvancedContext getConfigAdvancedContext() {
+		return configAdvancedContext;
+	}
+
+	public void setConfigAdvancedContext(ConfigAdvancedContext configAdvancedContext) {
+		this.configAdvancedContext = configAdvancedContext;
 	}
 
 }
