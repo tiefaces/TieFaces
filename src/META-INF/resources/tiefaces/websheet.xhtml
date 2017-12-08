@@ -237,7 +237,7 @@
 
 
 								<h:outputText id="msgcolumn#{loop.index}" style="color:red"
-									styleClass="inputColumnWidth"
+									styleClass="inputColumnWidth errorMsg"
 									rendered="#{dataRow.cells[loop.index].invalid}"
 									value="#{dataRow.cells[loop.index].errormsg}" />
 								<p:graphicImage id="pictures#{loop.index}"

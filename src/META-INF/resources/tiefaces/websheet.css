@@ -96,3 +96,9 @@
 #websheet button.ui-button {
     padding: 1px 12px !important;
 }
+
+#websheet .inputColumnWidth.errorMsg {
+	display: block;
+}
+
+
