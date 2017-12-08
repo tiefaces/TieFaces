@@ -160,6 +160,7 @@ public class TieWebSheetBean extends TieWebSheetView
 	
 	private String defaultDatePattern = null;
 	
+	private String fileName = "WebSheetTemplate" + "." + TieConstants.EXCEL_2007_TYPE;
 
 	/** logger. */
 	private static final Logger LOG = Logger
@@ -719,8 +720,7 @@ public class TieWebSheetBean extends TieWebSheetView
 	public void doExport() {
 		try {
 
-			String fileName = "WebSheetTemplate" + "."
-					+ TieConstants.EXCEL_2007_TYPE;
+			String fileName = getFileName();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			this.getWb().write(out);
 			InputStream stream = new BufferedInputStream(
@@ -995,6 +995,14 @@ public class TieWebSheetBean extends TieWebSheetView
 	public String getThousandSeparatorByDefaultLocale() {
 		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
 		return "" + nf.getDecimalFormatSymbols().getGroupingSeparator();
+	}
+
+	public String getFileName() {
+	    return fileName;
+	}
+
+	public void setFileName(String fileName) {
+	    this.fileName = fileName;
 	}
 
 }
