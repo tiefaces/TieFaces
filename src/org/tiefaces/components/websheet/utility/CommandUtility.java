@@ -7,6 +7,7 @@ package org.tiefaces.components.websheet.utility;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -31,6 +32,7 @@ import org.tiefaces.components.websheet.configuration.RowsMapping;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CollectionObject;
 import org.tiefaces.components.websheet.dataobjects.FacesRow;
+import org.tiefaces.components.websheet.dataobjects.TieCell;
 import org.tiefaces.exception.AddRowException;
 import org.tiefaces.exception.DeleteRowException;
 import org.tiefaces.exception.EvaluationException;
@@ -523,8 +525,55 @@ public final class CommandUtility {
 				evaluationResult = "";
 			}
 			CellUtility.setCellValue(cell, evaluationResult.toString());
+
+			createTieCell(cell, context, engine);
+
 		}
 	}
+
+	private static void createTieCell(final Cell cell, final Map<String, Object> context,
+	    final ExpressionEngine engine) {
+
+        	@SuppressWarnings("unchecked")
+        	HashMap<String, TieCell> tieCells = (HashMap<String, TieCell>) context.get("tiecells");
+        
+        	// if tiecells exists is because tieWebSheetBean.isAdvancedContext() is
+        	// true
+        	if (tieCells != null) {
+        
+        	    if (SaveAttrsUtility.isHasSaveAttr(cell)) {
+        
+        		String saveAttrList = SaveAttrsUtility.getSaveAttrListFromRow(cell.getRow());
+        
+        		if (saveAttrList != null) {
+        		    String saveAttr = SaveAttrsUtility.getSaveAttrFromList(cell.getColumnIndex(), saveAttrList);
+        		    if (saveAttr != null) {
+        
+        			int index = saveAttr.lastIndexOf('.');
+        			if (index > 0) {
+        			    String strObject = saveAttr.substring(0, index);
+        			    String strMethod = saveAttr.substring(index + 1);
+        			    strObject = "${" + strObject + "}";
+        
+        			    Object object = CommandUtility.evaluate(strObject, context, engine);
+        
+        			    if (object != null) {
+        				TieCell tieCell = CellUtility.getOrAddTieCellInMap(cell, tieCells);
+        				tieCell.setContextObject(object);
+        				tieCell.setObjectStr(strObject);
+        				tieCell.setMethodStr(strMethod);
+        			    }
+        
+        			}
+        
+        		    }
+        		}
+        
+        	    }
+        
+        	}
+	}
+
 
 	/**
 	 * Evaluate user formula.
