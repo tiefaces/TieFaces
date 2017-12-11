@@ -299,16 +299,41 @@ public class ParserUtilityTest {
 		String newComment2 = "$validate{rule=\"$value<=employee.total\" error=\"payment must be less than total\"}";
 		ParserUtility.parseValidateAttributes(cell1, newComment2,
 				cellAttributesMap);
-		// key = sheetName!$columnIndex$rowIndex
 		attrs = cellAttributesMap
 				.getCellValidateAttributes().get(key);
 		assertEquals(attrs.size(), 2);
 		assertEquals(attrs.get(1).getValue(), "$value<=employee.total");
 		assertEquals(attrs.get(1).getMessage(), "payment must be less than total");
 		
+		String newComment3 = "$validate{rule=\"#{validationBean.checkRule1($value)}\" error=\"Value must be greater than zero (0).\"}";
+		
+		assertTrue(ParserUtility.isMethodString(newComment3));
+		assertTrue(ParserUtility.isValidateMethodString(newComment3));
+		ParserUtility.parseValidateAttributes(cell1, newComment3,
+				cellAttributesMap);
+		attrs = cellAttributesMap
+				.getCellValidateAttributes().get(key);
+		assertEquals(attrs.size(), 3);
+		assertEquals(attrs.get(2).getValue(), "#{validationBean.checkRule1($value)}");
+		assertEquals(attrs.get(2).getMessage(), "Value must be greater than zero (0).");
+
+		
+		
 		wb.close();
 
 	
 	}
+
+	@Test
+	public void testFindFirstNonCellNamePosition() throws Exception {
+		assertEquals(ParserUtility.findFirstNonCellNamePosition("A1 ", 0),2);
+		assertEquals(ParserUtility.findFirstNonCellNamePosition("'$A'", 1),3);	
+	}
+
+
+	
+	
+	
+	
 
 }

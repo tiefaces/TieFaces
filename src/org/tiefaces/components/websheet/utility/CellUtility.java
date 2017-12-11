@@ -379,11 +379,17 @@ public final class CellUtility {
 			return null;
 		}
 		// If source cell is dest cell refresh it
-		if (sourceRow.equals(newRow)) {
-		    sourceRow.removeCell(sourceCell);
+		boolean refreshCell = false;		
+		if (sourceRow.equals(newRow)&&(sourceCell.getColumnIndex()==cellIndex)) {
+			sourceRow.removeCell(sourceCell);
+			refreshCell = true;
 		}
 		Cell newCell = newRow.createCell(cellIndex);
 		try {
+			if (!refreshCell && (sourceCell.getCellComment() != null)) {
+				// If there is a cell comment, copy
+				cloneComment(sourceCell, newCell);
+			}
 			copyCellSetStyle(destSheet, sourceCell, newCell);
 			copyCellSetValue(sourceCell, newCell, checkLock);
 		} catch (Exception ex) {
@@ -510,11 +516,6 @@ public final class CellUtility {
 		CellStyle newCellStyle = getCellStyleFromSourceCell(destSheet, sourceCell);
 		newCell.setCellStyle(newCellStyle);
 
-		// If there is a cell comment, copy
-		if (sourceCell.getCellComment() != null) {
-			cloneComment(sourceCell, newCell);
-		}
-
 		// If there is a cell hyperlink, copy
 		if (sourceCell.getHyperlink() != null) {
 			newCell.setHyperlink(sourceCell.getHyperlink());
@@ -523,11 +524,14 @@ public final class CellUtility {
 		// Set the cell data type
 		newCell.setCellType(sourceCell.getCellTypeEnum());
 	}
-	
+
 	/**
 	 * clone existing comments into new cell comment.
-	 * @param sourceCell source cell.
-	 * @param newCell target cell.
+	 * 
+	 * @param sourceCell
+	 *            source cell.
+	 * @param newCell
+	 *            target cell.
 	 */
 
 	private static void cloneComment(final Cell sourceCell, final Cell newCell) {
@@ -553,14 +557,17 @@ public final class CellUtility {
 		comment.setColumn(newCell.getColumnIndex());
 		comment.setRow(newCell.getRowIndex());
 		// As POI doesn't has well support for comments,
-		// So we have to use low level api to match the comments. 
+		// So we have to use low level api to match the comments.
 		matchCommentSettings(newCell, sourceCell);
 	}
 
 	/**
 	 * Use low level API to match the comments setting.
-	 * @param newCell target cell.
-	 * @param sourceCell source cell.
+	 * 
+	 * @param newCell
+	 *            target cell.
+	 * @param sourceCell
+	 *            source cell.
 	 */
 	private static void matchCommentSettings(final Cell newCell, final Cell sourceCell) {
 		try {
@@ -574,12 +581,12 @@ public final class CellUtility {
 			String[] anchorArray = sourceClientData.getAnchorList().get(0).split(",");
 			int shiftRows = newCell.getRowIndex() - sourceCell.getRowIndex();
 			/*
-			 * AchorArray mappings: 0->col1 1->dx1 2->row1 3->dy1 4->col2
-			 * 5->dx2 6-> row2 7->dy2
+			 * AchorArray mappings: 0->col1 1->dx1 2->row1 3->dy1 4->col2 5->dx2 6-> row2
+			 * 7->dy2
 			 */
 			anchorArray[2] = Integer.toString(Integer.parseInt(anchorArray[2].trim()) + shiftRows);
 			anchorArray[6] = Integer.toString(Integer.parseInt(anchorArray[6].trim()) + shiftRows);
-			targetClientData.getAnchorList().set(0, FacesUtility.strJoin(anchorArray,","));
+			targetClientData.getAnchorList().set(0, FacesUtility.strJoin(anchorArray, ","));
 		} catch (Exception e) {
 			LOG.log(Level.SEVERE, "matchCommentSettings error = " + e.getLocalizedMessage(), e);
 		}
@@ -587,7 +594,9 @@ public final class CellUtility {
 
 	/**
 	 * Find vmldrawing part according to cell.
-	 * @param cell cell.
+	 * 
+	 * @param cell
+	 *            cell.
 	 * @return vmldrawing.
 	 */
 	private static XSSFVMLDrawing getVmlDrawingFromCell(final Cell cell) {
@@ -601,10 +610,13 @@ public final class CellUtility {
 	}
 
 	/**
-	 * Find CtShape from vml object.
-	 * This class use reflection to invoke the protected method in POI.
-	 * @param sourceCell cell.
-	 * @param sourceVml vml.
+	 * Find CtShape from vml object. This class use reflection to invoke the
+	 * protected method in POI.
+	 * 
+	 * @param sourceCell
+	 *            cell.
+	 * @param sourceVml
+	 *            vml.
 	 * @return ctShape.
 	 * @throws ReflectiveOperationException
 	 * @throws SecurityException
@@ -783,29 +795,28 @@ public final class CellUtility {
 
 	/**
 	 * Gets the faces row from body row.
+	 * 
 	 * @param row
-	 * 		the row
+	 *            the row
 	 * @param bodyRows
-	 * 		the body rows
+	 *            the body rows
 	 * @param topRow
-	 * 		the top row
-	 * @return
-	 * 		faces row
+	 *            the top row
+	 * @return faces row
 	 */
-	public static FacesRow getFacesRowFromBodyRow(final int row, final List<FacesRow> bodyRows,
-			final int topRow) {
+	public static FacesRow getFacesRowFromBodyRow(final int row, final List<FacesRow> bodyRows, final int topRow) {
 		FacesRow frow = null;
 
 		try {
 			frow = bodyRows.get(row - topRow);
 
 		} catch (Exception e) {
-			LOG.log(Level.SEVERE, "getFacesRowFromBodyRow Error row = " + row +  "top row = " + topRow
-					+ " ; error = " + e.getLocalizedMessage(), e);
+			LOG.log(Level.SEVERE, "getFacesRowFromBodyRow Error row = " + row + "top row = " + topRow + " ; error = "
+					+ e.getLocalizedMessage(), e);
 		}
 		return frow;
-	}	
-	
+	}
+
 	/**
 	 * Gets the faces cell from body row.
 	 *
@@ -871,16 +882,16 @@ public final class CellUtility {
 		return null;
 	}
 
-
 	public static String getSkeyFromPoiCell(final Cell poiCell) {
-		String skey = poiCell.getSheet().getSheetName() + "!" + CellUtility.getCellIndexNumberKey(poiCell.getColumnIndex(), poiCell.getRowIndex());
+		String skey = poiCell.getSheet().getSheetName() + "!"
+				+ CellUtility.getCellIndexNumberKey(poiCell.getColumnIndex(), poiCell.getRowIndex());
 		return skey;
 	}
 
 	public static TieCell getOrAddTieCellInMap(final Cell poiCell, HashMap<String, TieCell> tieCells) {
 		String skey = CellUtility.getSkeyFromPoiCell(poiCell);
 		TieCell tieCell = tieCells.get(skey);
-		if (tieCell == null)  {
+		if (tieCell == null) {
 			tieCell = new TieCell();
 			tieCell.setSkey(skey);
 			tieCells.put(skey, tieCell);

@@ -150,10 +150,10 @@ public final class TieConstants {
 	public static final String EL_START = "#{";
 
 	/** The Constant EL_START_BRACKET. */
-	public static final String EL_START_BRACKET = "{";
+	public static final char EL_START_BRACKET = '{';
 
 	/** The Constant EL_END. */
-	public static final String EL_END = "}";
+	public static final char EL_END = '}';
 
 	/** The Constant TAB_TYPE_NONE. */
 	public static final String TAB_TYPE_NONE = "none";
@@ -254,7 +254,7 @@ public final class TieConstants {
 	/** component attributes locale. */
 	public static final String COMPONENT_ATTR_LOCALE = "locale";
 	/** method regex. */
-	public static final String METHOD_REGEX = "\\$+[^{$]+\\{+[^{}]+\\}";
+	public static final String METHOD_REGEX = "\\$+[^{$]+\\{.*\\}";
 	/** method prefix. */
 	public static final String METHOD_PREFIX = "${";
 	/** The expression notation end. */

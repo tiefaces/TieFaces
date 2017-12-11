@@ -11,13 +11,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,10 +36,8 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.chart.ChartHelper;
 import org.tiefaces.components.websheet.chart.ChartsData;
-import org.tiefaces.components.websheet.configuration.ConfigAdvancedContext;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
 import org.tiefaces.components.websheet.dataobjects.CachedCells;
@@ -125,16 +119,6 @@ public class TieWebSheetBean extends TieWebSheetView
 	private Boolean fullValidation = false;
 	/** create bean's this.getHelper(). */
 	private transient TieWebSheetBeanHelper helper = null;
-	/**
-	 * Client id for whole websheet component. This is the top level client id.
-	 * There're tabs and web forms under this top level.
-	 */
-	private String clientId = null;
-	/** Client id for web forms. */
-	private transient String webFormClientId = null;
-
-	/** skip configuration. show the excel form as is. */
-	private boolean skipConfiguration = false;
 
 	/**
 	 * cell default control.
@@ -150,22 +134,8 @@ public class TieWebSheetBean extends TieWebSheetView
 
 	private CellMap cellsMap = new CellMap(this);
 	
-	/**
-	 * workaround for rendered attributes.
-	 * True -- work sheet will be rendered.
-	 * False -- work sheet not rendered.
-	 */
-	private boolean rendered = true;	
-	
-	private Locale defaultLocale = null;
-	
-	private String defaultDatePattern = null;
-	
-	private String fileName = "WebSheetTemplate" + "." + TieConstants.EXCEL_2007_TYPE;
-
-	private boolean isAdvancedContext = false;
-	
-	private ConfigAdvancedContext configAdvancedContext;
+	/** The tie web sheet validation bean. */
+	private TieWebSheetValidation tieWebSheetValidationBean;
 	
 	/** logger. */
 	private static final Logger LOG = Logger
@@ -182,43 +152,6 @@ public class TieWebSheetBean extends TieWebSheetView
 		initialLoad();
 	}
 
-	/**
-	 * assign web form client id.
-	 * 
-	 * @param pWebFormClientId
-	 *            String client id name.
-	 */
-	public void setWebFormClientId(final String pWebFormClientId) {
-		this.webFormClientId = pWebFormClientId;
-	}
-
-	/**
-	 * Gets the web form client id.
-	 *
-	 * @return web form client Id.
-	 */
-	public String getWebFormClientId() {
-		return webFormClientId;
-	}
-
-	/**
-	 * Gets the client id.
-	 *
-	 * @return client id.
-	 */
-	public String getClientId() {
-		return clientId;
-	}
-
-	/**
-	 * Sets the client id.
-	 *
-	 * @param pClientId
-	 *            client Id.
-	 */
-	public void setClientId(final String pClientId) {
-		this.clientId = pClientId;
-	}
 
 	/**
 	 * get body rows.
@@ -578,24 +511,6 @@ public class TieWebSheetBean extends TieWebSheetView
 		return maxColCounts;
 	}
 
-	/**
-	 * Checks if is skip configuration.
-	 *
-	 * @return the skipConfiguration
-	 */
-	public boolean isSkipConfiguration() {
-		return skipConfiguration;
-	}
-
-	/**
-	 * Sets the skip configuration.
-	 *
-	 * @param pskipConfiguration
-	 *            the skipConfiguration to set
-	 */
-	public void setSkipConfiguration(final boolean pskipConfiguration) {
-		this.skipConfiguration = pskipConfiguration;
-	}
 
 	/**
 	 * recalculate max coulumn count across sheets in the workbook.
@@ -725,7 +640,7 @@ public class TieWebSheetBean extends TieWebSheetView
 	public void doExport() {
 		try {
 
-			String fileName = getFileName();
+			String fileName = this.getExportFileName();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			this.getWb().write(out);
 			InputStream stream = new BufferedInputStream(
@@ -938,92 +853,24 @@ public class TieWebSheetBean extends TieWebSheetView
 		}
 	}
 
+
 	/**
-	 * Checks if is show tab view.
+	 * Gets the tie web sheet validation bean.
 	 *
-	 * @return true, if is show tab view
+	 * @return the tie web sheet validation bean
 	 */
-	public boolean isShowTabView() {
-		if (this.getTabs() == null) {
-			return false;
-		}
-		return !this.isHideSingleSheetTabTitle()
-				|| (this.getTabs().size() > 1);
-
-	}
-	
-
-	/**
-	 * @return the rendered
-	 */
-	public boolean isRendered() {
-		return rendered;
+	public TieWebSheetValidation getTieWebSheetValidationBean() {
+		return tieWebSheetValidationBean;
 	}
 
 	/**
-	 * @param rendered the rendered to set
+	 * Sets the tie web sheet validation bean.
+	 *
+	 * @param tieWebSheetValidationBean the new tie web sheet validation bean
 	 */
-	public void setRendered(boolean rendered) {
-		this.rendered = rendered;
-	}
-	
-
-	public Locale getDefaultLocale() {
-	    if (defaultLocale== null) {
-		defaultLocale = Locale.getDefault();
-	    }
-	    return defaultLocale;
+	public void setTieWebSheetValidationBean(TieWebSheetValidation tieWebSheetValidationBean) {
+		this.tieWebSheetValidationBean = tieWebSheetValidationBean;
 	}
 
-	public void setDefaultLocale(Locale defaultLocale) {
-		this.defaultLocale = defaultLocale;
-	}
-
-	public String getDefaultDatePattern() {
-	    if (defaultDatePattern == null) {
-		DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT,
-			Locale.getDefault());
-		defaultDatePattern = ((SimpleDateFormat) formatter).toLocalizedPattern();
-	    }
-	    return defaultDatePattern;
-	}
-
-	public void setDefaultDatePattern(String defaultDatePattern) {
-		this.defaultDatePattern = defaultDatePattern;
-	}
-
-	public String getDecimalSeparatorByDefaultLocale() {
-		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
-		return "" + nf.getDecimalFormatSymbols().getDecimalSeparator();
-	}
-
-	public String getThousandSeparatorByDefaultLocale() {
-		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
-		return "" + nf.getDecimalFormatSymbols().getGroupingSeparator();
-	}
-
-	public String getFileName() {
-	    return fileName;
-	}
-
-	public void setFileName(String fileName) {
-	    this.fileName = fileName;
-	}
-	
-	public boolean isAdvancedContext() {
-		return isAdvancedContext;
-	}
-
-	public void setAdvancedContext(boolean isAdvancedContext) {
-		this.isAdvancedContext = isAdvancedContext;
-	}
-
-	public ConfigAdvancedContext getConfigAdvancedContext() {
-		return configAdvancedContext;
-	}
-
-	public void setConfigAdvancedContext(ConfigAdvancedContext configAdvancedContext) {
-		this.configAdvancedContext = configAdvancedContext;
-	}
 
 }

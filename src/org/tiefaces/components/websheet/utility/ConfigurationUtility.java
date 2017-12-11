@@ -647,16 +647,16 @@ public final class ConfigurationUtility {
 
 		int ibegin = 0;
 		int ifind;
-		int iblank;
+		int inameEnd;
 		String tempStr;
 		String findStr;
 		String replaceStr;
 		String returnStr = attrValue;
 		while ((ifind = attrValue.indexOf(TieConstants.CELL_ADDR_PRE_FIX,
 				ibegin)) > 0) {
-			iblank = attrValue.indexOf(' ', ifind);
-			if (iblank > 0) {
-				findStr = attrValue.substring(ifind, iblank);
+			inameEnd = ParserUtility.findFirstNonCellNamePosition(attrValue, ifind);
+			if (inameEnd > 0) {
+				findStr = attrValue.substring(ifind, inameEnd);
 			} else {
 				findStr = attrValue.substring(ifind);
 			}
