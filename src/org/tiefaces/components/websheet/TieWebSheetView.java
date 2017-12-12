@@ -6,11 +6,17 @@
 package org.tiefaces.components.websheet;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import org.primefaces.component.tabview.TabView;
 import org.tiefaces.common.TieConstants;
+import org.tiefaces.components.websheet.configuration.ConfigAdvancedContext;
 
+// TODO: Auto-generated Javadoc
 /**
  * sheet view class.
  * 
@@ -18,12 +24,12 @@ import org.tiefaces.common.TieConstants;
  *
  */
 public class TieWebSheetView {
-	
+
 	/**
 	 * tab type.
 	 */
 	private String tabType;
-	
+
 	/**
 	 * tabs.
 	 */
@@ -36,31 +42,64 @@ public class TieWebSheetView {
 
 	/** maxrowsperpage. */
 	private Integer maxRowsPerPage = TieConstants.DEFAULT_MAX_ROWS_PER_PAGE;
-	
+
 	/**
 	 * tabwidth style.
 	 */
 	private String tableWidthStyle = TieConstants.DEFAULT_TABLE_WIDTH_STYLE;
 
 	/** line number column width. */
-	private int lineNumberColumnWidth 
-	= TieConstants.DEFAULT_LINENUMBER_COLUMN_WIDTH;
+	private int lineNumberColumnWidth = TieConstants.DEFAULT_LINENUMBER_COLUMN_WIDTH;
 	/** add row column width. */
 	private int addRowColumnWidth = TieConstants.DEFAULT_ADDROW_COLUMN_WIDTH;
 	/** line number column width style. */
 	private String lineNumberColumnWidthStyle = "";
 	/** add row column width style. */
-	private String addRowColumnWidthStyle = "";	
+	private String addRowColumnWidthStyle = "";
 	/** allow add row in body. */
-	private boolean bodyAllowAddRows;	
+	private boolean bodyAllowAddRows;
 	/** show line number in web gui. */
 	private boolean showLineNumber = false;
 	/** The hide single sheet tab title. */
 	private boolean hideSingleSheetTabTitle = true;
-	/** active tab index */
+	
+	/**  active tab index. */
 	private int activeTabIndex = 0;
+
+	/**
+	 * Client id for whole websheet component. This is the top level client id.
+	 * There're tabs and web forms under this top level.
+	 */
+	private String clientId = null;
+	/** Client id for web forms. */
+	private transient String webFormClientId = null;
+
+	/** skip configuration. show the excel form as is. */
+	private boolean skipConfiguration = false;
+
+	/**
+	 * workaround for rendered attributes. True -- work sheet will be rendered.
+	 * False -- work sheet not rendered.
+	 */
+	private boolean rendered = true;
+
+	/** The default locale. */
+	private Locale defaultLocale = null;
+
+	/** The default date pattern. */
+	private String defaultDatePattern = null;
+
+	/** The export file name. */
+	private String exportFileName = "WebSheetTemplate" + "." + TieConstants.EXCEL_2007_TYPE;
+
+	/** The is advanced context. */
+	private boolean isAdvancedContext = false;
+
+	/** The config advanced context. */
+	private ConfigAdvancedContext configAdvancedContext;
 	
-	
+
+
 	/**
 	 * empty constructor.
 	 */
@@ -68,6 +107,43 @@ public class TieWebSheetView {
 		super();
 	}
 
+	/**
+	 * assign web form client id.
+	 * 
+	 * @param pWebFormClientId
+	 *            String client id name.
+	 */
+	public void setWebFormClientId(final String pWebFormClientId) {
+		this.webFormClientId = pWebFormClientId;
+	}
+
+	/**
+	 * Gets the web form client id.
+	 *
+	 * @return web form client Id.
+	 */
+	public String getWebFormClientId() {
+		return webFormClientId;
+	}
+
+	/**
+	 * Gets the client id.
+	 *
+	 * @return client id.
+	 */
+	public String getClientId() {
+		return clientId;
+	}
+
+	/**
+	 * Sets the client id.
+	 *
+	 * @param pClientId
+	 *            client Id.
+	 */
+	public void setClientId(final String pClientId) {
+		this.clientId = pClientId;
+	}
 
 	/**
 	 * get tabs.
@@ -115,8 +191,7 @@ public class TieWebSheetView {
 		 * @param ptype
 		 *            type.
 		 */
-		public TabModel(final String pid, final String ptitle,
-				final String ptype) {
+		public TabModel(final String pid, final String ptitle, final String ptype) {
 			this.id = pid;
 			if (this.id != null) {
 				this.id = this.id.replaceAll(" ", "_");
@@ -137,7 +212,8 @@ public class TieWebSheetView {
 		/**
 		 * set id.
 		 * 
-		 * @param pid id.
+		 * @param pid
+		 *            id.
 		 */
 		public void setId(final String pid) {
 			this.id = pid;
@@ -162,7 +238,6 @@ public class TieWebSheetView {
 		}
 	}
 
-
 	/**
 	 * get web form tab view.
 	 * 
@@ -181,7 +256,6 @@ public class TieWebSheetView {
 	public void setWebFormTabView(final TabView pwebFormTabView) {
 		this.webFormTabView = pwebFormTabView;
 	}
-
 
 	/**
 	 * get tab type.
@@ -202,7 +276,6 @@ public class TieWebSheetView {
 		return tabType;
 	}
 
-
 	/**
 	 * get tab style.
 	 * 
@@ -213,8 +286,8 @@ public class TieWebSheetView {
 		String tabStyle = TieConstants.TAB_STYLE_VISIBLE;
 		int sheetId = webFormTabView.getActiveIndex();
 		if ((sheetId >= 0) && (sheetId < tabs.size())) {
-				tabStyle = TieConstants.TAB_STYLE_INVISIBLE;
-			
+			tabStyle = TieConstants.TAB_STYLE_INVISIBLE;
+
 		}
 
 		return tabStyle;
@@ -229,8 +302,6 @@ public class TieWebSheetView {
 	public void setTabType(final String ptabType) {
 		this.tabType = ptabType;
 	}
-
-
 
 	/**
 	 * get maxrowsperpage.
@@ -251,8 +322,6 @@ public class TieWebSheetView {
 		this.maxRowsPerPage = pmaxRowsPerPage;
 	}
 
-
-
 	/**
 	 * get table width style.
 	 * 
@@ -272,8 +341,6 @@ public class TieWebSheetView {
 		this.tableWidthStyle = ptableWidthStyle;
 	}
 
-
-
 	/**
 	 * get line number column width.
 	 * 
@@ -289,8 +356,7 @@ public class TieWebSheetView {
 	 * @param plineNumberColumnWidth
 	 *            column width.
 	 */
-	public void setLineNumberColumnWidth(
-			final int plineNumberColumnWidth) {
+	public void setLineNumberColumnWidth(final int plineNumberColumnWidth) {
 		this.lineNumberColumnWidth = plineNumberColumnWidth;
 	}
 
@@ -328,8 +394,7 @@ public class TieWebSheetView {
 	 * @param lineNumberCoumnWidthStyle
 	 *            style.
 	 */
-	public void setLineNumberColumnWidthStyle(
-			final String lineNumberCoumnWidthStyle) {
+	public void setLineNumberColumnWidthStyle(final String lineNumberCoumnWidthStyle) {
 		this.lineNumberColumnWidthStyle = lineNumberCoumnWidthStyle;
 	}
 
@@ -352,8 +417,6 @@ public class TieWebSheetView {
 		this.addRowColumnWidthStyle = addWidthStyle;
 	}
 
-
-
 	/**
 	 * is allow add row.
 	 * 
@@ -372,8 +435,6 @@ public class TieWebSheetView {
 	public void setBodyAllowAddRows(final boolean pbodyAllowAddRows) {
 		this.bodyAllowAddRows = pbodyAllowAddRows;
 	}
-
-
 
 	/**
 	 * is show line number.
@@ -394,7 +455,6 @@ public class TieWebSheetView {
 		this.showLineNumber = pshowLineNumber;
 	}
 
-	
 	/**
 	 * Checks if is hide single sheet tab title.
 	 *
@@ -410,17 +470,196 @@ public class TieWebSheetView {
 	 * @param phideSingleSheetTabTitle
 	 *            the hideSingleSheetTabTitle to set
 	 */
-	public void setHideSingleSheetTabTitle(
-			final boolean phideSingleSheetTabTitle) {
+	public void setHideSingleSheetTabTitle(final boolean phideSingleSheetTabTitle) {
 		this.hideSingleSheetTabTitle = phideSingleSheetTabTitle;
 	}
 
+	/**
+	 * Checks if is show tab view.
+	 *
+	 * @return true, if is show tab view
+	 */
+	public boolean isShowTabView() {
+		if (this.getTabs() == null) {
+			return false;
+		}
+		return !this.isHideSingleSheetTabTitle() || (this.getTabs().size() > 1);
+
+	}
+
+	/**
+	 * Checks if is skip configuration.
+	 *
+	 * @return the skipConfiguration
+	 */
+	public boolean isSkipConfiguration() {
+		return skipConfiguration;
+	}
+
+	/**
+	 * Sets the skip configuration.
+	 *
+	 * @param pskipConfiguration
+	 *            the skipConfiguration to set
+	 */
+	public void setSkipConfiguration(final boolean pskipConfiguration) {
+		this.skipConfiguration = pskipConfiguration;
+	}
+
+	/**
+	 * Gets the active tab index.
+	 *
+	 * @return the active tab index
+	 */
 	public int getActiveTabIndex() {
 		return activeTabIndex;
 	}
 
+	/**
+	 * Sets the active tab index.
+	 *
+	 * @param activeTabIndex the new active tab index
+	 */
 	public void setActiveTabIndex(int activeTabIndex) {
 		this.activeTabIndex = activeTabIndex;
 	}
 
+	/**
+	 * Checks if is rendered.
+	 *
+	 * @return the rendered
+	 */
+	public boolean isRendered() {
+		return rendered;
+	}
+
+	/**
+	 * Sets the rendered.
+	 *
+	 * @param rendered            the rendered to set
+	 */
+	public void setRendered(boolean rendered) {
+		this.rendered = rendered;
+	}
+
+	/**
+	 * Gets the default locale.
+	 *
+	 * @return the default locale
+	 */
+	public Locale getDefaultLocale() {
+		if (defaultLocale == null) {
+			defaultLocale = Locale.getDefault();
+		}
+		return defaultLocale;
+	}
+
+	/**
+	 * Sets the default locale.
+	 *
+	 * @param defaultLocale the new default locale
+	 */
+	public void setDefaultLocale(Locale defaultLocale) {
+		this.defaultLocale = defaultLocale;
+	}
+
+	/**
+	 * Gets the default date pattern.
+	 *
+	 * @return the default date pattern
+	 */
+	public String getDefaultDatePattern() {
+		if (defaultDatePattern == null) {
+			DateFormat formatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+			defaultDatePattern = ((SimpleDateFormat) formatter).toLocalizedPattern();
+		}
+		return defaultDatePattern;
+	}
+
+	/**
+	 * Sets the default date pattern.
+	 *
+	 * @param defaultDatePattern the new default date pattern
+	 */
+	public void setDefaultDatePattern(String defaultDatePattern) {
+		this.defaultDatePattern = defaultDatePattern;
+	}
+
+	/**
+	 * Gets the decimal separator by default locale.
+	 *
+	 * @return the decimal separator by default locale
+	 */
+	public String getDecimalSeparatorByDefaultLocale() {
+		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
+		return "" + nf.getDecimalFormatSymbols().getDecimalSeparator();
+	}
+
+	/**
+	 * Gets the thousand separator by default locale.
+	 *
+	 * @return the thousand separator by default locale
+	 */
+	public String getThousandSeparatorByDefaultLocale() {
+		final DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(getDefaultLocale());
+		return "" + nf.getDecimalFormatSymbols().getGroupingSeparator();
+	}
+
+	/**
+	 * Gets the export file name.
+	 *
+	 * @return the export file name
+	 */
+	public String getExportFileName() {
+		return this.exportFileName;
+	}
+
+	/**
+	 * Sets the export file name.
+	 *
+	 * @param pExportFileName the new export file name
+	 */
+	public void setExportFileName(String pExportFileName) {
+		this.exportFileName = pExportFileName;
+	}
+
+	/**
+	 * Checks if is advanced context.
+	 *
+	 * @return true, if is advanced context
+	 */
+	public boolean isAdvancedContext() {
+		return isAdvancedContext;
+	}
+
+	/**
+	 * Sets the advanced context.
+	 *
+	 * @param isAdvancedContext the new advanced context
+	 */
+	public void setAdvancedContext(boolean isAdvancedContext) {
+		this.isAdvancedContext = isAdvancedContext;
+	}
+
+	/**
+	 * Gets the config advanced context.
+	 *
+	 * @return the config advanced context
+	 */
+	public ConfigAdvancedContext getConfigAdvancedContext() {
+		return configAdvancedContext;
+	}
+
+	/**
+	 * Sets the config advanced context.
+	 *
+	 * @param configAdvancedContext the new config advanced context
+	 */
+	public void setConfigAdvancedContext(ConfigAdvancedContext configAdvancedContext) {
+		this.configAdvancedContext = configAdvancedContext;
+	}
+
+
+	
+	
 }

@@ -5,13 +5,10 @@
 
 package org.tiefaces.components.websheet.utility;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -214,7 +211,7 @@ public final class ParserUtility {
 	 * get the string between two bracket. .e.g. $save{employee.name} return
 	 * employee.name.
 	 * 
-	 * @param newComment
+	 * @param str
 	 *            input string.
 	 * @return return string.
 	 */
@@ -222,7 +219,7 @@ public final class ParserUtility {
 	private static String getStringBetweenBracket(final String newComment) {
 
 		int elStart = newComment.indexOf(TieConstants.EL_START_BRACKET);
-		int elEnd = newComment.indexOf(TieConstants.EL_END);
+		int elEnd = findPairBracketPosition(newComment, elStart);
 		if (elStart >= elEnd) {
 			return null;
 		}
@@ -231,6 +228,27 @@ public final class ParserUtility {
 
 	}
 
+	private static int findPairBracketPosition(final String str, final int startPos) {
+
+	    
+		int bracketNum = 0;
+	    for (int i = startPos; i < str.length(); i++)
+	    {
+	        char current = str.charAt(i);
+	        if (current == TieConstants.EL_START_BRACKET)
+	        {
+	            bracketNum++;
+	        } else if (current == TieConstants.EL_END )
+	        {
+	        	bracketNum--;
+	        	if (bracketNum <=0 ) {
+	                return i;
+	        	}
+	        }
+	    }   
+	    return -1;		
+	}
+	
 	/**
 	 * Parse the attributes from string.
 	 * 
@@ -526,4 +544,22 @@ public final class ParserUtility {
 			sheetCommentMap.put(commentKey, map);
 		}
 	}
+	
+	/**
+	 * find first non letterordigit position from string
+	 * @param input input string 
+	 * @param startPosition startposition
+	 * @return first position
+	 */
+	
+	public static int findFirstNonCellNamePosition(String input, int startPosition) {
+		char c;
+	    for (int i = startPosition; i < input.length(); i++) {
+	    	c = input.charAt(i);
+	        if ( c!='$' && !Character.isLetterOrDigit(c)) {
+	            return i;
+	        }
+	    }
+	    return -1; // not found
+	}	
 }
