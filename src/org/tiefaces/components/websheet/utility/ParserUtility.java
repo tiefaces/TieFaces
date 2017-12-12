@@ -5,15 +5,11 @@
 
 package org.tiefaces.components.websheet.utility;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Stack;
 import java.util.regex.Matcher;
 
 import org.apache.poi.ss.usermodel.Cell;
