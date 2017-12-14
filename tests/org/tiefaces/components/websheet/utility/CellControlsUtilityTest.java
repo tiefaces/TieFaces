@@ -26,28 +26,28 @@ public class CellControlsUtilityTest {
 	 */
 	@Test
 	public void testConvertToObject() throws Exception {
-		assertEquals(CellControlsUtility.convertToObject(
-				AttributesType.STRING, "String"), "String");
+		assertEquals("String", CellControlsUtility.convertToObject(
+				AttributesType.STRING, "String"));
 		assertEquals(CellControlsUtility.convertToObject(
 				AttributesType.BOOLEAN, "True"), Boolean.valueOf("True"));
-		assertEquals(CellControlsUtility
-				.convertToObject(AttributesType.BOOLEANTYPE, "True"), true);
+		assertEquals(true, CellControlsUtility
+				.convertToObject(AttributesType.BOOLEANTYPE, "True"));
 		assertEquals(CellControlsUtility.convertToObject(
 				AttributesType.INTEGER, "100"), Integer.valueOf("100"));
-		assertEquals(CellControlsUtility
-				.convertToObject(AttributesType.INTEGERTYPE, "100"), 100);
+		assertEquals(100, CellControlsUtility
+				.convertToObject(AttributesType.INTEGERTYPE, "100"));
 		assertEquals(CellControlsUtility.convertToObject(
 				AttributesType.LONG, "100"), Long.valueOf("100"));
-		assertEquals(CellControlsUtility
-				.convertToObject(AttributesType.LONGTYPE, "100"), 100L);
+		assertEquals(100L, CellControlsUtility
+				.convertToObject(AttributesType.LONGTYPE, "100"));
 		assertEquals(CellControlsUtility.convertToObject(
 				AttributesType.FLOAT, "100"), Float.valueOf("100"));
-		assertEquals(CellControlsUtility
-				.convertToObject(AttributesType.FLOATTYPE, "100"), 100f);
+		assertEquals(100f, CellControlsUtility
+				.convertToObject(AttributesType.FLOATTYPE, "100"));
 		assertEquals(CellControlsUtility.convertToObject(
 				AttributesType.DOUBLE, "100"), Double.valueOf("100"));
-		assertEquals(CellControlsUtility
-				.convertToObject(AttributesType.DOUBLETYPE, "100"), 100d);
+		assertEquals(100d, CellControlsUtility
+				.convertToObject(AttributesType.DOUBLETYPE, "100"));
 		assertEquals(CellControlsUtility.convertToObject(
 				AttributesType.BYTE, "0"), Byte.valueOf("0"));
 		assertEquals(CellControlsUtility

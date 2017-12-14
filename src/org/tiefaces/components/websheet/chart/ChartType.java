@@ -338,10 +338,7 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils.emptyList((List) plotArea.getBubbleChartList())) {
-				return true;
-			}
-			return false;
+			return  (!AppUtils.emptyList((List) plotArea.getBubbleChartList()));
 		}
 
 		@Override
@@ -360,11 +357,8 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils
-					.emptyList((List) plotArea.getDoughnutChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils
+					.emptyList((List) plotArea.getDoughnutChartList()));
 		}
 
 		@Override
@@ -383,10 +377,7 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils.emptyList((List) plotArea.getLine3DChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils.emptyList((List) plotArea.getLine3DChartList()));
 		}
 
 		@Override
@@ -405,12 +396,8 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils.emptyList((List) plotArea.getLineChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils.emptyList((List) plotArea.getLineChartList()));
 		}
-
 		@Override
 		public ChartObject createChartObject() {
 			return new LineChart();
@@ -427,10 +414,7 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils.emptyList((List) plotArea.getOfPieChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils.emptyList((List) plotArea.getOfPieChartList()));
 		}
 
 		@Override
@@ -449,10 +433,7 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils.emptyList((List) plotArea.getPie3DChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils.emptyList((List) plotArea.getPie3DChartList()));
 		}
 
 		@Override
@@ -471,11 +452,7 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils.emptyList((List) plotArea.getPieChartList())) {
-				return true;
-			}
-
-			return false;
+			return (!AppUtils.emptyList((List) plotArea.getPieChartList()));
 		}
 
 		@Override
@@ -494,10 +471,7 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils.emptyList((List) plotArea.getRadarChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils.emptyList((List) plotArea.getRadarChartList()));
 		}
 
 		@Override
@@ -516,12 +490,8 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils
-					.emptyList((List) plotArea.getScatterChartList())) {
-				return true;
-			}
-
-			return false;
+			return (!AppUtils
+					.emptyList((List) plotArea.getScatterChartList()));
 		}
 
 		@Override
@@ -541,10 +511,7 @@ public enum ChartType {
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
 			// Stock
-			if (!AppUtils.emptyList((List) plotArea.getStockChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils.emptyList((List) plotArea.getStockChartList()));
 		}
 
 		@Override
@@ -563,11 +530,8 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils
-					.emptyList((List) plotArea.getSurface3DChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils
+					.emptyList((List) plotArea.getSurface3DChartList()));
 		}
 
 		@Override
@@ -586,11 +550,8 @@ public enum ChartType {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean isThisType(final CTPlotArea plotArea) {
-			if (!AppUtils
-					.emptyList((List) plotArea.getSurfaceChartList())) {
-				return true;
-			}
-			return false;
+			return (!AppUtils
+					.emptyList((List) plotArea.getSurfaceChartList()));
 		}
 
 		@Override

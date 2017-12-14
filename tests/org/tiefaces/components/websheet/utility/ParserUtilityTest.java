@@ -94,18 +94,18 @@ public class ParserUtilityTest {
 		String key = "sheet1!$0$0";
 		String type = (String) cellAttributesMap.getCellInputType()
 				.get(key);
-		assertEquals(type, "calendar");
+		assertEquals("calendar", type);
 
 		List<CellFormAttributes> attrs = cellAttributesMap
 				.getCellInputAttributes().get(key);
 
-		assertEquals(attrs.size(), 3);
-		assertEquals(attrs.get(0).getType(), "showOn");
-		assertEquals(attrs.get(0).getValue(), "button");
-		assertEquals(attrs.get(1).getType(), "pattern");
-		assertEquals(attrs.get(1).getValue(), "yyyy/MM/dd");
-		assertEquals(attrs.get(2).getType(), "readonlyInput");
-		assertEquals(attrs.get(2).getValue(), "true");
+		assertEquals(3, attrs.size());
+		assertEquals("showOn", attrs.get(0).getType());
+		assertEquals("button", attrs.get(0).getValue());
+		assertEquals("pattern", attrs.get(1).getType());
+		assertEquals("yyyy/MM/dd", attrs.get(1).getValue());
+		assertEquals("readonlyInput", attrs.get(2).getType());
+		assertEquals("true", attrs.get(2).getValue());
 
 		String newComment2 = "$widget.inputnumber{symbol=\" years\" symbolPosition=\"s\" minValue=\"0\" maxValue=\"999\" decimalPlaces=\"2\"}";
 		ParserUtility.parseWidgetAttributes(cell2, newComment2,
@@ -114,18 +114,18 @@ public class ParserUtilityTest {
 		String key2 = "sheet1!$1$0";
 		String type2 = (String) cellAttributesMap.getCellInputType().get(
 				key2);
-		assertEquals(type2, "inputnumber");
+		assertEquals("inputnumber", type2);
 
 		List<CellFormAttributes> attrs2 = cellAttributesMap
 				.getCellInputAttributes().get(key2);
 
-		assertEquals(attrs2.size(), 5);
-		assertEquals(attrs2.get(0).getType(), "symbol");
-		assertEquals(attrs2.get(0).getValue(), " years");
-		assertEquals(attrs2.get(1).getType(), "symbolPosition");
-		assertEquals(attrs2.get(1).getValue(), "s");
-		assertEquals(attrs2.get(2).getType(), "minValue");
-		assertEquals(attrs2.get(2).getValue(), "0");
+		assertEquals(5, attrs2.size());
+		assertEquals("symbol", attrs2.get(0).getType());
+		assertEquals(" years", attrs2.get(0).getValue());
+		assertEquals("symbolPosition", attrs2.get(1).getType());
+		assertEquals("s", attrs2.get(1).getValue());
+		assertEquals("minValue", attrs2.get(2).getType());
+		assertEquals("0", attrs2.get(2).getValue());
 		
 		wb.close();
 
@@ -138,11 +138,11 @@ public class ParserUtilityTest {
 		String commandAttr = "items=\"departments\", var=\"department\", length=\"8\" allowAdd=\"true\"";
 		Map<String, String> attrs = ParserUtility
 				.parseCommandAttributes(commandAttr);
-		assertEquals(attrs.size(), 4);
-		assertEquals(attrs.get("items"), "departments");
-		assertEquals(attrs.get("var"), "department");
-		assertEquals(attrs.get("length"), "8");
-		assertEquals(attrs.get("allowAdd"), "true");
+		assertEquals(4, attrs.size());
+		assertEquals("departments", attrs.get("items"));
+		assertEquals("department", attrs.get("var"));
+		assertEquals("8", attrs.get("length"));
+		assertEquals("true", attrs.get("allowAdd"));
 
 	}
 
@@ -156,11 +156,11 @@ public class ParserUtilityTest {
 		String values = "itemLabels=\"Male;Female\" itemValues=\"M;F\"";
 
 		ParserUtility.parseInputAttributes(attrs, values);
-		assertEquals(attrs.size(), 2);
-		assertEquals(attrs.get(0).getType(), "itemLabels");
-		assertEquals(attrs.get(0).getValue(), "Male;Female");
-		assertEquals(attrs.get(1).getType(), "itemValues");
-		assertEquals(attrs.get(1).getValue(), "M;F");
+		assertEquals(2, attrs.size());
+		assertEquals("itemLabels", attrs.get(0).getType());
+		assertEquals("Male;Female", attrs.get(0).getValue());
+		assertEquals("itemValues", attrs.get(1).getType());
+		assertEquals("M;F", attrs.get(1).getValue());
 		
 		
 	    String controlAttrs = " symbol=\" years\" symbolPosition=\"s\" minValue=\"0\" maxValue=\"999\" decimalPlaces=\"0\"  ";
@@ -213,13 +213,13 @@ public class ParserUtilityTest {
 				.getCellInputAttributes().get(key);
 		ParserUtility.parseSpecialAttributes(key, type, attrs,
 				cellAttributesMap);
-		assertEquals(type, "dropdown");
+		assertEquals("dropdown", type);
 
 		Map<String, String> selectmap = cellAttributesMap
 				.getCellSelectItemsAttributes().get(key);
 
-		assertEquals(selectmap.get("Male"), "M");
-		assertEquals(selectmap.get("Female"), "F");
+		assertEquals("M", selectmap.get("Male"));
+		assertEquals("F", selectmap.get("Female"));
 
 		String newComment2 = "$widget.calendar{showOn=\"button\" pattern=\"yyyy/MM/dd\" readonlyInput=\"true\"}";
 		ParserUtility.parseWidgetAttributes(cell2, newComment2,
@@ -228,13 +228,12 @@ public class ParserUtilityTest {
 		String key2 = "sheet1!$1$0";
 		String type2 = (String) cellAttributesMap.getCellInputType().get(
 				key2);
-		assertEquals(type2, "calendar");
+		assertEquals("calendar", type2);
 		List<CellFormAttributes> attrs2 = cellAttributesMap
 				.getCellInputAttributes().get(key2);
 		ParserUtility.parseSpecialAttributes(key2, type2, attrs2,
 				cellAttributesMap);
-		assertEquals(cellAttributesMap.getCellDatePattern().get(key2),
-				"yyyy/MM/dd");
+		assertEquals("yyyy/MM/dd", cellAttributesMap.getCellDatePattern().get(key2));
 		
 		wb.close();
 
@@ -252,14 +251,12 @@ public class ParserUtilityTest {
 		ParserUtility.parseCommentToMap(cellKey, "this is normal comment.",
 				sheetCommentMap, true);
 
-		assertEquals(sheetCommentMap.size(), 3);
-		assertEquals(
+		assertEquals(3, sheetCommentMap.size());
+		assertEquals("this is normal comment.", 
 				sheetCommentMap.get(TieConstants.NORMAL_COMMENT_KEY_IN_MAP)
-						.get(cellKey), "this is normal comment.");
-		assertEquals(sheetCommentMap.get("$init").get(cellKey),
-				"$init{emloyee.total}");
-		assertEquals(sheetCommentMap.get("$").get(cellKey),
-				"${emloyee.bonus}");
+						.get(cellKey));
+		assertEquals("$init{emloyee.total}", sheetCommentMap.get("$init").get(cellKey));
+		assertEquals("${emloyee.bonus}", sheetCommentMap.get("$").get(cellKey));
 	}
 
 	@Test
@@ -292,18 +289,18 @@ public class ParserUtilityTest {
 		List<CellFormAttributes> attrs = cellAttributesMap
 				.getCellValidateAttributes().get(key);
 
-		assertEquals(attrs.size(), 1);
-		assertEquals(attrs.get(0).getValue(), "$value>=100");
-		assertEquals(attrs.get(0).getMessage(), "payment must be greater than or equal to 100");
+		assertEquals(1, attrs.size());
+		assertEquals("$value>=100", attrs.get(0).getValue());
+		assertEquals("payment must be greater than or equal to 100", attrs.get(0).getMessage());
 
 		String newComment2 = "$validate{rule=\"$value<=employee.total\" error=\"payment must be less than total\"}";
 		ParserUtility.parseValidateAttributes(cell1, newComment2,
 				cellAttributesMap);
 		attrs = cellAttributesMap
 				.getCellValidateAttributes().get(key);
-		assertEquals(attrs.size(), 2);
-		assertEquals(attrs.get(1).getValue(), "$value<=employee.total");
-		assertEquals(attrs.get(1).getMessage(), "payment must be less than total");
+		assertEquals(2, attrs.size());
+		assertEquals("$value<=employee.total", attrs.get(1).getValue());
+		assertEquals("payment must be less than total", attrs.get(1).getMessage());
 		
 		String newComment3 = "$validate{rule=\"#{validationBean.checkRule1($value)}\" error=\"Value must be greater than zero (0).\"}";
 		
@@ -313,9 +310,9 @@ public class ParserUtilityTest {
 				cellAttributesMap);
 		attrs = cellAttributesMap
 				.getCellValidateAttributes().get(key);
-		assertEquals(attrs.size(), 3);
-		assertEquals(attrs.get(2).getValue(), "#{validationBean.checkRule1($value)}");
-		assertEquals(attrs.get(2).getMessage(), "Value must be greater than zero (0).");
+		assertEquals(3, attrs.size());
+		assertEquals("#{validationBean.checkRule1($value)}", attrs.get(2).getValue());
+		assertEquals("Value must be greater than zero (0).", attrs.get(2).getMessage());
 
 		
 		
@@ -326,8 +323,8 @@ public class ParserUtilityTest {
 
 	@Test
 	public void testFindFirstNonCellNamePosition() throws Exception {
-		assertEquals(ParserUtility.findFirstNonCellNamePosition("A1 ", 0),2);
-		assertEquals(ParserUtility.findFirstNonCellNamePosition("'$A'", 1),3);	
+		assertEquals(2, ParserUtility.findFirstNonCellNamePosition("A1 ", 0));
+		assertEquals(3, ParserUtility.findFirstNonCellNamePosition("'$A'", 1));	
 	}
 
 

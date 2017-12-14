@@ -18,10 +18,10 @@ public class SaveAttrsUtilityTest {
 	 */
 	@Test
 	public void testParseSaveAttr() throws Exception {
-		assertEquals(SaveAttrsUtility.parseSaveAttrString("${employee.name}"),"employee.name");
-		assertEquals(SaveAttrsUtility.parseSaveAttrString("${employee.name} "),"employee.name");
-		assertEquals(SaveAttrsUtility.parseSaveAttrString("${employee.name} ${employee.birthday}"),"");
-		assertEquals(SaveAttrsUtility.parseSaveAttrString("${employee.name"),"");
+		assertEquals("employee.name", SaveAttrsUtility.parseSaveAttrString("${employee.name}"));
+		assertEquals("employee.name", SaveAttrsUtility.parseSaveAttrString("${employee.name} "));
+		assertEquals("", SaveAttrsUtility.parseSaveAttrString("${employee.name} ${employee.birthday}"));
+		assertEquals("", SaveAttrsUtility.parseSaveAttrString("${employee.name"));
 		
 		
 	}
@@ -57,11 +57,11 @@ public class SaveAttrsUtilityTest {
 	public void testGetSaveAttrFromList() throws Exception {
 
 		String attrs = "$0=employee.name,$1=employee.birthDate,$2=employee.age,$3=employee.payment,$4=employee.bonus,";
-		assertEquals(SaveAttrsUtility.getSaveAttrFromList(0, attrs),"employee.name");
-		assertEquals(SaveAttrsUtility.getSaveAttrFromList(1, attrs),"employee.birthDate");
-		assertEquals(SaveAttrsUtility.getSaveAttrFromList(2, attrs),"employee.age");
-		assertEquals(SaveAttrsUtility.getSaveAttrFromList(3, attrs),"employee.payment");
-		assertEquals(SaveAttrsUtility.getSaveAttrFromList(4, attrs),"employee.bonus");		
+		assertEquals("employee.name", SaveAttrsUtility.getSaveAttrFromList(0, attrs));
+		assertEquals("employee.birthDate", SaveAttrsUtility.getSaveAttrFromList(1, attrs));
+		assertEquals("employee.age", SaveAttrsUtility.getSaveAttrFromList(2, attrs));
+		assertEquals("employee.payment", SaveAttrsUtility.getSaveAttrFromList(3, attrs));
+		assertEquals("employee.bonus", SaveAttrsUtility.getSaveAttrFromList(4, attrs));		
 	}
 
 	/**

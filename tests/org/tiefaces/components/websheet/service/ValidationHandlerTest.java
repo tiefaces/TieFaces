@@ -41,6 +41,7 @@ public class ValidationHandlerTest {
 	 * {@link org.tiefaces.components.websheet.service.ValidationHandler#validateWithRowColInCurrentPage(int, int, boolean)}
 	 * .
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public final void testValidateWithRowColInCurrentPage()
 			throws Exception {
@@ -54,7 +55,7 @@ public class ValidationHandlerTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(1, bean.loadWebSheet(stream, context));
 
 		bean.getCellsMap().put("4:3", "-1");
 		bean.getValidationHandler().validateWithRowColInCurrentPage(4,
@@ -88,6 +89,7 @@ public class ValidationHandlerTest {
 	 * {@link org.tiefaces.components.websheet.service.ValidationHandler#validateRowInCurrentPage(int, boolean)}
 	 * .
 	 */
+	@SuppressWarnings({ "unchecked" })
 	@Test
 	public final void testValidateRowInCurrentPage() throws Exception {
 
@@ -100,7 +102,7 @@ public class ValidationHandlerTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(1, bean.loadWebSheet(stream, context));
 
 		bean.getCellsMap().put("4:3", "-1");
 
@@ -114,6 +116,7 @@ public class ValidationHandlerTest {
 	 * {@link org.tiefaces.components.websheet.service.ValidationHandler#findFirstInvalidSheet(boolean)}
 	 * .
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public final void testFindFirstInvalidSheet() throws Exception {
 		TieWebSheetBean bean = new TieWebSheetBean();
@@ -125,10 +128,10 @@ public class ValidationHandlerTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(1, bean.loadWebSheet(stream, context));
 		bean.getCellsMap().put("4:3", "-1");
-		assertEquals(bean.getValidationHandler()
-				.findFirstInvalidSheet(true), "Sale Price Report");
+		assertEquals("Sale Price Report", bean.getValidationHandler()
+				.findFirstInvalidSheet(true));
 
 	}
 

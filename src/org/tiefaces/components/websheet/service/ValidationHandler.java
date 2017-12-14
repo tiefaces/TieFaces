@@ -123,9 +123,9 @@ public class ValidationHandler {
 			refreshAfterStatusChanged(oldStatus, false, row - topRow, col - leftCol, cell);
 			return pass;
 		}
-		
-		
-		if (!validateByTieWebSheetValidationBean(poiCell.getSheet().getSheetName(), row, col, topRow, leftCol, cell, value)) {
+
+		if (!validateByTieWebSheetValidationBean(poiCell.getSheet().getSheetName(), row, col, topRow, leftCol, cell,
+				value)) {
 			return false;
 		}
 
@@ -133,13 +133,12 @@ public class ValidationHandler {
 		List<CellFormAttributes> cellAttributes = CellControlsUtility.findCellValidateAttributes(
 				parent.getCellAttributesMap().getCellValidateAttributes(), fRow.getOriginRowIndex(), poiCell);
 
-		if (parent.isAdvancedContext() && parent.getConfigAdvancedContext().getErrorSuffix() != null) {
-			if (!checkErrorMessageFromObjectInContext(row - topRow, col - leftCol, cell, poiCell, value, sheetConfig)) {
+		if ( parent.isAdvancedContext() && parent.getConfigAdvancedContext().getErrorSuffix() != null
+			&& !checkErrorMessageFromObjectInContext(row - topRow, col - leftCol, cell, poiCell, value, sheetConfig)) {
 				return false;
-			}
 		}
 
-		if (pass && (cellAttributes != null)) {
+		if (cellAttributes != null) {
 			pass = validateAllRulesForSingleCell(row - topRow, col - leftCol, cell, poiCell, value, sheetConfig,
 					cellAttributes);
 		}
@@ -151,10 +150,11 @@ public class ValidationHandler {
 
 	}
 
-	private boolean validateByTieWebSheetValidationBean(final String sheetName, final int row, final int col, final int topRow, final int leftCol, final FacesCell cell, final String value) {
+	private boolean validateByTieWebSheetValidationBean(final String sheetName, final int row, final int col,
+			final int topRow, final int leftCol, final FacesCell cell, final String value) {
 		if (parent.getTieWebSheetValidationBean() != null) {
 			String errormsg = parent.getTieWebSheetValidationBean().validate(sheetName, row, col, value);
-			if ((errormsg!=null)&&(!errormsg.isEmpty())) {
+			if ((errormsg != null) && (!errormsg.isEmpty())) {
 				cell.setErrormsg(errormsg);
 				refreshAfterStatusChanged(false, true, row - topRow, col - leftCol, cell);
 				return false;
@@ -183,10 +183,9 @@ public class ValidationHandler {
 
 				if (errorMessage != null && !errorMessage.isEmpty()) {
 					cell.setErrormsg(errorMessage);
-					LOG.log(Level.INFO,
-							"Validation failed for sheet " + poiCell.getSheet().getSheetName() + " row "
-									+ Integer.toString(poiCell.getRowIndex()) + " column "
-									+ Integer.toString(poiCell.getColumnIndex()) + " : " + errorMessage);
+					LOG.log(Level.INFO, "Validation failed for sheet {0} row {1} column {2} : {3}",
+							new Object[]{poiCell.getSheet().getSheetName(), poiCell.getRowIndex(), poiCell.getColumnIndex(),
+							errorMessage});
 					refreshAfterStatusChanged(false, true, formRow, formCol, cell);
 					return false;
 				}
@@ -229,10 +228,9 @@ public class ValidationHandler {
 					errmsg = TieConstants.DEFALT_MSG_INVALID_INPUT;
 				}
 				cell.setErrormsg(errmsg);
-				LOG.log(Level.INFO,
-						"Validation failed for sheet " + sheet1.getSheetName() + " row "
-								+ Integer.toString(poiCell.getRowIndex()) + " column "
-								+ Integer.toString(poiCell.getColumnIndex()) + " : " + errmsg);
+				LOG.log(Level.INFO, "Validation failed for sheet {0} row {1} column {2} : {3}",
+						new Object[]{poiCell.getSheet().getSheetName(), poiCell.getRowIndex(), poiCell.getColumnIndex(),
+						errmsg});				
 				refreshAfterStatusChanged(false, true, formRow, formCol, cell);
 				return false;
 			}
@@ -268,7 +266,7 @@ public class ValidationHandler {
 			pass = Boolean.parseBoolean(attrValue);
 		} else {
 			pass = parent.getCellHelper().evalBoolExpression(attrValue);
-		}	
+		}
 		return pass;
 
 	}

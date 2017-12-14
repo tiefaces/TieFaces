@@ -1,11 +1,14 @@
 package org.tiefaces.components.websheet;
+
+import java.io.Serializable;
+
 /**
  * Interface for server side validation.
  * User can handle the validation through this. 
  * @author JASON JIANG
  *
  */
-public interface TieWebSheetValidation {
+public interface TieWebSheetValidation extends Serializable{
 	
 	/**
 	 * After enable this validation bean, it will be triggered during each cell update.

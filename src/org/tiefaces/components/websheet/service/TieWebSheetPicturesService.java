@@ -54,7 +54,7 @@ public class TieWebSheetPicturesService implements Serializable  {
 	 * @throws IOException
 	 *             exception.
 	 */
-	public StreamedContent getPicture() throws IOException {
+	public StreamedContent getPicture() {
 		FacesContext context = FacesContext.getCurrentInstance();
 
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {

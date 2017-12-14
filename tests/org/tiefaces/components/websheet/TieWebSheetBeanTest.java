@@ -71,7 +71,7 @@ public class TieWebSheetBeanTest {
 		TieWebSheetBean bean = new TieWebSheetBean();
 		bean.init();
 		bean.reCalcMaxColCounts();
-		assertEquals(bean.getMaxColCounts(), 0);
+		assertEquals(0, bean.getMaxColCounts());
 
 	}
 
@@ -87,7 +87,7 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/datacommentdemo.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		Workbook wb = bean.getWb();
 		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
 			String sheetName = wb.getSheetName(i);
@@ -114,7 +114,7 @@ public class TieWebSheetBeanTest {
         List<Department> departments = WebSheetDataDemo.createDepartments();
         context.put("departments", departments);
         
-        assertEquals(bean.loadWebSheet(stream, context), 1);
+        assertEquals(1, bean.loadWebSheet(stream, context));
         Workbook wb = bean.getWb();
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             String sheetName = wb.getSheetName(i);
@@ -122,16 +122,16 @@ public class TieWebSheetBeanTest {
                 assertTrue(wb.isSheetVeryHidden(i));
             } else {
                 Sheet sheet = wb.getSheetAt(i);
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(8).getCell(6)), "2875");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(6)), "12415");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(21).getCell(6)), "2070");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(23).getCell(6)), "8245");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(33).getCell(6)), "2687.5");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(34).getCell(6)), "10957.5");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(35).getCell(6)), "31617.5");
-                assertEquals(ConfigurationUtility.getFullNameFromRow(sheet.getRow(7)), "F.departments:E.department.0:E.employee.0");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(7)), "10800.75");
-                assertEquals(CellUtility.getCellValueWithoutFormat(sheet.getRow(22).getCell(7)), "1900.15");
+                assertEquals("2875", CellUtility.getCellValueWithoutFormat(sheet.getRow(8).getCell(6)));
+                assertEquals("12415",CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(6)));
+                assertEquals("2070", CellUtility.getCellValueWithoutFormat(sheet.getRow(21).getCell(6)));
+                assertEquals("8245", CellUtility.getCellValueWithoutFormat(sheet.getRow(23).getCell(6)));
+                assertEquals("2687.5", CellUtility.getCellValueWithoutFormat(sheet.getRow(33).getCell(6)));
+                assertEquals("10957.5", CellUtility.getCellValueWithoutFormat(sheet.getRow(34).getCell(6)));
+                assertEquals("31617.5", CellUtility.getCellValueWithoutFormat(sheet.getRow(35).getCell(6)));
+                assertEquals("F.departments:E.department.0:E.employee.0", ConfigurationUtility.getFullNameFromRow(sheet.getRow(7)));
+                assertEquals("10800.75", CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(7)));
+                assertEquals("1900.15", CellUtility.getCellValueWithoutFormat(sheet.getRow(22).getCell(7)));
 
                 Comment comment1 = sheet.getRow(0).getCell(0).getCellComment();
                 assertNull(comment1);
@@ -162,7 +162,7 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/linecharts1.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
@@ -183,7 +183,7 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/chartareas.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
@@ -202,7 +202,7 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/chartbars2d.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
@@ -221,7 +221,7 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/chartbars3d.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
@@ -240,7 +240,7 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/chartcolumns2d.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
@@ -259,7 +259,7 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/chartcolumns3d.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
@@ -278,12 +278,12 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/chartpie2d.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
 
-			assertEquals(entry.getValue().getType(), ChartType.PIE);
+			assertEquals(ChartType.PIE, entry.getValue().getType());
 		}
 	}
 
@@ -297,13 +297,13 @@ public class TieWebSheetBeanTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/chartpie3d.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		assertTrue(bean.getCharsData().getChartsMap().size() > 0);
 
 		Map<String, ChartData> map = bean.getCharsData().getChartDataMap();
 		for (Map.Entry<String, ChartData> entry : map.entrySet()) {
 
-			assertEquals(entry.getValue().getType(), ChartType.PIE3D);
+			assertEquals(ChartType.PIE3D, entry.getValue().getType());
 		}
 	}
 
@@ -320,7 +320,7 @@ public class TieWebSheetBeanTest {
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/datacommentdemo.xlsx");
 		bean.loadWebSheet(stream);
-		assertEquals(bean.loadWorkSheetByTabName("departments"), 1);
+		assertEquals(1, bean.loadWorkSheetByTabName("departments"));
 
 	}
 
@@ -383,13 +383,13 @@ public class TieWebSheetBeanTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(1, bean.loadWebSheet(stream, context));
 		bean.addRepeatRow(4);
-		assertEquals(itemList.size(), 2);
+		assertEquals(2, itemList.size());
 		bean.addRepeatRow(5);
-		assertEquals(itemList.size(), 3);
+		assertEquals(3, itemList.size());
 		bean.deleteRepeatRow(5);
-        assertEquals(itemList.size(), 2);
+        assertEquals(2, itemList.size());
 
 	}
 

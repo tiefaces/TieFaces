@@ -641,13 +641,10 @@ public final class WebSheetUtility {
 	public static boolean insideRange(final ConfigRange child,
 			final ConfigRange parent) {
 
-		if ((cellCompareTo(child.getFirstRowRef(),
+		return ((cellCompareTo(child.getFirstRowRef(),
 				parent.getFirstRowRef()) >= 0)
 				&& (cellCompareTo(child.getLastRowPlusRef(),
-						parent.getLastRowPlusRef()) <= 0)) {
-			return true;
-		}
-		return false;
+						parent.getLastRowPlusRef()) <= 0));
 	}
 
 	/**

@@ -24,8 +24,8 @@ public class FacesUtilityTest {
 	@Test
 	public final void testRemovePrefixPath() throws Exception {
 
-		assertEquals(FacesUtility.removePrefixPath("/showcase/",
-				"/showcase/first/first.xhtml"), "/first/first.xhtml");
+		assertEquals("/first/first.xhtml", FacesUtility.removePrefixPath("/showcase/",
+				"/showcase/first/first.xhtml"));
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class FacesUtilityTest {
 	@Test
 	public final void testStrJoin() throws Exception {
 		short[] rgb = { 192, 192, 192 };
-		assertEquals(FacesUtility.strJoin(rgb, ","), "192,192,192");
+		assertEquals("192,192,192", FacesUtility.strJoin(rgb, ","));
 
 	}
 
@@ -65,7 +65,7 @@ public class FacesUtilityTest {
 	 */
 	@Test
 	public final void testRound() throws Exception {
-		assertEquals(FacesUtility.round(100.123456, 2), 100.12, 0.001);
+		assertEquals(100.12, FacesUtility.round(100.123456, 2), 0.001);
 	}
 
 }

@@ -252,10 +252,7 @@ public class CellHelper {
 			return false;
 		}
 
-		if ((parts == null) || (parts.length <= 1)) {
-			return false;
-		}
-		return true;
+		return ((parts != null) && (parts.length > 1)); 
 	}
 
 	/**

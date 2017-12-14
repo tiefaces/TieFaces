@@ -30,7 +30,7 @@ public class CellMapTest {
 	 */
 	@Test
 	public final void testSize() throws Exception {
-		assertEquals(cellMap.size(), 0);
+		assertEquals(0, cellMap.size());
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class CellMapTest {
 		InputStream stream =
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/linecharts1.xlsx");
-		assertEquals(bean.loadWebSheet(stream), 1);
+		assertEquals(1, bean.loadWebSheet(stream));
 		String chartViewId = (String) bean.getCellsMap().get("7:0:chart");
 		assertFalse(chartViewId.isEmpty());
 
@@ -130,9 +130,9 @@ public class CellMapTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
-		assertEquals(bean.getCellsMap().get("0:0"), "Sale Price Report");
-		assertEquals(bean.getCellsMap().get("2:1"), "Item Number");
+		assertEquals(1, bean.loadWebSheet(stream, context));
+		assertEquals("Sale Price Report", bean.getCellsMap().get("0:0"));
+		assertEquals("Item Number", bean.getCellsMap().get("2:1"));
 
 	}
 
@@ -153,10 +153,9 @@ public class CellMapTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
-		assertEquals((String) bean.getCellsMap().put("4:1", "test item"),
-				"test item");
-		assertEquals(bean.getCellsMap().get("4:1"), "test item");
+		assertEquals(1, bean.loadWebSheet(stream, context));
+		assertEquals("test item", (String) bean.getCellsMap().put("4:1", "test item"));
+		assertEquals("test item", bean.getCellsMap().get("4:1"));
 	}
 
 }

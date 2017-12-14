@@ -402,7 +402,7 @@ public class ConfigurationHandler {
 		for (CellAddress key : keys) {
 			Cell cell = sheet.getRow(key.getRow()).getCell(key.getColumn(),
 					MissingCellPolicy.CREATE_NULL_AS_BLANK);
-			commandList = buildCommandList(sheet, sheetRightCol, cell,
+			buildCommandList(sheet, sheetRightCol, cell,
 					commandList, cellAttributesMap);
 		}
 		return commandList;
@@ -795,10 +795,10 @@ public class ConfigurationHandler {
 		@SuppressWarnings("rawtypes")
 		Class clas = commandMap.get(commandName);
 		if (clas == null) {
-			LOG.warning("Cannot find command class for " + commandName);
+			LOG.log(Level.WARNING,"Cannot find command class for {} ", commandName);
 			return null;
 		}
-		try {
+		try { 
 			ConfigCommand command = (ConfigCommand) clas.newInstance();
 			command.setCommandTypeName(commandName);
 			for (Map.Entry<String, String> attr : attrMap.entrySet()) {

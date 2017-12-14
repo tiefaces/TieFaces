@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -623,7 +622,7 @@ public final class CellUtility {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static CTShape getCtShapeFromVml(final Cell sourceCell, XSSFVMLDrawing sourceVml)
-			throws ReflectiveOperationException, SecurityException {
+			throws ReflectiveOperationException {
 		Method findshape;
 		// int parameter
 		Class[] paramInt = new Class[2];
@@ -631,8 +630,7 @@ public final class CellUtility {
 		paramInt[1] = Integer.TYPE;
 		findshape = sourceVml.getClass().getDeclaredMethod("findCommentShape", paramInt);
 		findshape.setAccessible(true);
-		CTShape ctShape = (CTShape) findshape.invoke(sourceVml, sourceCell.getRowIndex(), sourceCell.getColumnIndex());
-		return ctShape;
+		return (CTShape) findshape.invoke(sourceVml, sourceCell.getRowIndex(), sourceCell.getColumnIndex());
 	}
 
 	/**
@@ -883,9 +881,8 @@ public final class CellUtility {
 	}
 
 	public static String getSkeyFromPoiCell(final Cell poiCell) {
-		String skey = poiCell.getSheet().getSheetName() + "!"
+		return poiCell.getSheet().getSheetName() + "!"
 				+ CellUtility.getCellIndexNumberKey(poiCell.getColumnIndex(), poiCell.getRowIndex());
-		return skey;
 	}
 
 	public static TieCell getOrAddTieCellInMap(final Cell poiCell, HashMap<String, TieCell> tieCells) {

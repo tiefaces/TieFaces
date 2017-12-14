@@ -16,7 +16,6 @@ import org.primefaces.component.tabview.TabView;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.configuration.ConfigAdvancedContext;
 
-// TODO: Auto-generated Javadoc
 /**
  * sheet view class.
  * 
@@ -72,7 +71,7 @@ public class TieWebSheetView {
 	 */
 	private String clientId = null;
 	/** Client id for web forms. */
-	private transient String webFormClientId = null;
+	private String webFormClientId = null;
 
 	/** skip configuration. show the excel form as is. */
 	private boolean skipConfiguration = false;

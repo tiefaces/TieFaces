@@ -972,7 +972,7 @@ public class WebSheetLoader implements Serializable {
 		// in client js should have setUnsavedState method
 		if (requestContext != null) {
 			LOG.log(Level.FINE,
-					"run setUnsavedState(" + statusFlag.toString() + ")");
+					"run setUnsavedState( {} )" , statusFlag.toString());
 			requestContext.execute(
 					"setUnsavedState(" + statusFlag.toString() + ")");
 		}
