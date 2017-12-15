@@ -134,8 +134,7 @@ public class TieWebSheetBean extends TieWebSheetView
 
 	private CellMap cellsMap = new CellMap(this);
 	
-	/** The tie web sheet validation bean. */
-	private TieWebSheetValidation tieWebSheetValidationBean;
+
 	
 	/** logger. */
 	private static final Logger LOG = Logger
@@ -851,23 +850,6 @@ public class TieWebSheetBean extends TieWebSheetView
 	}
 
 
-	/**
-	 * Gets the tie web sheet validation bean.
-	 *
-	 * @return the tie web sheet validation bean
-	 */
-	public TieWebSheetValidation getTieWebSheetValidationBean() {
-		return tieWebSheetValidationBean;
-	}
-
-	/**
-	 * Sets the tie web sheet validation bean.
-	 *
-	 * @param tieWebSheetValidationBean the new tie web sheet validation bean
-	 */
-	public void setTieWebSheetValidationBean(TieWebSheetValidation tieWebSheetValidationBean) {
-		this.tieWebSheetValidationBean = tieWebSheetValidationBean;
-	}
 
 
 }

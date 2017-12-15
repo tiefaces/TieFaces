@@ -6,16 +6,23 @@
 package org.tiefaces.components.websheet;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.primefaces.component.tabview.TabView;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.configuration.ConfigAdvancedContext;
+import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+// TODO: Auto-generated Javadoc
 /**
  * sheet view class.
  * 
@@ -97,7 +104,11 @@ public class TieWebSheetView {
 	/** The config advanced context. */
 	private ConfigAdvancedContext configAdvancedContext;
 	
-
+	/** The tie web sheet validation bean. */
+	private TieWebSheetValidation tieWebSheetValidationBean;
+	
+	/** The tie command alias list. */
+	private List<TieCommandAlias> tieCommandAliasList;
 
 	/**
 	 * empty constructor.
@@ -658,7 +669,58 @@ public class TieWebSheetView {
 		this.configAdvancedContext = configAdvancedContext;
 	}
 
+	/**
+	 * Gets the tie web sheet validation bean.
+	 *
+	 * @return the tie web sheet validation bean
+	 */
+	public TieWebSheetValidation getTieWebSheetValidationBean() {
+		return tieWebSheetValidationBean;
+	}
 
+	/**
+	 * Sets the tie web sheet validation bean.
+	 *
+	 * @param tieWebSheetValidationBean the new tie web sheet validation bean
+	 */
+	public void setTieWebSheetValidationBean(TieWebSheetValidation tieWebSheetValidationBean) {
+		this.tieWebSheetValidationBean = tieWebSheetValidationBean;
+	}
+
+	/**
+	 * Gets the tie command alias list.
+	 *
+	 * @return the tie command alias list
+	 */
+	public List<TieCommandAlias> getTieCommandAliasList() {
+		return tieCommandAliasList;
+	}
+	
+	
+
+	/**
+	 * Sets the tie command alias list.
+	 *
+	 * @param tieCommandAliasList the new tie command alias list
+	 */
+	public void setTieCommandAliasList(List<TieCommandAlias> tieCommandAliasList) {
+		this.tieCommandAliasList = tieCommandAliasList;
+	}
+
+	
+	/**
+	 * Sets the tie command alias list.
+	 *
+	 * @param aliasListJson the new tie command alias list
+	 */
+	public void setTieCommandAliasList(String aliasListJson) {
+		
+		Gson gson = new Gson();
+
+		Type aliasListType = new TypeToken<ArrayList<TieCommandAlias>>(){}.getType();
+
+		this.tieCommandAliasList = gson.fromJson(aliasListJson, aliasListType); 		
+	}
 	
 	
 }
