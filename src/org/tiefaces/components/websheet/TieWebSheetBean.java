@@ -697,11 +697,8 @@ public class TieWebSheetBean extends TieWebSheetView
 	 * @return true (multiple pages) false ( single page).
 	 */
 	public boolean isMultiplePage() {
-		if ((bodyRows != null)
-				&& (bodyRows.size() > this.getMaxRowsPerPage())) {
-			return true;
-		}
-		return false;
+		return ((bodyRows != null)
+				&& (bodyRows.size() > this.getMaxRowsPerPage()));
 	}
 
 	/**

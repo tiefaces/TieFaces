@@ -6,7 +6,6 @@
 package org.tiefaces.components.websheet.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
@@ -48,11 +47,9 @@ public class TieWebSheetPicturesService implements Serializable  {
 
 	/**
 	 * Return picture to web front end.
-	 * 
+	 *
 	 * @return empty (phase is render_response) or real picture ( browser
 	 *         request).
-	 * @throws IOException
-	 *             exception.
 	 */
 	public StreamedContent getPicture() {
 		FacesContext context = FacesContext.getCurrentInstance();

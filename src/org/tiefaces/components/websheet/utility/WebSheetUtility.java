@@ -375,7 +375,7 @@ public final class WebSheetUtility {
 		Matcher matcher;
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return true;
 			}
 		}
@@ -383,7 +383,7 @@ public final class WebSheetUtility {
 		terms = s.split(" ");
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return true;
 			}
 		}
@@ -403,7 +403,7 @@ public final class WebSheetUtility {
 		Matcher matcher;
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return matcher.group();
 			}
 		}
@@ -411,7 +411,7 @@ public final class WebSheetUtility {
 		terms = entry.split(" ");
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return matcher.group();
 			}
 		}
