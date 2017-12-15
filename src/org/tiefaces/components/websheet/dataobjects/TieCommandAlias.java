@@ -1,19 +1,26 @@
 package org.tiefaces.components.websheet.dataobjects;
 
 /**
- * This class is to help user to easily define the command.
+ * This class is to help end user to easily define the control behavior of the cell.
+ * In the real world, two group of people will involve in the design of template:
+ * (1) developer (2) business users 
+ * While business user are difficult to understand the $widget command, but they
+ * are the main desinger for the template. So they need a short cut to control the 
  * 
  * First we can setup a list alias for commands like:
- * example 1:
- * alias = ${date} , command = $widget.calendar... $validate.... 
+ * example 1: matches part of data field 
+ * alias = ${*date*} , command = $widget.calendar... $validate.... 
  * end-user only need to define ${date} in the template while 
  * widget and validate command could be added in fly
  * 
- * example 2:
- * alias = <dropdown1> command = $widget.dropdown.... remove = true
- * when set the remove to true, the alias <dropdown1> will be removed
- * after setup the command.
+ * example 2: matches special string which could be removed
+ * alias = ${dropdown1} command = $widget.dropdown.... remove = true
+ * when set the remove to true, the alias ${dropdown1} will be removed
+ * after set the command. In this case, user can define a cell like:
+ * ${data_field1} ${dropdown1} 
+ * And the ${dropdown1} will be removed later.
  * 
+ * The alias will support wildcard, e.g. ${*date*} match ${object.field_date_1} 
  */
 public class TieCommandAlias {
 	
