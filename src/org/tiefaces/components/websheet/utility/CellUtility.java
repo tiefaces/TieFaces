@@ -45,6 +45,7 @@ import org.tiefaces.components.websheet.dataobjects.TieCell;
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.vml.CTShape;
 
+// TODO: Auto-generated Javadoc
 /**
  * Helper class for web sheet cells.
  * 
@@ -483,7 +484,6 @@ public final class CellUtility {
 				newCell.setCellType(CellType.BLANK);
 			}
 		};
-
 		/**
 		 * Sets the cell value.
 		 *
@@ -533,7 +533,7 @@ public final class CellUtility {
 	 *            target cell.
 	 */
 
-	private static void cloneComment(final Cell sourceCell, final Cell newCell) {
+	public static void cloneComment(final Cell sourceCell, final Cell newCell) {
 
 		XSSFSheet sheet = (XSSFSheet) newCell.getSheet();
 		CreationHelper factory = sheet.getWorkbook().getCreationHelper();
@@ -541,11 +541,7 @@ public final class CellUtility {
 		XSSFComment sourceComment = (XSSFComment) sourceCell.getCellComment();
 		// Below code are from POI busy manual.
 		// When the comment box is visible, have it show in a 1x3 space
-		ClientAnchor anchor = factory.createClientAnchor();
-		anchor.setCol1(newCell.getColumnIndex());
-		anchor.setCol2(newCell.getColumnIndex() + 1);
-		anchor.setRow1(newCell.getRowIndex());
-		anchor.setRow2(newCell.getRowIndex() + 3);
+		ClientAnchor anchor = createCommentAnchor(newCell, factory);
 		// Create the comment and set the text+author
 		Comment comment = drawing.createCellComment(anchor);
 		RichTextString str = factory.createRichTextString(sourceComment.getString().toString());
@@ -560,6 +556,54 @@ public final class CellUtility {
 		matchCommentSettings(newCell, sourceCell);
 	}
 
+	/**
+	 * Creates the comment anchor.
+	 *
+	 * @param newCell the new cell
+	 * @param factory the factory
+	 * @return the client anchor
+	 */
+	private static ClientAnchor createCommentAnchor(final Cell newCell, CreationHelper factory) {
+		ClientAnchor anchor = factory.createClientAnchor();
+		anchor.setCol1(newCell.getColumnIndex());
+		anchor.setCol2(newCell.getColumnIndex() + 1);
+		anchor.setRow1(newCell.getRowIndex());
+		anchor.setRow2(newCell.getRowIndex() + 3);
+		return anchor;
+	}
+
+	/**
+	 * Creates the or insert comment.
+	 *
+	 * @param cell the cell
+	 * @param commentStr the comment str
+	 */
+	public static void createOrInsertComment(final Cell cell, final String commentStr) {
+
+		XSSFSheet sheet = (XSSFSheet) cell.getSheet();
+		CreationHelper factory = sheet.getWorkbook().getCreationHelper();
+		Drawing drawing = sheet.createDrawingPatriarch();
+		Comment comment = cell.getCellComment();
+		String originStr = "";
+		if (comment == null) { 
+			// Below code are from POI busy manual.
+			// When the comment box is visible, have it show in a 1x3 space
+			ClientAnchor anchor = createCommentAnchor(cell, factory);
+			// Create the comment and set the text+author
+			comment = drawing.createCellComment(anchor);
+		} else {
+			originStr = comment.getString().getString()+"\n";
+		}
+		originStr +=  commentStr;
+		RichTextString str = factory.createRichTextString(originStr);
+		comment.setString(str);
+		comment.setAuthor("");
+		// Assign the comment to the cell
+		cell.setCellComment(comment);
+		comment.setColumn(cell.getColumnIndex());
+		comment.setRow(cell.getRowIndex());
+	}	
+	
 	/**
 	 * Use low level API to match the comments setting.
 	 * 
@@ -611,14 +655,12 @@ public final class CellUtility {
 	/**
 	 * Find CtShape from vml object. This class use reflection to invoke the
 	 * protected method in POI.
-	 * 
-	 * @param sourceCell
-	 *            cell.
-	 * @param sourceVml
-	 *            vml.
+	 *
+	 * @param sourceCell            cell.
+	 * @param sourceVml            vml.
 	 * @return ctShape.
-	 * @throws ReflectiveOperationException
-	 * @throws SecurityException
+	 * @throws ReflectiveOperationException the reflective operation exception
+	 * @throws SecurityException the security exception
 	 */
 	@SuppressWarnings("rawtypes")
 	private static CTShape getCtShapeFromVml(final Cell sourceCell, XSSFVMLDrawing sourceVml)
@@ -880,11 +922,24 @@ public final class CellUtility {
 		return null;
 	}
 
+	/**
+	 * Gets the skey from poi cell.
+	 *
+	 * @param poiCell the poi cell
+	 * @return the skey from poi cell
+	 */
 	public static String getSkeyFromPoiCell(final Cell poiCell) {
 		return poiCell.getSheet().getSheetName() + "!"
 				+ CellUtility.getCellIndexNumberKey(poiCell.getColumnIndex(), poiCell.getRowIndex());
 	}
 
+	/**
+	 * Gets the or add tie cell in map.
+	 *
+	 * @param poiCell the poi cell
+	 * @param tieCells the tie cells
+	 * @return the or add tie cell in map
+	 */
 	public static TieCell getOrAddTieCellInMap(final Cell poiCell, HashMap<String, TieCell> tieCells) {
 		String skey = CellUtility.getSkeyFromPoiCell(poiCell);
 		TieCell tieCell = tieCells.get(skey);

@@ -1,5 +1,8 @@
 package org.tiefaces.components.websheet.dataobjects;
 
+import org.tiefaces.components.websheet.utility.ParserUtility;
+
+
 /**
  * This class is to help end user to easily define the control behavior of the cell.
  * In the real world, two group of people will involve in the design of template:
@@ -32,6 +35,10 @@ private String command;
 
 /** The remove. */
 private boolean remove = false;
+
+
+/** The alias value. */
+private String aliasRegex = null;
 
 /**
  * Gets the alias.
@@ -86,8 +93,18 @@ public boolean isRemove() {
 public void setRemove(boolean remove) {
 	this.remove = remove;
 }
-	
 
+/**
+ * Gets the alias value.
+ *
+ * @return the alias value
+ */
+public String getAliasRegex() {
+	if (this.aliasRegex == null) {
+		this.aliasRegex = ParserUtility.wildcardToRegex(alias);
+	}
+	return aliasRegex;
+}
 
 
 }

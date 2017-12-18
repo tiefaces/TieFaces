@@ -327,6 +327,14 @@ public class ParserUtilityTest {
 		assertEquals(3, ParserUtility.findFirstNonCellNamePosition("'$A'", 1));	
 	}
 
+	@Test
+	public void testWildcardToRegex() throws Exception {
+		assertTrue("${cost_date}".matches(ParserUtility.wildcardToRegex("${*date*}")));
+		assertTrue("${cost_date}".matches(ParserUtility.wildcardToRegex("${?????date*}")));
+		assertFalse("object${cost_date}".matches(ParserUtility.wildcardToRegex("${*date*}")));
+		assertTrue("object${cost_date}".matches(ParserUtility.wildcardToRegex("*${*date*}")));
+	}
+
 
 	
 	

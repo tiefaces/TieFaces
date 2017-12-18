@@ -21,8 +21,6 @@ import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-// TODO: Auto-generated Javadoc
 /**
  * sheet view class.
  * 
