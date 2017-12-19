@@ -20,6 +20,7 @@ import org.tiefaces.components.websheet.chart.ChartData;
 import org.tiefaces.components.websheet.chart.ChartType;
 import org.tiefaces.components.websheet.utility.CellUtility;
 import org.tiefaces.components.websheet.utility.ConfigurationUtility;
+import org.tiefaces.components.websheet.utility.SaveAttrsUtility;
 import org.tiefaces.datademo.Department;
 import org.tiefaces.datademo.WebSheetDataDemo;
 import org.tiefaces.common.Item;
@@ -130,6 +131,7 @@ public class TieWebSheetBeanTest {
                 assertEquals("10957.5", CellUtility.getCellValueWithoutFormat(sheet.getRow(34).getCell(6)));
                 assertEquals("31617.5", CellUtility.getCellValueWithoutFormat(sheet.getRow(35).getCell(6)));
                 assertEquals("F.departments:E.department.0:E.employee.0", ConfigurationUtility.getFullNameFromRow(sheet.getRow(7)));
+                assertEquals("$0=employee.name,$1=employee.birthDate,$2=employee.sex,$3=employee.worktime,$4=employee.payment,$5=employee.bonus,",SaveAttrsUtility.getSaveAttrListFromRow(sheet.getRow(7)));                
                 assertEquals("10800.75", CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(7)));
                 assertEquals("1900.15", CellUtility.getCellValueWithoutFormat(sheet.getRow(22).getCell(7)));
 
@@ -146,6 +148,14 @@ public class TieWebSheetBeanTest {
                 int size = departments.size();
                 bean.addRepeatRow(2);
                 assertEquals(departments.size(), (size + 1));
+                
+                
+                assertEquals("10.25", departments.get(0).getStaff().get(0).getWorktime().toString());                
+                departments.get(0).getStaff().get(0).setWorktime(20.25);
+                assertEquals("10.25", CellUtility.getCellValueWithoutFormat(sheet.getRow(7).getCell(3)));
+                bean.refreshData();
+                assertEquals("20.25", CellUtility.getCellValueWithoutFormat(sheet.getRow(7).getCell(3)));
+                
                 
             }
         }
@@ -402,5 +412,6 @@ public class TieWebSheetBeanTest {
 	@Test
 	public final void testPopulateComponent() throws Exception {
 	}
+
 
 }

@@ -850,6 +850,12 @@ public class TieWebSheetBean extends TieWebSheetView
 	}
 
 
+	/**
+	 * Refresh data.
+	 */
+	public void refreshData() {
+		this.getWebSheetLoader().refreshData();
+	}
 
 
 }

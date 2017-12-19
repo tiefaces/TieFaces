@@ -515,7 +515,7 @@ public final class CommandUtility {
 	 * @param engine
 	 *            engine.
 	 */
-	private static void evaluateNormalCells(final Cell cell,
+	public static void evaluateNormalCells(final Cell cell,
 			final String strValue, final Map<String, Object> context,
 			final ExpressionEngine engine) {
 		if (strValue.contains(TieConstants.METHOD_PREFIX)) {
