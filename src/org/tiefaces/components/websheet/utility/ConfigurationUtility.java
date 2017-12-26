@@ -32,6 +32,7 @@ import org.tiefaces.components.websheet.configuration.ConfigRangeAttrs;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.RowsMapping;
 import org.tiefaces.components.websheet.configuration.ShiftFormulaRef;
+import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 import org.tiefaces.exception.EvaluationException;
 
 /**
@@ -749,4 +750,41 @@ public final class ConfigurationUtility {
 		}
 	}
 
+	
+	/**
+	 * Build Sheet Comment From command alias.
+	 *
+	 * @param sheet sheet.
+	 * @param tieCommandAliasList 			list of ommand alias
+	 */
+	public static void buildSheetCommentFromAlias(Sheet sheet, List<TieCommandAlias> tieCommandAliasList) {
+
+		if ((tieCommandAliasList == null)||(tieCommandAliasList.isEmpty())) {
+			return;
+		}
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                buildCellCommentFromalias(tieCommandAliasList, cell);
+            }
+        }		
+		
+	}
+
+	/**
+	 * Builds the cell comment fromalias.
+	 *
+	 * @param tieCommandAliasList the tie command alias list
+	 * @param cell the cell
+	 */
+	private static void buildCellCommentFromalias(List<TieCommandAlias> tieCommandAliasList, Cell cell) {
+		String value = CellUtility.getCellValueWithoutFormat(cell);
+		if ((value!=null)&&(!value.isEmpty())) {
+			for (TieCommandAlias alias : tieCommandAliasList) {
+				if (value.matches(alias.getAliasRegex())) {
+					CellUtility.createOrInsertComment(cell, alias.getCommand());                		}
+			}
+		}
+	}
+	
+	
 }

@@ -44,8 +44,6 @@ import org.tiefaces.components.websheet.dataobjects.TieCell;
 
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.vml.CTShape;
-
-// TODO: Auto-generated Javadoc
 /**
  * Helper class for web sheet cells.
  * 

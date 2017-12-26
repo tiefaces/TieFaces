@@ -3,7 +3,20 @@
  */
 package org.tiefaces.components.websheet.utility;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
+import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 
 /**
  * @author jason jiang
@@ -170,5 +183,35 @@ public class ConfigurationUtilityTest {
     public void testSkippedRegionCells() throws Exception {
         
     }
+
+	@SuppressWarnings("resource")
+	@Test
+	public void testBuildSheetCommentFromAlias() throws Exception {
+
+			
+			Workbook wb = new XSSFWorkbook();
+			// XSSFEvaluationWorkbook wbWrapper = XSSFEvaluationWorkbook
+			// .create((XSSFWorkbook) wb);
+			XSSFSheet sheet = (XSSFSheet) wb.createSheet("sheet1");
+			// Create a row and put some cells in it. Rows are 0 based.
+			XSSFRow row1 = sheet.createRow((short) 0);
+			// Create a cell and put a value in it.
+			Cell cell1 = row1.createCell(0);
+			cell1.setCellValue("${employee.birthDate}");
+			Cell cell2 = row1.createCell(1);
+			cell2.setCellValue("${employee.birthdate}");
+			
+			List<TieCommandAlias> tieCommandAliasList = new ArrayList<>();
+			
+			String comment1 = "$widget.calendar{showOn=\"button\" pattern=\"yyyy/MM/dd\" readonlyInput=\"true\"}";
+			tieCommandAliasList.add(new TieCommandAlias("*Date*", comment1)); 
+			
+			ConfigurationUtility.buildSheetCommentFromAlias((Sheet) sheet, tieCommandAliasList);
+			
+			String outStr = row1.getCell(0).getCellComment().getString().getString();
+			assertEquals(comment1, outStr);
+			assertNull( row1.getCell(1).getCellComment());
+		}
+
 
 }

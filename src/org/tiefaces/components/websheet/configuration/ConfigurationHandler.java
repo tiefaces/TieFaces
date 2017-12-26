@@ -31,7 +31,6 @@ import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
 import org.tiefaces.components.websheet.dataobjects.CellRange;
-import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 import org.tiefaces.components.websheet.utility.CellUtility;
 import org.tiefaces.components.websheet.utility.ConfigurationUtility;
 import org.tiefaces.components.websheet.utility.ParserUtility;
@@ -96,7 +95,7 @@ public class ConfigurationHandler {
 
 		for (String sheetName : sheetNames) {
 			Sheet sheet = parent.getWb().getSheet(sheetName);
-			buildSheetCommentFromAlias(sheet, parent.getTieCommandAliasList());
+			ConfigurationUtility.buildSheetCommentFromAlias(sheet, parent.getTieCommandAliasList());
 			buildSheet(sheet, sheetConfigMap,
 					parent.getCellAttributesMap());
 		}
@@ -104,37 +103,6 @@ public class ConfigurationHandler {
 
 	}
 	
-	/**
-	 * Build Sheet Comment From command alias.
-	 *
-	 * @param sheet sheet.
-	 * @param tieCommandAliasList 			list of command alias
-	 */
-	private void buildSheetCommentFromAlias(Sheet sheet, List<TieCommandAlias> tieCommandAliasList) {
-
-        for (Row row : sheet) {
-            for (Cell cell : row) {
-                buildCellCommentFromalias(tieCommandAliasList, cell);
-            }
-        }		
-		
-	}
-
-	/**
-	 * Builds the cell comment fromalias.
-	 *
-	 * @param tieCommandAliasList the tie command alias list
-	 * @param cell the cell
-	 */
-	private void buildCellCommentFromalias(List<TieCommandAlias> tieCommandAliasList, Cell cell) {
-		String value = CellUtility.getCellValueWithoutFormat(cell);
-		if ((value!=null)&&(!value.isEmpty())) {
-			for (TieCommandAlias alias : tieCommandAliasList) {
-				if (value.matches(alias.getAliasRegex())) {
-					CellUtility.createOrInsertComment(cell, alias.getCommand());                		}
-			}
-		}
-	}
 
 
 	/**

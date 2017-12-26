@@ -3,6 +3,7 @@ package org.tiefaces.components.websheet.dataobjects;
 import org.tiefaces.components.websheet.utility.ParserUtility;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * This class is to help end user to easily define the control behavior of the cell.
  * In the real world, two group of people will involve in the design of template:
@@ -39,6 +40,32 @@ private boolean remove = false;
 
 /** The alias value. */
 private String aliasRegex = null;
+
+
+/**
+ * Instantiates a new tie command alias.
+ *
+ * @param alias the alias
+ * @param command the command
+ */
+public TieCommandAlias(String alias, String command) {
+	this.alias = alias;
+	this.command = command;
+}
+
+
+/**
+ * Instantiates a new tie command alias.
+ *
+ * @param alias the alias
+ * @param command the command
+ * @param remove the remove
+ */
+public TieCommandAlias(String alias, String command, boolean remove) {
+	this.alias = alias;
+	this.command = command;
+	this.remove = remove;
+}
 
 /**
  * Gets the alias.
