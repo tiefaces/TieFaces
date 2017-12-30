@@ -20,10 +20,10 @@ import javax.faces.context.FacesContext;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.component.datatable.DataTable;
@@ -34,7 +34,6 @@ import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.TieWebSheetView.TabModel;
 import org.tiefaces.components.websheet.configuration.ConfigBuildRef;
 import org.tiefaces.components.websheet.configuration.ConfigurationHandler;
-import org.tiefaces.components.websheet.configuration.ExpressionEngine;
 import org.tiefaces.components.websheet.configuration.RangeBuildRef;
 import org.tiefaces.components.websheet.configuration.RowsMapping;
 import org.tiefaces.components.websheet.configuration.SheetConfiguration;
@@ -536,6 +535,25 @@ public class WebSheetLoader implements Serializable {
 	 */
 	public final void loadWorkSheet(final String tabName) {
 
+		prepareWorkShee(tabName);
+		parent.getValidationHandler().validateCurrentPage();
+		createDynamicColumns(tabName);
+		// reset datatable current page to 1
+		setDataTablePage(0);
+		parent.getCurrent().setCurrentDataContextName(null);
+		saveObjs();
+		if ((RequestContext.getCurrentInstance() != null) && (parent.getClientId() != null)) {
+			RequestContext.getCurrentInstance().update(parent.getClientId() + ":websheettab");
+		}
+	}
+	
+	/**
+	 * prepare worksheet for loading.
+	 * this only load at backend without refresh gui.
+	 * @param tabName
+	 */
+	public final void prepareWorkShee(final String tabName) {
+
 		int tabIndex = findTabIndexWithName(tabName);
 		if (parent.getWebFormTabView() != null) {
 			parent.getWebFormTabView().setActiveIndex(tabIndex);
@@ -556,16 +574,7 @@ public class WebSheetLoader implements Serializable {
 		List<String> skippedRegionCells = ConfigurationUtility.skippedRegionCells(sheet1);
 		loadHeaderRows(sheetConfig, cellRangeMap, skippedRegionCells);
 		loadBodyRows(sheetConfig, cellRangeMap, skippedRegionCells);
-		parent.getValidationHandler().validateCurrentPage();
-		createDynamicColumns(tabName);
-		// reset datatable current page to 1
-		setDataTablePage(0);
-		parent.getCurrent().setCurrentDataContextName(null);
-		saveObjs();
-		if ((RequestContext.getCurrentInstance() != null) && (parent.getClientId() != null)) {
-			RequestContext.getCurrentInstance().update(parent.getClientId() + ":websheettab");
-		}
-	}
+	}	
 
 	/**
 	 * Sets the data table page.
@@ -592,7 +601,7 @@ public class WebSheetLoader implements Serializable {
 			if (FacesContext.getCurrentInstance() != null) {
 				Map<String, Object> viewMap = FacesContext.getCurrentInstance().getViewRoot().getViewMap();
 				viewMap.put("currentTabName", parent.getCurrent().getCurrentTabName());
-				viewMap.put("fullValidation", parent.getFullValidation());
+				viewMap.put(TieConstants.SUBMITMODE, parent.getSubmitMode());
 			}
 		} catch (Exception ex) {
 			LOG.log(Level.SEVERE, "saveobjs in viewMap error = " + ex.getMessage(), ex);
@@ -939,7 +948,7 @@ public class WebSheetLoader implements Serializable {
 	 */
 	public final Boolean isUnsavedStatus() {
 		Map<String, Object> viewMap = FacesContext.getCurrentInstance().getViewRoot().getViewMap();
-		Boolean flag = (Boolean) viewMap.get("unSaved");
+		Boolean flag = (Boolean) viewMap.get(TieConstants.UNSAVEDSTATE);
 		if (flag == null) {
 			return false;
 		}

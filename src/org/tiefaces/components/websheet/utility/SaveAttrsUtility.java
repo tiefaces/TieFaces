@@ -4,6 +4,7 @@
  */
 package org.tiefaces.components.websheet.utility;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -11,7 +12,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.tiefaces.common.TieConstants;
+import org.tiefaces.components.websheet.TieWebSheetBean;
+import org.tiefaces.components.websheet.TieWebSheetBeanCurrent;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
+import org.tiefaces.components.websheet.dataobjects.CollectionObject;
+import org.tiefaces.components.websheet.service.CellHelper;
 
 /**
  * Helper class for save attributes.
@@ -33,10 +38,8 @@ public final class SaveAttrsUtility {
 	 * @return the string
 	 */
 	public static String parseSaveAttr(final Cell cell) {
-		if ((cell != null) && (cell.getCellTypeEnum() == CellType.STRING)
-				) {
-			String saveAttr = SaveAttrsUtility.parseSaveAttrString(
-					cell.getStringCellValue());
+		if ((cell != null) && (cell.getCellTypeEnum() == CellType.STRING)) {
+			String saveAttr = SaveAttrsUtility.parseSaveAttrString(cell.getStringCellValue());
 			if (!saveAttr.isEmpty()) {
 				return TieConstants.CELL_ADDR_PRE_FIX + cell.getColumnIndex() + "=" + saveAttr + ",";
 			}
@@ -56,46 +59,47 @@ public final class SaveAttrsUtility {
 	 * @param engine
 	 *            the engine
 	 */
-	public static void saveDataToObjectInContext(
-			final Map<String, Object> context, final String saveAttr,
+	public static void saveDataToObjectInContext(final Map<String, Object> context, final String saveAttr,
 			final String strValue, final ExpressionEngine engine) {
-	
+
 		int index = saveAttr.lastIndexOf('.');
 		if (index > 0) {
 			String strObject = saveAttr.substring(0, index);
 			String strMethod = saveAttr.substring(index + 1);
 			strObject = TieConstants.METHOD_PREFIX + strObject + TieConstants.METHOD_END;
 			Object object = CommandUtility.evaluate(strObject, context, engine);
-			CellControlsUtility.setObjectProperty(object, strMethod,
-					strValue, true);
+			CellControlsUtility.setObjectProperty(object, strMethod, strValue, true);
 		}
 	}
-	
+
 	/**
 	 * reload the data from context to websheet row.
-	 * @param context context.
-	 * @param fullSaveAttr full saveattr.
-	 * @param row row.
-	 * @param engine engine.
+	 * 
+	 * @param context
+	 *            context.
+	 * @param fullSaveAttr
+	 *            full saveattr.
+	 * @param row
+	 *            row.
+	 * @param engine
+	 *            engine.
 	 */
 
-	public static void refreshSheetRowFromContext(
-			final Map<String, Object> context, final String fullSaveAttr,
+	public static void refreshSheetRowFromContext(final Map<String, Object> context, final String fullSaveAttr,
 			final Row row, final ExpressionEngine engine) {
 		if (!fullSaveAttr.startsWith(TieConstants.CELL_ADDR_PRE_FIX)) {
 			return;
 		}
 		int ipos = fullSaveAttr.indexOf('=');
-		if (ipos>0) {
+		if (ipos > 0) {
 			String columnIndex = fullSaveAttr.substring(1, ipos);
-			String saveAttr = fullSaveAttr.substring(ipos+1);
+			String saveAttr = fullSaveAttr.substring(ipos + 1);
 			Cell cell = row.getCell(Integer.parseInt(columnIndex));
-			CommandUtility.evaluateNormalCells(cell,TieConstants.METHOD_PREFIX+saveAttr+TieConstants.METHOD_END, context, engine);
+			CommandUtility.evaluateNormalCells(cell, TieConstants.METHOD_PREFIX + saveAttr + TieConstants.METHOD_END,
+					context, engine);
 		}
 	}
-	
-	
-	
+
 	/**
 	 * Parses the save attr string.
 	 *
@@ -124,8 +128,7 @@ public final class SaveAttrsUtility {
 	 */
 	public static String getSaveAttrListFromRow(final Row row) {
 		if (row != null) {
-			Cell cell = row
-					.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
+			Cell cell = row.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
 			if (cell != null) {
 				String str = cell.getStringCellValue();
 				if ((str != null) && (!str.isEmpty())) {
@@ -145,8 +148,7 @@ public final class SaveAttrsUtility {
 	 *            the save attrs
 	 * @return the save attr from list
 	 */
-	public static String getSaveAttrFromList(final int columnIndex,
-			final String saveAttrs) {
+	public static String getSaveAttrFromList(final int columnIndex, final String saveAttrs) {
 		if ((saveAttrs != null) && (!saveAttrs.isEmpty())) {
 			String str = TieConstants.CELL_ADDR_PRE_FIX + columnIndex + "=";
 			int istart = saveAttrs.indexOf(str);
@@ -154,19 +156,18 @@ public final class SaveAttrsUtility {
 				int iend = saveAttrs.indexOf(',', istart);
 				if (iend > istart) {
 					return saveAttrs.substring(istart + str.length(), iend);
-	
+
 				}
 			}
 		}
 		return null;
 	}
-	
-	
+
 	/**
-	 * get the columnIndex from saveAttr.
-	 * saveAttr format as: $columnIndex=xxxxxxx
+	 * get the columnIndex from saveAttr. saveAttr format as: $columnIndex=xxxxxxx
 	 * 
-	 * @param saveAttr saveAttr
+	 * @param saveAttr
+	 *            saveAttr
 	 * @return columnIndex String
 	 */
 	public static String getColumnIndexFromSaveAttr(final String saveAttr) {
@@ -176,13 +177,12 @@ public final class SaveAttrsUtility {
 				int istart = saveAttr.indexOf('$');
 				if (iend > istart) {
 					return saveAttr.substring(istart + 1, iend);
-	
+
 				}
 			}
 		}
 		return null;
 	}
-	
 
 	/**
 	 * Checks if is checks for save attr.
@@ -192,11 +192,9 @@ public final class SaveAttrsUtility {
 	 * @return true, if is checks for save attr
 	 */
 	public static boolean isHasSaveAttr(final Cell cell) {
-		Cell saveAttrCell = cell.getRow()
-				.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
+		Cell saveAttrCell = cell.getRow().getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN);
 		if (saveAttrCell != null) {
-			return isHasSaveAttr(cell,
-					saveAttrCell.getStringCellValue());
+			return isHasSaveAttr(cell, saveAttrCell.getStringCellValue());
 		}
 		return false;
 	}
@@ -210,16 +208,15 @@ public final class SaveAttrsUtility {
 	 *            the save attrs
 	 * @return true, if is checks for save attr
 	 */
-	public static boolean isHasSaveAttr(final Cell cell,
-			final String saveAttrs) {
-		
+	public static boolean isHasSaveAttr(final Cell cell, final String saveAttrs) {
+
 		if (cell != null) {
 			int columnIndex = cell.getColumnIndex();
 			String str = TieConstants.CELL_ADDR_PRE_FIX + columnIndex + "=";
 			if ((saveAttrs != null) && (saveAttrs.indexOf(str) >= 0)) {
 				return true;
 			}
-		}	
+		}
 		return false;
 	}
 
@@ -231,11 +228,9 @@ public final class SaveAttrsUtility {
 	 * @param saveAttr
 	 *            the save attr
 	 */
-	public static void setSaveObjectsInHiddenColumn(final Row row,
-			final String saveAttr) {
-		Cell cell = row.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN,
-				MissingCellPolicy.CREATE_NULL_AS_BLANK);
-	
+	public static void setSaveObjectsInHiddenColumn(final Row row, final String saveAttr) {
+		Cell cell = row.getCell(TieConstants.HIDDEN_SAVE_OBJECTS_COLUMN, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+
 		cell.setCellValue(saveAttr);
 	}
 
@@ -249,9 +244,8 @@ public final class SaveAttrsUtility {
 	 * @param maxRowNum
 	 *            the max row num
 	 */
-	public static void setSaveAttrsForSheet(final Sheet sheet,
-			final int minRowNum, final int maxRowNum) {
-	
+	public static void setSaveAttrsForSheet(final Sheet sheet, final int minRowNum, final int maxRowNum) {
+
 		for (Row row : sheet) {
 			int rowIndex = row.getRowNum();
 			if ((rowIndex >= minRowNum) && (rowIndex <= maxRowNum)) {
@@ -275,11 +269,37 @@ public final class SaveAttrsUtility {
 			}
 		}
 		if (saveAttr.length() > 0) {
-			SaveAttrsUtility.setSaveObjectsInHiddenColumn(row,
-					saveAttr.toString());
+			SaveAttrsUtility.setSaveObjectsInHiddenColumn(row, saveAttr.toString());
 		}
 	}
 
+	/**
+	 * parepare context and saveattr for cell
+	 * 
+	 * @param poiCell
+	 *            poi cell
+	 * @param fullName
+	 * 			full name for nested data level.
+	 * 			used for restore data context.
+	 * @param parent
+	 *            websheetbean parent
+	 * @return saveattr if success null if failed find saveAttr and restore context.
+	 */
+	public static String prepareContextAndAttrsForCell(Cell poiCell, String fullName, CellHelper cellHelper) {
 
+		if (fullName == null) {
+			return null;
+		}
+		String saveAttrList = SaveAttrsUtility.getSaveAttrListFromRow(poiCell.getRow());
+		if (saveAttrList != null) {
+			String saveAttr = SaveAttrsUtility.getSaveAttrFromList(poiCell.getColumnIndex(), saveAttrList);
+			if (saveAttr != null) {
+				cellHelper.restoreDataContext(fullName);
+				return saveAttr;
+			}
+
+		}
+		return null;
+	}
 
 }

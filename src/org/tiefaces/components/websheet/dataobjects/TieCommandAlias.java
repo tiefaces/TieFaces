@@ -1,9 +1,9 @@
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.util.regex.Pattern;
+
 import org.tiefaces.components.websheet.utility.ParserUtility;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * This class is to help end user to easily define the control behavior of the cell.
  * In the real world, two group of people will involve in the design of template:
@@ -29,17 +29,16 @@ import org.tiefaces.components.websheet.utility.ParserUtility;
 public class TieCommandAlias {
 	
 /** The alias. */
-private String alias;
+private String alias = null;
 
 /** The command. */
-private String command;
+private String command = null;
 
 /** The remove. */
 private boolean remove = false;
 
-
-/** The alias value. */
-private String aliasRegex = null;
+/** The pattern. */
+private Pattern pattern = null;
 
 
 /**
@@ -121,17 +120,21 @@ public void setRemove(boolean remove) {
 	this.remove = remove;
 }
 
+
+
 /**
- * Gets the alias value.
+ * Gets the pattern.
  *
- * @return the alias value
+ * @return the pattern
  */
-public String getAliasRegex() {
-	if (this.aliasRegex == null) {
-		this.aliasRegex = ParserUtility.wildcardToRegex(alias);
-	}
-	return aliasRegex;
+public Pattern getPattern() {
+	if ((this.pattern == null) && (alias != null)) {
+		this.pattern = Pattern.compile("\\s*" + ParserUtility.wildcardToRegex(alias));
+	}	
+	return pattern;
 }
+
+
 
 
 }

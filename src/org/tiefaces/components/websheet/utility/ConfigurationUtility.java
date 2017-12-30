@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
@@ -780,8 +781,13 @@ public final class ConfigurationUtility {
 		String value = CellUtility.getCellValueWithoutFormat(cell);
 		if ((value!=null)&&(!value.isEmpty())) {
 			for (TieCommandAlias alias : tieCommandAliasList) {
-				if (value.matches(alias.getAliasRegex())) {
-					CellUtility.createOrInsertComment(cell, alias.getCommand());                		}
+				Matcher matcher = alias.getPattern().matcher(value);
+				if (matcher.find()) {
+					CellUtility.createOrInsertComment(cell, alias.getCommand());
+					if (alias.isRemove()) {
+						CellUtility.setCellValue(cell, ParserUtility.removeCharsFromString(value, matcher.start(), matcher.end()));
+					}
+				}	
 			}
 		}
 	}

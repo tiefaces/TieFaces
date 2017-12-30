@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -331,8 +333,24 @@ public class ParserUtilityTest {
 	public void testWildcardToRegex() throws Exception {
 		assertTrue("${cost_date}".matches(ParserUtility.wildcardToRegex("${*date*}")));
 		assertTrue("${cost_date}".matches(ParserUtility.wildcardToRegex("${?????date*}")));
-		assertFalse("object${cost_date}".matches(ParserUtility.wildcardToRegex("${*date*}")));
-		assertTrue("object${cost_date}".matches(ParserUtility.wildcardToRegex("*${*date*}")));
+		//assertFalse("object${cost_date}".matches(ParserUtility.wildcardToRegex("${*date*}")));
+		String regx = ParserUtility.wildcardToRegex("${*date*}");
+		Pattern pattern = Pattern.compile(regx);
+		Matcher matcher = pattern.matcher("object${cost_date}");				
+		assertTrue(matcher.find());
+	}
+
+	@Test
+	public void testRemoveCharsFromString() throws Exception {
+		assertEquals("${cost}", ParserUtility.removeCharsFromString("${cost_date}", 6, 11));
+		assertEquals("${cost_date}", ParserUtility.removeCharsFromString("${cost_date}${dropdown}", 12, 23));
+		assertEquals("${cost_date} ", ParserUtility.removeCharsFromString("${cost_date} ${dropdown}", 13, 24));
+	}
+
+	@Test
+	public void testWildcardToRegexStringBoolean() throws Exception {
+		assertFalse("object${cost_date}".matches(ParserUtility.wildcardToRegex("${*date*}",true)));
+		assertTrue("object${cost_date}".matches(ParserUtility.wildcardToRegex("*${*date*}",true)));
 	}
 
 

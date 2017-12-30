@@ -115,8 +115,8 @@ public class TieWebSheetBean extends TieWebSheetView
 	/** hold current objects. */
 	private TieWebSheetBeanCurrent current;
 
-	/** weather process full a validation. */
-	private Boolean fullValidation = false;
+	/** submit mode may affect validation process. e.g. validation interface. */
+	private Boolean submitMode = false;
 	/** create bean's this.getHelper(). */
 	private transient TieWebSheetBeanHelper helper = null;
 
@@ -354,22 +354,24 @@ public class TieWebSheetBean extends TieWebSheetView
 	}
 
 	/**
-	 * get full validation.
+	 * get submit mode.
 	 * 
-	 * @return true if it's fullvalidation.
+	 * @return true if it's in submit mode.
 	 */
-	public Boolean getFullValidation() {
-		return fullValidation;
+	public Boolean getSubmitMode() {
+		return this.submitMode;
 	}
 
 	/**
-	 * set full validation.
+	 * set submit mode.
 	 * 
-	 * @param pFullValidation
-	 *            full validation flag.
+	 * @param pSubmitMode
+	 *            submit mode flag.
 	 */
-	public void setFullValidation(final Boolean pFullValidation) {
-		this.fullValidation = pFullValidation;
+	public void setSubmitMde(final Boolean pSubmitMode) {
+		this.submitMode = pSubmitMode;
+		this.getHelper().getValidationHandler()
+		.setSubmitModeInView(this.submitMode);		
 	}
 
 	/**
@@ -658,16 +660,16 @@ public class TieWebSheetBean extends TieWebSheetView
 	 * Save the current workbooks.
 	 */
 	public void doSave() {
-
-		fullValidation = false;
-		this.getHelper().getValidationHandler()
-				.setFullValidationInView(fullValidation);
-		if (!this.getHelper().getValidationHandler().preValidation(true)) {
+		
+		
+		this.setSubmitMde(false);
+		if (!this.getHelper().getValidationHandler().preValidation()) {
 			LOG.fine("Validation failded before saving");
 			return;
 		}
-
 		processSave();
+		this.getHelper().getWebSheetLoader().setUnsavedStatus(
+				RequestContext.getCurrentInstance(), false);
 	}
 
 	/**
@@ -675,11 +677,39 @@ public class TieWebSheetBean extends TieWebSheetView
 	 * 
 	 */
 	public void processSave() {
-		this.getHelper().getWebSheetLoader().setUnsavedStatus(
-				RequestContext.getCurrentInstance(), false);
 		return;
 	}
 
+	
+	/**
+	 * Submit the current workbooks.
+	 */
+	public void doSubmit() {
+				
+		this.setSubmitMde(true);
+		// in submit mode, validation may behavior differently.
+		// e.g. some empty fields need to fill in if set as required.
+		// while empty fields are allowed when submit mode set to false
+		// in order to partial save the form into db.
+		if (!this.getHelper().getValidationHandler().preValidation()) {
+			LOG.fine("Validation failded before saving");
+			return;
+		}
+		processSubmit();
+		this.getHelper().getWebSheetLoader().setUnsavedStatus(
+				RequestContext.getCurrentInstance(), false);
+		this.setSubmitMde(false);
+	}
+
+	/**
+	 * submit process. User need override this method to submit the form.
+	 * 
+	 */
+	public void processSubmit() {
+		return;
+	}
+	
+	
 	/**
 	 * Triggered when value in cells changed. e.g. user edit cell.
 	 * 

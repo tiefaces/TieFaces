@@ -300,9 +300,10 @@ public final class TieConstants {
 	/** The Constant VERTICAL_ALIGN_CENTER. */
 	public static final String VERTICAL_ALIGN_CENTER = "vertical-align: middle;";
 
-	/** The Constant FULL_VALIDATION. */
-	public static final String FULL_VALIDATION = "fullValidation";
-
+	/** The Constant submit mode. */
+	public static final String SUBMITMODE = "tieWebSheetSubmitMode";
+	/** The Constant unSaved state. */
+	public static final String UNSAVEDSTATE = "unSaved";
 	/**
 	 * hide constructor.
 	 */
