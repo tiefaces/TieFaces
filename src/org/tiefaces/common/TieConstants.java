@@ -270,6 +270,8 @@ public final class TieConstants {
 	public static final float DEFAULT_HEADER_ROW_HEIGHT = 12;
 	/** The NORMAL_COMMENT_KEY_IN_MAP. */
 	public static final String NORMAL_COMMENT_KEY_IN_MAP = "$$";
+	/** The SAVE_COMMENT_KEY_IN_MAP. */
+	public static final String SAVE_COMMENT_KEY_IN_MAP = "$save";
 	/** The VALIDATION_RULE_TAG. */
 	public static final String VALIDATION_RULE_TAG = "rule";
 	/** The VALIDATION_ERROR_MSG_TAG. */

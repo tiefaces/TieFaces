@@ -4,18 +4,15 @@
  */
 package org.tiefaces.components.websheet.utility;
 
-import java.util.List;
 import java.util.Map;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.tiefaces.common.TieConstants;
-import org.tiefaces.components.websheet.TieWebSheetBean;
-import org.tiefaces.components.websheet.TieWebSheetBeanCurrent;
 import org.tiefaces.components.websheet.configuration.ExpressionEngine;
-import org.tiefaces.components.websheet.dataobjects.CollectionObject;
 import org.tiefaces.components.websheet.service.CellHelper;
 
 /**
@@ -35,12 +32,22 @@ public final class SaveAttrsUtility {
 	 *
 	 * @param cell
 	 *            the cell
+	 * @param saveCommentsMap
+	 *            the save comments map
 	 * @return the string
 	 */
-	public static String parseSaveAttr(final Cell cell) {
-		if ((cell != null) && (cell.getCellTypeEnum() == CellType.STRING)) {
-			String saveAttr = SaveAttrsUtility.parseSaveAttrString(cell.getStringCellValue());
-			if (!saveAttr.isEmpty()) {
+	public static String parseSaveAttr(final Cell cell, final Map<String, String> saveCommentsMap) {
+		if (cell != null) {
+			String key = cell.getSheet().getSheetName() + "!"
+					+ CellUtility.getCellIndexNumberKey(cell.getColumnIndex(), cell.getRowIndex());
+			String saveAttr = null;
+			if (saveCommentsMap != null) {
+				saveAttr = ParserUtility.getStringBetweenBracket(saveCommentsMap.get(key));
+			}
+			if ((saveAttr == null) && (cell.getCellTypeEnum() == CellType.STRING)) {
+				saveAttr = SaveAttrsUtility.parseSaveAttrString(cell.getStringCellValue());
+			}
+			if ((saveAttr != null) && (!saveAttr.isEmpty())) {
 				return TieConstants.CELL_ADDR_PRE_FIX + cell.getColumnIndex() + "=" + saveAttr + ",";
 			}
 		}
@@ -95,8 +102,10 @@ public final class SaveAttrsUtility {
 			String columnIndex = fullSaveAttr.substring(1, ipos);
 			String saveAttr = fullSaveAttr.substring(ipos + 1);
 			Cell cell = row.getCell(Integer.parseInt(columnIndex));
-			CommandUtility.evaluateNormalCells(cell, TieConstants.METHOD_PREFIX + saveAttr + TieConstants.METHOD_END,
-					context, engine);
+			if (cell.getCellTypeEnum() != CellType.FORMULA) {
+				CommandUtility.evaluateNormalCells(cell,
+						TieConstants.METHOD_PREFIX + saveAttr + TieConstants.METHOD_END, context, engine);
+			}
 		}
 	}
 
@@ -243,27 +252,32 @@ public final class SaveAttrsUtility {
 	 *            the min row num
 	 * @param maxRowNum
 	 *            the max row num
+	 * @param saveCommentsMap
+	 *            the save comments map
 	 */
-	public static void setSaveAttrsForSheet(final Sheet sheet, final int minRowNum, final int maxRowNum) {
+	public static void setSaveAttrsForSheet(final Sheet sheet, final int minRowNum, final int maxRowNum,
+			final Map<String, String> saveCommentsMap) {
 
 		for (Row row : sheet) {
 			int rowIndex = row.getRowNum();
 			if ((rowIndex >= minRowNum) && (rowIndex <= maxRowNum)) {
-				setSaveAttrsForRow(row);
+				setSaveAttrsForRow(row, saveCommentsMap);
 			}
 		}
 	}
 
 	/**
-	 * set SaveAttrs For Row.
-	 * 
+	 * Sets the save attrs for row.
+	 *
 	 * @param row
-	 *            row.
+	 *            the row
+	 * @param saveCommentsMap
+	 *            the save comments map
 	 */
-	private static void setSaveAttrsForRow(final Row row) {
+	public static void setSaveAttrsForRow(final Row row, final Map<String, String> saveCommentsMap) {
 		StringBuilder saveAttr = new StringBuilder();
 		for (Cell cell : row) {
-			String sAttr = parseSaveAttr(cell);
+			String sAttr = parseSaveAttr(cell, saveCommentsMap);
 			if (!sAttr.isEmpty()) {
 				saveAttr.append(sAttr);
 			}
@@ -274,16 +288,15 @@ public final class SaveAttrsUtility {
 	}
 
 	/**
-	 * parepare context and saveattr for cell
-	 * 
+	 * Prepare context and attrs for cell.
+	 *
 	 * @param poiCell
-	 *            poi cell
+	 *            the poi cell
 	 * @param fullName
-	 * 			full name for nested data level.
-	 * 			used for restore data context.
-	 * @param parent
-	 *            websheetbean parent
-	 * @return saveattr if success null if failed find saveAttr and restore context.
+	 *            the full name
+	 * @param cellHelper
+	 *            the cell helper
+	 * @return the string
 	 */
 	public static String prepareContextAndAttrsForCell(Cell poiCell, String fullName, CellHelper cellHelper) {
 

@@ -687,12 +687,12 @@ public class TieWebSheetBean extends TieWebSheetView
 	public void doSubmit() {
 				
 		this.setSubmitMde(true);
-		// in submit mode, validation may behavior differently.
-		// e.g. some empty fields need to fill in if set as required.
-		// while empty fields are allowed when submit mode set to false
-		// in order to partial save the form into db.
+		// validation may behavior differently depend on the submit mode.
+		// e.g. when submit mode = false, empty fields or value not changed cells
+		// don't need to pass the validation rule. This allow partial save the form. 
+		// when submit mode = true, all cells need to pass the validation.
 		if (!this.getHelper().getValidationHandler().preValidation()) {
-			LOG.fine("Validation failded before saving");
+			LOG.fine("Validation failed before saving");
 			return;
 		}
 		processSubmit();

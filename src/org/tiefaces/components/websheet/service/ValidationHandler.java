@@ -171,7 +171,7 @@ public class ValidationHandler {
 	 * @param leftCol the left col
 	 * @param cell the cell
 	 * @param value the value
-	 * @param updateGui 
+	 * @param updateGui the update gui
 	 * @return true, if successful
 	 */
 	private boolean validateByTieWebSheetValidationBean(final Cell poiCell, final int topRow, final int leftCol,
@@ -207,7 +207,7 @@ public class ValidationHandler {
 	 * @param poiCell the poi cell
 	 * @param value the value
 	 * @param sheetConfig the sheet config
-	 * @param updateGui 
+	 * @param updateGui the update gui
 	 * @return true, if successful
 	 */
 	private boolean checkErrorMessageFromObjectInContext(final int formRow, final int formCol, final FacesCell cell,
@@ -247,21 +247,14 @@ public class ValidationHandler {
 	/**
 	 * Validate all rules for single cell.
 	 *
-	 * @param formRow
-	 *            the form row
-	 * @param formCol
-	 *            the form col
-	 * @param cell
-	 *            the cell
-	 * @param poiCell
-	 *            the poi cell
-	 * @param value
-	 *            the value
-	 * @param sheetConfig
-	 *            the sheet config
-	 * @param cellAttributes
-	 *            the cell attributes
-	 * @param updateGui 
+	 * @param formRow            the form row
+	 * @param formCol            the form col
+	 * @param cell            the cell
+	 * @param poiCell            the poi cell
+	 * @param value            the value
+	 * @param sheetConfig            the sheet config
+	 * @param cellAttributes            the cell attributes
+	 * @param updateGui the update gui
 	 * @return true, if successful
 	 */
 	private boolean validateAllRulesForSingleCell(final int formRow, final int formCol, final FacesCell cell,
@@ -347,13 +340,12 @@ public class ValidationHandler {
 		return allpass;
 	}
 
+
 	/**
 	 * Validate row in current page.
 	 *
-	 * @param irow
-	 *            the irow
-	 * @param passEmptyCheck
-	 *            the pass empty check
+	 * @param irow the irow
+	 * @param updateGui the update gui
 	 * @return true, if successful
 	 */
 	public final boolean validateRowInCurrentPage(final int irow, final boolean updateGui) {
@@ -361,38 +353,15 @@ public class ValidationHandler {
 		return this.validateRow(irow, sheetConfig, updateGui);
 	}
 
-	/**
-	 * Find first invalid sheet.
-	 *
-	 * @param passEmptyCheck
-	 *            the pass empty check
-	 * @return the string
-	 */
-	public final String findFirstInvalidSheet() {
-		for (Map.Entry<String, SheetConfiguration> entry : parent.getSheetConfigMap().entrySet()) {
-			SheetConfiguration sheetConfig = entry.getValue();
-			String tabName = entry.getKey();
-			int topRow = sheetConfig.getBodyCellRange().getTopRow();
-			for (int irow = 0; irow < parent.getBodyRows().size(); irow++) {
-				if (!validateRow(irow + topRow, sheetConfig, false)) {
-					return tabName;
-				}
-			}
-		}
-		return null;
-	}
+
 
 	/**
-	 * Validate data row.
-	 * 
-	 * @param irow
-	 *            row number.
-	 * @param passEmptyCheck
-	 *            whether pass empty cell.
-	 * @param sheetConfig
-	 *            sheet config.
-	 * @param updateGui 
-	 * @return true if passed validation.
+	 * Validate row.
+	 *
+	 * @param irow the irow
+	 * @param sheetConfig the sheet config
+	 * @param updateGui the update gui
+	 * @return true, if successful
 	 */
 	private boolean validateRow(final int irow, final SheetConfiguration sheetConfig, boolean updateGui) {
 		boolean pass = true;
@@ -515,11 +484,27 @@ public class ValidationHandler {
 	 * @return true (pass) false (failed)
 	 */
 	public boolean preValidation() {
-		
-//todo
-		String tabName = findFirstInvalidSheet();
-		if (tabName != null) {
-			parent.getHelper().getWebSheetLoader().loadWorkSheet(tabName);
+				
+		String currentTabName = parent.getCurrent().getCurrentTabName();
+		String tabName = null;
+		String firstInvalidTabName = null;
+		boolean reload = false;
+		for (Map.Entry<String, SheetConfiguration> entry : parent.getSheetConfigMap().entrySet()) {
+			tabName = entry.getKey();
+			// if not reload and tabname==current then skip reloading.
+			if (reload || (!tabName.equals(currentTabName))) {
+				parent.getWebSheetLoader().prepareWorkShee(tabName);
+				reload = true;
+			}
+			if (!parent.getValidationHandler().validateCurrentPage() &&
+				(firstInvalidTabName == null)) {
+				firstInvalidTabName = tabName; 
+			}
+		}		
+		if (firstInvalidTabName != null)  {
+			if (!tabName.equals(firstInvalidTabName)) {
+				parent.getHelper().getWebSheetLoader().loadWorkSheet(firstInvalidTabName);
+			}
 			return false;
 		}
 		return true;

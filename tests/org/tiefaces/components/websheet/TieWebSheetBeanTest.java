@@ -131,7 +131,7 @@ public class TieWebSheetBeanTest {
                 assertEquals("10957.5", CellUtility.getCellValueWithoutFormat(sheet.getRow(34).getCell(6)));
                 assertEquals("31617.5", CellUtility.getCellValueWithoutFormat(sheet.getRow(35).getCell(6)));
                 assertEquals("F.departments:E.department.0:E.employee.0", ConfigurationUtility.getFullNameFromRow(sheet.getRow(7)));
-                assertEquals("$0=employee.name,$1=employee.birthDate,$2=employee.sex,$3=employee.worktime,$4=employee.payment,$5=employee.bonus,",SaveAttrsUtility.getSaveAttrListFromRow(sheet.getRow(7)));                
+                assertEquals("$0=employee.name,$1=employee.birthDate,$2=employee.sex,$3=employee.worktime,$4=employee.payment,$5=employee.bonus,$6=employee.total,",SaveAttrsUtility.getSaveAttrListFromRow(sheet.getRow(7)));                
                 assertEquals("10800.75", CellUtility.getCellValueWithoutFormat(sheet.getRow(12).getCell(7)));
                 assertEquals("1900.15", CellUtility.getCellValueWithoutFormat(sheet.getRow(22).getCell(7)));
 

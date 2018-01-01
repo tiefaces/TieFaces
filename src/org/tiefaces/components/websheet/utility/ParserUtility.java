@@ -215,8 +215,11 @@ public final class ParserUtility {
 	 * @return return string.
 	 */
 
-	private static String getStringBetweenBracket(final String newComment) {
+	public static String getStringBetweenBracket(final String newComment) {
 
+		if (newComment == null) {
+			return null;
+		}
 		int elStart = newComment.indexOf(TieConstants.EL_START_BRACKET);
 		int elEnd = findPairBracketPosition(newComment, elStart);
 		if (elStart >= elEnd) {
