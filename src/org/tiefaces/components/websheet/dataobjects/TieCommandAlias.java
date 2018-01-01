@@ -9,7 +9,7 @@ import org.tiefaces.components.websheet.utility.ParserUtility;
  * In the real world, two group of people will involve in the design of template:
  * (1) developer (2) business users 
  * While business user are difficult to understand the $widget command, but they
- * are the main desinger for the template. So they need a short cut to control the 
+ * are the main designer for the template. So they need a shortcut for the controls. 
  * 
  * First we can setup a list alias for commands like:
  * example 1: matches part of data field 

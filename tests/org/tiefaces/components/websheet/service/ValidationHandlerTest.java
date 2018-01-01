@@ -106,14 +106,9 @@ public class ValidationHandlerTest {
 
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.tiefaces.components.websheet.service.ValidationHandler#findFirstInvalidSheet(boolean)}
-	 * .
-	 */
-	@SuppressWarnings("unchecked")
+
 	@Test
-	public final void testFindFirstInvalidSheet() throws Exception {
+	public void testPreValidation() throws Exception {
 		TieWebSheetBean bean = new TieWebSheetBean();
 		bean.init();
 		InputStream stream =
@@ -125,9 +120,7 @@ public class ValidationHandlerTest {
 		context.put("items", itemList);
 		assertEquals(1, bean.loadWebSheet(stream, context));
 		bean.getCellsMap().put("4:3", "-1");
-		assertEquals("Sale Price Report", bean.getValidationHandler()
-				.findFirstInvalidSheet());
-
-	}
+		assertFalse(bean.getValidationHandler()
+				.preValidation());	}
 
 }
