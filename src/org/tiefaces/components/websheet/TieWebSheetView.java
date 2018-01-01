@@ -22,7 +22,6 @@ import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-// TODO: Auto-generated Javadoc
 /**
  * sheet view class.
  * 
@@ -106,6 +105,9 @@ public class TieWebSheetView {
 	
 	/** The tie web sheet validation bean. */
 	private TieWebSheetValidation tieWebSheetValidationBean;
+	
+	/**  If true then validationBean only work in submitMode. */ 
+	private boolean onlyValidateInSubmitMode = false;
 	
 	/** The tie command alias list. */
 	private List<TieCommandAlias> tieCommandAliasList;
@@ -682,9 +684,21 @@ public class TieWebSheetView {
 	 * Sets the tie web sheet validation bean.
 	 *
 	 * @param tieWebSheetValidationBean the new tie web sheet validation bean
+	 * @param onlyValidationInSubmitMode the only validation in submit mode
 	 */
-	public void setTieWebSheetValidationBean(TieWebSheetValidation tieWebSheetValidationBean) {
+	public void setTieWebSheetValidationBean(TieWebSheetValidation tieWebSheetValidationBean, boolean onlyValidationInSubmitMode) {
 		this.tieWebSheetValidationBean = tieWebSheetValidationBean;
+		this.onlyValidateInSubmitMode = onlyValidationInSubmitMode;
+	}
+		
+
+	/**
+	 * Checks if is only validate in submit mode.
+	 *
+	 * @return true, if is only validate in submit mode
+	 */
+	public boolean isOnlyValidateInSubmitMode() {
+		return onlyValidateInSubmitMode;
 	}
 
 	/**

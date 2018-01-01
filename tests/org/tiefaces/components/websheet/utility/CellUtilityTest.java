@@ -4,6 +4,8 @@
 package org.tiefaces.components.websheet.utility;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -240,6 +242,79 @@ public class CellUtilityTest {
 	 */
 	@Test
 	public void testGetPoiCellFromSheet() throws Exception {
+		Workbook wb = new XSSFWorkbook();
+		Sheet sheet1 = wb.createSheet("sheet1");
+		// Create a row and put some cells in it. Rows are 0 based.
+		Row row1 = sheet1.createRow((short) 0);
+		// Create a cell and put a value in it.
+		row1.createCell(0).setCellValue(1);
+		assertNotNull(CellUtility.getPoiCellFromSheet(0, 0, sheet1));
+		assertNull(CellUtility.getPoiCellFromSheet(0, 1, sheet1));
+		assertNull(CellUtility.getPoiCellFromSheet(1, 1, sheet1));
+		
+		wb.close();
+	}
+
+
+	@Test
+	public void testCloneComment() throws Exception {
+		
+		
+		Workbook wb = new XSSFWorkbook();
+		Sheet sheet1 = wb.createSheet("sheet1");
+		// Create a row and put some cells in it. Rows are 0 based.
+		Row row1 = sheet1.createRow((short) 0);
+		// Create a cell and put a value in it.
+		row1.createCell(0).setCellValue(1);
+		row1.createCell(1).setCellValue(2);
+		String commentStr = "first line.\n\2nd line.";
+		CellUtility.createOrInsertComment(row1.getCell(0), commentStr);
+		CellUtility.cloneComment(row1.getCell(0), row1.getCell(1));
+		String outStr1 = row1.getCell(0).getCellComment().getString().getString();
+		String outStr2 = row1.getCell(1).getCellComment().getString().getString();
+		assertEquals(outStr2, outStr1);
+		wb.close();		
+		
+		
+	}
+
+
+	@Test
+	public void testCreateOrInsertComment() throws Exception {
+		
+		Workbook wb = new XSSFWorkbook();
+		Sheet sheet1 = wb.createSheet("sheet1");
+		// Create a row and put some cells in it. Rows are 0 based.
+		Row row1 = sheet1.createRow((short) 0);
+		// Create a cell and put a value in it.
+		row1.createCell(0).setCellValue(1);
+		row1.createCell(1).setCellValue(true);
+		String commentStr = "first line.\n\2nd line.";
+		CellUtility.createOrInsertComment(row1.getCell(0), commentStr);
+		String outStr = row1.getCell(0).getCellComment().getString().getString();
+		assertEquals(commentStr, outStr);
+		String commentStr2 = "first line.\n\2nd line.";
+		CellUtility.createOrInsertComment(row1.getCell(0), commentStr2);
+		outStr = row1.getCell(0).getCellComment().getString().getString();
+		assertEquals(commentStr+"\n"+commentStr2, outStr);
+		wb.close();
+		
+	}
+
+	@Test
+	public void testGetSkeyFromPoiCell() throws Exception {
+		Workbook wb = new XSSFWorkbook();
+		Sheet sheet1 = wb.createSheet("sheet1");
+		// Create a row and put some cells in it. Rows are 0 based.
+		Row row1 = sheet1.createRow((short) 0);
+		// Create a cell and put a value in it.
+		row1.createCell(0).setCellValue(1);
+		Row row2 = sheet1.createRow((short) 1);
+		// Create a cell and put a value in it.
+		row2.createCell(0).setCellValue(1);
+		assertEquals("sheet1!$0$0",CellUtility.getSkeyFromPoiCell(row1.getCell(0)));
+		assertEquals("sheet1!$0$1",CellUtility.getSkeyFromPoiCell(row2.getCell(0)));
+		wb.close();
 
 	}
 

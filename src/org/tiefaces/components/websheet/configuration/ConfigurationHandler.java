@@ -5,8 +5,6 @@
 
 package org.tiefaces.components.websheet.configuration;
 
-import org.tiefaces.common.TieConstants;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -23,11 +21,12 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.TieWebSheetBean;
 import org.tiefaces.components.websheet.dataobjects.CellAttributesMap;
 import org.tiefaces.components.websheet.dataobjects.CellFormAttributes;
@@ -96,20 +95,22 @@ public class ConfigurationHandler {
 
 		for (String sheetName : sheetNames) {
 			Sheet sheet = parent.getWb().getSheet(sheetName);
+			ConfigurationUtility.buildSheetCommentFromAlias(sheet, parent.getTieCommandAliasList());
 			buildSheet(sheet, sheetConfigMap,
 					parent.getCellAttributesMap());
 		}
 		return sheetConfigMap;
 
 	}
+	
+
 
 	/**
 	 * Gets the sheet configuration.
 	 *
-	 * @param sheet
-	 *            the sheet
-	 * @param formName
-	 *            the form name
+	 * @param sheet            the sheet
+	 * @param formName            the form name
+	 * @param sheetRightCol the sheet right col
 	 * @return the sheet configuration
 	 */
 	private SheetConfiguration getSheetConfiguration(final Sheet sheet,
@@ -277,6 +278,7 @@ public class ConfigurationHandler {
 		checkAndRepairLastRow(sheet);
 
 		int sheetRightCol = WebSheetUtility.getSheetRightCol(sheet);
+						
 		List<ConfigCommand> commandList = buildCommandListFromSheetComment(
 				(XSSFSheet) sheet, sheetRightCol, cellAttributesMap);
 
@@ -298,7 +300,8 @@ public class ConfigurationHandler {
 
 	/**
 	 * check and repair the sheet's lastrow. If the row is blank then remove it.
-	 * @param sheet
+	 *
+	 * @param sheet the sheet
 	 */
 	private final void checkAndRepairLastRow(final Sheet sheet) {
 		// repair last row if it's inserted in the configuration generation
@@ -414,14 +417,11 @@ public class ConfigurationHandler {
 	 * tie:form command in the comments (which will transfer to sheetConfig), Or
 	 * just ignore it, then use whole sheet as one form.
 	 *
-	 * @param sheet
-	 *            sheet.
-	 * @param sheetConfigMap
-	 *            sheetConfigMap.
-	 * @param commandList
-	 *            command list.
-	 * @param formList
-	 *            form list.
+	 * @param sheet            sheet.
+	 * @param sheetConfigMap            sheetConfigMap.
+	 * @param commandList            command list.
+	 * @param formList            form list.
+	 * @param sheetRightCol the sheet right col
 	 */
 	private void buildSheetConfigMapFromFormCommand(final Sheet sheet,
 			final Map<String, SheetConfiguration> sheetConfigMap,
@@ -842,11 +842,10 @@ public class ConfigurationHandler {
 
 	/**
 	 * Create sheet configuration from form command.
-	 * 
-	 * @param sheet
-	 *            sheet.
-	 * @param fcommand
-	 *            form command.
+	 *
+	 * @param sheet            sheet.
+	 * @param fcommand            form command.
+	 * @param sheetRightCol the sheet right col
 	 * @return sheet configuration.
 	 */
 	private SheetConfiguration getSheetConfigurationFromConfigCommand(

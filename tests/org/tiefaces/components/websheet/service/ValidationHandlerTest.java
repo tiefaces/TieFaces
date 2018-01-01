@@ -58,27 +58,23 @@ public class ValidationHandlerTest {
 		assertEquals(1, bean.loadWebSheet(stream, context));
 
 		bean.getCellsMap().put("4:3", "-1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(4,
-					3, true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(4,3, false);
 		FacesCell fcell = bean.getBodyRows().get(4).getCells().get(3);
 		assertTrue(fcell.isInvalid());
 		assertTrue(fcell.getValidStyle().contains(TieConstants.CELL_INVALID_STYLE));
 		bean.getCellsMap().put("4:3", "1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(4, 3,
-				true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(4, 3, false);
 		assertFalse(fcell.isInvalid());
 		
 		bean.addRepeatRow(4);
 		
 		bean.getCellsMap().put("5:3", "-1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(5,
-					3, true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(5,3, false);
 		fcell = bean.getBodyRows().get(5).getCells().get(3);
 		assertTrue(fcell.isInvalid());
 		assertTrue(fcell.getValidStyle().contains(TieConstants.CELL_INVALID_STYLE));
 		bean.getCellsMap().put("5:3", "1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(5, 3,
-				true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(5, 3, false);
 		assertFalse(fcell.isInvalid());
 		
 
@@ -106,8 +102,7 @@ public class ValidationHandlerTest {
 
 		bean.getCellsMap().put("4:3", "-1");
 
-		assertFalse(bean.getValidationHandler().validateRowInCurrentPage(4,
-				true));
+		assertFalse(bean.getValidationHandler().validateRowInCurrentPage(4, false));
 
 	}
 
@@ -131,7 +126,7 @@ public class ValidationHandlerTest {
 		assertEquals(1, bean.loadWebSheet(stream, context));
 		bean.getCellsMap().put("4:3", "-1");
 		assertEquals("Sale Price Report", bean.getValidationHandler()
-				.findFirstInvalidSheet(true));
+				.findFirstInvalidSheet());
 
 	}
 

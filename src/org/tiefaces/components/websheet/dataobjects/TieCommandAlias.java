@@ -1,5 +1,9 @@
 package org.tiefaces.components.websheet.dataobjects;
 
+import java.util.regex.Pattern;
+
+import org.tiefaces.components.websheet.utility.ParserUtility;
+
 /**
  * This class is to help end user to easily define the control behavior of the cell.
  * In the real world, two group of people will involve in the design of template:
@@ -25,13 +29,42 @@ package org.tiefaces.components.websheet.dataobjects;
 public class TieCommandAlias {
 	
 /** The alias. */
-private String alias;
+private String alias = null;
 
 /** The command. */
-private String command;
+private String command = null;
 
 /** The remove. */
 private boolean remove = false;
+
+/** The pattern. */
+private Pattern pattern = null;
+
+
+/**
+ * Instantiates a new tie command alias.
+ *
+ * @param alias the alias
+ * @param command the command
+ */
+public TieCommandAlias(String alias, String command) {
+	this.alias = alias;
+	this.command = command;
+}
+
+
+/**
+ * Instantiates a new tie command alias.
+ *
+ * @param alias the alias
+ * @param command the command
+ * @param remove the remove
+ */
+public TieCommandAlias(String alias, String command, boolean remove) {
+	this.alias = alias;
+	this.command = command;
+	this.remove = remove;
+}
 
 /**
  * Gets the alias.
@@ -86,7 +119,21 @@ public boolean isRemove() {
 public void setRemove(boolean remove) {
 	this.remove = remove;
 }
-	
+
+
+
+/**
+ * Gets the pattern.
+ *
+ * @return the pattern
+ */
+public Pattern getPattern() {
+	if ((this.pattern == null) && (alias != null)) {
+		this.pattern = Pattern.compile("\\s*" + ParserUtility.wildcardToRegex(alias));
+	}	
+	return pattern;
+}
+
 
 
 

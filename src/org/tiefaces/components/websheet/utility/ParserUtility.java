@@ -210,9 +210,8 @@ public final class ParserUtility {
 	/**
 	 * get the string between two bracket. .e.g. $save{employee.name} return
 	 * employee.name.
-	 * 
-	 * @param str
-	 *            input string.
+	 *
+	 * @param newComment the new comment
 	 * @return return string.
 	 */
 
@@ -228,6 +227,13 @@ public final class ParserUtility {
 
 	}
 
+	/**
+	 * Find pair bracket position.
+	 *
+	 * @param str the str
+	 * @param startPos the start pos
+	 * @return the int
+	 */
 	private static int findPairBracketPosition(final String str, final int startPos) {
 
 	    
@@ -546,8 +552,9 @@ public final class ParserUtility {
 	}
 	
 	/**
-	 * find first non letterordigit position from string
-	 * @param input input string 
+	 * find first non letterordigit position from string.
+	 *
+	 * @param input input string
 	 * @param startPosition startposition
 	 * @return first position
 	 */
@@ -570,8 +577,22 @@ public final class ParserUtility {
 	 * @return regex string.
 	 */
     public static String wildcardToRegex(String wildcard){
-        StringBuffer s = new StringBuffer(wildcard.length());
-        s.append('^');
+    	return wildcardToRegex(wildcard,false);
+    }
+    
+    /**
+     * Convert wildcard expression into regex experssion with option check start and end.
+     * 
+     * @param wildcard input wildcard.
+     * @param checkStartEnd check start and end.
+     * @return regex string.
+     */
+    public static String wildcardToRegex(String wildcard, boolean checkStartEnd){
+        StringBuilder s = new StringBuilder(wildcard.length());
+
+        if (checkStartEnd) {
+        	s.append('^');
+        }	
         for (int i = 0, is = wildcard.length(); i < is; i++) {
             char c = wildcard.charAt(i);
             switch(c) {
@@ -593,7 +614,31 @@ public final class ParserUtility {
                     break;
             }
         }
-        s.append('$');
+        if (checkStartEnd) {
+        	s.append('$');
+        }	
         return(s.toString());
     }	
+    
+
+    
+    /**
+     * Removes the chars from string.
+     *
+     * @param inputStr the input str
+     * @param start the start
+     * @param end the end
+     * @return the string
+     */
+    public static String removeCharsFromString(String inputStr, int start, int end) {
+    	 StringBuilder sb = new StringBuilder(inputStr);
+    	 sb.delete(start, end);
+//    	 if ((start > 0) && (inputStr.charAt(start - 1) ==' ')) {
+//    		 // if end with a space, then remove it as well.
+//    		 sb.deleteCharAt(start - 1);
+//    	 }
+    	 return sb.toString();
+    }
+    
+    
 }
