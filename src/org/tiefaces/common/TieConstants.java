@@ -270,6 +270,8 @@ public final class TieConstants {
 	public static final float DEFAULT_HEADER_ROW_HEIGHT = 12;
 	/** The NORMAL_COMMENT_KEY_IN_MAP. */
 	public static final String NORMAL_COMMENT_KEY_IN_MAP = "$$";
+	/** The SAVE_COMMENT_KEY_IN_MAP. */
+	public static final String SAVE_COMMENT_KEY_IN_MAP = "$save";
 	/** The VALIDATION_RULE_TAG. */
 	public static final String VALIDATION_RULE_TAG = "rule";
 	/** The VALIDATION_ERROR_MSG_TAG. */
@@ -300,9 +302,10 @@ public final class TieConstants {
 	/** The Constant VERTICAL_ALIGN_CENTER. */
 	public static final String VERTICAL_ALIGN_CENTER = "vertical-align: middle;";
 
-	/** The Constant FULL_VALIDATION. */
-	public static final String FULL_VALIDATION = "fullValidation";
-
+	/** The Constant submit mode. */
+	public static final String SUBMITMODE = "tieWebSheetSubmitMode";
+	/** The Constant unSaved state. */
+	public static final String UNSAVEDSTATE = "unSaved";
 	/**
 	 * hide constructor.
 	 */

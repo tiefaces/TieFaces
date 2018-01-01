@@ -217,12 +217,12 @@ public final class PicturesUtility {
 		double picHeight = 0.0;
 		int left = anchor.getDx1()
 				/ org.apache.poi.util.Units.EMU_PER_PIXEL;
-		int top = (int) (anchor.getDy1()
+		int top = (int) ((double) anchor.getDy1()
 				/ org.apache.poi.util.Units.EMU_PER_PIXEL
 				/ WebSheetUtility.PICTURE_HEIGHT_ADJUST);
 		int right = anchor.getDx2()
 				/ org.apache.poi.util.Units.EMU_PER_PIXEL;
-		int bottom = (int) (anchor.getDy2()
+		int bottom = (int) ((double) anchor.getDy2()
 				/ org.apache.poi.util.Units.EMU_PER_PIXEL
 				/ WebSheetUtility.PICTURE_HEIGHT_ADJUST);
 

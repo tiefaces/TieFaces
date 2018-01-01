@@ -3,7 +3,20 @@
  */
 package org.tiefaces.components.websheet.utility;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
+import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 
 /**
  * @author jason jiang
@@ -170,5 +183,48 @@ public class ConfigurationUtilityTest {
     public void testSkippedRegionCells() throws Exception {
         
     }
+
+	@SuppressWarnings("resource")
+	@Test
+	public void testBuildSheetCommentFromAlias() throws Exception {
+
+			
+			Workbook wb = new XSSFWorkbook();
+			// XSSFEvaluationWorkbook wbWrapper = XSSFEvaluationWorkbook
+			// .create((XSSFWorkbook) wb);
+			XSSFSheet sheet = (XSSFSheet) wb.createSheet("sheet1");
+			// Create a row and put some cells in it. Rows are 0 based.
+			XSSFRow row1 = sheet.createRow((short) 0);
+			// Create a cell and put a value in it.
+			Cell cell1 = row1.createCell(0);
+			cell1.setCellValue("${employee.birthDate}");
+			Cell cell2 = row1.createCell(1);
+			cell2.setCellValue("${employee.birthdate}");
+			Cell cell3 = row1.createCell(2);
+			cell3.setCellValue("${employee.worktime} ${inputWorkTime}");
+			Cell cell4 = row1.createCell(3);
+			cell4.setCellValue("${employee.worktime}    ${inputWorkTime}");
+			Cell cell5 = row1.createCell(4);
+			cell5.setCellValue("${employee.worktime}${inputWorkTime}");
+			
+			List<TieCommandAlias> tieCommandAliasList = new ArrayList<>();
+			
+			String comment1 = "$widget.calendar{showOn=\"button\" pattern=\"yyyy/MM/dd\" readonlyInput=\"true\"}";
+			String comment2 = "$widget.inputnumber{symbol=\" years\" symbolPosition=\"s\" minValue=\"0\" maxValue=\"999\" decimalPlaces=\"2\"}\r\n"; 
+
+			tieCommandAliasList.add(new TieCommandAlias("Date", comment1)); 
+			tieCommandAliasList.add(new TieCommandAlias("${inputWorkTime}", comment2, true)); 
+			ConfigurationUtility.buildSheetCommentFromAlias((Sheet) sheet, tieCommandAliasList);
+			
+			assertEquals(comment1, row1.getCell(0).getCellComment().getString().getString());
+			assertNull( row1.getCell(1).getCellComment());
+			assertEquals(comment2, row1.getCell(2).getCellComment().getString().getString());
+			assertEquals("${employee.worktime}", CellUtility.getCellValueWithoutFormat(row1.getCell(2)));
+			assertEquals("${employee.worktime}", CellUtility.getCellValueWithoutFormat(row1.getCell(3)));
+			assertEquals("${employee.worktime}", CellUtility.getCellValueWithoutFormat(row1.getCell(4)));
+		}
+
+
+
 
 }

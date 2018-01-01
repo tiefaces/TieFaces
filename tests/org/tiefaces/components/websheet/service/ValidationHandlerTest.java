@@ -41,6 +41,7 @@ public class ValidationHandlerTest {
 	 * {@link org.tiefaces.components.websheet.service.ValidationHandler#validateWithRowColInCurrentPage(int, int, boolean)}
 	 * .
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public final void testValidateWithRowColInCurrentPage()
 			throws Exception {
@@ -54,30 +55,26 @@ public class ValidationHandlerTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(1, bean.loadWebSheet(stream, context));
 
 		bean.getCellsMap().put("4:3", "-1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(4,
-					3, true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(4,3, false);
 		FacesCell fcell = bean.getBodyRows().get(4).getCells().get(3);
 		assertTrue(fcell.isInvalid());
 		assertTrue(fcell.getValidStyle().contains(TieConstants.CELL_INVALID_STYLE));
 		bean.getCellsMap().put("4:3", "1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(4, 3,
-				true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(4, 3, false);
 		assertFalse(fcell.isInvalid());
 		
 		bean.addRepeatRow(4);
 		
 		bean.getCellsMap().put("5:3", "-1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(5,
-					3, true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(5,3, false);
 		fcell = bean.getBodyRows().get(5).getCells().get(3);
 		assertTrue(fcell.isInvalid());
 		assertTrue(fcell.getValidStyle().contains(TieConstants.CELL_INVALID_STYLE));
 		bean.getCellsMap().put("5:3", "1");
-		bean.getValidationHandler().validateWithRowColInCurrentPage(5, 3,
-				true);
+		bean.getValidationHandler().validateWithRowColInCurrentPage(5, 3, false);
 		assertFalse(fcell.isInvalid());
 		
 
@@ -88,6 +85,7 @@ public class ValidationHandlerTest {
 	 * {@link org.tiefaces.components.websheet.service.ValidationHandler#validateRowInCurrentPage(int, boolean)}
 	 * .
 	 */
+	@SuppressWarnings({ "unchecked" })
 	@Test
 	public final void testValidateRowInCurrentPage() throws Exception {
 
@@ -100,22 +98,17 @@ public class ValidationHandlerTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(1, bean.loadWebSheet(stream, context));
 
 		bean.getCellsMap().put("4:3", "-1");
 
-		assertFalse(bean.getValidationHandler().validateRowInCurrentPage(4,
-				true));
+		assertFalse(bean.getValidationHandler().validateRowInCurrentPage(4, false));
 
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.tiefaces.components.websheet.service.ValidationHandler#findFirstInvalidSheet(boolean)}
-	 * .
-	 */
+
 	@Test
-	public final void testFindFirstInvalidSheet() throws Exception {
+	public void testPreValidation() throws Exception {
 		TieWebSheetBean bean = new TieWebSheetBean();
 		bean.init();
 		InputStream stream =
@@ -125,11 +118,9 @@ public class ValidationHandlerTest {
 		itemList.add(new Item());
 		HashMap<String, Object> context = new HashMap<String, Object>();
 		context.put("items", itemList);
-		assertEquals(bean.loadWebSheet(stream, context), 1);
+		assertEquals(1, bean.loadWebSheet(stream, context));
 		bean.getCellsMap().put("4:3", "-1");
-		assertEquals(bean.getValidationHandler()
-				.findFirstInvalidSheet(true), "Sale Price Report");
-
-	}
+		assertFalse(bean.getValidationHandler()
+				.preValidation());	}
 
 }

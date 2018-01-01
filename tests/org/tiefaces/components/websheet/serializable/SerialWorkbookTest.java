@@ -31,7 +31,7 @@ public class SerialWorkbookTest {
 				this.getClass().getClassLoader().getResourceAsStream(
 						"resources/sheet/datacommentdemo.xlsx");
 		bean.loadWebSheet(stream);
-		assertEquals(bean.loadWorkSheetByTabName("departments"), 1);		
+		assertEquals(1, bean.loadWorkSheetByTabName("departments"));		
 
 		SerialWorkbook swb = bean.getSerialWb();
 		

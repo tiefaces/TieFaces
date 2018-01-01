@@ -64,23 +64,13 @@ public class CellHelper {
 	public final void saveDataInContext(final Cell poiCell,
 			final String strValue) {
 
-		String saveAttrList = SaveAttrsUtility
-				.getSaveAttrListFromRow(poiCell.getRow());
-		if (saveAttrList != null) {
-			String saveAttr = SaveAttrsUtility.getSaveAttrFromList(
-					poiCell.getColumnIndex(), saveAttrList);
-			if (saveAttr != null) {
-				String fullName = ConfigurationUtility
-						.getFullNameFromRow(poiCell.getRow());
-				if (fullName != null) {
-					restoreDataContext(fullName);
-					SaveAttrsUtility.saveDataToObjectInContext(
+		String saveAttr = SaveAttrsUtility.prepareContextAndAttrsForCell(poiCell, ConfigurationUtility.getFullNameFromRow(poiCell.getRow()), this);
+		if (saveAttr!= null) {
+			SaveAttrsUtility.saveDataToObjectInContext(
 							parent.getSerialDataContext().getDataContext(),
 							saveAttr, strValue, parent.getExpEngine());
-					parent.getHelper().getWebSheetLoader().setUnsavedStatus(
+			parent.getHelper().getWebSheetLoader().setUnsavedStatus(
 							RequestContext.getCurrentInstance(), true);
-				}
-			}
 		}
 	}
 
@@ -252,10 +242,7 @@ public class CellHelper {
 			return false;
 		}
 
-		if ((parts == null) || (parts.length <= 1)) {
-			return false;
-		}
-		return true;
+		return ((parts != null) && (parts.length > 1)); 
 	}
 
 	/**

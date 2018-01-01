@@ -6,17 +6,22 @@
 package org.tiefaces.components.websheet;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.primefaces.component.tabview.TabView;
 import org.tiefaces.common.TieConstants;
 import org.tiefaces.components.websheet.configuration.ConfigAdvancedContext;
+import org.tiefaces.components.websheet.dataobjects.TieCommandAlias;
 
-// TODO: Auto-generated Javadoc
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 /**
  * sheet view class.
  * 
@@ -72,7 +77,7 @@ public class TieWebSheetView {
 	 */
 	private String clientId = null;
 	/** Client id for web forms. */
-	private transient String webFormClientId = null;
+	private String webFormClientId = null;
 
 	/** skip configuration. show the excel form as is. */
 	private boolean skipConfiguration = false;
@@ -98,7 +103,14 @@ public class TieWebSheetView {
 	/** The config advanced context. */
 	private ConfigAdvancedContext configAdvancedContext;
 	
-
+	/** The tie web sheet validation bean. */
+	private TieWebSheetValidation tieWebSheetValidationBean;
+	
+	/**  If true then validationBean only work in submitMode. */ 
+	private boolean onlyValidateInSubmitMode = false;
+	
+	/** The tie command alias list. */
+	private List<TieCommandAlias> tieCommandAliasList;
 
 	/**
 	 * empty constructor.
@@ -659,7 +671,70 @@ public class TieWebSheetView {
 		this.configAdvancedContext = configAdvancedContext;
 	}
 
+	/**
+	 * Gets the tie web sheet validation bean.
+	 *
+	 * @return the tie web sheet validation bean
+	 */
+	public TieWebSheetValidation getTieWebSheetValidationBean() {
+		return tieWebSheetValidationBean;
+	}
 
+	/**
+	 * Sets the tie web sheet validation bean.
+	 *
+	 * @param tieWebSheetValidationBean the new tie web sheet validation bean
+	 * @param onlyValidationInSubmitMode the only validation in submit mode
+	 */
+	public void setTieWebSheetValidationBean(TieWebSheetValidation tieWebSheetValidationBean, boolean onlyValidationInSubmitMode) {
+		this.tieWebSheetValidationBean = tieWebSheetValidationBean;
+		this.onlyValidateInSubmitMode = onlyValidationInSubmitMode;
+	}
+		
+
+	/**
+	 * Checks if is only validate in submit mode.
+	 *
+	 * @return true, if is only validate in submit mode
+	 */
+	public boolean isOnlyValidateInSubmitMode() {
+		return onlyValidateInSubmitMode;
+	}
+
+	/**
+	 * Gets the tie command alias list.
+	 *
+	 * @return the tie command alias list
+	 */
+	public List<TieCommandAlias> getTieCommandAliasList() {
+		return tieCommandAliasList;
+	}
+	
+	
+
+	/**
+	 * Sets the tie command alias list.
+	 *
+	 * @param tieCommandAliasList the new tie command alias list
+	 */
+	public void setTieCommandAliasList(List<TieCommandAlias> tieCommandAliasList) {
+		this.tieCommandAliasList = tieCommandAliasList;
+	}
+
+	
+	/**
+	 * Sets the tie command alias list.
+	 *
+	 * @param aliasListJson the new tie command alias list
+	 */
+	public void setTieCommandAliasList(String aliasListJson) {
+		
+		Gson gson = new Gson();
+
+		Type aliasListType = new TypeToken<ArrayList<TieCommandAlias>>(){}.getType();
+
+		this.tieCommandAliasList = gson.fromJson(aliasListJson, aliasListType); 		
+	}
 	
 	
 }

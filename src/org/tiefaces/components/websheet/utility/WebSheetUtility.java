@@ -375,7 +375,7 @@ public final class WebSheetUtility {
 		Matcher matcher;
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return true;
 			}
 		}
@@ -383,7 +383,7 @@ public final class WebSheetUtility {
 		terms = s.split(" ");
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return true;
 			}
 		}
@@ -403,7 +403,7 @@ public final class WebSheetUtility {
 		Matcher matcher;
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return matcher.group();
 			}
 		}
@@ -411,7 +411,7 @@ public final class WebSheetUtility {
 		terms = entry.split(" ");
 		for (String term : terms) {
 			matcher = pattern.matcher(term);
-			while (matcher.matches()) {
+			if (matcher.matches()) {
 				return matcher.group();
 			}
 		}
@@ -641,13 +641,10 @@ public final class WebSheetUtility {
 	public static boolean insideRange(final ConfigRange child,
 			final ConfigRange parent) {
 
-		if ((cellCompareTo(child.getFirstRowRef(),
+		return ((cellCompareTo(child.getFirstRowRef(),
 				parent.getFirstRowRef()) >= 0)
 				&& (cellCompareTo(child.getLastRowPlusRef(),
-						parent.getLastRowPlusRef()) <= 0)) {
-			return true;
-		}
-		return false;
+						parent.getLastRowPlusRef()) <= 0));
 	}
 
 	/**

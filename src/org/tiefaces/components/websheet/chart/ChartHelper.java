@@ -162,7 +162,9 @@ public class ChartHelper {
 	 */
 	private String getPieTitle(final ChartData chartData) {
 		for (ChartSeries chartSeries : chartData.getSeriesList()) {
-			return getParsedCellValue(chartSeries.getSeriesLabel());
+			if (chartSeries != null) {
+				return getParsedCellValue(chartSeries.getSeriesLabel());
+			}	
 		}
 		return "";
 
@@ -229,8 +231,8 @@ public class ChartHelper {
 							e);
 				}
 			} else {
-				LOG.log(Level.FINE, "setSeriesColor() unsupported plot: "
-						+ plot.toString());
+				LOG.log(Level.FINE, "setSeriesColor() unsupported plot: {}",
+						plot.toString());
 			}
 		}
 	}

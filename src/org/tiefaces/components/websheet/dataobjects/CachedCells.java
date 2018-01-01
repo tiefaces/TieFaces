@@ -150,10 +150,7 @@ public class CachedCells implements Serializable {
 		if (newValue == null) {
 			newValue = "";
 		}
-		if (!oldValue.equals(newValue)) {
-			return true;
-		}
-		return false;
+		return (!oldValue.equals(newValue));
 	}
 
 	/**
