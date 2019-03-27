@@ -64,7 +64,7 @@
        text-overflow:ellipsis !important;
    }
    
-#websheet .ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td, .ui-datatable tfoot th  {
+#websheet .ui-datatable thead th, #websheet .ui-datatable tbody td, #websheet .ui-datatable tfoot td, #websheet .ui-datatable tfoot th  {
     padding: 0 !important;
 }   
    
@@ -80,7 +80,7 @@
     height: 30px !important;
 }
 
-#websheet .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield {
+#websheet .ui-inputfield, #websheet .ui-widget-content .ui-inputfield, #websheet .ui-widget-header .ui-inputfield {
     line-height: 1.42 !important;
 }
 
@@ -89,7 +89,7 @@
     padding: 1px 10px !important;
 }
 
-#websheet div.ui-selectonemenu, div.ui-fluid div.ui-selectonemenu {
+#websheet div.ui-selectonemenu, #websheet div.ui-fluid div.ui-selectonemenu {
     height: 23px !important;
 }	
 
@@ -100,5 +100,3 @@
 #websheet .inputColumnWidth.errorMsg {
 	display: block;
 }
-
-
